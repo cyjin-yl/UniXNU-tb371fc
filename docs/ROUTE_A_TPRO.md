@@ -148,6 +148,8 @@ python3 scripts/audit_route_a_tpro.py \
 
 ## 目前最有价值的下一步
 
+已完成的候选 XNU 源码核对见 [内核 TPRO 能力发布](ROUTE_A_TPRO_KERNEL_PUBLICATION.md)。检查到的 `exec_add_apple_strings` 没有构造两个 `dyld_hw_tpro*` 项，但明确发布 `security_config`；task 状态可继承，最终 pmap／commpage 配置也尚未由完整内核确认。这些事实限定后续检查位置，尚不构成整个启动链的非 TPRO 证明。
+
 1. 补全实际 `dyld_hw_tpro=1` 比较循环的前驱和输入指针来源，并覆盖不能由
    相邻 ADR(P) 扫描找到的引用。分清能力检测、普通内存访问与能力发布。
 2. 从 `start` 的全部入口与分支出发验证 `0x4944`、`0x4aac` 附近路径，

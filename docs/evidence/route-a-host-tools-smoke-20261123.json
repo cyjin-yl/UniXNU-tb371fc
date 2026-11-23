@@ -1,0 +1,610 @@
+{
+  "schema_version": 1,
+  "record_date": "2026-11-23",
+  "kind": "actual_host_component_semantic_smoke",
+  "environment": "CT102 unixnu-route-a-dev Linux container; independent self-authored inputs",
+  "component_builder_commit": "92bf388872d4d249c87989815832bd2c2386715f",
+  "component_builder_driver_sha256": "f076e276dfecefe3ec344ea73efbede7a36a2bf11098b0cc63833468ec8f61a0",
+  "original_report_sha256": "94929624f5ff2214a90034df3906db694bb8eb29303157e3f37fd0e8853cf170",
+  "public_report_normalization": "Only the private work-root prefix was replaced by WORK. All tool/input/output digests, commands and diagnostics are retained.",
+  "counts": {
+    "semantic_groups_passed": 3,
+    "commands_succeeded": 15,
+    "tools_hashed_before_and_after": 7
+  },
+  "report": {
+    "artifacts": [
+      {
+        "path": "entry.c",
+        "sha256": "15e721034859c193157f7d1ce356fd8b041daf648dc83d3571a4b672f2dbc088",
+        "size": 123
+      },
+      {
+        "path": "entry.o",
+        "sha256": "faaebd6f058e2b1050103be7da1adb9dba42b04b51ad375305d9e92387b29cd8",
+        "size": 432
+      },
+      {
+        "path": "helper.c",
+        "sha256": "0021cd897696a288adab84546d46dd28aaec3203d030badad5e6446c52680569",
+        "size": 71
+      },
+      {
+        "path": "helper.o",
+        "sha256": "a2ae721849c11e1159ef32a226e7e627324beeb8de4a635b2a1e7a3b1b33f457",
+        "size": 400
+      },
+      {
+        "path": "libroute_a.a",
+        "sha256": "3ba560806113c6fee909dbd7682b792cb520759be0b0d17e46bb7c386ca2f731",
+        "size": 592
+      },
+      {
+        "path": "restored.bin",
+        "sha256": "66bbe6778f87678f090a488d097aa93bed324a3e7d595c50c226d09838938ef4",
+        "size": 69192
+      },
+      {
+        "path": "route_a_kernel_smoke",
+        "sha256": "6c93843b07e7612077d3fc0ef512c90381ba3756794bee2e3ec2e7ed77f8385c",
+        "size": 16488
+      },
+      {
+        "path": "sample.bin",
+        "sha256": "66bbe6778f87678f090a488d097aa93bed324a3e7d595c50c226d09838938ef4",
+        "size": 69192
+      },
+      {
+        "path": "sample.lzfse",
+        "sha256": "9f3c46fed399eb05d8008a973c222abe40113437c0bfc878926189e572cce0dc",
+        "size": 558
+      },
+      {
+        "path": "smoke.defs",
+        "sha256": "d2a6f9033d1fc431f71562f20354fa136f0cc59f18b6d7d0771bddfef6d25bc1",
+        "size": 256
+      },
+      {
+        "path": "smoke_ids.h",
+        "sha256": "41dc5377ef8ba683c9c0242d89ff2936353162d65b5f5023354e6f921327aad0",
+        "size": 974
+      },
+      {
+        "path": "smoke_server.c",
+        "sha256": "bd8403fa77bb79f52cb119fe7d5a5c63d17845b0d4293a369783042d67be22e7",
+        "size": 6247
+      },
+      {
+        "path": "smoke_server.h",
+        "sha256": "3a41c04c40cd1fdea51d2c094774f99d39bd9cae426b7543e8a3afe1bd5901ed",
+        "size": 5204
+      },
+      {
+        "path": "smoke_user.c",
+        "sha256": "eb5fcd2cff03e602537a0062261baad38d2aaee7ea9ebee16e63be0bdc36dce0",
+        "size": 6836
+      },
+      {
+        "path": "smoke_user.h",
+        "sha256": "53d4e0a64232aed8c15199d0769dcd1a722377829f95398eb9b104593c728a1c",
+        "size": 5006
+      }
+    ],
+    "checks": [
+      {
+        "evidence": {
+          "archive_member_resolved": true,
+          "executable_was_run": false,
+          "linked_executable": {
+            "filetype": 2,
+            "header_words": [
+              4277009103,
+              16777228,
+              0,
+              2,
+              7,
+              648,
+              1,
+              0
+            ],
+            "load_commands": [
+              25,
+              25,
+              25,
+              2,
+              27,
+              42,
+              5
+            ],
+            "ordinary_arm64": true
+          },
+          "linked_sample_is_xnu": false,
+          "objects": {
+            "entry": {
+              "filetype": 1,
+              "header_words": [
+                4277009103,
+                16777228,
+                0,
+                1,
+                4,
+                280,
+                8192,
+                0
+              ],
+              "load_commands": [
+                25,
+                50,
+                2,
+                11
+              ],
+              "ordinary_arm64": true
+            },
+            "helper": {
+              "filetype": 1,
+              "header_words": [
+                4277009103,
+                16777228,
+                0,
+                1,
+                4,
+                280,
+                8192,
+                0
+              ],
+              "load_commands": [
+                25,
+                50,
+                2,
+                11
+              ],
+              "ordinary_arm64": true
+            }
+          }
+        },
+        "name": "ordinary_arm64_archive_kernel_link",
+        "passed": true
+      },
+      {
+        "evidence": {
+          "generated_c_compiled_against_sdk": false,
+          "generated_files": [
+            "smoke_user.h",
+            "smoke_server.h",
+            "smoke_user.c",
+            "smoke_server.c",
+            "smoke_ids.h"
+          ],
+          "ipc_runtime_verified": false,
+          "message_id": 48640
+        },
+        "name": "migcom_interface_generation",
+        "passed": true
+      },
+      {
+        "evidence": {
+          "compressed_bytes": 558,
+          "input_bytes": 69192,
+          "input_sha256": "66bbe6778f87678f090a488d097aa93bed324a3e7d595c50c226d09838938ef4",
+          "restored_sha256": "66bbe6778f87678f090a488d097aa93bed324a3e7d595c50c226d09838938ef4"
+        },
+        "name": "lzfse_roundtrip",
+        "passed": true
+      }
+    ],
+    "commands": [
+      {
+        "argv": [
+          "/usr/bin/clang-19",
+          "--version"
+        ],
+        "cwd": "WORK/host-smoke-v1/results-001",
+        "elapsed_seconds": 0.027,
+        "exit_code": 0,
+        "label": "host_clang_version",
+        "stderr": "",
+        "stdout": "Debian clang version 19.1.7 (3+b1)\nTarget: x86_64-pc-linux-gnu\nThread model: posix\nInstalledDir: /usr/lib/llvm-19/bin\n"
+      },
+      {
+        "argv": [
+          "WORK/toolchain/CommandLineTools/usr/bin/ld",
+          "-v"
+        ],
+        "cwd": "WORK/host-smoke-v1/results-001",
+        "elapsed_seconds": 0.004,
+        "exit_code": 0,
+        "label": "ld64_version",
+        "stderr": "@(#)PROGRAM:ld  PROJECT:ld64-956.6\nBUILD 13:06:01 Nov 23 2026\nconfigured to support archs: armv6 armv7 armv7s arm64 arm64e arm64_32 i386 x86_64 x86_64h armv6m armv7k armv7m armv7em riscv32 (tvOS)\n",
+        "stdout": ""
+      },
+      {
+        "argv": [
+          "/usr/bin/clang-19",
+          "--target=arm64-apple-ios27.0",
+          "-march=armv8-a",
+          "-ffreestanding",
+          "-fno-stack-protector",
+          "-fno-unwind-tables",
+          "-fno-asynchronous-unwind-tables",
+          "-fno-builtin",
+          "-c",
+          "entry.c",
+          "-o",
+          "entry.o"
+        ],
+        "cwd": "WORK/host-smoke-v1/results-001",
+        "elapsed_seconds": 0.593,
+        "exit_code": 0,
+        "label": "compile_entry",
+        "stderr": "",
+        "stdout": ""
+      },
+      {
+        "argv": [
+          "/usr/bin/clang-19",
+          "--target=arm64-apple-ios27.0",
+          "-march=armv8-a",
+          "-ffreestanding",
+          "-fno-stack-protector",
+          "-fno-unwind-tables",
+          "-fno-asynchronous-unwind-tables",
+          "-fno-builtin",
+          "-c",
+          "helper.c",
+          "-o",
+          "helper.o"
+        ],
+        "cwd": "WORK/host-smoke-v1/results-001",
+        "elapsed_seconds": 0.04,
+        "exit_code": 0,
+        "label": "compile_helper",
+        "stderr": "",
+        "stdout": ""
+      },
+      {
+        "argv": [
+          "WORK/toolchain/CommandLineTools/usr/bin/nm",
+          "-g",
+          "entry.o"
+        ],
+        "cwd": "WORK/host-smoke-v1/results-001",
+        "elapsed_seconds": 0.002,
+        "exit_code": 0,
+        "label": "nm_entry",
+        "stderr": "",
+        "stdout": "0000000000000000 T _route_a_entry\n                 U _route_a_helper\n"
+      },
+      {
+        "argv": [
+          "WORK/toolchain/CommandLineTools/usr/bin/libtool",
+          "-static",
+          "-o",
+          "libroute_a.a",
+          "helper.o"
+        ],
+        "cwd": "WORK/host-smoke-v1/results-001",
+        "elapsed_seconds": 0.002,
+        "exit_code": 0,
+        "label": "archive",
+        "stderr": "",
+        "stdout": ""
+      },
+      {
+        "argv": [
+          "WORK/toolchain/CommandLineTools/usr/bin/nm",
+          "-g",
+          "libroute_a.a"
+        ],
+        "cwd": "WORK/host-smoke-v1/results-001",
+        "elapsed_seconds": 0.003,
+        "exit_code": 0,
+        "label": "nm_archive",
+        "stderr": "",
+        "stdout": "\nlibroute_a.a(helper.o):\n0000000000000000 T _route_a_helper\n"
+      },
+      {
+        "argv": [
+          "WORK/toolchain/CommandLineTools/usr/bin/lipo",
+          "-archs",
+          "entry.o"
+        ],
+        "cwd": "WORK/host-smoke-v1/results-001",
+        "elapsed_seconds": 0.002,
+        "exit_code": 0,
+        "label": "lipo_entry.o",
+        "stderr": "",
+        "stdout": "arm64\n"
+      },
+      {
+        "argv": [
+          "WORK/toolchain/CommandLineTools/usr/bin/lipo",
+          "-archs",
+          "libroute_a.a"
+        ],
+        "cwd": "WORK/host-smoke-v1/results-001",
+        "elapsed_seconds": 0.001,
+        "exit_code": 0,
+        "label": "lipo_libroute_a.a",
+        "stderr": "",
+        "stdout": "arm64\n"
+      },
+      {
+        "argv": [
+          "WORK/toolchain/CommandLineTools/usr/bin/ld",
+          "-static",
+          "-kernel",
+          "-arch",
+          "arm64",
+          "-e",
+          "_route_a_entry",
+          "-platform_version",
+          "ios",
+          "27.0",
+          "27.0",
+          "-o",
+          "route_a_kernel_smoke",
+          "entry.o",
+          "libroute_a.a"
+        ],
+        "cwd": "WORK/host-smoke-v1/results-001",
+        "elapsed_seconds": 0.071,
+        "exit_code": 0,
+        "label": "ld64_kernel",
+        "stderr": "ld: warning: directory not found for option '-F/System/Library/Frameworks/'\n",
+        "stdout": ""
+      },
+      {
+        "argv": [
+          "WORK/toolchain/CommandLineTools/usr/bin/nm",
+          "-g",
+          "route_a_kernel_smoke"
+        ],
+        "cwd": "WORK/host-smoke-v1/results-001",
+        "elapsed_seconds": 0.002,
+        "exit_code": 0,
+        "label": "nm_linked",
+        "stderr": "",
+        "stdout": "0000000100000000 A __mh_execute_header\n0000000100003fcc T _route_a_entry\n0000000100003fe4 T _route_a_helper\n"
+      },
+      {
+        "argv": [
+          "WORK/toolchain/CommandLineTools/usr/bin/lipo",
+          "-archs",
+          "route_a_kernel_smoke"
+        ],
+        "cwd": "WORK/host-smoke-v1/results-001",
+        "elapsed_seconds": 0.002,
+        "exit_code": 0,
+        "label": "lipo_linked",
+        "stderr": "",
+        "stdout": "arm64\n"
+      },
+      {
+        "argv": [
+          "WORK/toolchain/CommandLineTools/usr/libexec/migcom",
+          "-header",
+          "smoke_user.h",
+          "-sheader",
+          "smoke_server.h",
+          "-user",
+          "smoke_user.c",
+          "-server",
+          "smoke_server.c",
+          "-dheader",
+          "smoke_ids.h"
+        ],
+        "cwd": "WORK/host-smoke-v1/results-001",
+        "elapsed_seconds": 0.004,
+        "exit_code": 0,
+        "label": "migcom_generate",
+        "stderr": "",
+        "stdin_sha256": "d2a6f9033d1fc431f71562f20354fa136f0cc59f18b6d7d0771bddfef6d25bc1",
+        "stdout": ""
+      },
+      {
+        "argv": [
+          "WORK/toolchain/bin/lzfse",
+          "-encode",
+          "-i",
+          "sample.bin",
+          "-o",
+          "sample.lzfse"
+        ],
+        "cwd": "WORK/host-smoke-v1/results-001",
+        "elapsed_seconds": 0.003,
+        "exit_code": 0,
+        "label": "lzfse_encode",
+        "stderr": "",
+        "stdout": ""
+      },
+      {
+        "argv": [
+          "WORK/toolchain/bin/lzfse",
+          "-decode",
+          "-i",
+          "sample.lzfse",
+          "-o",
+          "restored.bin"
+        ],
+        "cwd": "WORK/host-smoke-v1/results-001",
+        "elapsed_seconds": 0.001,
+        "exit_code": 0,
+        "label": "lzfse_decode",
+        "stderr": "",
+        "stdout": ""
+      }
+    ],
+    "component_manifest": {
+      "identity": {
+        "adapter_sha256": "dd973d21f1fe45b8361889afb723dae654de8050b8efa202ee3e9acfd3a36389",
+        "host": {
+          "cc": {
+            "path": "/usr/lib/llvm-19/bin/clang",
+            "realpath": "/usr/lib/llvm-19/bin/clang",
+            "sha256": "0a3c55936ac43954fbe4914e6e73b577ca9e35e75d89ef13d3e28c187f41ca1a",
+            "version": "Debian clang version 19.1.7 (3+b1)\nTarget: x86_64-pc-linux-gnu\nThread model: posix\nInstalledDir: /usr/lib/llvm-19/bin"
+          },
+          "cxx": {
+            "path": "/usr/lib/llvm-19/bin/clang++",
+            "realpath": "/usr/lib/llvm-19/bin/clang",
+            "sha256": "0a3c55936ac43954fbe4914e6e73b577ca9e35e75d89ef13d3e28c187f41ca1a",
+            "version": "Debian clang version 19.1.7 (3+b1)\nTarget: x86_64-pc-linux-gnu\nThread model: posix\nInstalledDir: /usr/lib/llvm-19/bin"
+          },
+          "libclang_sha256": "a376ffcb5b1714685f7deec6ba344cf5e1eadde83c7ccb74bd557d75f9096b6d",
+          "llvm_config": {
+            "path": "/usr/bin/llvm-config",
+            "realpath": "/usr/lib/llvm-19/bin/llvm-config",
+            "sha256": "0ad6303a9d04d2dd21a7f7dc0aec2a2c0bbaf35b04ac5b43dc7ab48688929772",
+            "version": "19.1.7"
+          },
+          "resource": "/usr/lib/llvm-19/lib/clang/19"
+        },
+        "pins": {
+          "https://github.com/Nyktis/iig-port": {
+            "commit": "ea6d147d668ca15d490da638012243fcd705f30d",
+            "ref": "ea6d147d668ca15d490da638012243fcd705f30d"
+          },
+          "https://github.com/apple-oss-distributions/bootstrap_cmds": {
+            "commit": "c71d2d72f48995baaea76148f61002e5299841de",
+            "ref": "bootstrap_cmds-138"
+          },
+          "https://github.com/lzfse/lzfse": {
+            "commit": "e634ca58b4821d9f3d560cdc6df5dec02ffc93fd",
+            "ref": "e634ca58b4821d9f3d560cdc6df5dec02ffc93fd"
+          },
+          "https://github.com/swiftlang/swift-corelibs-libdispatch": {
+            "commit": "024805abec6daa9cdda569fd736b9c7686dfd735",
+            "ref": "swift-6.4.0-RELEASE"
+          },
+          "https://github.com/tpoechtrager/cctools-port": {
+            "commit": "3e694ee7393af2a4ce8bd6e7dae28fe37450aa87",
+            "ref": "1030.6.3-ld64-956.6"
+          }
+        },
+        "support": {
+          "LICENSE": {
+            "git_blob": "f63d2a6e4c80c3bf8d44b047458468289927593d",
+            "sha256": "5b1d3d911103cb0f41641ec0964c5ac1f7e229f57aa072b6ac38bae913a1307b"
+          },
+          "scripts/linux/TargetConditionals.h": {
+            "git_blob": "3050d74d725f9b35936fef75732b7cd750e2d498",
+            "sha256": "2dbd9a6885bd6ece5195c2f67c75e29c63bd7519cbbe8b6bcc6ebd279de118b2"
+          },
+          "scripts/linux/cc": {
+            "git_blob": "0f2d8425b2dae5d59e779d8a09b3ee5ac0fdb04e",
+            "sha256": "abd4ae2f7ec1f3558b41454df2aead4b3b0c1414d2997e13d7af4d44f7973132"
+          },
+          "scripts/linux/clang": {
+            "git_blob": "b24f2a77a2591ab62f8c34e87f7869c320f5429a",
+            "sha256": "f9374d4fee38f59f73f6f19c0fad2b0bf4bb5f65a6f74afb8820502368b4a96a"
+          },
+          "scripts/linux/clang++": {
+            "git_blob": "e3f7052e0bc8bde52523ebd52b5ac89937f472aa",
+            "sha256": "1bd96563baa554c95cf87afd8ff9c26c64c6c6bca22be562e2a600000057faa4"
+          },
+          "scripts/linux/codesign": {
+            "git_blob": "b42a1f8670975820be6ae2abd143ae605ed6054a",
+            "sha256": "c5af99f85a28e60d50d53ea030d5bf8b85b3f02dedbe8fdb67ec6c68d9a25c5f"
+          },
+          "scripts/linux/gm4": {
+            "git_blob": "04cf7e13b91be4c5569dc6f69474c1ef53bfbabc",
+            "sha256": "a96fd816d35a8bc4d7383e582a7b653fb69bdfcec3861530841296842ea9630d"
+          },
+          "scripts/linux/iig-port-darwin-target.patch": {
+            "git_blob": "6c556889da1f0293f3adcbf80be69001b833961b",
+            "sha256": "aa63f66fdf5422a0af9158734a231852c03fe0c86c4adc09c9bd2eeded9ebf4f"
+          },
+          "scripts/linux/install": {
+            "git_blob": "eb94b1e7c192dfbec60ff69bf2f23952e136ca9d",
+            "sha256": "198a02f94d32ac800e099876d2f9071f01ef0603bb49959dd1e911d6d2327dff"
+          },
+          "scripts/linux/llvm-xnu-builtin-type.patch": {
+            "git_blob": "1d46a2a90b8873036c8953685ea14e89d23a7a40",
+            "sha256": "7c9f2cb16ff1cc045d246fa6d1b6fbe6c90dc1540839a4219a0045219792dba9"
+          },
+          "scripts/linux/plutil": {
+            "git_blob": "89636977a6ca99d987134690e7588332b2a07df1",
+            "sha256": "58e6cfc687cda0af800ec8babea3177f65cc6d9e6abd65f736f3e00c3604331d"
+          },
+          "scripts/linux/prepare-xnu.py": {
+            "git_blob": "efef7a6d84b55e89c3a5a59e1f7053ae5bb1aab5",
+            "sha256": "6d6b4f92cb421f09b3694293491b4bcb558ef3e23a70250d20374a3b817acf25"
+          },
+          "scripts/linux/setup-toolchain.py": {
+            "git_blob": "2bbb6edeed91d725594b8c3a498686aca5c9781d",
+            "sha256": "82a4bae15dfaa680c081e32ca3143d593abe9b9be307a5a498e39ed19f0c5415"
+          },
+          "scripts/linux/xcrun": {
+            "git_blob": "140877774a0561569bdb6316669ac95288fb57ea",
+            "sha256": "8da8a494abd47a6d484c217ac074c1759792732f048ffce3f65c114c5d641576"
+          }
+        }
+      },
+      "path": "WORK/toolchain-work/host-components.json",
+      "sha256": "90b3b471c715abb82c628ceaf5343f576db2ad8863076ae287d07561c7693685"
+    },
+    "custom_clang_verified": false,
+    "driver_sha256": "4395ea1c0beeb8a16238c6ebfe57b49418d920933d431956b68e7216f687f9b8",
+    "full_instruction_set_audited": false,
+    "full_kernel_compiled": false,
+    "full_kernel_linked": false,
+    "os_boot_verified": false,
+    "output": "WORK/host-smoke-v1/results-001",
+    "prefix": "WORK/toolchain",
+    "schema_version": 1,
+    "scope": "host-component-smoke",
+    "sdk_ready": false,
+    "status": "passed",
+    "tools": {
+      "host_clang": {
+        "path": "/usr/bin/clang-19",
+        "realpath": "/usr/lib/llvm-19/bin/clang",
+        "sha256": "0a3c55936ac43954fbe4914e6e73b577ca9e35e75d89ef13d3e28c187f41ca1a",
+        "size": 132352
+      },
+      "ld64": {
+        "path": "WORK/toolchain/CommandLineTools/usr/bin/ld",
+        "realpath": "WORK/toolchain/CommandLineTools/usr/bin/ld",
+        "sha256": "4f87332cbbbba8fe26e67eef48ff14018b6074a77e51b0e215c1f9c5de0ad8d4",
+        "size": 4659624
+      },
+      "libtool": {
+        "path": "WORK/toolchain/CommandLineTools/usr/bin/libtool",
+        "realpath": "WORK/toolchain/CommandLineTools/usr/bin/libtool",
+        "sha256": "593323ed7c66ef5b1c1651ba116eda32ae89b87db8680a83e3ee5692958c6f33",
+        "size": 198160
+      },
+      "lipo": {
+        "path": "WORK/toolchain/CommandLineTools/usr/bin/lipo",
+        "realpath": "WORK/toolchain/CommandLineTools/usr/bin/lipo",
+        "sha256": "112adcff6ed878b8f84bcacfe20a730589bcb94e05ce7df5886206ac3dc2749e",
+        "size": 96336
+      },
+      "lzfse": {
+        "path": "WORK/toolchain/bin/lzfse",
+        "realpath": "WORK/toolchain/bin/lzfse",
+        "sha256": "df5d7921f8a6d9c7c33cccdf9ce9f4587c4759767131cd47b4c28c7da20bec35",
+        "size": 47656
+      },
+      "migcom": {
+        "path": "WORK/toolchain/CommandLineTools/usr/libexec/migcom",
+        "realpath": "WORK/toolchain/CommandLineTools/usr/libexec/migcom",
+        "sha256": "1275416a191428125c51d2621fd4a6478f553bfb426fc4d9c1e34cda78e3f284",
+        "size": 255368
+      },
+      "nm": {
+        "path": "WORK/toolchain/CommandLineTools/usr/bin/nm",
+        "realpath": "WORK/toolchain/CommandLineTools/usr/bin/nm",
+        "sha256": "b875626078578d911ee6618095c554e833ba54cebde614284ff87fd8e10c0708",
+        "size": 166616
+      }
+    }
+  },
+  "limitations": [
+    "The sample uses stock Clang 19.1.7 to produce ordinary ARM64 objects, not the custom XNU compiler.",
+    "ld64 -static -kernel links only the self-authored sample; it is not XNU and was not executed.",
+    "Only migcom generation is tested: the mig shell driver, generated C against SDK, IIG and IPC runtime are not covered.",
+    "The linker warned that /System/Library/Frameworks/ was absent; the self-contained sample needs no frameworks.",
+    "All full-kernel, SDK, ISA and OS boot qualification flags remain false."
+  ]
+}

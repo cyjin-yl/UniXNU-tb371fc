@@ -27,6 +27,8 @@
 
 ## 先 stage，可与 LLVM 编译并行
 
+该步骤已在 [提交 3a52649 的 CI](https://github.com/cyjin-yl/UniXNU-tb371fc/actions/runs/45181619136) 和开发容器实际通过。两次 staged source inventory 都是 `93f9ac5f67205a884ff11dd6c1d949bd3deac6b0b2fdc6776bd592ef006a240a`。共记录 7 份源码和 26 个 headers，其中 21 个保留原准备结果，5 个为新增 TrustCache 文件；[公开报告](evidence/route-a-kernel-staging-20261123.json) 保留 CI 原始 artifact 与报告摘要及完整来源。此结果的状态为 `inputs_staged`，完整 builder 的执行结果另行记录。
+
 ```sh
 python3 SOURCE/scripts/run_route_a_kernel_build.py stage \
   --unixnu-repository WORK/sources/unixnu.git \

@@ -98,6 +98,26 @@ python3 SOURCE/scripts/prepare_route_a_toolchain.py verify-clang \
 
 该探针能证明所测 compiler 语义与普通 arm64 code generation，不能证明 XNU 每个 translation unit 或外部 archive 都兼容 Snapdragon 870。所有工具链报告保留 `kernel_compiled=false`、`kernel_linked=false`、`os_boot_verified=false`。
 
+## 已构建主机组件的实际验收
+
+在独立新目录运行自写样本，输出绑定组件 manifest、工具执行前后 SHA-256、完整命令和产物摘要：
+
+```sh
+python3 SOURCE/scripts/check_route_a_host_tools.py \
+  --prefix WORK/toolchain \
+  --components-manifest WORK/toolchain-work/host-components.json \
+  --host-clang clang-19 \
+  --output WORK/new-host-smoke
+```
+
+[2026-11-23 的实际报告](evidence/route-a-host-tools-smoke-20261123.json) 为 3 组通过、15 次子命令成功：
+
+- stock Clang 19.1.7 生成普通 ARM64 对象，libtool 归档，ld64 用 `-static -kernel` 抽取所需 archive 成员并链接；nm 检查无未定义符号，lipo 确认架构，实际 header 为 ARM64 subtype 0 / `MH_EXECUTE`。这是自写样本，未执行产物。
+- 直接使用 MIGCOM，从自写 `.defs` 生成用户／服务端等 5 个文件，核对入口和 message ID。未验证 mig shell driver、生成代码与 SDK 的编译或 IPC。
+- LZFSE 将 69,192 字节样本压缩到 558 字节，再解压为逐字节相同的输入。
+
+此次样本没有验收 IIG，也没有验证定制 Clang、SDK 或完整 XNU。所有对应资格字段继续为 false；这些步骤由组合工具链及实际 kernel builder 完成各自验证。
+
 ## 日志、身份和许可
 
 | 文件 | 含义 |

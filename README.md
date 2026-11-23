@@ -16,8 +16,11 @@
 | 真实 27.0.1 `launchd` 改写 | 2,409 处；150 个签名代码页通过独立校验 | 离线单文件暂存产物 |
 | 真实 27.0.1 `dyld` 改写 | 5,385 处；347 个签名代码页通过独立校验 | 仍保留 236 条 FEAT_S1POE2 指令；非 TPRO 路径待完整验证 |
 | 普通 arm64 / XNU 12377 源码准备 | **71 项所选补丁**应用成功，6,119 个源码条目有摘要；配置探针编译通过 | 通用源码子集，1 项板级进度／看门狗补丁明确延后；完整内核未编译 |
+| 首次内核构建输入 | 7 份固定公开源码；21 个已适配 header 保留，补齐 5 个 TrustCache header | CI 与开发容器的 staged source 摘要一致；[实际报告](docs/evidence/route-a-kernel-staging-20261123.json) |
+| 主机工具实际验收 | 普通 ARM64 样本链接、MIG 接口生成、LZFSE 往返 **3/3 组通过** | 自写样本；完整 XNU、SDK 和定制 Clang 资格单独验证 |
+| 真实 dyld 局部 TPRO 路径 | 4 个分支均匹配；2 个条件区域闭合，2 个仍有调用／异常／间接转移缺口 | 固定原始 dyld；全部 236 处与早期运行时路径仍未证明 |
 | 普通指针 pager 补丁 | v3/v5/分块 v5、dyld pager 和错误返回传播 | 固定源码应用／反向恢复；提取 C 函数验证 |
-| 最新主机回归检查 | **162 项通过，0 跳过**，包含 9 项提取真实 pager C 的测试 | 新增 TPRO 审计与内核准备检查；[本轮记录](docs/evidence/route-a-continuation-validation-20261123.json) |
+| 最新主机回归检查 | **191 项通过，0 跳过**，包含 9 项提取真实 pager C 的测试 | 33 项 TPRO、9 项工具链、6 项构建入口等检查；[本轮 CI](https://github.com/cyjin-yl/UniXNU-tb371fc/actions/runs/45181619136) |
 | 独立汇编器复核 | 54/54 原始编码，45/45 替换编码 | 编码与基础 `armv8-a` 输出核对 |
 
 完整共享缓存、普通 arm64 内核构建、Darwin 进程启动及 27 的硬件驱动仍在集成。macOS 27 当前只有目标配置记录，没有对应用户空间实测。最终验收包括 GPU、显示与刷新率、触控笔、键盘、网络、音频、相机、USB、存储、充电与休眠唤醒；进入桌面是中间里程碑。
@@ -34,6 +37,9 @@
 | [内核与加载器缺口](docs/ROUTE_A_KERNEL_GAPS.md) | XNU、27 ABI、页大小、信任目录与驱动集成 |
 | [TPRO 审计入口](docs/ROUTE_A_TPRO.md) | 固定真实 dyld 来源的指令清单、静态引用与两类启动能力键检查 |
 | [普通 arm64 内核准备](docs/ROUTE_A_KERNEL_BUILD.md) | XNU 12377 补丁顺序、干净源码树与编译器配置探针 |
+| [定制 Clang 与主机工具](docs/ROUTE_A_TOOLCHAIN.md) | 固定编译器、19 项语义断言、主机组件和实际验收 |
+| [第一次完整内核编译入口](docs/ROUTE_A_FIRST_KERNEL_BUILD.md) | 固定 source/header staging、真实 builder、失败与产物记录 |
+| [内核 TPRO 能力发布核对](docs/ROUTE_A_TPRO_KERNEL_PUBLICATION.md) | apple 向量、task security_config、commpage 与最终配置边界 |
 | [输入提取方法](docs/ROUTE_A_EXTRACTION.md) | 官方镜像定位、分段读取与 APFS type 4 支持 |
 
 ```sh

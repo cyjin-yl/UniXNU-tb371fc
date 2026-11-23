@@ -1,0 +1,376 @@
+{
+  "schema_version": 1,
+  "record_date": "2026-11-23",
+  "kind": "actual_ci_source_and_header_staging",
+  "repository": "cyjin-yl/UniXNU-tb371fc",
+  "tested_commit": "3a52649f837f49f8df638d165f3dbbb7aa20e953",
+  "ci": {
+    "run_id": 45181619136,
+    "url": "https://github.com/cyjin-yl/UniXNU-tb371fc/actions/runs/45181619136",
+    "kernel_preparation_job_id": 137716562812,
+    "host_check_job_id": 137716563472,
+    "both_jobs_conclusion": "success",
+    "host_tests_run": 191,
+    "host_tests_skipped": 0,
+    "source_and_license_files_checked": 229
+  },
+  "downloaded_evidence": {
+    "artifact_id": 14821382601,
+    "artifact_name": "route-a-kernel-preparation",
+    "archive_sha256": "37b825fb9fcdb8fcdfc6776c0b8bd3bbbd40670440eeaf9d6bfc9cc3167e50cb",
+    "member": "route-a-kernel-build/.route-a/stage-report.json",
+    "original_report_sha256": "2eeab697a81ba3f538bc5654afa6048ad1accfd7cc184549752aa353a4257748",
+    "public_report_normalization": "Only the CI temporary work-root prefix was replaced by WORK/kernel-build; all report values and hashes are otherwise retained."
+  },
+  "counts": {
+    "source_records": 7,
+    "header_records": 26,
+    "existing_prepared_headers_preserved": 21,
+    "missing_trustcache_headers_installed": 5
+  },
+  "new_header_paths": [
+    "EXTERNAL_HEADERS/TrustCache/API.h",
+    "EXTERNAL_HEADERS/TrustCache/RawTypes.h",
+    "EXTERNAL_HEADERS/TrustCache/Return.h",
+    "EXTERNAL_HEADERS/TrustCache/Types.h",
+    "EXTERNAL_HEADERS/TrustCache/TypesConfig.h"
+  ],
+  "stage_report": {
+    "complete_board_archive_closure": false,
+    "crypto_provider_selected": false,
+    "driver_sha256": "e52b53d0dad472d97a7833e21cb183fdae6ccb9f33d20ed26aa1978e4eaa3164",
+    "full_upstream_profile_applied": false,
+    "kernel_compiled": false,
+    "kernel_linked": false,
+    "os_boot_verified": false,
+    "preparation_scope": "architecture-darwin26-plain-pager",
+    "prepared_source_inventory_sha256": "16aed427ee21f60f7e8697dbd21f1fce75db653749e677a787c4844c44a438b8",
+    "restored_headers": [
+      {
+        "git_blob": "71c98a84650a7da3c66618d4306852d3df1c4d60",
+        "installed_sha256": "8dd82930c349cde7023a05281ffb4d76823f20617bc5c45e7733a5688bc3d02d",
+        "preserved_prepared_header": true,
+        "source_commit": "ac9718fb1af618d5ce8678d0dc6e8a58f252216f",
+        "source_path": "iokit/DriverKit/IOKernelReportStructs.h",
+        "source_sha256": "8dd82930c349cde7023a05281ffb4d76823f20617bc5c45e7733a5688bc3d02d",
+        "target": "WORK/kernel-build/.cache/xnu-work/iokit/DriverKit/IOKernelReportStructs.h"
+      },
+      {
+        "git_blob": "a304bd533485861dc79a8af0999366fce0238348",
+        "installed_sha256": "61ce0fd0fb839caa2bf179644154dc2b50d7d631b0ebdd6def1e418afdaf84c5",
+        "preserved_prepared_header": true,
+        "source_commit": "ac9718fb1af618d5ce8678d0dc6e8a58f252216f",
+        "source_path": "iokit/DriverKit/IOKitKeys.h",
+        "source_sha256": "61ce0fd0fb839caa2bf179644154dc2b50d7d631b0ebdd6def1e418afdaf84c5",
+        "target": "WORK/kernel-build/.cache/xnu-work/iokit/DriverKit/IOKitKeys.h"
+      },
+      {
+        "git_blob": "7ffc6b73e32ba98616e35c999945d367d2b8751d",
+        "installed_sha256": "3463c83ffccead1f69c474d0d0ffcb5389cdcff923236d35600e31bcdbd229ce",
+        "preserved_prepared_header": true,
+        "source_commit": "ac9718fb1af618d5ce8678d0dc6e8a58f252216f",
+        "source_path": "iokit/DriverKit/IORPC.h",
+        "source_sha256": "3463c83ffccead1f69c474d0d0ffcb5389cdcff923236d35600e31bcdbd229ce",
+        "target": "WORK/kernel-build/.cache/xnu-work/iokit/DriverKit/IORPC.h"
+      },
+      {
+        "git_blob": "dd81759a416ba5cc3b5f6b79f843554765053c22",
+        "installed_sha256": "d6b1a66d6e5933416e025efada06367fe15e642b9120eb0c24c13196a76e705f",
+        "preserved_prepared_header": true,
+        "source_commit": "ac9718fb1af618d5ce8678d0dc6e8a58f252216f",
+        "source_path": "iokit/DriverKit/IOReportTypes.h",
+        "source_sha256": "d6b1a66d6e5933416e025efada06367fe15e642b9120eb0c24c13196a76e705f",
+        "target": "WORK/kernel-build/.cache/xnu-work/iokit/DriverKit/IOReportTypes.h"
+      },
+      {
+        "git_blob": "e36d37b374d1443c7721ade372a92ccc60d1d129",
+        "installed_sha256": "4767dd8a847d4b7dcff0b74c7a67013f0462f3ea6313e5a483f49fe046f93ab1",
+        "preserved_prepared_header": true,
+        "source_commit": "ac9718fb1af618d5ce8678d0dc6e8a58f252216f",
+        "source_path": "iokit/DriverKit/IOReturn.h",
+        "source_sha256": "4767dd8a847d4b7dcff0b74c7a67013f0462f3ea6313e5a483f49fe046f93ab1",
+        "target": "WORK/kernel-build/.cache/xnu-work/iokit/DriverKit/IOReturn.h"
+      },
+      {
+        "git_blob": "9605ab33376ac1b0bc805829a6ddf614d0738c18",
+        "installed_sha256": "f9cdd0f877589fe98b1dba6d3566c7ed6a2122ff1fac199ad6a4737c3a19f2d5",
+        "preserved_prepared_header": true,
+        "source_commit": "ac9718fb1af618d5ce8678d0dc6e8a58f252216f",
+        "source_path": "iokit/DriverKit/IOTypes.h",
+        "source_sha256": "f9cdd0f877589fe98b1dba6d3566c7ed6a2122ff1fac199ad6a4737c3a19f2d5",
+        "target": "WORK/kernel-build/.cache/xnu-work/iokit/DriverKit/IOTypes.h"
+      },
+      {
+        "git_blob": "e413229b982880b91350e82520e4aaa6dfd18124",
+        "installed_sha256": "69c9ba2a35afe782a6de410698ff23d70c11a466b6278fd201153a9c0470f157",
+        "preserved_prepared_header": true,
+        "source_commit": "ac9718fb1af618d5ce8678d0dc6e8a58f252216f",
+        "source_path": "iokit/DriverKit/OSBoundedArray.h",
+        "source_sha256": "69c9ba2a35afe782a6de410698ff23d70c11a466b6278fd201153a9c0470f157",
+        "target": "WORK/kernel-build/.cache/xnu-work/iokit/DriverKit/OSBoundedArray.h"
+      },
+      {
+        "git_blob": "4467f6b6ff2ff3e50f495bcfce751adb82bd72a4",
+        "installed_sha256": "d716a3328942cc179f58c92768e9358e9a90b5a31049a6f4a78ce1f96e0b4f62",
+        "preserved_prepared_header": true,
+        "source_commit": "ac9718fb1af618d5ce8678d0dc6e8a58f252216f",
+        "source_path": "iokit/DriverKit/OSBoundedArrayRef.h",
+        "source_sha256": "d716a3328942cc179f58c92768e9358e9a90b5a31049a6f4a78ce1f96e0b4f62",
+        "target": "WORK/kernel-build/.cache/xnu-work/iokit/DriverKit/OSBoundedArrayRef.h"
+      },
+      {
+        "git_blob": "6ea9b1340603fbb5edf7072a276650aed2223f58",
+        "installed_sha256": "9ac2ff2dd2700bde779b1eac359bc3ad252c1743b0b2a51bff8666c4601238df",
+        "preserved_prepared_header": true,
+        "source_commit": "ac9718fb1af618d5ce8678d0dc6e8a58f252216f",
+        "source_path": "iokit/DriverKit/OSBoundedPtr.h",
+        "source_sha256": "9ac2ff2dd2700bde779b1eac359bc3ad252c1743b0b2a51bff8666c4601238df",
+        "target": "WORK/kernel-build/.cache/xnu-work/iokit/DriverKit/OSBoundedPtr.h"
+      },
+      {
+        "git_blob": "04c4df48c508f6c9c1a3f53fbb613130ede06b2f",
+        "installed_sha256": "fa359f42f2ee59354d571fdf9901faaaff9ebd23a34a87386d1cfdd390c24db6",
+        "preserved_prepared_header": true,
+        "source_commit": "ac9718fb1af618d5ce8678d0dc6e8a58f252216f",
+        "source_path": "iokit/DriverKit/OSBoundedPtrFwd.h",
+        "source_sha256": "fa359f42f2ee59354d571fdf9901faaaff9ebd23a34a87386d1cfdd390c24db6",
+        "target": "WORK/kernel-build/.cache/xnu-work/iokit/DriverKit/OSBoundedPtrFwd.h"
+      },
+      {
+        "git_blob": "57e102743d6f6039a27a6ff8310e9ce63d878d0e",
+        "installed_sha256": "2941818ae1b1456aed888f6cf420aadd7da7aca3b3c3506f34913b113cc60292",
+        "preserved_prepared_header": true,
+        "source_commit": "ac9718fb1af618d5ce8678d0dc6e8a58f252216f",
+        "source_path": "iokit/DriverKit/bounded_array.h",
+        "source_sha256": "2941818ae1b1456aed888f6cf420aadd7da7aca3b3c3506f34913b113cc60292",
+        "target": "WORK/kernel-build/.cache/xnu-work/iokit/DriverKit/bounded_array.h"
+      },
+      {
+        "git_blob": "fe060a6d72a9f6930071a701caf162d9bf275fff",
+        "installed_sha256": "4354d784f1ebbd393d83df839d21def8329a34a9641d12ad4763843510c8d4e9",
+        "preserved_prepared_header": true,
+        "source_commit": "ac9718fb1af618d5ce8678d0dc6e8a58f252216f",
+        "source_path": "iokit/DriverKit/bounded_array_ref.h",
+        "source_sha256": "4354d784f1ebbd393d83df839d21def8329a34a9641d12ad4763843510c8d4e9",
+        "target": "WORK/kernel-build/.cache/xnu-work/iokit/DriverKit/bounded_array_ref.h"
+      },
+      {
+        "git_blob": "4c7de13f1a5bfe6d130413bde4c9c3de444a93ad",
+        "installed_sha256": "29339515720513ba48414eae0869e80ae1d82bfec28d6b9692dc029d4e9f4255",
+        "preserved_prepared_header": true,
+        "source_commit": "ac9718fb1af618d5ce8678d0dc6e8a58f252216f",
+        "source_path": "iokit/DriverKit/bounded_ptr.h",
+        "source_sha256": "29339515720513ba48414eae0869e80ae1d82bfec28d6b9692dc029d4e9f4255",
+        "target": "WORK/kernel-build/.cache/xnu-work/iokit/DriverKit/bounded_ptr.h"
+      },
+      {
+        "git_blob": "9613279e9841fef46f10398d4d5ac0d2c44a589a",
+        "installed_sha256": "40c619ee9a64a23e6a7ba662c83348ab6d7b5cd1199a8a8271db43970491750f",
+        "preserved_prepared_header": true,
+        "source_commit": "ac9718fb1af618d5ce8678d0dc6e8a58f252216f",
+        "source_path": "iokit/DriverKit/bounded_ptr_fwd.h",
+        "source_sha256": "40c619ee9a64a23e6a7ba662c83348ab6d7b5cd1199a8a8271db43970491750f",
+        "target": "WORK/kernel-build/.cache/xnu-work/iokit/DriverKit/bounded_ptr_fwd.h"
+      },
+      {
+        "git_blob": "02fff0602846c259670822c9766424c106ea6a2b",
+        "installed_sha256": "6bf35433d7fab3ea45dd0e19dd0998f59974bf87b2cf2b661be9d45ab3789d24",
+        "preserved_prepared_header": true,
+        "source_commit": "ac9718fb1af618d5ce8678d0dc6e8a58f252216f",
+        "source_path": "iokit/DriverKit/macro_help.h",
+        "source_sha256": "6bf35433d7fab3ea45dd0e19dd0998f59974bf87b2cf2b661be9d45ab3789d24",
+        "target": "WORK/kernel-build/.cache/xnu-work/iokit/DriverKit/macro_help.h"
+      },
+      {
+        "git_blob": "e92c2c54c77e1db1ce56502872a38a73bd4c2a8f",
+        "installed_sha256": "22fcc280afe600720c7471a3203429069e6865f1299e1f21ed0c6a6a3efee4c0",
+        "preserved_prepared_header": true,
+        "source_commit": "ac9718fb1af618d5ce8678d0dc6e8a58f252216f",
+        "source_path": "iokit/DriverKit/queue_implementation.h",
+        "source_sha256": "22fcc280afe600720c7471a3203429069e6865f1299e1f21ed0c6a6a3efee4c0",
+        "target": "WORK/kernel-build/.cache/xnu-work/iokit/DriverKit/queue_implementation.h"
+      },
+      {
+        "git_blob": "1d4759b1ab36d76e7604adce3939ef5b6a56d12f",
+        "installed_sha256": "24fd13492d10747f8b4f00a7cb5b8973fcf3e3aa780e8c4ce3bf3a4bbc897d7b",
+        "preserved_prepared_header": true,
+        "source_commit": "ac9718fb1af618d5ce8678d0dc6e8a58f252216f",
+        "source_path": "iokit/DriverKit/safe_allocation.h",
+        "source_sha256": "24fd13492d10747f8b4f00a7cb5b8973fcf3e3aa780e8c4ce3bf3a4bbc897d7b",
+        "target": "WORK/kernel-build/.cache/xnu-work/iokit/DriverKit/safe_allocation.h"
+      },
+      {
+        "git_blob": "9e962a873c50d4bb5d37fb8e333c77985bbe532e",
+        "installed_sha256": "e217855801b7232726d8e877bd74d07b626b0007193c697d7d976ed949dd6049",
+        "preserved_prepared_header": true,
+        "source_commit": "ac9718fb1af618d5ce8678d0dc6e8a58f252216f",
+        "source_path": "iokit/DriverKit/crypto/aes.h",
+        "source_sha256": "e217855801b7232726d8e877bd74d07b626b0007193c697d7d976ed949dd6049",
+        "target": "WORK/kernel-build/.cache/xnu-work/iokit/DriverKit/crypto/aes.h"
+      },
+      {
+        "git_blob": "4ecd947d7a61464543059eb6265ec4cc548c84f6",
+        "installed_sha256": "1f33a28ac6fb819ae949ac90d93652e1aa85d76cb149b7d264613d8eea981f1e",
+        "preserved_prepared_header": true,
+        "source_commit": "ac9718fb1af618d5ce8678d0dc6e8a58f252216f",
+        "source_path": "iokit/DriverKit/crypto/md5.h",
+        "source_sha256": "1f33a28ac6fb819ae949ac90d93652e1aa85d76cb149b7d264613d8eea981f1e",
+        "target": "WORK/kernel-build/.cache/xnu-work/iokit/DriverKit/crypto/md5.h"
+      },
+      {
+        "git_blob": "706d10f88a499090bbd9fe2b03b4028a6069f7ca",
+        "installed_sha256": "d84151b54492a1988c68d9a220bd8eccdbc9040bc0498521bfafe90facc8f3ac",
+        "preserved_prepared_header": true,
+        "source_commit": "ac9718fb1af618d5ce8678d0dc6e8a58f252216f",
+        "source_path": "iokit/DriverKit/crypto/sha1.h",
+        "source_sha256": "d84151b54492a1988c68d9a220bd8eccdbc9040bc0498521bfafe90facc8f3ac",
+        "target": "WORK/kernel-build/.cache/xnu-work/iokit/DriverKit/crypto/sha1.h"
+      },
+      {
+        "git_blob": "2e93f35d7cc6766f0996014362a7b6c57fa14f19",
+        "installed_sha256": "bf0d9f345cc763fe926d7b9394585df445df146d2f4bc1a844727c8033d2fb94",
+        "preserved_prepared_header": true,
+        "source_commit": "ac9718fb1af618d5ce8678d0dc6e8a58f252216f",
+        "source_path": "iokit/DriverKit/crypto/sha2.h",
+        "source_sha256": "bf0d9f345cc763fe926d7b9394585df445df146d2f4bc1a844727c8033d2fb94",
+        "target": "WORK/kernel-build/.cache/xnu-work/iokit/DriverKit/crypto/sha2.h"
+      },
+      {
+        "git_blob": "d13cddf36560638696223559c210797fa0442f5d",
+        "installed_sha256": "a8e2994a5b6ec61e3aaab6516d82041f629322a76bb4ee1339a172aaea14417a",
+        "preserved_prepared_header": false,
+        "source_commit": "aca3beaa3dfbd42498b42c5e5ce20a938e6554e5",
+        "source_path": "EXTERNAL_HEADERS/TrustCache/API.h",
+        "source_sha256": "a8e2994a5b6ec61e3aaab6516d82041f629322a76bb4ee1339a172aaea14417a",
+        "target": "WORK/kernel-build/.cache/xnu-work/EXTERNAL_HEADERS/TrustCache/API.h"
+      },
+      {
+        "git_blob": "16b684e219975b21f954813cad13bc243d2f6fe0",
+        "installed_sha256": "03e945ba48a3b3400012d42fc1b97fb70bc59835985c2921e8173369e40301bf",
+        "preserved_prepared_header": false,
+        "source_commit": "aca3beaa3dfbd42498b42c5e5ce20a938e6554e5",
+        "source_path": "EXTERNAL_HEADERS/TrustCache/RawTypes.h",
+        "source_sha256": "03e945ba48a3b3400012d42fc1b97fb70bc59835985c2921e8173369e40301bf",
+        "target": "WORK/kernel-build/.cache/xnu-work/EXTERNAL_HEADERS/TrustCache/RawTypes.h"
+      },
+      {
+        "git_blob": "440a53c4f85a025155a9ac408b4f31acf04089d8",
+        "installed_sha256": "d15cae97bb0c7cfa690b6ffa71805c7aa0c774e7c0bd23095d6684f564674b44",
+        "preserved_prepared_header": false,
+        "source_commit": "aca3beaa3dfbd42498b42c5e5ce20a938e6554e5",
+        "source_path": "EXTERNAL_HEADERS/TrustCache/Return.h",
+        "source_sha256": "d15cae97bb0c7cfa690b6ffa71805c7aa0c774e7c0bd23095d6684f564674b44",
+        "target": "WORK/kernel-build/.cache/xnu-work/EXTERNAL_HEADERS/TrustCache/Return.h"
+      },
+      {
+        "git_blob": "f3412f3869c69d1d2e40a0f8883aa9e3f5b3c7ae",
+        "installed_sha256": "68f179189fb0f5e37f6898c8a0daa80e44b4a05c5a7834e4ae68e05f1ef99c4a",
+        "preserved_prepared_header": false,
+        "source_commit": "aca3beaa3dfbd42498b42c5e5ce20a938e6554e5",
+        "source_path": "EXTERNAL_HEADERS/TrustCache/Types.h",
+        "source_sha256": "68f179189fb0f5e37f6898c8a0daa80e44b4a05c5a7834e4ae68e05f1ef99c4a",
+        "target": "WORK/kernel-build/.cache/xnu-work/EXTERNAL_HEADERS/TrustCache/Types.h"
+      },
+      {
+        "git_blob": "d93e8b09336ea508a968c563f2b2483e074e3cd4",
+        "installed_sha256": "bb46daeff6efe7a7bc701741cbc73690b3ee5036aeac7096cbf269b751f0d1d3",
+        "preserved_prepared_header": false,
+        "source_commit": "aca3beaa3dfbd42498b42c5e5ce20a938e6554e5",
+        "source_path": "EXTERNAL_HEADERS/TrustCache/TypesConfig.h",
+        "source_sha256": "bb46daeff6efe7a7bc701741cbc73690b3ee5036aeac7096cbf269b751f0d1d3",
+        "target": "WORK/kernel-build/.cache/xnu-work/EXTERNAL_HEADERS/TrustCache/TypesConfig.h"
+      }
+    ],
+    "schema_version": 1,
+    "source_environment": {
+      "UNIXNU_AVAILABILITYVERSIONS_COMMIT": "149b1777f3e8c2133042d8e188f72e3adf6a7110",
+      "UNIXNU_AVAILABILITYVERSIONS_TAG": "AvailabilityVersions-157.2",
+      "UNIXNU_DRIVERKIT_TAG": "xnu-12377.121.6",
+      "UNIXNU_IOS_VERSION": "27.0",
+      "UNIXNU_LIBDISPATCH_COMMIT": "701f4d1a24ae9c6863901bbbb22624b7d1b87321",
+      "UNIXNU_LIBDISPATCH_TAG": "libdispatch-1542.100.32",
+      "UNIXNU_LIBPLATFORM_COMMIT": "b7ed7cf5cf7dd12b98672435db2225a860f199d8",
+      "UNIXNU_LIBPLATFORM_TAG": "libplatform-375.120.2",
+      "UNIXNU_PATCH_LIST": "WORK/kernel-build/.route-a/selected-patches.txt",
+      "UNIXNU_TRUSTCACHE_TAG": "xnu-8796.101.5",
+      "UNIXNU_XNU_ARCH": "arm64",
+      "UNIXNU_XNU_COMMIT": "ac9718fb1af618d5ce8678d0dc6e8a58f252216f",
+      "UNIXNU_XNU_DARWIN": "25.5.0",
+      "UNIXNU_XNU_TAG": "xnu-12377.121.6",
+      "UNIXNU_XNU_TARGET": "ios",
+      "UNIXNU_XNU_VERSION": "12377.121.6",
+      "XNU_BOOT_PROGRESS": "0"
+    },
+    "sources": [
+      {
+        "commit": "ac9718fb1af618d5ce8678d0dc6e8a58f252216f",
+        "path": "WORK/kernel-build/refer/xnu",
+        "shared_object_store": false,
+        "source": "WORK/kernel-build/.cache/xnu-work",
+        "sparse_paths": []
+      },
+      {
+        "commit": "b7ed7cf5cf7dd12b98672435db2225a860f199d8",
+        "path": "WORK/kernel-build/refer/libplatform",
+        "shared_object_store": false,
+        "source": "https://github.com/apple-oss-distributions/libplatform.git",
+        "sparse_paths": []
+      },
+      {
+        "commit": "701f4d1a24ae9c6863901bbbb22624b7d1b87321",
+        "path": "WORK/kernel-build/refer/libdispatch",
+        "shared_object_store": false,
+        "source": "https://github.com/apple-oss-distributions/libdispatch.git",
+        "sparse_paths": []
+      },
+      {
+        "commit": "149b1777f3e8c2133042d8e188f72e3adf6a7110",
+        "path": "WORK/kernel-build/refer/AvailabilityVersions",
+        "shared_object_store": false,
+        "source": "https://github.com/apple-oss-distributions/AvailabilityVersions.git",
+        "sparse_paths": []
+      },
+      {
+        "commit": "aca3beaa3dfbd42498b42c5e5ce20a938e6554e5",
+        "path": "WORK/kernel-build/.cache/route-a-sources/xnu-trustcache",
+        "shared_object_store": false,
+        "source": "https://github.com/apple-oss-distributions/xnu.git",
+        "sparse_paths": [
+          "/EXTERNAL_HEADERS/TrustCache/",
+          "/APPLE_LICENSE"
+        ]
+      },
+      {
+        "commit": "58c46bae21181fb4240cf964461bea738d96d50e",
+        "path": "WORK/kernel-build/.cache/linux/llvm-project",
+        "shared_object_store": false,
+        "source": "https://github.com/llvm/llvm-project.git",
+        "sparse_paths": [
+          "/compiler-rt/lib/profile/",
+          "/compiler-rt/include/profile/",
+          "/LICENSE.TXT"
+        ]
+      },
+      {
+        "commit": "899a3b2d52d95d75e05fb286a5e64975ec3de757",
+        "path": "WORK/kernel-build/.cache/linux/Libc",
+        "shared_object_store": false,
+        "source": "https://github.com/apple-oss-distributions/Libc.git",
+        "sparse_paths": [
+          "/include/",
+          "/APPLE_LICENSE"
+        ]
+      }
+    ],
+    "staged_source_inventory_sha256": "93f9ac5f67205a884ff11dd6c1d949bd3deac6b0b2fdc6776bd592ef006a240a",
+    "status": "inputs_staged",
+    "unixnu_commit": "8542980d02b4d2cc5c32ee3542de1760b2562aac",
+    "xnu_commit": "ac9718fb1af618d5ce8678d0dc6e8a58f252216f"
+  },
+  "limitations": [
+    "This CI executed real source acquisition and header staging, not the full XNU builder.",
+    "The 71-patch architecture/Darwin 26/plain-pager subset remains distinct from the complete board profile.",
+    "21 existing prepared headers were preserved and 5 missing headers were added; 26 is not the count of newly installed headers.",
+    "No complete kernel, shared-cache conversion, Darwin process launch, TB371FC boot or hardware validation is established by this result."
+  ]
+}
