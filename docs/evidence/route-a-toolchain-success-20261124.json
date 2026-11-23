@@ -1,0 +1,272 @@
+{
+  "clang_state": {
+    "command": [
+      "/usr/bin/ninja",
+      "-C",
+      "WORK/toolchain-work/llvm-build",
+      "-j2",
+      "install-clang",
+      "install-clang-resource-headers"
+    ],
+    "jobs": 2,
+    "kernel_compiled": false,
+    "kernel_linked": false,
+    "link_jobs": 1,
+    "os_boot_verified": false,
+    "stage": "complete",
+    "status": "clang_verified",
+    "verification": {
+      "command": [
+        "WORK/toolchain/llvm/bin/clang",
+        "-target",
+        "arm64-apple-ios27.0",
+        "-march=armv8-a",
+        "-std=c++17",
+        "-ffreestanding",
+        "-Werror",
+        "-c",
+        "WORK/toolchain-work/checks/run-001/xnu-traits.cpp",
+        "-o",
+        "WORK/toolchain-work/checks/run-001/xnu-traits.o"
+      ],
+      "compiler": {
+        "path": "WORK/toolchain/llvm/bin/clang",
+        "realpath": "WORK/toolchain/llvm/bin/clang-24",
+        "sha256": "85d220e32bd83d75de788c8beab0bea646a4684e1112f7c06266ca71e651bb04",
+        "version": "clang version 24.0.0git (WORK/toolchain-work/llvm-project/clang 58c46bae21181fb4240cf964461bea738d96d50e)\nTarget: unknown\nThread model: posix\nInstalledDir: WORK/toolchain/llvm/bin\nBuild config: +assertions"
+      },
+      "compiler_exit_code": 0,
+      "compiler_stderr": "",
+      "kernel_compiled": false,
+      "kernel_linked": false,
+      "object_header_words": [
+        4277009103,
+        16777228,
+        0,
+        1
+      ],
+      "object_sha256": "9d8fef975f6a74470b98dc964c8a3e746f6342923e3f51cb70fdf94a927986f5",
+      "os_boot_verified": false,
+      "probe_sha256": "cb50b1bb34c733d22d9711c1e17d4c86745d174a28ea8b740ace229a1d82cf85",
+      "schema_version": 1,
+      "static_assertions": 19,
+      "status": "passed"
+    }
+  },
+  "executed_driver_versions": {
+    "clang_build": {
+      "published_commit": "e17c49f2d9bf7355577046c9991baed7963e6f5b",
+      "sha256": "e8779b5ce6f026d7957044fa27b39f8bf11b6b1254b7bd8648c3fbb9f3ab4e62"
+    },
+    "host_tools_finalization": {
+      "published_commit": "3a52649f837f49f8df638d165f3dbbb7aa20e953",
+      "sha256": "2448b5f6a60c7ebc6b66ac1d19c92515faa66acdd5a959795d05389b5f25b208"
+    }
+  },
+  "host_tools": {
+    "clang_verification": {
+      "command": [
+        "WORK/toolchain/llvm/bin/clang",
+        "-target",
+        "arm64-apple-ios27.0",
+        "-march=armv8-a",
+        "-std=c++17",
+        "-ffreestanding",
+        "-Werror",
+        "-c",
+        "WORK/toolchain-work/host-attempts/run-002/clang-final-check/xnu-traits.cpp",
+        "-o",
+        "WORK/toolchain-work/host-attempts/run-002/clang-final-check/xnu-traits.o"
+      ],
+      "compiler": {
+        "path": "WORK/toolchain/llvm/bin/clang",
+        "realpath": "WORK/toolchain/llvm/bin/clang-24",
+        "sha256": "85d220e32bd83d75de788c8beab0bea646a4684e1112f7c06266ca71e651bb04",
+        "version": "clang version 24.0.0git (WORK/toolchain-work/llvm-project/clang 58c46bae21181fb4240cf964461bea738d96d50e)\nTarget: unknown\nThread model: posix\nInstalledDir: WORK/toolchain/llvm/bin\nBuild config: +assertions"
+      },
+      "compiler_exit_code": 0,
+      "compiler_stderr": "",
+      "kernel_compiled": false,
+      "kernel_linked": false,
+      "object_header_words": [
+        4277009103,
+        16777228,
+        0,
+        1
+      ],
+      "object_sha256": "9d8fef975f6a74470b98dc964c8a3e746f6342923e3f51cb70fdf94a927986f5",
+      "os_boot_verified": false,
+      "probe_sha256": "cb50b1bb34c733d22d9711c1e17d4c86745d174a28ea8b740ace229a1d82cf85",
+      "schema_version": 1,
+      "static_assertions": 19,
+      "status": "passed"
+    },
+    "combined_toolchain_verified": true,
+    "component_cache_reused": true,
+    "environment": {
+      "CCC_OVERRIDE_OPTIONS": "# +-Wno-missing-designated-field-initializers +-Wno-unused-but-set-global",
+      "CLT_PREFIX": "WORK/toolchain/CommandLineTools/usr",
+      "CROSS_CLANG": "WORK/toolchain/llvm/bin/clang",
+      "CROSS_EXTRA_FLAGS": "-mllvm -disable-atexit-based-global-dtor-lowering",
+      "DARWIN_TRIPLE": "arm64-apple-ios27.0",
+      "LC_ALL": "C",
+      "UNIXNU_PLATFORM_PATH": "WORK/kernel-build/.cache/fakeroot/Platforms/iPhoneOS.platform",
+      "UNIXNU_SDKROOT": "WORK/kernel-build/.cache/fakeroot",
+      "UNIXNU_SDK_BUILD": "24A446",
+      "UNIXNU_SDK_VERSION": "27.0",
+      "UNIXNU_TOOLCHAIN": "WORK/toolchain",
+      "UNIXNU_XNU_ARCH": "arm64",
+      "XCTOOLCHAIN_PREFIX": "WORK/toolchain/XcodeDefault.xctoolchain/usr",
+      "XNU_BOOT_PROGRESS": "0",
+      "XNU_TOOLCHAIN_BIN": "WORK/toolchain/CommandLineTools/usr/bin WORK/toolchain/XcodeDefault.xctoolchain/usr/bin",
+      "ZERO_AR_DATE": "1"
+    },
+    "host_identity": {
+      "cc": {
+        "path": "/usr/lib/llvm-19/bin/clang",
+        "realpath": "/usr/lib/llvm-19/bin/clang",
+        "sha256": "0a3c55936ac43954fbe4914e6e73b577ca9e35e75d89ef13d3e28c187f41ca1a",
+        "version": "Debian clang version 19.1.7 (3+b1)\nTarget: x86_64-pc-linux-gnu\nThread model: posix\nInstalledDir: /usr/lib/llvm-19/bin"
+      },
+      "cxx": {
+        "path": "/usr/lib/llvm-19/bin/clang++",
+        "realpath": "/usr/lib/llvm-19/bin/clang",
+        "sha256": "0a3c55936ac43954fbe4914e6e73b577ca9e35e75d89ef13d3e28c187f41ca1a",
+        "version": "Debian clang version 19.1.7 (3+b1)\nTarget: x86_64-pc-linux-gnu\nThread model: posix\nInstalledDir: /usr/lib/llvm-19/bin"
+      },
+      "libclang_sha256": "a376ffcb5b1714685f7deec6ba344cf5e1eadde83c7ccb74bd557d75f9096b6d",
+      "llvm_config": {
+        "path": "/usr/bin/llvm-config",
+        "realpath": "/usr/lib/llvm-19/bin/llvm-config",
+        "sha256": "0ad6303a9d04d2dd21a7f7dc0aec2a2c0bbaf35b04ac5b43dc7ab48688929772",
+        "version": "19.1.7"
+      },
+      "resource": "/usr/lib/llvm-19/lib/clang/19"
+    },
+    "host_source_pins": {
+      "https://github.com/Nyktis/iig-port": {
+        "commit": "ea6d147d668ca15d490da638012243fcd705f30d",
+        "ref": "ea6d147d668ca15d490da638012243fcd705f30d"
+      },
+      "https://github.com/apple-oss-distributions/bootstrap_cmds": {
+        "commit": "c71d2d72f48995baaea76148f61002e5299841de",
+        "ref": "bootstrap_cmds-138"
+      },
+      "https://github.com/lzfse/lzfse": {
+        "commit": "e634ca58b4821d9f3d560cdc6df5dec02ffc93fd",
+        "ref": "e634ca58b4821d9f3d560cdc6df5dec02ffc93fd"
+      },
+      "https://github.com/swiftlang/swift-corelibs-libdispatch": {
+        "commit": "024805abec6daa9cdda569fd736b9c7686dfd735",
+        "ref": "swift-6.4.0-RELEASE"
+      },
+      "https://github.com/tpoechtrager/cctools-port": {
+        "commit": "3e694ee7393af2a4ce8bd6e7dae28fe37450aa87",
+        "ref": "1030.6.3-ld64-956.6"
+      }
+    },
+    "installer_adapter_sha256": "dd973d21f1fe45b8361889afb723dae654de8050b8efa202ee3e9acfd3a36389",
+    "outputs": [
+      {
+        "path": "WORK/toolchain/CommandLineTools/usr/bin/ld",
+        "sha256": "4f87332cbbbba8fe26e67eef48ff14018b6074a77e51b0e215c1f9c5de0ad8d4"
+      },
+      {
+        "path": "WORK/toolchain/CommandLineTools/usr/bin/libtool",
+        "sha256": "593323ed7c66ef5b1c1651ba116eda32ae89b87db8680a83e3ee5692958c6f33"
+      },
+      {
+        "path": "WORK/toolchain/CommandLineTools/usr/bin/nm",
+        "sha256": "b875626078578d911ee6618095c554e833ba54cebde614284ff87fd8e10c0708"
+      },
+      {
+        "path": "WORK/toolchain/CommandLineTools/usr/bin/lipo",
+        "sha256": "112adcff6ed878b8f84bcacfe20a730589bcb94e05ce7df5886206ac3dc2749e"
+      },
+      {
+        "path": "WORK/toolchain/CommandLineTools/usr/bin/mig",
+        "sha256": "72210518ef314ef0517869283f6fe1cf990844eefaa15e76c007f9b97d4abcdd"
+      },
+      {
+        "path": "WORK/toolchain/CommandLineTools/usr/bin/xnu-host-cc",
+        "sha256": "c7d0a389b33353d4b5366a313881a87dc61ce1aa1d2a62bd86549c4b5d81d7dd"
+      },
+      {
+        "path": "WORK/toolchain/CommandLineTools/usr/libexec/migcom",
+        "sha256": "1275416a191428125c51d2621fd4a6478f553bfb426fc4d9c1e34cda78e3f284"
+      },
+      {
+        "path": "WORK/toolchain/XcodeDefault.xctoolchain/usr/bin/iig",
+        "sha256": "ff78539d6e15e77c4c33814fc8f294deb64ab4bb4c94f950fe0ad3a57a28092d"
+      },
+      {
+        "path": "WORK/toolchain/bin/lzfse",
+        "sha256": "df5d7921f8a6d9c7c33cccdf9ce9f4587c4759767131cd47b4c28c7da20bec35"
+      },
+      {
+        "path": "/usr/bin/xcrun",
+        "sha256": "8da8a494abd47a6d484c217ac074c1759792732f048ffce3f65c114c5d641576"
+      },
+      {
+        "path": "/usr/bin/plutil",
+        "sha256": "58e6cfc687cda0af800ec8babea3177f65cc6d9e6abd65f736f3e00c3604331d"
+      },
+      {
+        "path": "/usr/bin/codesign",
+        "sha256": "c5af99f85a28e60d50d53ea030d5bf8b85b3f02dedbe8fdb67ec6c68d9a25c5f"
+      },
+      {
+        "path": "WORK/toolchain/CommandLineTools/usr/bin/clang",
+        "sha256": "f9374d4fee38f59f73f6f19c0fad2b0bf4bb5f65a6f74afb8820502368b4a96a"
+      },
+      {
+        "path": "WORK/toolchain/CommandLineTools/usr/bin/clang++",
+        "sha256": "1bd96563baa554c95cf87afd8ff9c26c64c6c6bca22be562e2a600000057faa4"
+      },
+      {
+        "path": "WORK/toolchain/CommandLineTools/usr/bin/cc",
+        "sha256": "abd4ae2f7ec1f3558b41454df2aead4b3b0c1414d2997e13d7af4d44f7973132"
+      },
+      {
+        "path": "WORK/toolchain/CommandLineTools/usr/bin/install",
+        "sha256": "198a02f94d32ac800e099876d2f9071f01ef0603bb49959dd1e911d6d2327dff"
+      },
+      {
+        "path": "WORK/toolchain/CommandLineTools/usr/bin/gm4",
+        "sha256": "a96fd816d35a8bc4d7383e582a7b653fb69bdfcec3861530841296842ea9630d"
+      },
+      {
+        "path": "WORK/toolchain/CommandLineTools/usr/lib/libmacho.a",
+        "sha256": "6737121673249ed680ea5c61179c30b9a4617c09247e0bb5a30bea872b2e92a3"
+      },
+      {
+        "path": "WORK/toolchain/CommandLineTools/usr/lib/libstuff.a",
+        "sha256": "78221e033b5b7441e1692518834a8b0e06ffa6dde6632834b4facb660def3fcb"
+      }
+    ],
+    "status": "host_tools_built"
+  },
+  "kernel_compiled": false,
+  "kernel_linked": false,
+  "limitations": [
+    "The historical 19-assertion probe checked XNU type semantics and the ordinary ARM64 Mach-O header. Its -march=armv8-a did not override the Darwin default Apple CPU.",
+    "This report does not qualify all generated instructions. A later real return-address probe exposed XPACI under the default apple-a12 CPU, requiring an explicit generic CPU and production-shim verification.",
+    "Host tools and type-builtin checks do not prove a complete kernel link, board/archive closure, or OS boot."
+  ],
+  "llvm_commit": "58c46bae21181fb4240cf964461bea738d96d50e",
+  "normalization": "Only known development workspace prefixes are replaced by WORK or SOURCES; original raw report digests are retained.",
+  "original_reports": {
+    "clang-state.json": {
+      "sha256": "f229e2f3897aec9397ff692ccd8373c1fc755eb6edaeba12141b2b1754797b9a"
+    },
+    "host-tools-state.json": {
+      "sha256": "d14002be94fd5c39769b97b0437d9253ef68cc5c890ff96322ea9d29683fb1fa"
+    }
+  },
+  "os_boot_verified": false,
+  "record_date": "2026-11-24",
+  "record_timezone": "Asia/Shanghai",
+  "schema_version": 1,
+  "scope": "Completed custom Clang build and host-tool finalization, recovered before repair of the first kernel build failure",
+  "unixnu_commit": "8542980d02b4d2cc5c32ee3542de1760b2562aac"
+}

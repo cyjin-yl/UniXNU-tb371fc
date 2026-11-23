@@ -4,6 +4,14 @@
 
 这是 architecture + Darwin 26 + plain-pager 子集的首次编译入口。67 项架构 patch、3 项 Darwin 26 patch 和 1 项 plain-auth patch 已应用；两个硬件 PAC patch 被排除，依赖板级 PMGR/watchdog 的 boot-progress patch 仍明确暂缓。完整 TB371FC board/SoC/archive profile 未解析，源码背景和真实 CI 证据见 [ROUTE_A_KERNEL_BUILD.md](ROUTE_A_KERNEL_BUILD.md)。
 
+## 已取得的真实构建结果：2026-11-24 记录
+
+定制 Clang 已完成构建，19 个 XNU type builtin 语义断言通过，最终 host-tools 状态为 `host_tools_built`、`combined_toolchain_verified=true`。[工具链完成记录](evidence/route-a-toolchain-success-20261124.json) 保留实际执行的旧 driver 身份及原始报告摘要；当时的探针只验收类型语义和 Mach-O header，没有覆盖完整指令集。
+
+首次完整 builder 已真正执行，生成 **716 个 `.o` / `.cpo` 文件**，随后以 2 退出。唯一 Clang error 为 `osfmk/kern/debug.c:2590:6: this target does not support pointer authentication`，出现在 950,343 行日志的第 538,726 行；之后其他并行 make job 的 warning 会把它挤出日志尾部。没有生成 link filelist 或普通 ARM64 kernel candidate，完整内核仍未编译／链接成功。详见[首次失败证据](evidence/route-a-first-kernel-failure-20261124.json)。
+
+错误来自上游新增的 `unixnu_fileset_unmapped` 无条件使用 `__builtin_ptrauth_strip`。新增[局部修复](ROUTE_A_FILESET_PTRAUTH.md)按编译器能力保留认证操作，同时保留普通 ARM64 的返回地址和 panic 行为。实际测试还发现 Darwin target 默认 `apple-a12` 可使 `__builtin_return_address` 生成 `XPACI`；完整构建现在显式选择 `-mcpu=generic`，并在调用 builder 前通过实际安装的 Clang shim 运行返回地址 codegen 检查。该检查不在自己的参数里补 CPU，因而能发现真实环境遗漏或覆盖。
+
 ## 固定输入和目录
 
 工作目录就是独立的 UniXNU checkout 根。`scripts/`、`refer/`、`.cache/`、`build/` 与 `.route-a/` 都在这一根下；本项目 checkout 与大型构建输出分开。
@@ -51,6 +59,12 @@ python3 SOURCE/scripts/run_route_a_kernel_build.py stage \
 
 Linux helper 的 LLVM/Libc cache 也预先设置为它实际要求的固定 HEAD，避免触发其“不同 HEAD 则 rmtree 后重取”分支。所有 sources、许可证文件、目录身份和共享对象依赖都留在持久工作树。
 
+### 独立的构建修复层
+
+[route-a-build-fixes.json](../upstream/route-a-build-fixes.json) 绑定原始 71 项 inventory、每个本地 patch 的 SHA-256 以及修改文件的前后摘要。stage 在 headers 准备后先保存 `pre-build-fix-source-inventory.json`，再检查并应用补丁，最后生成用于实际编译的完整 inventory。原始 71 项补丁和准备报告保持原样。
+
+每个修复只能修改 manifest 声明的文件。应用前检查 patch bytes、目标源文件摘要和 `git apply --numstat` 的路径集合；应用后核对整个文件清单，只允许声明的文件内容变化，模式和类型不能改变。run 再次比较当前 manifest、保存的 patch、receipt 和最终源码，拒绝使用被更换或未登记的修复。
+
 ## 工具链完成后执行真实 builder
 
 先完成 [ROUTE_A_TOOLCHAIN.md](ROUTE_A_TOOLCHAIN.md) 的定制 Clang 与最终 host-tools 步骤，`--sdk-root` 必须选择这个工作树的 `.cache/fakeroot`。然后执行：
@@ -79,10 +93,13 @@ run 检查 source staging 状态、XNU files、每个公开 reference 的 HEAD/�
 | `.route-a/stage-report.json` | 固定输入、headers 的原始/实际摘要、共享 Git object 依赖和 stage 成功或失败 |
 | `.route-a/stage.log` | 真实 source acquisition 日志 |
 | `.route-a/source-inventory.json` | 已通过 71 patch 准备的原始 inventory |
-| `.route-a/staged-source-inventory.json` | 添加缺失 headers 后的 source inventory |
+| `.route-a/pre-build-fix-source-inventory.json` | 添加缺失 headers 后、局部修复前的 source inventory |
+| `.route-a/build-fixes/` | 构建修复 manifest 与原始 patch bytes |
+| `.route-a/staged-source-inventory.json` | headers 与局部构建修复完成后的最终 source inventory |
 | `.route-a/selected-patches.txt` / `patches/` | 真实 patch bytes 与固定上游 skip-legacy 入口 |
 | `.route-a/build.log` | 实际上游 builder 的完整 stdout/stderr |
-| `.route-a/build-report.json` | 实际 exit code、有限 log tail、对象数量、link filelist、候选 kernel 摘要与真实 Mach-O header 检查 |
+| `.route-a/cpu-verification/` | 真实 compiler shim 的返回地址 C、IR、汇编、对象和 CPU 约定检查 |
+| `.route-a/build-report.json` | 实际 exit code、首批错误及总数、完整日志摘要、对象数量、link filelist、候选 kernel 摘要与真实 Mach-O header 检查 |
 
 非零 builder 退出会使 CLI 返回 2，并记录 `builder_failed`；不会将“生成了一些 headers”归类为 kernel build 成功。builder 返回 0 后，还要求实际候选文件为 Mach-O 64 位、ARM64、subtype 0、`MH_EXECUTE`；缺失或不符会记录 `output_check_failed` 并返回 2，原始 builder exit code 仍保存为 0。只有这一步也通过才记录 `builder_completed`。报告记录每个候选的真实 header words，但完整 board/archive、最终 ISA/ABI、预链接和启动验证没有由这个 header 检查自动证明。`kernel_compiled`、`kernel_linked` 与 `os_boot_verified` 的完整候选资格字段继续为 false，实际生成了什么由独立 artifact 列表和真实 exit code 描述。
 

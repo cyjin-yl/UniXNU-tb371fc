@@ -89,12 +89,14 @@ jobs:
           data = json.loads(report.read_text()) if report.exists() else {"status": "no_stage_report"}
           summary = {key: data.get(key) for key in (
               "status", "error", "unixnu_commit", "xnu_commit", "driver_sha256",
-              "prepared_source_inventory_sha256", "staged_source_inventory_sha256",
+              "prepared_source_inventory_sha256", "pre_build_fix_source_inventory_sha256", "staged_source_inventory_sha256",
               "full_upstream_profile_applied", "crypto_provider_selected",
               "complete_board_archive_closure", "kernel_compiled", "kernel_linked", "os_boot_verified",
           )}
           summary["source_count"] = len(data.get("sources", []))
           summary["header_record_count"] = len(data.get("restored_headers", []))
+          summary["build_fix_count"] = len(data.get("build_fixes", {}).get("applied", []))
+          summary["build_fix_manifest_sha256"] = data.get("build_fixes", {}).get("manifest_sha256")
           print("ROUTE_A_KERNEL_STAGE_SUMMARY_JSON=" + json.dumps(summary, sort_keys=True))
           PY
       - name: Preserve preparation reports and compiler diagnostics
@@ -114,3 +116,5 @@ jobs:
             ${{ runner.temp }}/route-a-kernel-build/.route-a/stage-report.json
             ${{ runner.temp }}/route-a-kernel-build/.route-a/stage.log
             ${{ runner.temp }}/route-a-kernel-build/.route-a/staged-source-inventory.json
+            ${{ runner.temp }}/route-a-kernel-build/.route-a/pre-build-fix-source-inventory.json
+            ${{ runner.temp }}/route-a-kernel-build/.route-a/build-fixes/

@@ -2,6 +2,16 @@
 
 本目录保存可公开、可追溯的结果摘要。系统二进制和原始私有日志不在仓库分发。文件名日期是该次记录日期，不代表之后所有改动都已重新执行相同测试。
 
+## 定制编译器完成与首次内核失败：2026-11-24
+
+| 记录 | 实际结果 | 范围 |
+| --- | --- | --- |
+| [定制 Clang 与组合工具链完成](route-a-toolchain-success-20261124.json) | Clang 24 固定源码构建完成；19 个 XNU 类型语义断言通过；19 个最终工具输出有摘要 | 旧探针未证明完整指令集；新发现的默认 Apple CPU 问题另行修复 |
+| [首轮真实 XNU 编译失败](route-a-first-kernel-failure-20261124.json) | 716 个目标文件；无条件 PAuth builtin 产生唯一 Clang error；builder 返回 2 | 没有完整 kernel candidate、link filelist 或 OS 启动结果 |
+| [fileset panic 修复实际测试](route-a-fileset-ptrauth-20261124.json) | 定制 Clang 4/4 真实回归通过，0 跳过；保留两个前次失败与 generic codegen 结果 | [修复说明](../ROUTE_A_FILESET_PTRAUTH.md)；本记录未替代真实 compiler wrapper 验收 |
+
+此前“Clang 正在构建”的快照保持原样。新增记录绑定实际完成的旧 driver、真实 compiler SHA-256、原始报告与完整失败日志的摘要，不将后来修订的脚本当成旧构建执行过的版本。
+
 ## 最新工具链、局部路径与构建输入：2026-11-23
 
 提交 [3a52649](https://github.com/cyjin-yl/UniXNU-tb371fc/commit/3a52649f837f49f8df638d165f3dbbb7aa20e953) 的两个 [CI 作业](https://github.com/cyjin-yl/UniXNU-tb371fc/actions/runs/45181619136) 均通过：**191 项回归、0 跳过**，229 份原始源码／许可证摘要保持一致。33 项 TPRO 回归、9 项工具链回归与 6 项首次构建入口回归包含在总数中；9 项提取真实 pager C 的检查仍实际执行。

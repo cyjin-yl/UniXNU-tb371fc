@@ -1,0 +1,21 @@
+{
+  "schema_version": 1,
+  "xnu_commit": "ac9718fb1af618d5ce8678d0dc6e8a58f252216f",
+  "base_source_inventory_sha256": "16aed427ee21f60f7e8697dbd21f1fce75db653749e677a787c4844c44a438b8",
+  "scope": "Explicit repairs applied after the unchanged 71-patch preparation and public header staging.",
+  "fixes": [
+    {
+      "id": "fileset-unmapped-ptrauth",
+      "patch": "patches/route-a-fileset-unmapped-ptrauth.patch",
+      "patch_sha256": "d3bebb609f6f1b6d11018c9be3aec36e941625019845c442aea6cf9506e62abe",
+      "reason": "The first ordinary-arm64 build failed because the unmapped-fileset diagnostic unconditionally used a pointer-authentication intrinsic.",
+      "files": [
+        {
+          "path": "osfmk/kern/debug.c",
+          "before_sha256": "fd749f59d773dac9cb95f8183ff9dece13f2ae2888f5da6f2efd9197acc9e5b0",
+          "after_sha256": "061de685fab552a0031ab547d75600a16b9d993a54740b461760ebf038b8b5be"
+        }
+      ]
+    }
+  ]
+}

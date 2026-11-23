@@ -1,6 +1,8 @@
 """Protect source identity and compiler-driver semantics without building LLVM."""
 import importlib.util
+import json
 from pathlib import Path
+import struct
 import subprocess
 import tempfile
 import unittest
@@ -48,6 +50,7 @@ class ToolchainBoundaryTests(unittest.TestCase):
         self.assertEqual(env["DARWIN_TRIPLE"], "arm64-apple-ios27.0")
         self.assertEqual(env["UNIXNU_XNU_ARCH"], "arm64")
         self.assertNotIn("ptrauth", env["CROSS_EXTRA_FLAGS"])
+        self.assertEqual(env["CROSS_EXTRA_FLAGS"].split().count("-mcpu=generic"), 1)
         self.assertEqual(env["XNU_BOOT_PROGRESS"], "0")
         self.assertEqual(env["UNIXNU_SDK_BUILD"], "24A446")
 
@@ -108,6 +111,116 @@ def lzfse(prefix):
         for unknown in (fixture.replace("libexec/migcom", "different-tool"), fixture + fixture):
             with self.assertRaises(MODULE.ToolchainError):
                 MODULE.installer_without_existence_shortcuts(unknown)
+
+
+class ReturnAddressCodegenGateTests(unittest.TestCase):
+    """Synthetic outputs test admission decisions, not compiler capability."""
+
+    IR = ('define ptr @route_a_return_address() {\n'
+          '  %address = call ptr @llvm.returnaddress.p0(i32 0)\n'
+          '  ret ptr %address\n}\n'
+          'attributes #0 = { "target-cpu"="generic" "target-features"="+fp-armv8,+neon,+v8a" }\n')
+    ASSEMBLY = '_route_a_return_address:\n\thint #7\n\tmov x0, x30\n\tret\n'
+    OBJECT = struct.pack("<8I", 0xFEEDFACF, 0x0100000C, 0, 1, 0, 0, 0, 0)
+
+    def fake_compiler(self, *, ir=None, assembly=None, obj=None, exit_code=0):
+        outputs = {".ll": (self.IR if ir is None else ir).encode(),
+                   ".s": (self.ASSEMBLY if assembly is None else assembly).encode(),
+                   ".o": self.OBJECT if obj is None else obj}
+
+        def run(args, **kwargs):
+            output = Path(args[args.index("-o") + 1])
+            if exit_code == 0:
+                output.write_bytes(outputs[output.suffix])
+            return subprocess.CompletedProcess(args, exit_code, stdout=b"", stderr=b"diagnostic\n" if exit_code else b"")
+
+        return run
+
+    def test_production_probe_does_not_inject_target_or_cpu_flags(self):
+        flags = ("-arch", "arm64", "-mkernel", "-mno-implicit-sme",
+                 "-momit-leaf-frame-pointer", "-fno-strict-aliasing")
+        environment = {"CROSS_CLANG": "/verified/clang", "DARWIN_TRIPLE": "arm64-apple-ios27.0",
+                       "CROSS_EXTRA_FLAGS": "-mcpu=generic"}
+        with tempfile.TemporaryDirectory() as directory:
+            output = Path(directory) / "check"
+            with patch.object(MODULE, "command", side_effect=self.fake_compiler()) as command:
+                report = MODULE.verify_return_address_codegen("/verified/CLT/bin/clang", output,
+                                                               target_flags=flags, env=environment)
+            self.assertTrue(report["passed"])
+            self.assertTrue(all(report["checks"].values()))
+            self.assertTrue(report["has_compatible_hint_7"])
+            self.assertEqual(report["driver_environment"], environment)
+            for call in command.call_args_list:
+                args = call.args[0]
+                self.assertEqual(args[:1 + len(flags)], ["/verified/CLT/bin/clang", *flags])
+                self.assertFalse(any(arg.startswith(("-mcpu", "-march", "-target")) for arg in args if isinstance(arg, str)))
+                self.assertIs(call.kwargs["env"], environment)
+            for entry in report["commands"]:
+                self.assertEqual(MODULE.sha256_file(Path(entry["output"])), entry["output_sha256"])
+                self.assertEqual(MODULE.sha256_file(Path(entry["stderr"])), entry["stderr_sha256"])
+            with self.assertRaises(FileExistsError):
+                MODULE.verify_return_address_codegen("/verified/CLT/bin/clang", output)
+
+    def test_legacy_intrinsic_name_and_xpaclri_hint_are_accepted(self):
+        with tempfile.TemporaryDirectory() as directory, patch.object(
+                MODULE, "command", side_effect=self.fake_compiler(
+                    ir=self.IR.replace("returnaddress.p0", "returnaddress"),
+                    assembly=self.ASSEMBLY.replace("hint #7", "xpaclri"))):
+            report = MODULE.verify_return_address_codegen("clang", Path(directory) / "check")
+            self.assertTrue(report["passed"])
+            self.assertTrue(report["has_compatible_hint_7"])
+
+    def test_cpu_pauth_and_failed_compilation_are_rejected_with_evidence(self):
+        cases = (
+            ({"ir": self.IR.replace('"generic"', '"apple-a12"')}, "ir_cpu_generic"),
+            ({"assembly": self.ASSEMBLY.replace("hint #7", "xpaci x30")}, "no_pauth_instructions"),
+            ({"assembly": self.ASSEMBLY.replace("ret\n", "retaa\n")}, "no_pauth_instructions"),
+            ({"ir": self.IR + '%stripped = call i64 @llvm.ptrauth.strip(i64 1, i32 0)\n'}, "no_pauth_intrinsics"),
+            ({"ir": self.IR.replace("+v8a", "+v8a,+pauth")}, "no_pauth_cpu_feature"),
+            ({"ir": self.IR.replace("llvm.returnaddress.p0", "unrelated_function")}, "return_address_intrinsic"),
+            ({"obj": struct.pack("<8I", 0xFEEDFACF, 0x0100000C, 2, 1, 0, 0, 0, 0)}, "ordinary_arm64_macho"),
+            ({"exit_code": 1}, "all_compiles_succeeded"),
+        )
+        for values, check in cases:
+            with self.subTest(check=check, values=values), tempfile.TemporaryDirectory() as directory:
+                output = Path(directory) / "check"
+                with patch.object(MODULE, "command", side_effect=self.fake_compiler(**values)):
+                    with self.assertRaises(MODULE.ToolchainError):
+                        MODULE.verify_return_address_codegen("clang", output)
+                report = json.loads((output / "verification.json").read_text())
+                self.assertFalse(report["passed"])
+                self.assertFalse(report["checks"][check])
+                self.assertEqual(len(report["commands"]), 3)
+                self.assertTrue(all(Path(entry["stderr"]).is_file() for entry in report["commands"]))
+
+    def test_direct_clang_qualification_includes_generic_cpu_and_codegen(self):
+        compiler = {"path": "/verified/clang", "sha256": "synthetic"}
+        with tempfile.TemporaryDirectory() as directory:
+            output = Path(directory) / "check"
+            with patch.object(MODULE, "tool_identity", return_value=compiler), patch.object(
+                    MODULE, "command", side_effect=self.fake_compiler()) as command:
+                report = MODULE.verify_clang("/verified/clang", output)
+            self.assertEqual(report["status"], "passed")
+            self.assertEqual(report["static_assertions"], 19)
+            self.assertTrue(report["return_address_codegen"]["passed"])
+            self.assertEqual(command.call_count, 4)
+            for call in command.call_args_list:
+                self.assertIn("-mcpu=generic", call.args[0])
+                self.assertIn("-march=armv8-a", call.args[0])
+
+    def test_trait_success_cannot_hide_a_codegen_failure(self):
+        compiler = {"path": "/verified/clang", "sha256": "synthetic"}
+        with tempfile.TemporaryDirectory() as directory:
+            output = Path(directory) / "check"
+            with patch.object(MODULE, "tool_identity", return_value=compiler), patch.object(
+                    MODULE, "command", side_effect=self.fake_compiler(
+                        assembly=self.ASSEMBLY.replace("hint #7", "xpaci x30"))):
+                with self.assertRaises(MODULE.ToolchainError):
+                    MODULE.verify_clang("/verified/clang", output)
+            report = json.loads((output / "verification.json").read_text())
+            self.assertEqual(report["compiler_exit_code"], 0)
+            self.assertEqual(report["status"], "failed")
+            self.assertFalse(report["return_address_codegen"]["checks"]["no_pauth_instructions"])
 
 
 class ToolchainSourceTests(unittest.TestCase):
