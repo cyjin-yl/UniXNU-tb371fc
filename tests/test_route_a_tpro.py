@@ -170,5 +170,111 @@ class TproSourceAndContractTests(unittest.TestCase):
                 self.assertFalse(output.exists())
 
 
+class TproLocalGateTests(unittest.TestCase):
+    BASE = 0x100000400
+
+    def analyze(self, words, *, budget=4096, expected=None, end=None):
+        data = signed_fixture(words=words)
+        base = self.BASE
+        return tpro.analyze_local_gate(
+            data, tpro.parse_macho(data), name="original synthetic gate",
+            start=base, end=base + len(words) * 4 if end is None else end,
+            gate=base, disabled_successor=base + 8,
+            expected_gate=expected or {"kind": "cbz", "register": 0, "width": 64, "target": base + 8},
+            assumption="X0 is zero at the first branch only.", max_states=budget)
+
+    def test_taken_disabled_edge_skips_hazard_and_reaches_return(self):
+        report = self.analyze((0xB4000040, 0xD5900040, 0xD65F03C0))
+        self.assertTrue(report["normal_control_flow_closed"])
+        self.assertTrue(report["conditional_region_without_tracked_hazards"])
+        self.assertEqual(report["normal_return_sites"], [hex(self.BASE + 8)])
+        for key in ("gate_predecessors_verified", "predicate_dataflow_verified", "callee_bodies_verified",
+                    "return_value_verified", "return_targets_verified", "termination_verified", "runtime_dispatch_verified",
+                    "whole_function_dispatch_verified"):
+            self.assertFalse(report[key], key)
+
+    def test_changed_condition_register_or_width_blocks_stale_gate_assumption(self):
+        for gate in (0xB5000040, 0xB4000041, 0x34000040):
+            with self.subTest(gate=hex(gate)):
+                report = self.analyze((gate, 0xD5900040, 0xD65F03C0))
+                self.assertEqual(report["status"], "gate_mismatch")
+                self.assertFalse(report["conditional_region_without_tracked_hazards"])
+
+    def test_nested_unknown_condition_explores_both_edges(self):
+        # Initial CBZ skips a dead BRK; a later B.EQ can enter TCHANGE.
+        report = self.analyze((0xB4000040, 0xD4200000, 0x54000040,
+                               0xD65F03C0, 0xD5900040, 0xD65F03C0))
+        self.assertEqual(report["status"], "reachable_tracked_hazard")
+        self.assertEqual(report["reachable_tracked_hazards"][0]["path_from_assumed_gate"],
+                         [hex(self.BASE), hex(self.BASE + 8), hex(self.BASE + 16)])
+        self.assertFalse(report["conditional_region_without_tracked_hazards"])
+
+    def test_gate_reentry_does_not_reuse_the_initial_predicate(self):
+        # B .-8 returns to CBZ after the assumed edge. Its second outcome is
+        # unknown; incorrectly applying the initial assumption again hides TCHANGE.
+        report = self.analyze((0xB4000040, 0xD5900040, 0x17FFFFFE))
+        self.assertEqual(report["reachable_tracked_hazards"][0]["path_from_assumed_gate"],
+                         [hex(self.BASE), hex(self.BASE + 8), hex(self.BASE), hex(self.BASE + 4)])
+        self.assertFalse(report["conditional_region_without_tracked_hazards"])
+
+    def test_unreachable_unknown_word_does_not_poison_a_closed_path(self):
+        report = self.analyze((0xB4000040, 0xFFFFFFFF, 0xD65F03C0))
+        self.assertTrue(report["conditional_region_without_tracked_hazards"])
+
+    def test_reachable_unknown_instruction_is_not_assumed_to_fall_through(self):
+        report = self.analyze((0xB4000040, 0xD65F03C0, 0xFFFFFFFF, 0xD65F03C0))
+        self.assertFalse(report["normal_control_flow_closed"])
+        self.assertIn("unknown instruction", report["blockers"][0]["reason"])
+
+    def test_direct_and_indirect_calls_require_callee_contracts(self):
+        for call in (0x94000001, 0xD63F0000, 0xD73F0801):
+            with self.subTest(call=hex(call)):
+                report = self.analyze((0xB4000040, 0xD65F03C0, call, 0xD65F03C0))
+                self.assertFalse(report["normal_control_flow_closed"])
+                self.assertEqual(report["status"], "incomplete")
+                self.assertEqual(report["reachable_tracked_hazards"], [])
+
+    def test_indirect_jump_and_exceptions_are_explicit_obligations(self):
+        for word in (0xD61F0000, 0xD71F0801, 0xD4000001, 0xD4200000, 0xD69F03E0):
+            with self.subTest(word=hex(word)):
+                report = self.analyze((0xB4000040, 0xD65F03C0, word, 0xD65F03C0))
+                self.assertFalse(report["conditional_region_without_tracked_hazards"])
+                self.assertTrue(report["blockers"])
+
+    def test_ret_to_another_register_is_not_an_assumed_normal_return(self):
+        report = self.analyze((0xB4000040, 0xD65F03C0, 0xD65F0000))  # RET X0
+        self.assertFalse(report["normal_control_flow_closed"])
+        self.assertIn("nonstandard return register", report["blockers"][0]["reason"])
+
+    def test_region_exit_is_not_mistaken_for_a_safe_return(self):
+        report = self.analyze((0xB4000040, 0xD65F03C0, 0x14000040))
+        self.assertFalse(report["normal_control_flow_closed"])
+        self.assertIn("leaves the selected region", report["blockers"][0]["reason"])
+        # Ordinary fallthrough past the end is also unresolved.
+        report = self.analyze((0xB4000040, 0xD65F03C0, 0xD503201F))
+        self.assertFalse(report["normal_control_flow_closed"])
+
+    def test_target_in_non_code_padding_is_blocked(self):
+        report = self.analyze((0xB4000040, 0xD65F03C0), end=self.BASE + 16)
+        self.assertFalse(report["normal_control_flow_closed"])
+        self.assertIn("outside validated instruction candidates", report["blockers"][0]["reason"])
+
+    def test_apple_register_access_is_a_hazard_without_tchange(self):
+        report = self.analyze((0xB4000040, 0xD65F03C0, 0xD53EF1A0, 0xD65F03C0))
+        self.assertEqual(report["reachable_tracked_hazards"][0]["kind"], "s3_6_c15_c1_5")
+        self.assertFalse(report["conditional_region_without_tracked_hazards"])
+
+    def test_hazard_free_loop_does_not_claim_termination(self):
+        report = self.analyze((0xB4000040, 0xD65F03C0, 0x14000000))
+        self.assertTrue(report["conditional_region_without_tracked_hazards"])
+        self.assertFalse(report["termination_verified"])
+        self.assertEqual(report["normal_return_sites"], [])
+
+    def test_state_budget_exhaustion_is_incomplete(self):
+        report = self.analyze((0xB4000040, 0xD65F03C0, 0xD503201F, 0xD65F03C0), budget=1)
+        self.assertFalse(report["normal_control_flow_closed"])
+        self.assertIn("state budget", report["blockers"][0]["reason"])
+
+
 if __name__ == "__main__":
     unittest.main()

@@ -1,0 +1,308 @@
+{
+  "schema": "route-a-tpro-local-path-evidence-v1",
+  "observed_date": "2026-11-23",
+  "execution": {
+    "environment": "Linux x86_64 development container; static analysis of the original dyld",
+    "base_repository_commit": "39ac9666b3158fc5b87749a0fb4894e0070f371a",
+    "audit_tool_sha256": "4376dfb49ca1c2f19c814d831e4ab81362952da8bca162198bd75edddf7e628d",
+    "tool_tests_passed": 33,
+    "command": "python scripts/audit_route_a_tpro.py --input ORIGINAL_USR_LIB_DYLD --report NEW_REPORT.json",
+    "exit_code": 0,
+    "raw_report_sha256": "25b6a2983cf2c550f93ac1eb3ca6dc06a20298a94b2c2cd0881c3a0e9e576e95",
+    "disassembly_included": false
+  },
+  "input": {
+    "build": "24A446",
+    "bytes": 1447088,
+    "path": "usr/lib/dyld",
+    "product": "iPad17,3",
+    "sha256": "ab9887ed96c9c08ad68d4c6a5c27e8289fb0c9e55ec3e134547292a1ec579608",
+    "version": "27.0.1"
+  },
+  "tchange_count": 236,
+  "original_code_pages": {
+    "cdhash": "aa7847c769647402eab56e9a03ea4a746918a2ca",
+    "cms_or_apple_trust_verified": false,
+    "code_directory_version": "0x20400",
+    "code_page_shift": 12,
+    "code_pages_verified": 347,
+    "effective_code_limit": 1417744
+  },
+  "required_absent_apple_keys": [
+    "dyld_hw_tpro",
+    "dyld_hw_tpro_pagers"
+  ],
+  "local_gate_analyses": [
+    {
+      "assumption": "X0 is zero at the first visit to the observed getenv-result branch.",
+      "blockers": [
+        {
+          "address": "0x719c",
+          "path_from_assumed_gate": [
+            "0x7188",
+            "0x7194",
+            "0x7198",
+            "0x719c"
+          ],
+          "reason": "direct call requires a separately verified callee and return contract"
+        }
+      ],
+      "callee_bodies_verified": false,
+      "conditional_region_without_tracked_hazards": false,
+      "disabled_successor": "0x7194",
+      "expected_gate": {
+        "kind": "cbz",
+        "register": 0,
+        "target": "0x7194",
+        "width": 64
+      },
+      "gate": "0x7188",
+      "gate_predecessors_verified": false,
+      "initial_branch_outcome_assumed": true,
+      "name": "MemoryManager null getenv result",
+      "normal_control_flow_closed": false,
+      "normal_control_flow_only": true,
+      "normal_return_sites": [],
+      "observed_gate": {
+        "kind": "cbz",
+        "register": 0,
+        "target": "0x7194",
+        "width": 64
+      },
+      "predicate_dataflow_verified": false,
+      "reachable_tracked_hazards": [],
+      "region_end": "0x7208",
+      "region_start": "0x713c",
+      "return_targets_verified": false,
+      "return_value_verified": false,
+      "runtime_dispatch_verified": false,
+      "status": "incomplete",
+      "termination_verified": false,
+      "visited_addresses": [
+        "0x7188",
+        "0x7194",
+        "0x7198",
+        "0x719c"
+      ],
+      "whole_function_dispatch_verified": false
+    },
+    {
+      "assumption": "X0 is zero at the first visit to the observed getenv-result branch.",
+      "blockers": [],
+      "callee_bodies_verified": false,
+      "conditional_region_without_tracked_hazards": true,
+      "disabled_successor": "0x212e0",
+      "expected_gate": {
+        "kind": "cbz",
+        "register": 0,
+        "target": "0x212e0",
+        "width": 64
+      },
+      "gate": "0x2128c",
+      "gate_predecessors_verified": false,
+      "initial_branch_outcome_assumed": true,
+      "name": "defaultTproStack null getenv result",
+      "normal_control_flow_closed": true,
+      "normal_control_flow_only": true,
+      "normal_return_sites": [
+        "0x212ec"
+      ],
+      "observed_gate": {
+        "kind": "cbz",
+        "register": 0,
+        "target": "0x212e0",
+        "width": 64
+      },
+      "predicate_dataflow_verified": false,
+      "reachable_tracked_hazards": [],
+      "region_end": "0x212f0",
+      "region_start": "0x21264",
+      "return_targets_verified": false,
+      "return_value_verified": false,
+      "runtime_dispatch_verified": false,
+      "status": "closed_under_initial_branch_assumption",
+      "termination_verified": false,
+      "visited_addresses": [
+        "0x2128c",
+        "0x212e0",
+        "0x212e4",
+        "0x212e8",
+        "0x212ec"
+      ],
+      "whole_function_dispatch_verified": false
+    },
+    {
+      "assumption": "W1 is zero at the first visit to the observed constructor branch.",
+      "blockers": [],
+      "callee_bodies_verified": false,
+      "conditional_region_without_tracked_hazards": true,
+      "disabled_successor": "0x3cb58",
+      "expected_gate": {
+        "kind": "cbz",
+        "register": 1,
+        "target": "0x3cb58",
+        "width": 32
+      },
+      "gate": "0x3cb4c",
+      "gate_predecessors_verified": false,
+      "initial_branch_outcome_assumed": true,
+      "name": "ProtectedStack false constructor argument",
+      "normal_control_flow_closed": true,
+      "normal_control_flow_only": true,
+      "normal_return_sites": [
+        "0x3cb64"
+      ],
+      "observed_gate": {
+        "kind": "cbz",
+        "register": 1,
+        "target": "0x3cb58",
+        "width": 32
+      },
+      "predicate_dataflow_verified": false,
+      "reachable_tracked_hazards": [],
+      "region_end": "0x3cb68",
+      "region_start": "0x3cb2c",
+      "return_targets_verified": false,
+      "return_value_verified": false,
+      "runtime_dispatch_verified": false,
+      "status": "closed_under_initial_branch_assumption",
+      "termination_verified": false,
+      "visited_addresses": [
+        "0x3cb4c",
+        "0x3cb58",
+        "0x3cb5c",
+        "0x3cb60",
+        "0x3cb64"
+      ],
+      "whole_function_dispatch_verified": false
+    },
+    {
+      "assumption": "NE holds at the first visit to the observed hardware-enable branch.",
+      "blockers": [
+        {
+          "address": "0x3220",
+          "path_from_assumed_gate": [
+            "0x3048",
+            "0x31e4",
+            "0x31e8",
+            "0x31ec",
+            "0x31f0",
+            "0x31f4",
+            "0x31f8",
+            "0x31fc",
+            "0x3200",
+            "0x3204",
+            "0x3208",
+            "0x320c",
+            "0x3210",
+            "0x3214",
+            "0x3218",
+            "0x3220"
+          ],
+          "reason": "indirect or unmodeled control transfer"
+        },
+        {
+          "address": "0x321c",
+          "path_from_assumed_gate": [
+            "0x3048",
+            "0x31e4",
+            "0x31e8",
+            "0x31ec",
+            "0x31f0",
+            "0x31f4",
+            "0x31f8",
+            "0x31fc",
+            "0x3200",
+            "0x3204",
+            "0x3208",
+            "0x320c",
+            "0x3210",
+            "0x3214",
+            "0x3218",
+            "0x321c"
+          ],
+          "reason": "trap or exception control flow is outside the local model"
+        }
+      ],
+      "callee_bodies_verified": false,
+      "conditional_region_without_tracked_hazards": false,
+      "disabled_successor": "0x31e4",
+      "expected_gate": {
+        "condition": 1,
+        "kind": "b.cond",
+        "target": "0x31e4"
+      },
+      "gate": "0x3048",
+      "gate_predecessors_verified": false,
+      "initial_branch_outcome_assumed": true,
+      "name": "ReadOnlyCallback disabled hardware branch",
+      "normal_control_flow_closed": false,
+      "normal_control_flow_only": true,
+      "normal_return_sites": [],
+      "observed_gate": {
+        "condition": 1,
+        "kind": "b.cond",
+        "target": "0x31e4"
+      },
+      "predicate_dataflow_verified": false,
+      "reachable_tracked_hazards": [],
+      "region_end": "0x3284",
+      "region_start": "0x2ffc",
+      "return_targets_verified": false,
+      "return_value_verified": false,
+      "runtime_dispatch_verified": false,
+      "status": "incomplete",
+      "termination_verified": false,
+      "visited_addresses": [
+        "0x3048",
+        "0x31e4",
+        "0x31e8",
+        "0x31ec",
+        "0x31f0",
+        "0x31f4",
+        "0x31f8",
+        "0x31fc",
+        "0x3200",
+        "0x3204",
+        "0x3208",
+        "0x320c",
+        "0x3210",
+        "0x3214",
+        "0x3218",
+        "0x321c",
+        "0x3220"
+      ],
+      "whole_function_dispatch_verified": false
+    }
+  ],
+  "runtime_dispatch_verified": false,
+  "all_tchange_sites_dispatch_verified": false,
+  "target_isa_audited": false,
+  "os_boot_verified": false,
+  "binary_was_modified_by_this_audit": false,
+  "tool_sha256": "4376dfb49ca1c2f19c814d831e4ab81362952da8bca162198bd75edddf7e628d",
+  "raw_report_sha256": "25b6a2983cf2c550f93ac1eb3ca6dc06a20298a94b2c2cd0881c3a0e9e576e95",
+  "selected_system_register_site_count": 932,
+  "instruction_window_count": 0,
+  "early_literal_observation": {
+    "literal": "dyld_hw_tpro=1",
+    "address": "0xa5e9c",
+    "observed_reference": [
+      "0x4518",
+      "0x451c"
+    ],
+    "kind": "14-byte string comparison loop",
+    "matched_target": "0x3d08",
+    "exhausted_list_target": "0x3c88",
+    "writes_apple_vector_in_this_fragment": false,
+    "predecessor_dataflow_verified": false,
+    "all_literal_references_verified": false
+  },
+  "limits": [
+    "The first outcome of each selected gate is an explicit local assumption, not a proved runtime input.",
+    "Two selected regions close without the tracked TPRO hazards; this does not establish caller dataflow, return targets, return values, whole-function dominance, termination, or complete ISA compatibility.",
+    "The MemoryManager and callback regions remain incomplete at the recorded call/control-transfer sites.",
+    "All 236 TCHANGE instructions and 932 selected system-register sites remain part of the whole-program audit obligation.",
+    "Apple code pages were verified against CodeDirectory; CMS signatures and Apple trust were not verified."
+  ]
+}

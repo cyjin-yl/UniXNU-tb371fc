@@ -7,7 +7,7 @@ It intentionally emits false whole-program/runtime verification flags.
 from __future__ import annotations
 
 import argparse
-from collections import Counter
+from collections import Counter, deque
 import hashlib
 import json
 from pathlib import Path
@@ -29,6 +29,26 @@ INSPECTION_RANGES = (
     ("ProtectedStack constructor", 0x3CB2C, 0x3CB68),
 )
 EXPECTED_TCHANGE_WORDS = {0xD5900040: 116, 0xD5940000: 120}
+# These describe the observed branch instructions, not established runtime
+# values or dominance over every caller. A mismatch blocks the local analysis.
+LOCAL_GATE_SCOPES = (
+    {"name": "MemoryManager null getenv result", "start": 0x713C, "end": 0x7208,
+     "gate": 0x7188, "disabled_successor": 0x7194,
+     "expected_gate": {"kind": "cbz", "register": 0, "width": 64, "target": 0x7194},
+     "assumption": "X0 is zero at the first visit to the observed getenv-result branch."},
+    {"name": "defaultTproStack null getenv result", "start": 0x21264, "end": 0x212F0,
+     "gate": 0x2128C, "disabled_successor": 0x212E0,
+     "expected_gate": {"kind": "cbz", "register": 0, "width": 64, "target": 0x212E0},
+     "assumption": "X0 is zero at the first visit to the observed getenv-result branch."},
+    {"name": "ProtectedStack false constructor argument", "start": 0x3CB2C, "end": 0x3CB68,
+     "gate": 0x3CB4C, "disabled_successor": 0x3CB58,
+     "expected_gate": {"kind": "cbz", "register": 1, "width": 32, "target": 0x3CB58},
+     "assumption": "W1 is zero at the first visit to the observed constructor branch."},
+    {"name": "ReadOnlyCallback disabled hardware branch", "start": 0x2FFC, "end": 0x3284,
+     "gate": 0x3048, "disabled_successor": 0x31E4,
+     "expected_gate": {"kind": "b.cond", "condition": 1, "target": 0x31E4},
+     "assumption": "NE holds at the first visit to the observed hardware-enable branch."},
+)
 
 
 class AuditError(ValueError):
@@ -180,6 +200,144 @@ def collect_disassembly_windows(data: bytes, image, *, enabled: bool = False) ->
     return windows
 
 
+def analyze_local_gate(data: bytes, image, *, name: str, start: int, end: int,
+                       gate: int, disabled_successor: int, expected_gate: dict,
+                       assumption: str, max_states: int = 4096) -> dict:
+    """Close a small normal-control-flow region under one initial edge assumption.
+
+    This deliberately does not infer the branch predicate from an apple vector,
+    memory, a caller, or a preceding getenv call. Unknown instructions, calls,
+    indirect branches, traps and exits outside the region block certification.
+    The chosen edge applies only on the first visit: a loop back to the gate
+    explores both outcomes because the predicate may have changed.
+    """
+    if (start % 4 or end % 4 or gate % 4 or disabled_successor % 4
+            or not start <= gate < end or max_states <= 0):
+        raise AuditError("invalid local gate region or state budget")
+    from capstone import (Cs, CS_ARCH_ARM64, CS_MODE_LITTLE_ENDIAN,
+                          CS_GRP_JUMP, CS_GRP_CALL, CS_GRP_RET, CS_GRP_INT, CS_GRP_IRET)
+    sys.path.insert(0, str(Path(__file__).resolve().parent / "route_a_zeta"))
+    from zeta_userland_code import poe2_instruction
+
+    words = {pc: entry for pc, entry in candidate_words(data, image).items() if start <= pc < end}
+    actual = direct_branch(words[gate][0], gate) if gate in words else None
+    result = {
+        "name": name, "region_start": hex(start), "region_end": hex(end),
+        "gate": hex(gate), "disabled_successor": hex(disabled_successor),
+        "expected_gate": {**expected_gate, "target": hex(expected_gate["target"])},
+        "observed_gate": None if actual is None else {**actual, "target": hex(actual["target"])},
+        "assumption": assumption, "initial_branch_outcome_assumed": True,
+        "normal_control_flow_only": True,
+        "gate_predecessors_verified": False, "predicate_dataflow_verified": False,
+        "callee_bodies_verified": False, "return_value_verified": False, "return_targets_verified": False,
+        "termination_verified": False, "runtime_dispatch_verified": False,
+        "whole_function_dispatch_verified": False,
+        "normal_control_flow_closed": False,
+        "conditional_region_without_tracked_hazards": False,
+        "visited_addresses": [], "normal_return_sites": [],
+        "reachable_tracked_hazards": [], "blockers": [],
+    }
+    if (actual != expected_gate or actual is None or actual["kind"] in ("b", "bl")
+            or disabled_successor not in (actual["target"], gate + 4)):
+        result["status"] = "gate_mismatch"
+        result["blockers"].append({"address": hex(gate), "reason": "expected conditional gate does not match"})
+        return result
+
+    decoder = Cs(CS_ARCH_ARM64, CS_MODE_LITTLE_ENDIAN)
+    decoder.detail = True
+    initial = (gate, True)
+    queue, parents, processed = deque([initial]), {initial: None}, set()
+    visited, returns, hazards = set(), set(), {}
+
+    def witness(state):
+        path = []
+        while state is not None:
+            path.append(hex(state[0]))
+            state = parents[state]
+        return list(reversed(path))
+
+    def block(state, reason):
+        result["blockers"].append({"address": hex(state[0]), "reason": reason,
+                                   "path_from_assumed_gate": witness(state)})
+
+    def enqueue(state, successors):
+        for target in successors:
+            next_state = (target, False)
+            if next_state not in parents:
+                parents[next_state] = state
+                queue.append(next_state)
+
+    while queue:
+        state = queue.popleft()
+        pc, first_visit = state
+        if len(processed) >= max_states:
+            block(state, "state budget exhausted; pending paths remain")
+            break
+        processed.add(state)
+        if not start <= pc < end:
+            block(state, "control flow leaves the selected region")
+            continue
+        if pc not in words:
+            block(state, "target is outside validated instruction candidates")
+            continue
+        visited.add(pc)
+        word = words[pc][0]
+        transition, register = poe2_instruction(word), system_register(word)
+        if transition or (register and register["system_register"] in TRACKED_REGISTERS):
+            hazards.setdefault(pc, {"address": hex(pc), "word": f"0x{word:08x}",
+                                    "kind": "TCHANGE" if transition else register["system_register"],
+                                    "path_from_assumed_gate": witness(state)})
+        if first_visit:
+            enqueue(state, [disabled_successor])
+            continue
+        branch = direct_branch(word, pc)
+        if branch:
+            if branch["kind"] == "bl":
+                block(state, "direct call requires a separately verified callee and return contract")
+            elif branch["kind"] == "b":
+                enqueue(state, [branch["target"]])
+            else:
+                enqueue(state, [branch["target"], pc + 4])
+            continue
+        if transition:
+            # TCHANGE's normal flow is known; its availability/traps are not
+            # waived. Reaching it already makes the hazard-free result false.
+            enqueue(state, [pc + 4])
+            continue
+        decoded = next(decoder.disasm(struct.pack("<I", word), pc, count=1), None)
+        if decoded is None or decoded.size != 4:
+            block(state, "unknown instruction; fallthrough is not assumed")
+            continue
+        groups = set(decoded.groups)
+        if (groups & {CS_GRP_INT, CS_GRP_IRET}
+                or decoded.mnemonic in {"brk", "hlt", "udf", "eret", "eretaa", "eretab", "drps"}
+                or decoded.mnemonic.startswith("dcps")):
+            block(state, "trap or exception control flow is outside the local model")
+        elif groups & {CS_GRP_CALL, CS_GRP_JUMP}:
+            block(state, "indirect or unmodeled control transfer")
+        elif CS_GRP_RET in groups:
+            if word in (0xD65F03C0, 0xD65F0BFF, 0xD65F0FFF):
+                returns.add(pc)
+            else:
+                block(state, "nonstandard return register requires an indirect-target contract")
+        else:
+            enqueue(state, [pc + 4])
+
+    result["visited_addresses"] = [hex(pc) for pc in sorted(visited)]
+    result["normal_return_sites"] = [hex(pc) for pc in sorted(returns)]
+    result["reachable_tracked_hazards"] = [hazards[pc] for pc in sorted(hazards)]
+    result["normal_control_flow_closed"] = not result["blockers"]
+    result["conditional_region_without_tracked_hazards"] = not result["blockers"] and not hazards
+    result["status"] = ("reachable_tracked_hazard" if hazards else "incomplete" if result["blockers"]
+                        else "closed_under_initial_branch_assumption")
+    return result
+
+
+def collect_local_gate_analyses(data: bytes, image) -> list[dict]:
+    """Run only the fixed source's four selected, explicitly conditional scopes."""
+    return [analyze_local_gate(data, image, **scope) for scope in LOCAL_GATE_SCOPES]
+
+
 def audit_bytes(data: bytes, *, apple_vector: list[str] | None = None, include_disassembly: bool = False) -> dict:
     digest = hashlib.sha256(data).hexdigest()
     if len(data) != SOURCE_BYTES or digest != SOURCE_SHA256:
@@ -205,6 +363,7 @@ def audit_bytes(data: bytes, *, apple_vector: list[str] | None = None, include_d
                          if row["kind"] in ("b", "bl") and int(row["target"], 16) in (0x3CB2C, 0x21264)]
     selected_registers = [row for row in inventory["system_registers"]
                           if row["system_register"] in TRACKED_REGISTERS]
+    local_gates = collect_local_gate_analyses(data, image)
     windows = collect_disassembly_windows(data, image, enabled=include_disassembly)
     return {
         "schema": "route-a-tpro-audit-v1",
@@ -220,6 +379,7 @@ def audit_bytes(data: bytes, *, apple_vector: list[str] | None = None, include_d
         "literal_references_complete": False,
         "external_direct_edges_into_inspection_ranges": incoming,
         "direct_protected_stack_calls": constructor_calls,
+        "local_gate_analyses": local_gates,
         "inspection_windows": windows,
         "supplied_apple_vector_check": None if apple_vector is None else check_apple_vector(apple_vector),
         "required_absent_apple_keys": list(FEATURE_KEYS),
@@ -227,6 +387,7 @@ def audit_bytes(data: bytes, *, apple_vector: list[str] | None = None, include_d
             "Candidate census and direct edges are not a CFG or feature-gate dominance proof.",
             "ADR and adjacent ADRP+ADD references do not cover GOT, data pointers or indirect materialization.",
             "An omitted key in a supplied vector does not prove that startup never inserts it later.",
+            "Local gate checks assume only the first branch outcome; they do not prove predicate dataflow, predecessors, callees or whole-function dispatch.",
             "Commpage values, early startup, indirect callbacks, shared-cache dyld and loaded libraries remain separate obligations.",
             "No input bytes are changed; TCHANGE and Apple-specific register accesses are not emulated."
         ],
