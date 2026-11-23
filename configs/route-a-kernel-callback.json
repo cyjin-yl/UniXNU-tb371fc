@@ -1,0 +1,87 @@
+{
+  "schema_version": 1,
+  "scope": "arm64-platform-sleep-cpu-replacement",
+  "unixnu_commit": "8542980d02b4d2cc5c32ee3542de1760b2562aac",
+  "xnu_commit": "ac9718fb1af618d5ce8678d0dc6e8a58f252216f",
+  "baseline": {
+    "build_report_path": ".route-a/build-report.json",
+    "build_report_sha256": "34c40f71b43000dff0cc39b97264fc93ef1fd3b3027735c4a710817863b71044",
+    "kernel_path": "build/xnu/ios-obj/DEVELOPMENT_ARM64_BCM2837/mach.development.bcm2837.unstripped",
+    "kernel_sha256": "a58cdeedb9b7a4c152867c3487f28658a3799b0158f5046bbad6d2d58e741469",
+    "kernel_size": 21905888,
+    "recipe_path": "build/xnu/ios-obj/DEVELOPMENT_ARM64_BCM2837/osfmk/DEVELOPMENT/cpu.o.json",
+    "recipe_sha256": "bfd7ad809f8b5704f8815a4f9214cba8de8a58c949825a1d8a0bf48fb22a0002",
+    "recipe_source": ".cache/xnu-work/osfmk/arm64/cpu.c",
+    "recipe_source_sha256": "6ea14e16fab1d5a16cf3483e630863b830e07190db35d1180850f29a27d9f968",
+    "recipe_source_size": 38492,
+    "original_object_path": "build/xnu/ios-obj/DEVELOPMENT_ARM64_BCM2837/osfmk/DEVELOPMENT/cpu.o",
+    "original_object_sha256": "25b913d235ed38f7d4e1910d54d79eaebdbc83003c501939822e288246ed12e4",
+    "original_object_size": 118200,
+    "compiler_sha256": "85d220e32bd83d75de788c8beab0bea646a4684e1112f7c06266ca71e651bb04"
+  },
+  "patch": {
+    "path": "patches/route-a-kernel-sleep-callback-12377.patch",
+    "sha256": "e241b720a828d307daba0cd57fc956515641a19867e723a58d54295a98fdb760",
+    "selected_diff_sha256": "4590124079b802ebf8f67746cff2b5b7de3c73eeef7495299a2828c8f12c28e2",
+    "result_source_sha256": "7b8eb68b50971168a7bc3d8ec05b8c76dbc9ee0b77e5f280b02d0c34a8c89bfc",
+    "result_source_size": 39238
+  },
+  "provenance": {
+    "repository": "https://github.com/UniXNU/UniXNU-sheng",
+    "commit": "c8f92b208068eeaa4cd2b0f592671f04ee70076e",
+    "path": "patches/xnu-12377/sheng-platform-sleep.patch",
+    "git_blob": "8517a5278e7fa5446a569aa111344b0c40140ce5",
+    "sha256": "fa70fe3346ab66f5c2a28ce1adfcd41ee770cb165a7080dc6fdf4541550cd033",
+    "url": "https://github.com/UniXNU/UniXNU-sheng/blob/c8f92b208068eeaa4cd2b0f592671f04ee70076e/patches/xnu-12377/sheng-platform-sleep.patch",
+    "selected_hunks": [
+      "cpu.c:hook-definition",
+      "cpu.c:boot-cpu-dispatch-and-resume",
+      "cpu.c:secondary-cpu-dispatch"
+    ],
+    "whole_upstream_patch_applied": false,
+    "deferred_files": [
+      "osfmk/arm/cpu_common.c",
+      "iokit/Kernel/IOPMrootDomain.cpp"
+    ],
+    "license": {
+      "spdx": "BSD-2-Clause-Patent",
+      "path": "LICENSE",
+      "git_blob": "f63d2a6e4c80c3bf8d44b047458468289927593d",
+      "sha256": "5b1d3d911103cb0f41641ec0964c5ac1f7e229f57aa072b6ac38bae913a1307b",
+      "local_copy": "LICENSES/BSD-2-Clause-Patent.txt",
+      "url": "https://github.com/UniXNU/UniXNU-sheng/blob/c8f92b208068eeaa4cd2b0f592671f04ee70076e/LICENSE",
+      "copyright": "Copyright (c) 2026, UniXNU contributors. All rights reserved."
+    },
+    "modified_xnu_file_license": "Original cpu.c Apple APSL / OSReference notices remain unchanged; this selection does not relicense XNU."
+  },
+  "support_files": [
+    {
+      "path": "scripts/build_route_a_platform.py",
+      "sha256": "3593172a4cf9695e1cc0efd4d110e65af7ca293a91e276bab6df96b86788009f"
+    },
+    {
+      "path": "scripts/prepare_route_a_toolchain.py",
+      "sha256": "9680894acc78dbbdf2e990860a3f4506742ae5f4e945d9fc84a606618ddde275"
+    }
+  ],
+  "target": {
+    "architecture": "arm64",
+    "cpu": "generic",
+    "platform": 2,
+    "minimum_os": "27.0",
+    "macho_subtype": 0
+  },
+  "warning_policy": "Preserve every actual C recipe warning argument, including its order and duplicates. The original recipe has no -Werror; no warning option is added or removed.",
+  "evidence_decoder": {
+    "name": "capstone",
+    "version": "5.0.6",
+    "scope": "bounded generated call sequences inside ml_arm_sleep; no full CFG, ISA or runtime reachability proof"
+  },
+  "runtime_qualification": {
+    "platform_sleep_bootarg_enabled": false,
+    "sleep_resume_verified": false,
+    "complete_sleep_patch_applied": false,
+    "board_wake_sources_verified": false,
+    "os_boot_verified": false
+  }
+}
