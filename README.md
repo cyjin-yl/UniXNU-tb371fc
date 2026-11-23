@@ -1,16 +1,50 @@
 # UniXNU-tb371fc
 
-联想小新 Pad Pro 12.7（2023，**TB371FC / Snapdragon 870 / Adreno 650**）的 UniXNU 设备适配源码。
+联想小新 Pad Pro 12.7（2023，**TB371FC / Snapdragon 870 / Adreno 650**）的 UniXNU 设备适配与 27 代系统原生执行实验。
 
-## 本分支：27 代系统的原生执行路线 A
+开发仓库：[cyjin-yl/UniXNU-tb371fc](https://github.com/cyjin-yl/UniXNU-tb371fc)。`main` 保存已合并的开发成果；`route-a/arm64e-27` 用于路线 A 集成。设备移植原始来源为 [xiuyityer/UniXNU-tb371fc](https://github.com/xiuyityer/UniXNU-tb371fc)，来源和许可证持续保留。
 
-本分支以 **离线 arm64e → arm64 转换、CPU 原生执行**为方向，先验证 iPadOS 27，再评估 macOS 27。转换规则、Mach-O 检查、共享缓存 proof 检查及原生测试已落地。2026-11-23 在 TB371FC 的 Android 环境中完成 **23/23 组原生正确性测试**，共 46 次基准／转换函数执行；这只验证合成指令序列，**尚未启动 iPadOS 27 或 macOS 27**。
+## 当前目标与进度
 
-真实 iPadOS 27.0.1 的 `launchd` / `dyld` 已分别完成 **2,409 / 5,385 处**离线指令改写，**150 / 347 个**签名代码页独立复核通过，并从原始 trust cache 取得匹配条目属性。pager 补丁也已验证应用和关键 C 函数。`dyld` 仍保留 236 条需要新 Arm 扩展的指令，正在核验非 TPRO 路径；上述结果尚未验证 Darwin 进程或整机启动。
+采用 **离线 arm64e → 普通 arm64 转换、CPU 原生执行**的路线 A，先推进 **iPadOS 27.0.1 / 24A446**，再验证 macOS 27。转换采用普通指针 ABI，不保留 PAC 认证；加载器、内核 pager 和指针生产者必须遵守同一约定。
 
-入口：[路线 A 实现与验证](docs/ROUTE_A.md)、[内核补丁](docs/ROUTE_A_PLAIN_AUTH_PATCH.md)、[内核与加载器缺口](docs/ROUTE_A_KERNEL_GAPS.md)、[测试代码](scripts/check_route_a.py)。转换采用普通指针 ABI，不保留 PAC 认证；完整运行还需要匹配的 dyld、内核 pager、信任目录及驱动。
+**当前没有启动 iPadOS 27 或 macOS 27。** 已完成的首轮结果如下；完整证据与适用范围见 [证据索引](docs/evidence/README.md)。
 
-以下 V135 状态来自上游 [xiuyityer/UniXNU-tb371fc](https://github.com/xiuyityer/UniXNU-tb371fc) 的既有记录，不表示本分支已经在当前测试平板上复现。
+| 已完成工作 | 可核验结果 | 证明范围 |
+| --- | --- | --- |
+| 平板原生正确性测试 | TB371FC 上 23/23 组，46 次独立函数执行 | Android 环境的合成 AArch64 函数 |
+| 真实 27.0.1 `launchd` 改写 | 2,409 处；150 个签名代码页通过独立校验 | 离线单文件暂存产物 |
+| 真实 27.0.1 `dyld` 改写 | 5,385 处；347 个签名代码页通过独立校验 | 仍保留 236 条 FEAT_S1POE2 指令；非 TPRO 路径待完整验证 |
+| 普通指针 pager 补丁 | v3/v5/分块 v5、dyld pager 和错误返回传播 | 固定源码应用／反向恢复；提取 C 函数验证 |
+| 首轮主机回归检查 | 120 项通过，其中 9 项提取真实 pager C 的测试；0 跳过 | 工具、格式、改写与局部 C 行为 |
+| 独立汇编器复核 | 54/54 原始编码，45/45 替换编码 | 编码与基础 `armv8-a` 输出核对 |
+
+完整共享缓存、普通 arm64 内核构建、Darwin 进程启动及 27 的硬件驱动仍在集成。macOS 27 当前只有目标配置记录，没有对应用户空间实测。最终验收包括 GPU、显示与刷新率、触控笔、键盘、网络、音频、相机、USB、存储、充电与休眠唤醒；进入桌面是中间里程碑。
+
+## 继续开发的入口
+
+| 入口 | 内容 |
+| --- | --- |
+| [开发指南](DEVELOPMENT.md) | 克隆、依赖、包含真实 pager C 的完整检查、输入输出约定 |
+| [路线图与验收表](ROADMAP.md) | 进行中的任务、依赖、完成条件和整机硬件矩阵 |
+| [路线 A 实现](docs/ROUTE_A.md) | 转换规则、严格检查、真实 27 输入结果和使用方法 |
+| [证据索引](docs/evidence/README.md) | 来源、测试报告、未证明范围与 CI |
+| [普通指针内核补丁](docs/ROUTE_A_PLAIN_AUTH_PATCH.md) | 固定 XNU 基线、补丁与提取 C 测试 |
+| [内核与加载器缺口](docs/ROUTE_A_KERNEL_GAPS.md) | XNU、27 ABI、页大小、信任目录与驱动集成 |
+| [输入提取方法](docs/ROUTE_A_EXTRACTION.md) | 官方镜像定位、分段读取与 APFS type 4 支持 |
+
+```sh
+git clone https://github.com/cyjin-yl/UniXNU-tb371fc.git
+cd UniXNU-tb371fc
+python3 scripts/check_repository.py
+python3 scripts/check_catalog.py
+```
+
+以上两项检查核验仓库源码与设备目录。完整开发验证请继续执行 [DEVELOPMENT.md](DEVELOPMENT.md) 中的步骤；只跑源码检查不等于执行回归测试。
+
+## 上游历史记录
+
+下文的 iPadOS 17 / V135 结果来自上游既有记录，用于设备移植参考。它们没有在当前 27 路线中重新验收。
 
 ## 上游 iPadOS 17.7.11 基线
 
@@ -18,7 +52,7 @@
 
 仓库现已包含 V135 内核定点派生、原生 macOS 固件构建和 Android boot 镜像打包入口。完整 XNU 源码重编译仍未接通；V135 保留已验证的 21H461 内核父镜像，并只对一个显示时序状态查询作等长 ARM64 指令替换。干净固件重编译已完成；用留存的 V135 固件快速打包可逐字节复现实机镜像。详见[构建说明](docs/BUILDING.md)及[V135 恢复记录](docs/V135-RESUME.md)。
 
-## 设备与支持状态
+## 上游 iPadOS 17 / V135 支持状态
 
 | 项目 | 当前结果 |
 | --- | --- |
@@ -58,14 +92,16 @@
 
 详见 [官网收录说明](docs/CATALOG.md) 和 [公开验证摘要](docs/VALIDATION.md)。
 
-## 从哪里开始
+## 复现上游 V135 历史基线
 
-1. 阅读 [实机状态与里程碑](docs/STATUS.md)。
+以下步骤只针对上游 iPadOS 17 / V135；27 路线请从 [开发指南](DEVELOPMENT.md) 开始。
+
+1. 阅读 [上游实机状态与里程碑](docs/STATUS.md)。
 2. 查看 [上游来源与许可证](docs/UPSTREAM.md)。
 3. 克隆并检查公开源码（只读源码与格式检查）：
 
    ```sh
-   git clone https://github.com/xiuyityer/UniXNU-tb371fc.git
+   git clone https://github.com/cyjin-yl/UniXNU-tb371fc.git
    cd UniXNU-tb371fc
    python3 scripts/check_repository.py
    ```

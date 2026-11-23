@@ -2,7 +2,7 @@
 
 更新：2026-11-23。
 
-本轮合并验证为 **120 项测试全部通过，包含 9 项提取真实 pager C 函数的主机测试，没有跳过项**；原始 229 份源码／许可证摘要及设备目录检查也通过。完整口径见 [验证汇总](evidence/route-a-validation-20261123.json)。
+首轮成果（提交 `eb2ccfa`）的合并验证为 **120 项测试全部通过，包含 9 项提取真实 pager C 函数的主机测试，没有跳过项**；原始 229 份源码／许可证摘要及设备目录检查也通过。完整口径见 [验证汇总](evidence/route-a-validation-20261123.json)。
 
 目标设备是 Lenovo TB371FC、Snapdragon 870、Adreno 650。采用离线转换 arm64e 程序、尽量保留等长 AArch64 指令、让 CPU 直接执行的路线。第一阶段选用 iPadOS 27；macOS 27 保留为后续目标，两者的用户空间、内核接口和设备服务需要分别验证。
 
@@ -100,6 +100,8 @@ Mach-O 解析器检查命令、段、节、文件和虚拟地址边界；只让�
 
 ## 复现开发验证
 
+完整、包含真实 pager C 的检查步骤见 [开发指南](../DEVELOPMENT.md)。以下是工具使用示例；没有设置已验证的 `ROUTE_A_XNU_PREPARED_DIR` 时，C 测试会跳过。
+
 Python 3.11+、NumPy 和 Capstone 是完整检查入口的依赖；遇到 Capstone 无法识别的指令时，上游 CFG 工具还会调用 `llvm-mc`。在约定的开发容器中运行：
 
 ```sh
@@ -166,7 +168,9 @@ python3 scripts/route_a_native_probe.py --run --timeout 2 \
 
 ## 接下来的集成顺序
 
-1. 取得真实 27 的 `launchd`、`dyld`、共享缓存及对应信任清单，保留镜像和提取工具来源；审计当前转换规则的实际覆盖。
+持续更新的任务和验收条件见 [ROADMAP.md](../ROADMAP.md)。
+
+1. 已取得并完成真实 27 的 `launchd`、`dyld` 及对应信任条目处理；继续取得完整共享缓存集合，保留镜像和提取工具来源，审计整包覆盖。
 2. 建立完整共享缓存 proof，处理实际遇到的不可等长形式，并验证非 PAuth 的 Cortex-A77 ISA 要求及 CPU feature dispatch。
 3. 对齐 XNU、dyld fixups、共享区和 dyld pager、4K／16K 页面处理以及代码签名／信任目录，让普通指针约定覆盖所有生产者和消费者。
 4. 在可复现、可恢复的 TB371FC 启动链上取得内核 → `launchd` → 图形用户空间证据，再验证 Adreno 650 的 Metal 前端、显示和触摸。
