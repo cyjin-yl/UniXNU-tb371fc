@@ -20,9 +20,9 @@
 
 ### 保留 PAN 的显式上下文重基
 
-真实完整 source preparation 已暴露一个顺序依赖：上游 `native-arm-pan.patch` 的尾部 context 引用了被排除的 PAC header 注释。该补丁自身的五行新增代码仍需保留，因此使用 [route-a-native-arm-pan-12377.patch](../patches/route-a-native-arm-pan-12377.patch) 重基到普通 arm64 header 的 `ASSEMBLER` guard。这个本地补丁只改变 context，不删除或修改 PAN 功能。
+真实完整 source preparation 已暴露一个顺序依赖：上游 `native-arm-pan.patch` 的尾部 context 引用了被排除的 PAC header 注释。该补丁自身的五行新增代码仍需保留，因此使用 [route-a-native-arm-pan-12377.patch](../patches/route-a-native-arm-pan-12377.patch) 重基到普通 arm64 header 的 `ASSEMBLER` guard，并保留此前 `no-apple-cpu-counters.patch` 已插入的 CPMU 注释和定义。这个本地补丁只改变 context，不删除或修改 PAN 功能。
 
-配置显式绑定原始 patch SHA-256 `9d171dd00a8ac07c0ca6374258f4ee6ce6d02667abd0117415585d616b0e08e8` 和本地补丁 SHA-256 `644e906823b269868c8dcbe05fbc02f3d7009183ec894c73362e508dd5ae141f`。准备器同时验证两份 bytes 的摘要、目标文件/hunk identity 与全部新增/删除行一致；重新计算 digest 不能绕过功能差异检查。报告为替换项保存原始路径/摘要、本地路径/摘要与原因，实际应用仍使用严格 `git apply --check`，不启用模糊匹配或跳过失败 hunk。
+配置显式绑定原始 patch SHA-256 `9d171dd00a8ac07c0ca6374258f4ee6ce6d02667abd0117415585d616b0e08e8` 和本地补丁 SHA-256 `902608946c2ba69692ceb08d234b041d2711fe65c6e36d6e1d4af596b4e90ca6`。准备器同时验证两份 bytes 的摘要、目标文件/hunk identity 与全部新增/删除行一致；重新计算 digest 不能绕过功能差异检查。报告为替换项保存原始路径/摘要、本地路径/摘要与原因，实际应用仍使用严格 `git apply --check`，不启用模糊匹配或跳过失败 hunk。
 
 排除项是 `native-pac-keys.patch` 与 `native-pac-arm64-user-jop.patch`。准备器要求这两个名字在原始固定 series 中确实存在，拒绝旧版 `patches/xnu/`、重复项、缺失必要 patch、路径逃逸，以及新加入 `HAS_NATIVE_PAC` / `HAS_APPLE_PAC` 定义的 patch。PAN 也列入 required patch，不能通过丢弃它来消除上下文冲突。**排除两个 patch 只证明选择策略；其余内核源码、汇编、外部 archives 和原厂 kext 仍需完整 ISA 审计。**
 

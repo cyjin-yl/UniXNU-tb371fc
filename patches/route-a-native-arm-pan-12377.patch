@@ -16,4 +16,4 @@ diff --git a/pexpert/pexpert/arm64/BCM2837.h b/pexpert/pexpert/arm64/BCM2837.h
 +
  #ifndef ASSEMBLER
  #define PLATFORM_PANIC_LOG_DISABLED
- #endif /* ! ASSEMBLER */
+ /* Apple CPMU registers are implementation defined; counters stay off and
