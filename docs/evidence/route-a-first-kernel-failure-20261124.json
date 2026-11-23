@@ -1,0 +1,106 @@
+{
+  "builder": {
+    "artifacts": [],
+    "builder_completed": false,
+    "compiled_object_file_count": 716,
+    "compiler": {
+      "path": "WORK/toolchain/llvm/bin/clang",
+      "realpath": "WORK/toolchain/llvm/bin/clang-24",
+      "sha256": "85d220e32bd83d75de788c8beab0bea646a4684e1112f7c06266ca71e651bb04",
+      "version": "clang version 24.0.0git (WORK/toolchain-work/llvm-project/clang 58c46bae21181fb4240cf964461bea738d96d50e)\nTarget: unknown\nThread model: posix\nInstalledDir: WORK/toolchain/llvm/bin\nBuild config: +assertions"
+    },
+    "complete_board_archive_closure": false,
+    "driver_sha256": "e52b53d0dad472d97a7833e21cb183fdae6ccb9f33d20ed26aa1978e4eaa3164",
+    "environment": {
+      "CCC_OVERRIDE_OPTIONS": "# +-Wno-missing-designated-field-initializers +-Wno-unused-but-set-global",
+      "CLT_PREFIX": "WORK/toolchain/CommandLineTools/usr",
+      "CROSS_CLANG": "WORK/toolchain/llvm/bin/clang",
+      "CROSS_EXTRA_FLAGS": "-mllvm -disable-atexit-based-global-dtor-lowering",
+      "JOBS": "2",
+      "LC_ALL": "C",
+      "PATH": "WORK/toolchain/CommandLineTools/usr/bin:WORK/toolchain/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
+      "UNIXNU_AVAILABILITYVERSIONS_COMMIT": "149b1777f3e8c2133042d8e188f72e3adf6a7110",
+      "UNIXNU_AVAILABILITYVERSIONS_TAG": "AvailabilityVersions-157.2",
+      "UNIXNU_DRIVERKIT_TAG": "xnu-12377.121.6",
+      "UNIXNU_IOS_VERSION": "27.0",
+      "UNIXNU_LIBDISPATCH_COMMIT": "701f4d1a24ae9c6863901bbbb22624b7d1b87321",
+      "UNIXNU_LIBDISPATCH_TAG": "libdispatch-1542.100.32",
+      "UNIXNU_LIBPLATFORM_COMMIT": "b7ed7cf5cf7dd12b98672435db2225a860f199d8",
+      "UNIXNU_LIBPLATFORM_TAG": "libplatform-375.120.2",
+      "UNIXNU_PATCH_LIST": "WORK/kernel-build/.route-a/selected-patches.txt",
+      "UNIXNU_PLATFORM_PATH": "WORK/kernel-build/.cache/fakeroot/Platforms/iPhoneOS.platform",
+      "UNIXNU_SDKROOT": "WORK/kernel-build/.cache/fakeroot",
+      "UNIXNU_SDK_BUILD": "24A446",
+      "UNIXNU_SDK_VERSION": "27.0",
+      "UNIXNU_TOOLCHAIN": "WORK/toolchain",
+      "UNIXNU_TRUSTCACHE_TAG": "xnu-8796.101.5",
+      "UNIXNU_XNU_ARCH": "arm64",
+      "UNIXNU_XNU_COMMIT": "ac9718fb1af618d5ce8678d0dc6e8a58f252216f",
+      "UNIXNU_XNU_DARWIN": "25.5.0",
+      "UNIXNU_XNU_TAG": "xnu-12377.121.6",
+      "UNIXNU_XNU_TARGET": "ios",
+      "UNIXNU_XNU_VERSION": "12377.121.6",
+      "XCTOOLCHAIN_PREFIX": "WORK/toolchain/XcodeDefault.xctoolchain/usr",
+      "XNU_BOOTSTRAP": "1",
+      "XNU_BOOT_PROGRESS": "0",
+      "XNU_BUILD_TARGET": "build",
+      "XNU_TOOLCHAIN_BIN": "WORK/toolchain/CommandLineTools/usr/bin WORK/toolchain/XcodeDefault.xctoolchain/usr/bin",
+      "ZERO_AR_DATE": "1"
+    },
+    "exit_code": 2,
+    "kernel_compiled": false,
+    "kernel_linked": false,
+    "link_filelist_count": 0,
+    "ordinary_arm64_candidate_headers_verified": false,
+    "os_boot_verified": false,
+    "schema_version": 1,
+    "scope": "generic-architecture-first-pass",
+    "sdk_headers_marker_present": true,
+    "status": "builder_failed",
+    "unixnu_commit": "8542980d02b4d2cc5c32ee3542de1760b2562aac",
+    "whole_profile_applied": false,
+    "xnu_commit": "ac9718fb1af618d5ce8678d0dc6e8a58f252216f"
+  },
+  "diagnostics": {
+    "build_log_lines": 950343,
+    "build_log_sha256": "44dd616360b8dfb960ed6c1d6c4197208704f4e8b91aaa4876871359ac007c4c",
+    "cause": "unixnu_fileset_unmapped unconditionally calls __builtin_ptrauth_strip for an ordinary ARM64 target.",
+    "compiler_error_count": 1,
+    "first_error": {
+      "log_line": 538726,
+      "message": "this target does not support pointer authentication",
+      "source": "osfmk/kern/debug.c",
+      "source_column": 6,
+      "source_line": 2590
+    },
+    "source_sha256": "fd749f59d773dac9cb95f8183ff9dece13f2ae2888f5da6f2efd9197acc9e5b0",
+    "upstream_introducing_patch": "https://github.com/UniXNU/UniXNU/blob/8542980d02b4d2cc5c32ee3542de1760b2562aac/patches/xnu-12377/fileset-unmapped-call.patch"
+  },
+  "finished_at": "2026-11-23T23:02:14.045122+08:00",
+  "kernel_compiled": false,
+  "kernel_linked": false,
+  "normalization": "Known workspace prefixes are replaced with WORK. Unrelated warning tail is omitted; complete original log and reports are retained by their digests.",
+  "original_reports": {
+    "first-build-report.json": {
+      "sha256": "bb26e0bc18f66e76a6d4942ec15f0deef5b71bb2d2c580973ca4934df1dd2ab2"
+    },
+    "followthrough-status.json": {
+      "sha256": "eb95c3e532bfa098ba5492ad3f6343861eb65bba666d75a483f6800f19e0699d"
+    },
+    "stage-report.json": {
+      "sha256": "7dd0798e1138a026c502e69f0f9343d9bbf625e4fd90706ec21fd1cf5a98249d"
+    }
+  },
+  "os_boot_verified": false,
+  "prepared_source_inventory_sha256": "16aed427ee21f60f7e8697dbd21f1fce75db653749e677a787c4844c44a438b8",
+  "record_date": "2026-11-24",
+  "record_timezone": "Asia/Shanghai",
+  "repair": {
+    "manifest": "upstream/route-a-build-fixes.json",
+    "patch": "patches/route-a-fileset-unmapped-ptrauth.patch",
+    "separate_cpu_requirement": "Explicitly select generic CPU in the actual build environment, then verify return-address codegen through the installed compiler shim."
+  },
+  "schema_version": 1,
+  "scope": "First actual upstream XNU builder failure; no full kernel artifact was produced",
+  "staged_source_inventory_sha256": "93f9ac5f67205a884ff11dd6c1d949bd3deac6b0b2fdc6776bd592ef006a240a"
+}

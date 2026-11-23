@@ -15,12 +15,15 @@
 | 平板原生正确性测试 | TB371FC 上 23/23 组，46 次独立函数执行 | Android 环境的合成 AArch64 函数 |
 | 真实 27.0.1 `launchd` 改写 | 2,409 处；150 个签名代码页通过独立校验 | 离线单文件暂存产物 |
 | 真实 27.0.1 `dyld` 改写 | 5,385 处；347 个签名代码页通过独立校验 | 仍保留 236 条 FEAT_S1POE2 指令；非 TPRO 路径待完整验证 |
-| 普通 arm64 / XNU 12377 源码准备 | **71 项所选补丁**应用成功，6,119 个源码条目有摘要；配置探针编译通过 | 通用源码子集，1 项板级进度／看门狗补丁明确延后；完整内核未编译 |
+| 普通 arm64 / XNU 12377 源码准备 | **71 项所选补丁**应用成功，6,119 个源码条目有摘要；配置探针编译通过 | 通用源码子集，1 项板级进度／看门狗补丁明确延后；完整内核尚未构建成功 |
 | 首次内核构建输入 | 7 份固定公开源码；21 个已适配 header 保留，补齐 5 个 TrustCache header | CI 与开发容器的 staged source 摘要一致；[实际报告](docs/evidence/route-a-kernel-staging-20261123.json) |
+| 定制 Clang 与组合工具链 | 固定 Clang 24 构建完成，**19 个类型语义断言通过**；host-tools finalization 完成 | [实际报告](docs/evidence/route-a-toolchain-success-20261124.json)；完整指令集资格单独验证 |
+| 实际生产 compiler wrapper | **3 次真实编译、7 项返回地址检查通过**；CPU 配置由真实构建环境提供 | [实际报告](docs/evidence/route-a-production-shim-20261124.json)；样本不含要求 PAuth 的指令，完整内核 ISA 待审计 |
+| 首轮真实内核编译 | 生成 **716 个目标文件**；定位并修复 fileset panic 的无条件 PAuth builtin | [失败证据](docs/evidence/route-a-first-kernel-failure-20261124.json)；完整 kernel 尚未编译／链接成功 |
 | 主机工具实际验收 | 普通 ARM64 样本链接、MIG 接口生成、LZFSE 往返 **3/3 组通过** | 自写样本；完整 XNU、SDK 和定制 Clang 资格单独验证 |
 | 真实 dyld 局部 TPRO 路径 | 4 个分支均匹配；2 个条件区域闭合，2 个仍有调用／异常／间接转移缺口 | 固定原始 dyld；全部 236 处与早期运行时路径仍未证明 |
 | 普通指针 pager 补丁 | v3/v5/分块 v5、dyld pager 和错误返回传播 | 固定源码应用／反向恢复；提取 C 函数验证 |
-| 最新主机回归检查 | **191 项通过，0 跳过**，包含 9 项提取真实 pager C 的测试 | 33 项 TPRO、9 项工具链、6 项构建入口等检查；[本轮 CI](https://github.com/cyjin-yl/UniXNU-tb371fc/actions/runs/45181619136) |
+| 最新主机回归检查 | **210 项通过，0 跳过**，包含 9 项提取真实 pager C 的测试 | 新增 fileset、构建修复与 CPU 约定检查；[本轮 CI](https://github.com/cyjin-yl/UniXNU-tb371fc/actions/runs/45221437252) |
 | 独立汇编器复核 | 54/54 原始编码，45/45 替换编码 | 编码与基础 `armv8-a` 输出核对 |
 
 完整共享缓存、普通 arm64 内核构建、Darwin 进程启动及 27 的硬件驱动仍在集成。macOS 27 当前只有目标配置记录，没有对应用户空间实测。最终验收包括 GPU、显示与刷新率、触控笔、键盘、网络、音频、相机、USB、存储、充电与休眠唤醒；进入桌面是中间里程碑。
@@ -39,6 +42,7 @@
 | [普通 arm64 内核准备](docs/ROUTE_A_KERNEL_BUILD.md) | XNU 12377 补丁顺序、干净源码树与编译器配置探针 |
 | [定制 Clang 与主机工具](docs/ROUTE_A_TOOLCHAIN.md) | 固定编译器、19 项语义断言、主机组件和实际验收 |
 | [第一次完整内核编译入口](docs/ROUTE_A_FIRST_KERNEL_BUILD.md) | 固定 source/header staging、真实 builder、失败与产物记录 |
+| [首个编译阻塞与 CPU 修复](docs/ROUTE_A_FILESET_PTRAUTH.md) | fileset panic 能力分支、实际返回地址 codegen 与生产 CPU 约定 |
 | [内核 TPRO 能力发布核对](docs/ROUTE_A_TPRO_KERNEL_PUBLICATION.md) | apple 向量、task security_config、commpage 与最终配置边界 |
 | [输入提取方法](docs/ROUTE_A_EXTRACTION.md) | 官方镜像定位、分段读取与 APFS type 4 支持 |
 
@@ -59,7 +63,7 @@ python3 scripts/check_catalog.py
 
 上游实机基线为 **V135，iPadOS 17.7.11（21H461）**。上游用户确认 V135 应用、设置、触摸和 GPU 正常；壁纸仍为黑屏，已停止该项实机调试。本项目仍在开发，不能作为日常使用系统。
 
-仓库现已包含 V135 内核定点派生、原生 macOS 固件构建和 Android boot 镜像打包入口。完整 XNU 源码重编译仍未接通；V135 保留已验证的 21H461 内核父镜像，并只对一个显示时序状态查询作等长 ARM64 指令替换。干净固件重编译已完成；用留存的 V135 固件快速打包可逐字节复现实机镜像。详见[构建说明](docs/BUILDING.md)及[V135 恢复记录](docs/V135-RESUME.md)。
+仓库现已包含 V135 内核定点派生、原生 macOS 固件构建和 Android boot 镜像打包入口。V135 的这条构建路径保留已验证的 21H461 内核父镜像，并只对一个显示时序状态查询作等长 ARM64 指令替换；27 路线的[完整源码构建](docs/ROUTE_A_FIRST_KERNEL_BUILD.md)另行验证。干净固件重编译已完成；用留存的 V135 固件快速打包可逐字节复现实机镜像。详见[构建说明](docs/BUILDING.md)及[V135 恢复记录](docs/V135-RESUME.md)。
 
 ## 上游 iPadOS 17 / V135 支持状态
 

@@ -1,0 +1,54 @@
+{
+  "conclusion": "success",
+  "kernel_compiled": false,
+  "kernel_linked": false,
+  "os_boot_verified": false,
+  "record_date": "2026-11-24",
+  "record_timezone": "Asia/Shanghai",
+  "regression": {
+    "failed": 0,
+    "includes_extracted_pager_tests": 9,
+    "includes_fileset_target_tests": 4,
+    "job_id": 137856444139,
+    "seconds": 32.743,
+    "skipped": 0,
+    "tests": 210
+  },
+  "schema_version": 1,
+  "scope": "Public CI tests and actual fixed-source staging only. The full XNU retry runs separately in the development container.",
+  "source_commit": "ce834a0e2e9d63803d920f39f30012e4759102cf",
+  "source_tree": "7938f1af4fd34452ec80a2fb304b7b7196ae8866",
+  "staging": {
+    "artifact": {
+      "download_digest_verified": true,
+      "id": 14841830886,
+      "name": "route-a-kernel-preparation",
+      "sha256": "76e700a82038afbaa65f1ab6e20ac7b8bc8eed7b4c879aa7903837df72b58b86",
+      "size_in_bytes": 939715
+    },
+    "job_id": 137856444803,
+    "original_report_sha256": "27875ec913caad4f8a034492eedd2d0c39196dfa0e371042456112c1db1c8bcd",
+    "summary": {
+      "build_fix_count": 1,
+      "build_fix_manifest_sha256": "7dd3a8703a929ad325b058f5161131da5aea14ffa5120f03830ced497af7d03d",
+      "complete_board_archive_closure": false,
+      "crypto_provider_selected": false,
+      "driver_sha256": "eca9f154be12cb71c82788826a937b45ddb454a71b5fe4ec356c8db340063441",
+      "error": null,
+      "full_upstream_profile_applied": false,
+      "header_record_count": 26,
+      "kernel_compiled": false,
+      "kernel_linked": false,
+      "os_boot_verified": false,
+      "pre_build_fix_source_inventory_sha256": "93f9ac5f67205a884ff11dd6c1d949bd3deac6b0b2fdc6776bd592ef006a240a",
+      "prepared_source_inventory_sha256": "16aed427ee21f60f7e8697dbd21f1fce75db653749e677a787c4844c44a438b8",
+      "source_count": 7,
+      "staged_source_inventory_sha256": "9a2f18aa42773260f52adeeeff20a5f0257fc4360858aa90a3871714f7b84008",
+      "status": "inputs_staged",
+      "unixnu_commit": "8542980d02b4d2cc5c32ee3542de1760b2562aac",
+      "xnu_commit": "ac9718fb1af618d5ce8678d0dc6e8a58f252216f"
+    }
+  },
+  "workflow_run": 45221437252,
+  "workflow_url": "https://github.com/cyjin-yl/UniXNU-tb371fc/actions/runs/45221437252"
+}

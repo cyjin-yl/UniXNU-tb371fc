@@ -14,6 +14,7 @@ import hashlib
 import json
 import os
 from pathlib import Path
+import re
 import shutil
 import struct
 import subprocess
@@ -202,6 +203,93 @@ def source_environment(work: Path) -> dict:
     return env
 
 
+def build_fix_plan(source_root: Path):
+    """Bind narrowly scoped build repairs to the unchanged prepared baseline."""
+    raw = (source_root / "upstream/route-a-build-fixes.json").read_bytes()
+    spec = json.loads(raw)
+    if (spec.get("schema_version") != 1 or spec.get("xnu_commit") != XNU_COMMIT or
+            spec.get("base_source_inventory_sha256") != SOURCE_INVENTORY_SHA256 or
+            not isinstance(spec.get("fixes"), list) or not spec["fixes"]):
+        raise BuildError("build-fix manifest does not match the prepared baseline")
+    records, payloads, identifiers = [], [], set()
+    for index, fix in enumerate(spec["fixes"], 1):
+        name = fix["id"]
+        if not re.fullmatch(r"[a-z0-9][a-z0-9-]*", name) or name in identifiers:
+            raise BuildError("build-fix identifiers must be unique simple names")
+        identifiers.add(name)
+        patch = safe_child(source_root, fix["patch"])
+        if patch.is_symlink() or not patch.is_file():
+            raise BuildError("build fix must be a regular patch file")
+        data = patch.read_bytes()
+        if digest(data) != fix["patch_sha256"]:
+            raise BuildError(f"build-fix patch digest changed: {name}")
+        files, paths = fix["files"], set()
+        if not isinstance(files, list) or not files:
+            raise BuildError("build fix must declare its modified files")
+        for item in files:
+            path = item["path"]
+            safe_child(source_root, path)
+            if path in paths or item["before_sha256"] == item["after_sha256"]:
+                raise BuildError("build-fix file declarations must be unique actual changes")
+            paths.add(path)
+            if any(not re.fullmatch(r"[0-9a-f]{64}", item[key])
+                   for key in ("before_sha256", "after_sha256")):
+                raise BuildError("invalid build-fix file digest")
+        records.append({"id": name, "source_patch": fix["patch"],
+                        "stored_patch": f"build-fixes/{index:03d}-{name}.patch",
+                        "patch_sha256": fix["patch_sha256"], "files": files})
+        payloads.append(data)
+    return raw, records, payloads
+
+
+def apply_build_fixes(tree: Path, metadata: Path, source_root: Path = ROOT) -> dict:
+    raw, records, payloads = build_fix_plan(source_root)
+    (metadata / "build-fixes").mkdir(exist_ok=False)
+    (metadata / "build-fixes/manifest.json").write_bytes(raw)
+    for record, data in zip(records, payloads):
+        before = {item["path"]: item for item in inventory(tree)}
+        paths = {item["path"] for item in record["files"]}
+        for item in record["files"]:
+            entry = before.get(item["path"])
+            if not entry or entry["kind"] != "file" or entry["sha256"] != item["before_sha256"]:
+                raise BuildError(f"build-fix input changed: {item['path']}")
+        patch = safe_child(metadata, record["stored_patch"])
+        patch.write_bytes(data)
+        numstat = command(["git", "-C", tree, "apply", "--numstat", "-z", patch]).stdout
+        touched = {entry.split(b"\t", 2)[2].decode() for entry in numstat.split(b"\0") if entry}
+        if touched != paths:
+            raise BuildError("patch changes files outside its build-fix declaration")
+        command(["git", "-C", tree, "apply", "--check", "--whitespace=error-all", patch])
+        command(["git", "-C", tree, "apply", "--whitespace=error-all", patch])
+        after = {item["path"]: item for item in inventory(tree)}
+        changed = {path for path in before.keys() | after.keys() if before.get(path) != after.get(path)}
+        if changed != paths:
+            raise BuildError("build fix changed an unexpected source inventory entry")
+        for item in record["files"]:
+            entry = after.get(item["path"])
+            if (not entry or entry["kind"] != "file" or entry["sha256"] != item["after_sha256"] or
+                    entry["mode"] != before[item["path"]]["mode"]):
+                raise BuildError(f"build-fix output does not match its declaration: {item['path']}")
+    return {"manifest_sha256": digest(raw), "applied": records}
+
+
+def verify_build_fixes(tree: Path, metadata: Path, receipt: dict, source_root: Path = ROOT):
+    raw, records, payloads = build_fix_plan(source_root)
+    if receipt != {"manifest_sha256": digest(raw), "applied": records}:
+        raise BuildError("staged build-fix receipt differs from the current fixed plan")
+    if (metadata / "build-fixes/manifest.json").read_bytes() != raw:
+        raise BuildError("saved build-fix manifest changed")
+    for record, data in zip(records, payloads):
+        if safe_child(metadata, record["stored_patch"]).read_bytes() != data:
+            raise BuildError("saved build-fix patch changed")
+    # Later fixes may intentionally update a file again; check its final digest.
+    final = {item["path"]: item["after_sha256"] for record in records for item in record["files"]}
+    for name, expected in final.items():
+        path = safe_child(tree, name)
+        if path.is_symlink() or toolchain.sha256_file(path) != expected:
+            raise BuildError(f"staged build-fix source changed: {name}")
+
+
 def stage_inputs(args):
     prepared = args.prepared_kernel.resolve()
     preparation = verify_prepared(prepared)
@@ -264,6 +352,10 @@ def stage_inputs(args):
         report["sources"].append(checkout(work / ".cache/linux/Libc",
             "https://github.com/apple-oss-distributions/Libc.git", LIBC_COMMIT, log,
             ("/include/", "/APPLE_LICENSE")))
+        toolchain.save_json(metadata / "pre-build-fix-source-inventory.json", inventory(xnu))
+        report["pre_build_fix_source_inventory_sha256"] = toolchain.sha256_file(
+            metadata / "pre-build-fix-source-inventory.json")
+        report["build_fixes"] = apply_build_fixes(xnu, metadata)
         toolchain.save_json(metadata / "staged-source-inventory.json", inventory(xnu))
         report["staged_source_inventory_sha256"] = toolchain.sha256_file(metadata / "staged-source-inventory.json")
         report["source_environment"] = source_environment(work)
@@ -303,6 +395,43 @@ def kernel_header(path: Path) -> dict:
             "full_instruction_set_audited": False}
 
 
+def verify_staged_sources(work: Path, report: dict):
+    metadata = work / ".route-a"
+    for name, key in (
+            ("source-inventory.json", "prepared_source_inventory_sha256"),
+            ("pre-build-fix-source-inventory.json", "pre_build_fix_source_inventory_sha256"),
+            ("staged-source-inventory.json", "staged_source_inventory_sha256")):
+        actual = toolchain.sha256_file(metadata / name)
+        if actual != report.get(key):
+            raise BuildError(f"staged inventory changed after its report: {name}")
+        if name == "source-inventory.json" and actual != SOURCE_INVENTORY_SHA256:
+            raise BuildError("staged original inventory differs from the 71-patch baseline")
+    if inventory(work / ".cache/xnu-work") != read_json(metadata / "staged-source-inventory.json"):
+        raise BuildError("staged XNU sources changed before the build")
+    verify_build_fixes(work / ".cache/xnu-work", metadata, report.get("build_fixes"))
+
+
+def build_diagnostics(log: Path, limit: int = 20) -> dict:
+    """Retain the actual error even when other make jobs emit a long warning tail."""
+    hasher, diagnostics, count = hashlib.sha256(), [], 0
+    location = re.compile(r"^.+:\d+(?::\d+)?: (?:fatal )?error: ")
+    driver = re.compile(r"^(?:clang(?:\+\+)?(?:-\d+)?|ld(?:64)?|ld\.lld): (?:fatal )?error: ")
+    with log.open("rb") as stream:
+        for number, raw in enumerate(stream, 1):
+            hasher.update(raw)
+            if b"error:" not in raw and not raw.startswith((b"Undefined symbols for architecture", b"ld: symbol(s) not found")):
+                continue
+            text = raw.decode("utf-8", "replace").rstrip("\r\n")
+            if not (location.match(text) or driver.match(text) or
+                    text.startswith(("Undefined symbols for architecture", "ld: symbol(s) not found"))):
+                continue
+            count += 1
+            if len(diagnostics) < limit:
+                diagnostics.append({"log_line": number, "diagnostic": text})
+    return {"build_log_sha256": hasher.hexdigest(), "error_diagnostic_count": count,
+            "first_error_diagnostics": diagnostics, "error_diagnostics_truncated": count > len(diagnostics)}
+
+
 def run_build(args):
     if sys.platform != "linux" or args.jobs < 1:
         raise BuildError("run requires Linux and a positive job limit")
@@ -313,8 +442,6 @@ def run_build(args):
         raise BuildError("source staging has not succeeded")
     if (work / "build").exists() or (metadata / "build-report.json").exists():
         raise BuildError("first-pass execution requires unused outputs; retain this attempt and stage a new work tree")
-    if inventory(work / ".cache/xnu-work") != read_json(metadata / "staged-source-inventory.json"):
-        raise BuildError("staged XNU sources changed before the build")
     if command(["git", "-C", work, "rev-parse", "HEAD"]).stdout.decode().strip() != UNIXNU_COMMIT:
         raise BuildError("UniXNU builder HEAD differs from the fixed commit")
     if command(["git", "-C", work, "status", "--porcelain", "-uno"]).stdout:
@@ -338,6 +465,7 @@ def run_build(args):
         # Recheck within the workspace lock; do not run two first passes.
         if (metadata / "build-report.json").exists():
             raise BuildError("this first-pass attempt has already started")
+        verify_staged_sources(work, report)
         identity, clang_state = read_json(toolwork / "identity.json"), read_json(toolwork / "state.json")
         host_state = read_json(toolwork / "host-tools-state.json")
         prefix = Path(identity["prefix"])
@@ -353,12 +481,28 @@ def run_build(args):
         env = build_environment(work, prefix, args.jobs)
         public_env = {key: value for key, value in env.items() if
                       key.startswith(("XNU_", "UNIXNU_", "CROSS_")) or
-                      key in ("PATH", "JOBS", "CLT_PREFIX", "XCTOOLCHAIN_PREFIX", "ZERO_AR_DATE", "LC_ALL", "CCC_OVERRIDE_OPTIONS")}
-        result = {"schema_version": 1, "status": "running", "scope": "generic-architecture-first-pass",
+                      key in ("PATH", "JOBS", "CLT_PREFIX", "XCTOOLCHAIN_PREFIX", "ZERO_AR_DATE", "LC_ALL", "CCC_OVERRIDE_OPTIONS", "DARWIN_TRIPLE")}
+        result = {"schema_version": 1, "status": "checking_cpu", "scope": "generic-architecture-first-pass",
                   "unixnu_commit": UNIXNU_COMMIT, "xnu_commit": XNU_COMMIT, "environment": public_env,
                   "driver_sha256": toolchain.sha256_file(Path(__file__)), "compiler": clang_state["verification"]["compiler"],
+                  "toolchain_driver_sha256": toolchain.sha256_file(Path(toolchain.__file__)),
+                  "build_fixes": report["build_fixes"],
                   "whole_profile_applied": False, "complete_board_archive_closure": False,
                   "kernel_compiled": False, "kernel_linked": False, "os_boot_verified": False}
+        toolchain.save_json(metadata / "build-report.json", result)
+        try:
+            # Exercise the installed production shim and environment. Neither
+            # the probe nor its argv supplies -mcpu/-march: the real CROSS flags
+            # must select the generic CPU instead of Darwin's Apple default.
+            result["cpu_verification"] = toolchain.verify_return_address_codegen(
+                str(prefix / "CommandLineTools/usr/bin/clang"), metadata / "cpu-verification",
+                target_flags=("-arch", "arm64", "-mkernel", "-mno-implicit-sme",
+                              "-momit-leaf-frame-pointer", "-fno-strict-aliasing"), env=env)
+        except (toolchain.ToolchainError, OSError, ValueError) as exc:
+            result.update(status="cpu_verification_failed", error=str(exc), builder_completed=False)
+            toolchain.save_json(metadata / "build-report.json", result)
+            raise
+        result["status"] = "running"
         toolchain.save_json(metadata / "build-report.json", result)
         log = metadata / "build.log"
         code = logged(["bash", "scripts/build-xnu-4k-baseline.sh"], log, cwd=work, env=env)
@@ -382,6 +526,7 @@ def run_build(args):
                       builder_completed=code == 0, compiled_object_file_count=len(objects),
                       link_filelist_count=len(filelists), artifacts=artifacts, log_tail=tail,
                       sdk_headers_marker_present=(work / ".cache/fakeroot/.xnu-12377.121.6-headers").exists())
+        result.update(build_diagnostics(log))
         candidate_headers = [item["ordinary_arm64_mh_execute"] for item in artifacts
                              if "ordinary_arm64_mh_execute" in item]
         result["ordinary_arm64_candidate_headers_verified"] = bool(candidate_headers) and all(candidate_headers)

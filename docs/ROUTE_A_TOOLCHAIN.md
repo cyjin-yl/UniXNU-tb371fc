@@ -94,7 +94,9 @@ python3 SOURCE/scripts/prepare_route_a_toolchain.py verify-clang \
 
 这会真正编译一个 C++17 freestanding 文件，执行 19 个 `static_assert`，覆盖 pointer/data、数组、union、usage semantics、padding、summary 位、type compatibility、void 和模板实例化。期望值直接根据上游 patch 的八字节 granule 编码设置；不是只检查 `__has_builtin` 或把编译成功的表达式当成语义正确。
 
-探针显式使用 `arm64-apple-ios27.0 -march=armv8-a`，拒绝 `__arm64e__` 或 `ptrauth_calls`，并检查真实输出为 Mach-O 64 位 `MH_OBJECT`、ARM64、subtype 0。保存 compiler identity、精确命令、源文件与对象摘要、退出码及有限 stderr。输出目录必须新建，失败不会覆盖旧证据。
+探针显式使用 `arm64-apple-ios27.0 -mcpu=generic -march=armv8-a`，拒绝 `__arm64e__` 或 `ptrauth_calls`，并检查真实输出为 Mach-O 64 位 `MH_OBJECT`、ARM64、subtype 0。保存 compiler identity、精确命令、源文件与对象摘要、退出码及有限 stderr。输出目录必须新建，失败不会覆盖旧证据。
+
+CPU 选择必须显式指定。实际定制 Clang 的普通 Darwin target 即使有 `-march=armv8-a`，仍可能保留默认 `apple-a12` CPU；它曾对真实返回地址 helper 生成 `XPACI`。因此当前验证另编译含 `__builtin_return_address(0)` 的小文件，核对 IR 的 `target-cpu=generic`、PAuth intrinsic、汇编和普通 ARM64 对象。`XPACLRI` 的 HINT #7 形式允许保留，要求 PAuth 的 `XPACI` 不允许。完整 builder 通过已安装的交叉 shim 再做一次检查，CPU 仅由实际 `CROSS_EXTRA_FLAGS` 提供。该小样本仍不替代最终 kernel/archive 的完整 ISA 审计。
 
 该探针能证明所测 compiler 语义与普通 arm64 code generation，不能证明 XNU 每个 translation unit 或外部 archive 都兼容 Snapdragon 870。所有工具链报告保留 `kernel_compiled=false`、`kernel_linked=false`、`os_boot_verified=false`。
 
@@ -123,6 +125,8 @@ python3 SOURCE/scripts/check_route_a_host_tools.py \
 [2026-11-23 21:29（北京时间）的实际执行快照](evidence/route-a-build-execution-20261123.json) 记录：host components 已完成，源码 staging 已完成；定制 Clang 仍在构建，完整 kernel builder 尚未开始。独立接续进程已经启动，等待旧 driver 的真实 `clang_verified` 状态和 19 项语义检查，随后依次执行固定新版 host-tools finalization 与首次 kernel builder。任一步失败都停止并保留现场。此快照保持原样，后续结果另记；运行中的 driver 不被新版文件覆盖。
 
 开发工作根中的 `build-followthrough-v1/status.json`、`runner.log` 记录接续阶段；`clang-job-status.json` 与 `toolchain-work/state.json` 记录实际编译进度；首次 kernel builder 真正进入后，结果在 `kernel-build/.route-a/build-report.json`。接续任务为一次执行，不重跑已存在的 kernel build，也不取消之前启动的 Clang 任务。
+
+2026-11-24 已取回[完成结果](evidence/route-a-toolchain-success-20261124.json)：旧 driver 实际完成定制 Clang 和 host-tools finalization，19 个类型语义断言通过。后续 builder 生成 716 个目标文件后[因 PAuth builtin 失败](evidence/route-a-first-kernel-failure-20261124.json)。原始编译器与完成报告保留；新版本增加 CPU codegen 检查，不将原报告追溯改写为已经执行了这项新检查。
 
 | 文件 | 含义 |
 | --- | --- |

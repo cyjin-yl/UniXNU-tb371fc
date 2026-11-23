@@ -1,0 +1,131 @@
+{
+  "attempts": [
+    {
+      "attempt": 1,
+      "interpretation": "LLVM 24 uses llvm.returnaddress.p0; the original assertion only accepted the earlier spelling.",
+      "original_report_sha256": "21d9f21d01a7ada4dd3b3b42236915f787305a190902aef5a64fc37db15e8a69",
+      "result": {
+        "command": [
+          "/usr/bin/python3",
+          "tests/test_route_a_fileset_ptrauth.py",
+          "-v"
+        ],
+        "compiler": "WORK/toolchain/llvm/bin/clang",
+        "compiler_sha256": "85d220e32bd83d75de788c8beab0bea646a4684e1112f7c06266ca71e651bb04",
+        "compiler_unchanged": true,
+        "compiler_version": "clang version 24.0.0git (WORK/toolchain-work/llvm-project/clang 58c46bae21181fb4240cf964461bea738d96d50e)\nTarget: unknown\nThread model: posix\nInstalledDir: WORK/toolchain/llvm/bin\nBuild config: +assertions\n",
+        "exit_code": 1,
+        "finished": 1795451965.0376103,
+        "kernel_compiled": false,
+        "log_sha256": "ced24c3c55dc89aac85e914f38d8d656dbcc1e3f97a9f7ed7baaefef3eef9b4d",
+        "os_boot_verified": false,
+        "patch_sha256": "d3bebb609f6f1b6d11018c9be3aec36e941625019845c442aea6cf9506e62abe",
+        "pid": 70005,
+        "scope": "four real Clang target regression tests for the isolated fileset panic helper",
+        "started": 1795451957.7635584,
+        "status": "failed",
+        "test_sha256": "defffc117881193aa30dd1e077955b983597d7e6687fa27c7df0df4b09a574b5"
+      }
+    },
+    {
+      "attempt": 2,
+      "interpretation": "After correcting that assertion, actual assembly contained XPACI because the Darwin target retained its default apple-a12 CPU.",
+      "original_report_sha256": "0400837304bb651593160f004e506dd6e1cb8659895767fb7f949c7726133cb4",
+      "result": {
+        "command": [
+          "/usr/bin/python3",
+          "tests/test_route_a_fileset_ptrauth.py",
+          "-v"
+        ],
+        "compiler": "WORK/toolchain/llvm/bin/clang",
+        "compiler_sha256": "85d220e32bd83d75de788c8beab0bea646a4684e1112f7c06266ca71e651bb04",
+        "compiler_unchanged": true,
+        "compiler_version": "clang version 24.0.0git (WORK/toolchain-work/llvm-project/clang 58c46bae21181fb4240cf964461bea738d96d50e)\nTarget: unknown\nThread model: posix\nInstalledDir: WORK/toolchain/llvm/bin\nBuild config: +assertions\n",
+        "exit_code": 1,
+        "finished": 1795452080.7343802,
+        "kernel_compiled": false,
+        "log_sha256": "0ed8735c5403720689383029fd5076cf09a5c38328c99085f6c562081d887be5",
+        "os_boot_verified": false,
+        "patch_sha256": "d3bebb609f6f1b6d11018c9be3aec36e941625019845c442aea6cf9506e62abe",
+        "pid": 70029,
+        "scope": "four real Clang target regression tests for the isolated fileset panic helper",
+        "started": 1795452076.5056643,
+        "status": "failed",
+        "test_sha256": "6fe2ce6eb6dbd9d94c88cdbc4cd0b5ce9c69f26aca18166b24fc837e95855180"
+      }
+    },
+    {
+      "attempt": 3,
+      "interpretation": "Explicit generic CPU generated the compatible HINT #7, while ordinary ARM64 and PAuth-capable target contracts all passed.",
+      "original_report_sha256": "6d6b9334e02e1a30ea87204cd872dfd686f1a5b634b1eccac3a30ab6742c0391",
+      "result": {
+        "command": [
+          "/usr/bin/python3",
+          "tests/test_route_a_fileset_ptrauth.py",
+          "-v"
+        ],
+        "compiler": "WORK/toolchain/llvm/bin/clang",
+        "compiler_sha256": "85d220e32bd83d75de788c8beab0bea646a4684e1112f7c06266ca71e651bb04",
+        "compiler_unchanged": true,
+        "compiler_version": "clang version 24.0.0git (WORK/toolchain-work/llvm-project/clang 58c46bae21181fb4240cf964461bea738d96d50e)\nTarget: unknown\nThread model: posix\nInstalledDir: WORK/toolchain/llvm/bin\nBuild config: +assertions\n",
+        "exit_code": 0,
+        "finished": 1795452319.7773461,
+        "kernel_compiled": false,
+        "log_sha256": "65594fb3e3a53241691f55199193d8c78295eba2d190b111798d6e35e3d43e44",
+        "os_boot_verified": false,
+        "patch_sha256": "d3bebb609f6f1b6d11018c9be3aec36e941625019845c442aea6cf9506e62abe",
+        "pid": 70067,
+        "scope": "four real Clang target regression tests for the isolated fileset panic helper; plain target explicitly uses generic CPU",
+        "started": 1795452308.0937705,
+        "status": "passed",
+        "test_sha256": "b04ae4bd4d954c7863235eeee6e9e2b41e70fa0504e135ebaaf7b3836b1e9f7f"
+      }
+    }
+  ],
+  "failed": 0,
+  "generic_codegen": {
+    "compiler_sha256": "85d220e32bd83d75de788c8beab0bea646a4684e1112f7c06266ca71e651bb04",
+    "fixture_sha256": "83ca4107410759c63019ff51b5dcfa1f891f0c628d0eb6d74261a2cf6c763356",
+    "flags": [
+      "-target",
+      "arm64-apple-ios27.0",
+      "-mcpu=generic",
+      "-march=armv8-a",
+      "-ffreestanding",
+      "-O1",
+      "-Werror",
+      "-fno-stack-protector",
+      "-fno-discard-value-names"
+    ],
+    "has_ptrauth_ir": false,
+    "ir_attributes": [
+      "attributes #0 = { noinline noreturn nounwind \"frame-pointer\"=\"non-leaf-no-reserve\" \"no-builtins\" \"no-trapping-math\"=\"true\" \"stack-protector-buffer-size\"=\"8\" \"target-cpu\"=\"generic\" \"target-features\"=\"+fp-armv8,+neon,+v8a\" }",
+      "attributes #1 = { mustprogress nocallback nofree nosync nounwind willreturn memory(none) }",
+      "attributes #2 = { noreturn \"frame-pointer\"=\"non-leaf-no-reserve\" \"no-builtins\" \"no-trapping-math\"=\"true\" \"stack-protector-buffer-size\"=\"8\" \"target-cpu\"=\"generic\" \"target-features\"=\"+fp-armv8,+neon,+v8a\" }",
+      "attributes #3 = { nobuiltin noreturn nounwind \"no-builtins\" }"
+    ],
+    "object_header": [
+      4277009103,
+      16777228,
+      0,
+      1
+    ],
+    "object_sha256": "bfd0835c469a7a3dd2b5cf7c9fa7315282d199bafc3874ea4de867890dbe4208",
+    "status": "passed"
+  },
+  "kernel_compiled": false,
+  "kernel_linked": false,
+  "limits": [
+    "The final unit probe explicitly supplies generic CPU; it does not prove the actual kernel builder environment.",
+    "The production driver must separately verify the installed Clang shim and the actual CROSS_EXTRA_FLAGS before a full retry."
+  ],
+  "original_codegen_report_sha256": "3458e3bd15c7639dae84347cc627e39d2ab8d7700d4546490e1dcb4f84011942",
+  "os_boot_verified": false,
+  "passed": 4,
+  "production_shim_tested_by_this_record": false,
+  "record_date": "2026-11-24",
+  "record_timezone": "Asia/Shanghai",
+  "schema_version": 1,
+  "scope": "Four real isolated-helper compiler regressions using the completed custom Clang, with retained failed attempts",
+  "skipped": 0
+}

@@ -13,6 +13,7 @@ import hashlib
 import json
 import os
 from pathlib import Path
+import re
 import shutil
 import struct
 import subprocess
@@ -77,6 +78,19 @@ extern "C" unsigned long route_a_codegen(void *p) {
 }
 '''
 
+# A type-traits probe alone does not exercise AArch64 return-address lowering.
+# Darwin's default Apple CPU can emit XPACI even with an ordinary arm64 ABI.
+RETURN_ADDRESS_PROBE = r'''#if defined(__arm64e__) || __has_feature(ptrauth_calls) || __has_feature(ptrauth_intrinsics) || defined(__PTRAUTH__)
+#error ordinary arm64 without PAuth intrinsics is required
+#endif
+__attribute__((noinline, used))
+void *route_a_return_address(void) {
+    return __builtin_return_address(0);
+}
+'''
+
+ORDINARY_ARM64_FLAGS = ("-target", "arm64-apple-ios27.0", "-mcpu=generic", "-march=armv8-a")
+
 
 class ToolchainError(RuntimeError):
     pass
@@ -90,8 +104,8 @@ def sha256_file(path: Path) -> str:
     return result.hexdigest()
 
 
-def command(args, *, cwd=None, check=True):
-    result = subprocess.run([str(arg) for arg in args], cwd=cwd, capture_output=True)
+def command(args, *, cwd=None, check=True, env=None):
+    result = subprocess.run([str(arg) for arg in args], cwd=cwd, env=env, capture_output=True)
     if check and result.returncode:
         raise ToolchainError(result.stderr.decode("utf-8", "replace")[-12000:])
     return result
@@ -154,7 +168,7 @@ def toolchain_environment(prefix: Path, sdk: Path) -> dict:
         "UNIXNU_TOOLCHAIN": str(prefix), "CLT_PREFIX": str(clt), "XCTOOLCHAIN_PREFIX": str(xct),
         "XNU_TOOLCHAIN_BIN": f"{clt / 'bin'} {xct / 'bin'}",
         "CROSS_CLANG": str(prefix / "llvm/bin/clang"), "DARWIN_TRIPLE": "arm64-apple-ios27.0",
-        "CROSS_EXTRA_FLAGS": "-mllvm -disable-atexit-based-global-dtor-lowering",
+        "CROSS_EXTRA_FLAGS": "-mcpu=generic -mllvm -disable-atexit-based-global-dtor-lowering",
         "UNIXNU_SDKROOT": str(sdk), "UNIXNU_SDK_VERSION": "27.0", "UNIXNU_SDK_BUILD": "24A446",
         "UNIXNU_PLATFORM_PATH": str(sdk / "Platforms/iPhoneOS.platform"),
         "UNIXNU_XNU_ARCH": "arm64", "XNU_BOOT_PROGRESS": "0", "ZERO_AR_DATE": "1",
@@ -405,12 +419,80 @@ def build_host_tools(args):
             raise ToolchainError(str(exc)) from exc
 
 
+def verify_return_address_codegen(clang: str, output: Path, *, target_flags=(), env=None) -> dict:
+    """Check actual codegen without supplying hidden target or CPU options.
+
+    Direct callers supply ORDINARY_ARM64_FLAGS. A production wrapper caller
+    supplies its real build flags/environment so a missing or overridden CPU
+    selection cannot be masked by the probe itself. Existing evidence is never
+    overwritten; a failed check also leaves a complete verification report.
+    """
+    output.mkdir(parents=True, exist_ok=False)
+    target_flags = tuple(target_flags)
+    source = output / "return-address.c"
+    source.write_text(RETURN_ADDRESS_PROBE)
+    records, generated = [], {}
+    common = [clang, *target_flags, "-ffreestanding", "-O1", "-Werror",
+              "-fno-stack-protector", "-fno-discard-value-names"]
+    for kind, extension, flags in (("ir", "ll", ("-S", "-emit-llvm")),
+                                   ("assembly", "s", ("-S",)),
+                                   ("object", "o", ("-c",))):
+        artifact = output / ("return-address." + extension)
+        args = [*common, *flags, source, "-o", artifact]
+        result = command(args, check=False, env=env)
+        stdout, stderr = output / (kind + ".stdout"), output / (kind + ".stderr")
+        stdout.write_bytes(result.stdout)
+        stderr.write_bytes(result.stderr)
+        generated[kind] = artifact.read_bytes() if artifact.is_file() else b""
+        records.append({"kind": kind, "command": [str(arg) for arg in args],
+                        "exit_code": result.returncode,
+                        "stdout": str(stdout), "stdout_sha256": sha256_file(stdout),
+                        "stderr": str(stderr), "stderr_sha256": sha256_file(stderr),
+                        "output": str(artifact),
+                        "output_sha256": sha256_file(artifact) if artifact.is_file() else None})
+    ir, assembly = (generated[key].decode("utf-8", "replace") for key in ("ir", "assembly"))
+    cpus = sorted(set(re.findall(r'"target-cpu"="([^"]+)"', ir)))
+    features = sorted(set(feature for value in re.findall(r'"target-features"="([^"]+)"', ir)
+                          for feature in value.split(",")))
+    # XPACLRI is HINT #7 on pre-PAuth CPUs. General-register XPACI/XPACD
+    # require PAuth; reject explicit signing/authentication mnemonics too.
+    forbidden = re.findall(
+        r"(?m)^[ \t]*(?:pac\w*|aut\w*|xpaci|xpacd|reta[ab]|bra[ab]\w*|blra[ab]\w*)\b[^\n]*",
+        assembly)
+    header = list(struct.unpack("<IIII", generated["object"][:16])) if len(generated["object"]) >= 32 else None
+    checks = {
+        "all_compiles_succeeded": all(record["exit_code"] == 0 for record in records),
+        "return_address_intrinsic": bool(re.search(r"call[^\n]*@llvm\.returnaddress(?:\.p0)?\(i32 0\)", ir)),
+        "ir_cpu_generic": cpus == ["generic"],
+        "no_pauth_intrinsics": "llvm.ptrauth." not in ir,
+        "no_pauth_cpu_feature": not any(feature.startswith("+pauth") for feature in features),
+        "no_pauth_instructions": not forbidden,
+        "ordinary_arm64_macho": header == [0xFEEDFACF, 0x0100000C, 0, 1],
+    }
+    passed = all(checks.values())
+    report = {"schema_version": 1, "status": "passed" if passed else "failed", "passed": passed,
+              "checks": checks, "compiler": str(clang), "target_flags": list(target_flags),
+              "probe_sha256": sha256_file(source), "commands": records,
+              "ir_target_cpus": cpus, "ir_target_features": features,
+              "forbidden_instruction_lines": forbidden, "object_header_words": header,
+              "has_compatible_hint_7": bool(re.search(r"(?m)^[ \t]*(?:hint[ \t]+#(?:7|0x7)|xpaclri)\b", assembly)),
+              "kernel_compiled": False, "kernel_linked": False, "os_boot_verified": False}
+    if env is not None:
+        report["driver_environment"] = {key: env[key] for key in
+                                        ("CROSS_CLANG", "DARWIN_TRIPLE", "CROSS_EXTRA_FLAGS") if key in env}
+    save_json(output / "verification.json", report)
+    if not passed:
+        failed = ", ".join(name for name, ok in checks.items() if not ok)
+        raise ToolchainError(f"ordinary-arm64 return-address codegen failed ({failed}); see {output / 'verification.json'}")
+    return report
+
+
 def verify_clang(clang: str, output: Path) -> dict:
     output.mkdir(parents=True, exist_ok=False)
     compiler = tool_identity(clang)
     source, obj = output / "xnu-traits.cpp", output / "xnu-traits.o"
     source.write_text(TRAIT_PROBE)
-    args = [compiler["path"], "-target", "arm64-apple-ios27.0", "-march=armv8-a",
+    args = [compiler["path"], *ORDINARY_ARM64_FLAGS,
             "-std=c++17", "-ffreestanding", "-Werror", "-c", source, "-o", obj]
     result = command(args, check=False)
     (output / "compiler.stderr").write_bytes(result.stderr)
@@ -419,6 +501,15 @@ def verify_clang(clang: str, output: Path) -> dict:
         with obj.open("rb") as stream:
             header = list(struct.unpack("<IIII", stream.read(16)))
     passed = result.returncode == 0 and header == [0xFEEDFACF, 0x0100000C, 0, 1]
+    codegen = None
+    if passed:
+        codegen_output = output / "return-address-codegen"
+        try:
+            codegen = verify_return_address_codegen(compiler["path"], codegen_output,
+                                                   target_flags=ORDINARY_ARM64_FLAGS)
+        except ToolchainError:
+            codegen = json.loads((codegen_output / "verification.json").read_text())
+            passed = False
     report = {"schema_version": 1, "status": "passed" if passed else "failed",
               "compiler": compiler, "command": [str(arg) for arg in args],
               "probe_sha256": sha256_file(source), "static_assertions": 19,
@@ -426,6 +517,7 @@ def verify_clang(clang: str, output: Path) -> dict:
               "compiler_stderr": result.stderr.decode("utf-8", "replace")[-12000:],
               "object_header_words": header,
               "object_sha256": sha256_file(obj) if obj.is_file() else None,
+              "return_address_codegen": codegen,
               "kernel_compiled": False, "kernel_linked": False, "os_boot_verified": False}
     save_json(output / "verification.json", report)
     if not passed:
