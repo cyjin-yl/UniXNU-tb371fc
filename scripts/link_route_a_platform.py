@@ -27,6 +27,7 @@ import prepare_route_a_toolchain as toolchain
 KERNEL_RELATIVE = Path("build/xnu/ios-obj/DEVELOPMENT_ARM64_BCM2837")
 KERNEL_NAME = "mach.development.bcm2837.unstripped"
 KERNEL_SHA256 = "a58cdeedb9b7a4c152867c3487f28658a3799b0158f5046bbad6d2d58e741469"
+KERNEL_SOURCE_VERSION = "12377.121.6"
 COMPONENTS = ("ArmDTPlatform", "ArmCpu")
 SCOPE = "isolated-platform-link-compatibility"
 FLAGS_SHA256 = "122039d9686275166f9772c52c4d494adfe02e6e417c069639dee0f9c297435f"
@@ -501,6 +502,12 @@ def tool_inputs(toolwork: Path, build_report: dict) -> tuple[Path, list[dict], d
         "PATH", "LC_ALL", "ZERO_AR_DATE", "CROSS_CLANG", "CROSS_EXTRA_FLAGS", "DARWIN_TRIPLE",
         "CLT_PREFIX", "XCTOOLCHAIN_PREFIX", "XNU_CLANG_DROP_FLAGS", "UNIXNU_TOOLCHAIN"}}
     require(env.get("CROSS_EXTRA_FLAGS", "").startswith("-mcpu=generic "), "generic CPU selection is missing")
+    # The upstream builder passes this value to make, which exports it to ld.
+    # ld64 Options.cpp reads RC_ProjectSourceVersion for LC_SOURCE_VERSION;
+    # it is not present in the retained command-line-only .LDFLAGS file.
+    require(original.get("UNIXNU_XNU_VERSION") == KERNEL_SOURCE_VERSION,
+            "successful build source version differs from the fixed XNU baseline")
+    env["RC_ProjectSourceVersion"] = original["UNIXNU_XNU_VERSION"]
     env.update(LC_ALL="C", ZERO_AR_DATE="1")
     return prefix, identities, env
 
@@ -582,7 +589,9 @@ def run(args) -> dict:
                 # A new reference can legitimately extract a previously unused
                 # member of a baseline archive. Keep the name-set observation;
                 # only the real link can establish that resolution succeeds.
-                baseline = output / "baseline.unstripped.noctf"
+                # ld64 computeContentUUID hashes the output leaf (including
+                # its preceding slash). Preserve that input in a new directory.
+                baseline = output / (KERNEL_NAME + ".noctf")
                 baseline_map = output / "baseline.map"
                 report["status"] = "replaying_baseline"
                 result = execute(link_command(recipe, filelist, baseline, baseline_map), cwd=Path(recipe["cwd"]),

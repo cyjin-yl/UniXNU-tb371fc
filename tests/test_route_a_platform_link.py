@@ -330,6 +330,40 @@ class PlatformLinkReplayTests(unittest.TestCase):
             MODULE.run(args)
         self.assertFalse(args.output.exists())
 
+    def test_tool_environment_restores_recorded_source_version_and_preserves_alias_identity(self):
+        toolwork = self.root / "toolchain-work"
+        toolwork.mkdir()
+        compiler = self.prefix / "llvm/bin/clang"
+        compiler.parent.mkdir(parents=True)
+        compiler.write_bytes(b"verified compiler fixture")
+        compiler_sha = MODULE.identity(compiler)["sha256"]
+        ld_target = self.prefix / "ld-real"
+        ld_target.write_bytes(b"verified linker fixture")
+        ld = self.prefix / "CommandLineTools/usr/bin/ld"
+        ld.parent.mkdir(parents=True)
+        ld.symlink_to(ld_target)
+        (toolwork / "identity.json").write_text(json.dumps({"prefix": str(self.prefix)}))
+        (toolwork / "state.json").write_text(json.dumps({"status": "clang_verified",
+            "verification": {"compiler": {"sha256": compiler_sha}}}))
+        (toolwork / "host-tools-state.json").write_text(json.dumps({"status": "host_tools_built",
+            "combined_toolchain_verified": True, "outputs": [{"path": str(ld),
+                                                               "sha256": MODULE.identity(ld_target)["sha256"]}]}))
+        original_env = MODULE.toolchain.toolchain_environment(self.prefix, self.kernel / ".cache/fakeroot")
+        original_env["UNIXNU_XNU_VERSION"] = "12377.121.6"
+        report = {"compiler": {"sha256": compiler_sha}, "environment": original_env}
+        with patch.object(MODULE, "CLANG_SHA256", compiler_sha):
+            prefix, inputs, env = MODULE.tool_inputs(toolwork, report)
+            self.assertEqual(prefix, self.prefix)
+            self.assertEqual(env["RC_ProjectSourceVersion"], "12377.121.6")
+            self.assertTrue(any(item["path"] == str(ld) and item.get("realpath") == str(ld_target)
+                                for item in inputs))
+            report["environment"]["UNIXNU_XNU_VERSION"] = "0"
+            with self.assertRaisesRegex(MODULE.LinkError, "source version"):
+                MODULE.tool_inputs(toolwork, report)
+            del report["environment"]["UNIXNU_XNU_VERSION"]
+            with self.assertRaisesRegex(MODULE.LinkError, "source version"):
+                MODULE.tool_inputs(toolwork, report)
+
     def exercise_run(self, action):
         from argparse import Namespace
         candidate = self.cwd / MODULE.KERNEL_NAME
@@ -412,6 +446,10 @@ class PlatformLinkReplayTests(unittest.TestCase):
         self.assertEqual(len(calls), 2)
         self.assertTrue(result["baseline_reproduced"])
         self.assertEqual(result["failed_stage"], "linking_platform")
+        baseline_path = Path(calls[0][calls[0].index("-o") + 1])
+        self.assertEqual(baseline_path.name, MODULE.KERNEL_NAME + ".noctf")
+        self.assertTrue(baseline_path.is_absolute())
+        self.assertNotEqual(baseline_path.parent, self.cwd)
         self.assertEqual(sum("-force_load" in arg for arg in calls[1]), 2)
         self.assertFalse(any("-undefined" in arg for arg in calls[1]))
         self.assertTrue(result["protected_inputs_recheck"]["unchanged"])
