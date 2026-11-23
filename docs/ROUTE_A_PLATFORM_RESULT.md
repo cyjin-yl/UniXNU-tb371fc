@@ -264,7 +264,7 @@ consumer 逐 token 重算 C recipe，并用实际对象字节重新运行有界�
 
 ## 新平台候选的限定编码审计
 
-新增审计针对 `link-attempt-004` 的**同一个实际候选文件**，同时固定其路径、21,942,456 B 大小、`46eff436…ce39f1b` 摘要和成功链接报告 `738a7af1…4feff7c`。完整记录见[审计摘要](evidence/route-a-platform-kernel-audit-20261124.json)、[原始 audit.json](evidence/route-a-platform-kernel-audit-20261124/audit.json)与[执行来源清单](evidence/route-a-platform-kernel-audit-20261124/source-manifest.json)。前后读取均指这一份候选，未推断额外的 CTF 或 `.noctf` 伴随构建。
+新增审计针对 `link-attempt-004` 的**同一个实际候选文件**，同时固定其路径、21,942,456 B 大小、`46eff436…bfe39f1b` 摘要和成功链接报告 `738a7af1…4feff7c`。完整记录见[审计摘要](evidence/route-a-platform-kernel-audit-20261124.json)、[原始 audit.json](evidence/route-a-platform-kernel-audit-20261124/audit.json)与[执行来源清单](evidence/route-a-platform-kernel-audit-20261124/source-manifest.json)。前后读取均指这一份候选，未推断额外的 CTF 或 `.noctf` 伴随构建。
 
 | 检查 | 实际结果 |
 | --- | --- |
