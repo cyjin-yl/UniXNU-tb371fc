@@ -67,6 +67,19 @@ def identity(path: Path) -> dict:
             "sha256": toolchain.sha256_file(path)}
 
 
+def tool_identity(path: Path) -> dict:
+    """Bind the invoked name as well as its final executable bytes.
+
+    Resolving first would lose a symlink alias: its old target can remain
+    unchanged while a later invocation follows the alias somewhere else.
+    """
+    require(path.is_absolute() and path.is_file(), f"missing absolute tool file: {path}")
+    logical, resolved = path.absolute(), path.resolve(strict=True)
+    return {"kind": "tool", "path": str(logical), "realpath": str(resolved),
+            "symlink_target": os.readlink(logical) if logical.is_symlink() else None,
+            "size": resolved.stat().st_size, "sha256": toolchain.sha256_file(logical)}
+
+
 def verify_identity(record: dict) -> Path:
     require(isinstance(record, dict) and isinstance(record.get("path"), str), "missing input identity")
     path = Path(record["path"])
@@ -429,7 +442,7 @@ def check_unchanged(inputs: list[dict]) -> dict:
     for record in inputs:
         path = Path(record["path"])
         try:
-            actual = identity(path)
+            actual = tool_identity(path) if record.get("kind") == "tool" else identity(path)
         except (LinkError, OSError) as exc:
             changes.append({"path": str(path), "error": str(exc)})
             continue
@@ -469,14 +482,15 @@ def tool_inputs(toolwork: Path, build_report: dict) -> tuple[Path, list[dict], d
             host.get("combined_toolchain_verified") is True, "combined compiler/host tools are not verified")
     prefix = Path(installation["prefix"]).resolve()
     clang = prefix / "llvm/bin/clang"
-    clang_id = identity(clang.resolve())
+    clang_id = tool_identity(clang)
     require(clang_id["sha256"] == CLANG_SHA256 == state["verification"]["compiler"]["sha256"] ==
             build_report["compiler"]["sha256"], "compiler differs from successful kernel build")
     identities.append(clang_id)
     for item in host["outputs"]:
         path = Path(item["path"])
-        require(toolchain.sha256_file(path) == item["sha256"], f"host tool changed: {path}")
-        identities.append(identity(path.resolve()))
+        current = tool_identity(path)
+        require(current["sha256"] == item["sha256"], f"host tool changed: {path}")
+        identities.append(current)
     # The successful build's generic CPU environment is authoritative, not
     # the older installation report's pre-generic defaults.
     original = build_report["environment"]
@@ -497,7 +511,14 @@ def run(args) -> dict:
     output = args.output
     require(not output.is_symlink() and not output.exists(), "output must be unused; retain earlier attempts")
     output = output.resolve()
-    for protected in (kernel, toolwork, platform.parent, Path(__file__).resolve().parents[1]):
+    # The installation can live outside toolwork. Read its location before
+    # creating anything, then require this same identity again under locks.
+    installation_hint = identity(toolwork / "identity.json")
+    prefix_value = json.loads(Path(installation_hint["path"]).read_text()).get("prefix")
+    require(isinstance(prefix_value, str) and Path(prefix_value).is_absolute(), "invalid tool installation prefix")
+    prefix_hint = Path(prefix_value).resolve()
+    require(prefix_hint.is_dir(), "tool installation prefix is absent")
+    for protected in (kernel, toolwork, prefix_hint, platform.parent, Path(__file__).resolve().parents[1]):
         require(not output.is_relative_to(protected) and not protected.is_relative_to(output), "output overlaps protected inputs")
     output.mkdir(parents=True, exist_ok=False)
     report = {"schema_version": 1, "status": "validating", "scope": SCOPE, "output": str(output),
@@ -517,6 +538,7 @@ def run(args) -> dict:
                     raise LinkError(f"input build or installation is active: {path}") from exc
             protected_inputs = []
             try:
+                verify_identity(installation_hint)
                 candidate = kernel / KERNEL_RELATIVE / KERNEL_NAME
                 original = pinned(candidate, KERNEL_SHA256)
                 noctf = pinned(candidate.with_name(KERNEL_NAME + ".noctf"), KERNEL_SHA256)
@@ -529,6 +551,7 @@ def run(args) -> dict:
                 for component in components:
                     protected_inputs.extend((component["object"], component["archive"], component["symbol_report"]))
                 prefix, tools, env = tool_inputs(toolwork, built)
+                require(prefix == prefix_hint, "tool installation prefix changed after output validation")
                 require(not output.is_relative_to(prefix) and not prefix.is_relative_to(output), "output overlaps tool installation")
                 (output / "tmp").mkdir()
                 env["TMPDIR"] = str(output / "tmp")

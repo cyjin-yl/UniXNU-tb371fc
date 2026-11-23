@@ -176,6 +176,44 @@ class PlatformLinkMetadataTests(unittest.TestCase):
             with self.assertRaisesRegex(MODULE.LinkError, "exactly the recorded object"):
                 MODULE.verify_platform(path, candidate)
 
+    def test_tool_alias_retarget_is_detected_even_with_identical_target_bytes(self):
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            original, replacement, alias = root / "original", root / "replacement", root / "ld"
+            original.write_bytes(b"same executable bytes")
+            replacement.write_bytes(original.read_bytes())
+            alias.symlink_to(original.name)
+            record = MODULE.tool_identity(alias)
+            self.assertEqual(record["path"], str(alias))
+            self.assertEqual(record["realpath"], str(original))
+            self.assertEqual(record["symlink_target"], original.name)
+            self.assertTrue(MODULE.check_unchanged([record])["unchanged"])
+            alias.unlink()
+            alias.symlink_to(replacement.name)
+            changed = MODULE.check_unchanged([record])
+            self.assertFalse(changed["unchanged"])
+            self.assertEqual(changed["changes"][0]["before"]["sha256"], changed["changes"][0]["after"]["sha256"])
+            self.assertNotEqual(changed["changes"][0]["before"]["realpath"], changed["changes"][0]["after"]["realpath"])
+
+    def test_tool_parent_alias_and_broken_alias_are_rechecked(self):
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            for name in ("old", "new"):
+                (root / name).mkdir()
+                (root / name / "clang").write_bytes(b"same compiler bytes")
+            alias = root / "bin"
+            alias.symlink_to("old", target_is_directory=True)
+            record = MODULE.tool_identity(alias / "clang")
+            self.assertIsNone(record["symlink_target"])
+            alias.unlink()
+            alias.symlink_to("new", target_is_directory=True)
+            self.assertFalse(MODULE.check_unchanged([record])["unchanged"])
+            alias.unlink()
+            alias.symlink_to("missing", target_is_directory=True)
+            result = MODULE.check_unchanged([record])
+            self.assertFalse(result["unchanged"])
+            self.assertIn("error", result["changes"][0])
+
 
 class PlatformLinkReplayTests(unittest.TestCase):
     def setUp(self):
@@ -259,6 +297,39 @@ class PlatformLinkReplayTests(unittest.TestCase):
         with self.assertRaisesRegex(MODULE.LinkError, "earlier link"):
             MODULE.link_command(recipe, filelist, self.output / "candidate", self.output / "candidate.map")
 
+    def test_output_inside_real_installation_is_rejected_before_mkdir(self):
+        from argparse import Namespace
+        toolwork = self.root / "toolchain-work"
+        toolwork.mkdir()
+        (toolwork / "identity.json").write_text(json.dumps({"prefix": str(self.prefix)}))
+        platform = self.root / "platform/report.json"
+        platform.parent.mkdir()
+        platform.write_text("{}")
+        alias = self.root / "tools-alias"
+        alias.symlink_to(self.prefix, target_is_directory=True)
+        before = sorted(self.prefix.rglob("*"))
+        for parent in (self.prefix, alias):
+            args = Namespace(kernel_dir=self.kernel, toolchain_work=toolwork,
+                             platform_report=platform, output=parent / "forbidden-result")
+            with self.assertRaisesRegex(MODULE.LinkError, "overlaps protected"):
+                MODULE.run(args)
+            self.assertFalse(args.output.exists())
+            self.assertEqual(sorted(self.prefix.rglob("*")), before)
+
+    def test_invalid_installation_identity_creates_no_output(self):
+        from argparse import Namespace
+        toolwork = self.root / "toolchain-work"
+        toolwork.mkdir()
+        (toolwork / "identity.json").write_text(json.dumps({"prefix": "relative-prefix"}))
+        platform = self.root / "platform/report.json"
+        platform.parent.mkdir()
+        platform.write_text("{}")
+        args = Namespace(kernel_dir=self.kernel, toolchain_work=toolwork,
+                         platform_report=platform, output=self.root / "must-not-exist")
+        with self.assertRaisesRegex(MODULE.LinkError, "installation prefix"):
+            MODULE.run(args)
+        self.assertFalse(args.output.exists())
+
     def exercise_run(self, action):
         from argparse import Namespace
         candidate = self.cwd / MODULE.KERNEL_NAME
@@ -271,6 +342,7 @@ class PlatformLinkReplayTests(unittest.TestCase):
         build_report.write_text(json.dumps({"status": "builder_completed", "exit_code": 0}))
         toolwork = self.root / "toolwork"
         toolwork.mkdir()
+        (toolwork / "identity.json").write_text(json.dumps({"prefix": str(self.prefix)}))
         (toolwork / "build.lock").touch()
         (toolwork / "host-tools.lock").touch()
         platform = self.root / "platform/report.json"
