@@ -35,7 +35,7 @@ A01 的可重复入口见 [TPRO 审计](docs/ROUTE_A_TPRO.md) 与 [内核能力�
 
 A01 不能通过“把 `dyld_hw_tpro` 设为 0”关闭硬件路径，已有二进制检查只看键是否存在。还需分别核对 DATA_CONST pager 的 TPRO 策略和早期能力发布。不得用批量 NOP 掩盖未证明的指令路径。
 
-本轮 [CI](https://github.com/cyjin-yl/UniXNU-tb371fc/actions/runs/45181619136) 已完成 **191 项回归（0 跳过）**、通用源码准备和公开输入 staging。`zzz-boot-progress.patch` 的 PMGR／watchdog 前置依赖待 TB371FC 板级接入，报告明确 `full_upstream_profile_applied=false`；它需要在后续实际板级配置中恢复验证。
+本轮 [CI](https://github.com/cyjin-yl/UniXNU-tb371fc/actions/runs/45221437252) 已完成 **210 项回归（0 跳过）**、通用源码准备和包含 fileset 修复的公开输入 staging。原 71 项 inventory 与 headers 后清单仍匹配历史摘要，修复后最终源码清单为 `9a2f18aa42773260f52adeeeff20a5f0257fc4360858aa90a3871714f7b84008`。`zzz-boot-progress.patch` 的 PMGR／watchdog 前置依赖待 TB371FC 板级接入，报告明确 `full_upstream_profile_applied=false`；它需要在后续实际板级配置中恢复验证。
 
 A02 不能直接选择针对旧 XNU 的 arm64 profile，也不能把 V135 的保留内核替换几条指令当作 27 内核。当前目标基于固定 XNU 12377.121.6 加 Darwin 26 兼容工作；目标用户空间版本不等于内核源码已经升级成完整 Darwin 26。细项见 [内核缺口](docs/ROUTE_A_KERNEL_GAPS.md)。
 

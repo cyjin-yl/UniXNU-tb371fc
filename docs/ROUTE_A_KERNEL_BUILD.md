@@ -111,7 +111,7 @@ Ubuntu runner 可以使用发行版 Clang 完成此处的通用配置探针。�
 
 配置内的 component inventory 列出了上游 common source-build 路径涉及的 firehose、compiler runtime、crypto、pthread、ArmDTPlatform 与 ArmCpu 输入，但 **TB371FC 的完整 archive closure 尚未解析**。存储、显示、GPU 和其他外设输入须按当前板级实现重新连接到 12377；不能把别的 Qualcomm 平台 archive 当作 TB371FC 已验证产物。
 
-下一步先补齐定制 Linux 工具链、匹配 headers 与明确选择的 provider；然后保存真实编译命令、link filelist、archives 的源版本和摘要。完整候选还必须经过 kernel/archive/kext ISA 审计、27 userland 与 TPRO contract 验证、板级最小启动和最终硬件验收。具体缺口见 [集成审计](ROUTE_A_KERNEL_GAPS.md) 与 [plain-auth 补丁说明](ROUTE_A_PLAIN_AUTH_PATCH.md)。
+后续的定制 Linux Clang、组合工具链和匹配 headers 已取得[实际完成记录](evidence/route-a-toolchain-success-20261124.json)。[首次完整 builder](ROUTE_A_FIRST_KERNEL_BUILD.md) 已生成 716 个目标文件并暴露 fileset panic 的 PAuth 编译错误，局部修复和显式 CPU 检查已接入下一次尝试。之后仍需明确选择 provider、保存真实 link filelist 和 archives 的源版本及摘要。完整候选必须经过 kernel/archive/kext ISA 审计、27 userland 与 TPRO contract 验证、板级最小启动和最终硬件验收。具体缺口见 [集成审计](ROUTE_A_KERNEL_GAPS.md) 与 [plain-auth 补丁说明](ROUTE_A_PLAIN_AUTH_PATCH.md)。
 
 ## 固定来源
 

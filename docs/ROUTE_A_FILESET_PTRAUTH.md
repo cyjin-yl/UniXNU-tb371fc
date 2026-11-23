@@ -64,4 +64,8 @@ ROUTE_A_FILESET_CLANG=/absolute/path/to/verified/clang \
 
 这个共享入口不会隐式补入 `-target`、`-mcpu` 或 `-march`。独立 Clang 检查明确传入这些参数；生产入口则应通过实际 CLT compiler shim、实际 builder 参数和实际构建环境调用，使 CPU 选择只能来自生产配置。测试覆盖了 Apple CPU、`XPACI`、错误对象 subtype、编译失败等拒绝分支；这些合成输出测试只证明验收逻辑，实际生产 shim 的通过结果应另行记录。
 
+实际生产 wrapper 已取得[独立通过记录](evidence/route-a-production-shim-20261124.json)：使用已发布 `ce834a0` 的 frozen driver、实际 `build_environment` 与从 `run_build` 取出的原参数，3 次真实编译均返回 0，7 项检查通过，编译器与 shim 摘要前后一致。该次 IR 的 CPU 为 `generic`，features 实际为 `+ete,+fp-armv8,+neon,+trbe,+v8a`；汇编只有保存／恢复帧、返回地址读取、`hint #7` 和 `ret`。记录保留完整实际 feature 列表，不将小样本结果扩展为完整内核的 ISA 证明。
+
+已核对这两个 trace feature 的来源：固定 LLVM 的 [Generic CPU 默认集合](https://github.com/llvm/llvm-project/blob/58c46bae21181fb4240cf964461bea738d96d50e/llvm/lib/Target/AArch64/AArch64Processors.td) 包含 ETE，[ETE 定义](https://github.com/llvm/llvm-project/blob/58c46bae21181fb4240cf964461bea738d96d50e/llvm/lib/Target/AArch64/AArch64Features.td) 再依赖 TRBE。[Clang driver](https://github.com/llvm/llvm-project/blob/58c46bae21181fb4240cf964461bea738d96d50e/clang/lib/Driver/ToolChains/Arch/AArch64.cpp) 优先采用 `-march` 的架构扩展；没有它时才采用显式 `-mcpu` 的 CPU 扩展，因此两次探针的列表不同。LLVM 注释明确限制这两个默认项的作用：不会因此自动生成相关代码，但可允许汇编显式引用新的系统寄存器。这不证明 TB371FC 支持对应 trace 功能，最终内联汇编和系统寄存器访问仍需审计。
+
 这些回归只验证该诊断函数的源码选择和生成结果。完整 XNU 编译／链接、所有文件的指令集、外部 archive、板级配置与设备启动均需要各自的后续证据。
