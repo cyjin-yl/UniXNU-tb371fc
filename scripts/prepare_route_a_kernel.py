@@ -198,7 +198,12 @@ def make_plan(config: dict, unixnu: Path, repo_root=ROOT):
 
 def snapshot(source_repo: Path, commit: str, destination: Path):
     verify_commit(source_repo, commit)
-    run(["git", "clone", "--quiet", "--shared", "--no-checkout", source_repo, destination])
+    # FETCH_HEAD-only bare inputs have no advertised branch for clone. Fetch
+    # the pinned object explicitly and keep independent objects in the output.
+    destination.mkdir(parents=False, exist_ok=False)
+    run(["git", "-C", destination, "init", "--quiet"])
+    run(["git", "-C", destination, "fetch", "--quiet", "--no-tags", "--depth", "1",
+         source_repo.resolve(), commit])
     run(["git", "-C", destination, "checkout", "--quiet", "--detach", commit])
     actual = run(["git", "-C", destination, "rev-parse", "HEAD"]).stdout.decode().strip()
     if actual != commit or run(["git", "-C", destination, "status", "--porcelain"]).stdout:

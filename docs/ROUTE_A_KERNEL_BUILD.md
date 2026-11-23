@@ -43,7 +43,7 @@ python3 scripts/prepare_route_a_kernel.py \
   --clang clang
 ```
 
-输出目录必须是新的。准备器不会覆盖已有目录，也不会改变输入仓库的 HEAD、index 或工作树。输出中的 Git snapshot 使用本地共享 object store，所以应保留输入 Git store；源文件本身已 checkout 到输出目录。
+输出目录必须是新的。准备器不会覆盖已有目录，也不会改变输入仓库的 HEAD、index 或工作树。输出通过显式获取固定提交建立独立 Git object store，即使输入只有 `FETCH_HEAD`、没有分支且为浅层仓库也能处理；准备完成后，输出中的 Git 对象不依赖输入仓库路径。
 
 Ubuntu runner 可以使用发行版 Clang 完成此处的通用配置探针。完整 XNU build 另需带 `__builtin_xnu_type_*` 支持的定制 Clang、MIG/IIG、Mach-O 工具链、headers 和全部已选组件；普通 Clang 能完成探针，不表示这些依赖已经满足。
 

@@ -123,6 +123,11 @@ class GitIdentityTests(unittest.TestCase):
         self.assertEqual(subprocess.run(
             ["git", "-C", str(bare), "show-ref"],
             capture_output=True).stdout, b"")
+        # Moving the input must not break the prepared Git object store.
+        bare.rename(self.base / "moved-bare")
+        self.assertEqual(subprocess.run(
+            ["git", "-C", str(target), "show", "HEAD:source.txt"],
+            capture_output=True, check=True).stdout, b"pinned source\n")
 
     def test_failed_patch_never_counts_as_applied(self):
         target = self.base / "snapshot"
