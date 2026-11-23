@@ -2,6 +2,17 @@
 
 本目录保存可公开、可追溯的结果摘要。系统二进制和原始私有日志不在仓库分发。文件名日期是该次记录日期，不代表之后所有改动都已重新执行相同测试。
 
+## 最新集成验证：2026-11-23
+
+提交 [5524e74](https://github.com/cyjin-yl/UniXNU-tb371fc/commit/5524e745ea50c71916b8abeb718b167e2d3c3350) 的两个 [CI 作业](https://github.com/cyjin-yl/UniXNU-tb371fc/actions/runs/45173610144) 均通过：
+
+- [本轮验证汇总](route-a-continuation-validation-20261123.json)：**162/162 项，0 跳过**；包含 9 项提取真实 pager C、19 项 TPRO 审计和 23 项内核准备测试。
+- [通用内核源码准备报告](route-a-kernel-preparation-20261123.json)：71 项补丁实际应用，6,119 个源码条目有摘要，普通 arm64 配置探针生成 subtype 0 的 Mach-O 对象。
+
+这是架构、Darwin 26 兼容和 plain-pager 源码子集。1 项依赖板级 PMGR/watchdog 的 boot-progress 补丁明确延后，完整 profile 未应用；完整 XNU 未编译／链接／启动。Clang 18.1.3 的 XNU type builtin 探针实际失败，记录为后续工具链依赖。
+
+本轮没有重新执行首轮设备函数和 Apple 用户空间改写；新增 TPRO 工具的真实输入报告也尚未重新采集。下列首轮 JSON 保持原样。
+
 ## 首轮结果：2026-11-23
 
 对应成果提交：[eb2ccfa](https://github.com/cyjin-yl/UniXNU-tb371fc/commit/eb2ccfaa6bf93b542c0234f28efd7ec93d3c7c61)。[该提交的 CI](https://github.com/cyjin-yl/UniXNU-tb371fc/actions/runs/45146081342) 已通过；完整回归为 120 项，其中包含 9 项提取真实 pager C 的测试，0 跳过。后续提交的检查结果应查看 [Actions](https://github.com/cyjin-yl/UniXNU-tb371fc/actions)，不沿用本次数字。

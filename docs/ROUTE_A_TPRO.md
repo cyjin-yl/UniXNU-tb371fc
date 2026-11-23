@@ -111,6 +111,8 @@ python3 scripts/audit_route_a_tpro.py \
 5. 在相匹配的普通 arm64 XNU 中验证 apple 向量、commpage 和 VM 保护行为，
    再进入实际用户态启动测试。
 
+本轮 [CI](https://github.com/cyjin-yl/UniXNU-tb371fc/actions/runs/45173610144) 已运行通过本工具的 **19 项合成回归**。新增脚本尚未对实际原始 dyld 产出本轮已核验的报告；既有二进制取证仍以上方首轮记录为准。
+
 回归测试覆盖直接分支的符号偏移、系统寄存器编码类别、ADR/ADRP 引用的边界、
 非代码数据排除、严格来源绑定、两类能力键和报告不覆盖行为：
 

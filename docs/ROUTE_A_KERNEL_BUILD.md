@@ -45,6 +45,12 @@
 - [boot-progress patch](https://github.com/UniXNU/UniXNU/blob/8542980d02b4d2cc5c32ee3542de1760b2562aac/patches/xnu-12377/zzz-boot-progress.patch)
 - [读取并传递 XNU_BOOT_PROGRESS 的 builder](https://github.com/UniXNU/UniXNU/blob/8542980d02b4d2cc5c32ee3542de1760b2562aac/scripts/build-xnu-4k-baseline.sh)
 
+## 本轮实际验证
+
+提交 `5524e745ea50c71916b8abeb718b167e2d3c3350` 的 [CI](https://github.com/cyjin-yl/UniXNU-tb371fc/actions/runs/45173610144) 实际应用上述 71 项所选补丁，生成覆盖 6,119 个源码条目的清单，并以 Ubuntu Clang 18.1.3 编译通过普通 arm64 配置探针。完整报告见 [源码准备证据](evidence/route-a-kernel-preparation-20261123.json)。
+
+对象为 Mach-O `MH_OBJECT`、ARM64、subtype 0；这仍然只是通用配置小程序。三个 XNU type builtins 的编译探针实际返回失败，连同 headers、链接组件和板级依赖一起保留为完整构建待办。整个内核尚未编译、链接或启动。
+
 ## 复现
 
 需要 Python 3.11 或更新版本、Git、能生成 arm64 Mach-O 对象的 Clang，以及足够存放完整源码的工作目录。源码和输出目录应在设备仓库之外。以下 fetch 下载的都是公开源码，不会下载系统镜像或 crypto provider。

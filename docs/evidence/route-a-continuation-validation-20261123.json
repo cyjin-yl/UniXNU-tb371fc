@@ -1,0 +1,75 @@
+{
+  "schema": "route-a-continuation-validation-v1",
+  "observed_date": "2026-11-23",
+  "ci": {
+    "commit": "5524e745ea50c71916b8abeb718b167e2d3c3350",
+    "run_id": 45173610144,
+    "url": "https://github.com/cyjin-yl/UniXNU-tb371fc/actions/runs/45173610144",
+    "host_job_id": 137689091128,
+    "kernel_preparation_job_id": 137689091835
+  },
+  "source_integrity": {
+    "original_source_and_license_files_verified": 229,
+    "passed": true
+  },
+  "catalog": {
+    "passed": true,
+    "scope": "Inherited device records; not new 27 hardware validation"
+  },
+  "host_suite": {
+    "command": "ROUTE_A_XNU_PREPARED_DIR=<verified four-file XNU tree> python scripts/check_route_a.py",
+    "total": 162,
+    "passed": 162,
+    "skipped": 0,
+    "extracted_pager_c_tests": 9,
+    "tpro_audit_tests": 19,
+    "kernel_preparation_tests": 23
+  },
+  "kernel_preparation": {
+    "status": "sources_prepared",
+    "applied_patches": 71,
+    "source_entries": 6119,
+    "source_inventory_sha256": "16aed427ee21f60f7e8697dbd21f1fce75db653749e677a787c4844c44a438b8",
+    "macro_contract_verified": true,
+    "mach_o_object_cpu_subtype": 0,
+    "compiler": "Ubuntu clang version 18.1.3 (1ubuntu1)\nTarget: x86_64-pc-linux-gnu\nThread model: posix\nInstalledDir: /usr/bin",
+    "xnu_type_builtins_available": false,
+    "deferred_patches": [
+      {
+        "applied": false,
+        "original_selected_index": 67,
+        "path": "patches/xnu-12377/zzz-boot-progress.patch",
+        "reason": "The generic source candidate has no resolved SoC/board PMGR hook or boot-progress/watchdog archive closure; the upstream diagnostic patch assumes that earlier board layer. Integrate it with the actual TB371FC board profile before enabling boot progress.",
+        "requires_board_profile_integration": true,
+        "sha256": "2e765b4416bab549027a7024c4777b003ca833b80addcc29daafbbcf65241e28",
+        "source": "unixnu"
+      }
+    ],
+    "full_upstream_profile_applied": false,
+    "full_kernel_compiled": false,
+    "kernel_linked": false,
+    "record": "route-a-kernel-preparation-20261123.json"
+  },
+  "tpro_audit": {
+    "tool": "scripts/audit_route_a_tpro.py",
+    "synthetic_tests_passed": 19,
+    "actual_24a446_audit_rerun_this_round": false,
+    "whole_program_dispatch_verified": false,
+    "prior_binary_evidence": "route-a-dyld-tpro-20261123.json"
+  },
+  "prior_native_and_apple_input_evidence": {
+    "rerun_this_round": false,
+    "record": "route-a-validation-20261123.json"
+  },
+  "os_boot_verified": false,
+  "all_hardware_verified": false,
+  "target_isa_audited": false,
+  "macos_userland_tested": false,
+  "remaining_work": [
+    "Qualify the Linux XNU toolchain, headers and full link inputs; current Clang lacks XNU type builtins.",
+    "Resolve the TB371FC SoC/board PMGR, watchdog and component wiring; reintegrate the explicitly deferred boot-progress layer.",
+    "Run the new auditor on the actual dyld and prove all relevant non-TPRO paths, including shared-cache dyld.",
+    "Transform and verify the complete 27 shared-cache set and integrate ordinary pointers and trust entries.",
+    "Build and boot the complete system, then validate every hardware subsystem and performance."
+  ]
+}

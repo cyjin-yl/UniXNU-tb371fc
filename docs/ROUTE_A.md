@@ -2,6 +2,8 @@
 
 更新：2026-11-23。
 
+后续集成已完成 162 项主机回归和 71 项通用内核源码补丁准备，具体范围见 [最新验证汇总](evidence/route-a-continuation-validation-20261123.json) 与 [内核准备报告](ROUTE_A_KERNEL_BUILD.md)。以下首轮实机和 Apple 输入结果保留原有范围。
+
 首轮成果（提交 `eb2ccfa`）的合并验证为 **120 项测试全部通过，包含 9 项提取真实 pager C 函数的主机测试，没有跳过项**；原始 229 份源码／许可证摘要及设备目录检查也通过。完整口径见 [验证汇总](evidence/route-a-validation-20261123.json)。
 
 目标设备是 Lenovo TB371FC、Snapdragon 870、Adreno 650。采用离线转换 arm64e 程序、尽量保留等长 AArch64 指令、让 CPU 直接执行的路线。第一阶段选用 iPadOS 27；macOS 27 保留为后续目标，两者的用户空间、内核接口和设备服务需要分别验证。
