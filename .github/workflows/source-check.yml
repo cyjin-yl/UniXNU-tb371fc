@@ -59,6 +59,12 @@ jobs:
             --xnu-repository "$RUNNER_TEMP/route-a-sources/xnu.git" \
             --output "$RUNNER_TEMP/route-a-kernel-prepared" \
             --clang clang
+      - name: Stage pinned public headers and first-pass kernel build inputs
+        run: |
+          python3 scripts/run_route_a_kernel_build.py stage \
+            --unixnu-repository "$RUNNER_TEMP/route-a-sources/unixnu.git" \
+            --prepared-kernel "$RUNNER_TEMP/route-a-kernel-prepared" \
+            --work-dir "$RUNNER_TEMP/route-a-kernel-build"
       - name: Record source preparation scope and remaining build blockers
         if: always()
         run: |
@@ -72,6 +78,24 @@ jobs:
               "os_boot_verified": False,
           }
           print("ROUTE_A_KERNEL_REPORT_JSON=" + json.dumps(data, sort_keys=True))
+          PY
+      - name: Record first-pass source staging scope
+        if: always()
+        run: |
+          python3 - <<'PY'
+          import json, os
+          from pathlib import Path
+          report = Path(os.environ["RUNNER_TEMP"]) / "route-a-kernel-build/.route-a/stage-report.json"
+          data = json.loads(report.read_text()) if report.exists() else {"status": "no_stage_report"}
+          summary = {key: data.get(key) for key in (
+              "status", "error", "unixnu_commit", "xnu_commit", "driver_sha256",
+              "prepared_source_inventory_sha256", "staged_source_inventory_sha256",
+              "full_upstream_profile_applied", "crypto_provider_selected",
+              "complete_board_archive_closure", "kernel_compiled", "kernel_linked", "os_boot_verified",
+          )}
+          summary["source_count"] = len(data.get("sources", []))
+          summary["header_record_count"] = len(data.get("restored_headers", []))
+          print("ROUTE_A_KERNEL_STAGE_SUMMARY_JSON=" + json.dumps(summary, sort_keys=True))
           PY
       - name: Preserve preparation reports and compiler diagnostics
         if: always()
@@ -87,3 +111,6 @@ jobs:
             ${{ runner.temp }}/route-a-kernel-prepared/build-environment.json
             ${{ runner.temp }}/route-a-kernel-prepared/compiler-probes/*.stderr
             ${{ runner.temp }}/route-a-kernel-prepared/compiler-probes/macros.txt
+            ${{ runner.temp }}/route-a-kernel-build/.route-a/stage-report.json
+            ${{ runner.temp }}/route-a-kernel-build/.route-a/stage.log
+            ${{ runner.temp }}/route-a-kernel-build/.route-a/staged-source-inventory.json

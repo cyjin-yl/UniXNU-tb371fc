@@ -7,6 +7,7 @@ and never substitutes successful compiler checks for a complete XNU build.
 from __future__ import annotations
 
 import argparse
+from contextlib import ExitStack
 import fcntl
 import hashlib
 import json
@@ -248,7 +249,7 @@ def build_host_tools(args):
     prefix = Path(identity["prefix"])
     if identity["unixnu_commit"] != UNIXNU_COMMIT or identity["llvm_commit"] != LLVM_COMMIT:
         raise ToolchainError("toolchain workspace has different source pins")
-    with (work / "host-tools.lock").open("a") as lock:
+    with (work / "host-tools.lock").open("a") as lock, ExitStack() as finalization:
         try:
             fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
         except BlockingIOError as exc:
@@ -365,6 +366,13 @@ def build_host_tools(args):
             if not reuse:
                 save_json(cache_path, {"identity": cache_identity, "outputs": component_inventory(prefix)})
             if not args.components_only:
+                # Native components can build beside LLVM. Final verification
+                # and shim installation must not race an LLVM reinstall.
+                clang_lock = finalization.enter_context((work / "build.lock").open("a"))
+                try:
+                    fcntl.flock(clang_lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
+                except BlockingIOError as exc:
+                    raise ToolchainError("Clang is still building; retry finalization after it completes") from exc
                 clang_state = json.loads((work / "state.json").read_text())
                 clang = prefix / "llvm/bin/clang"
                 if (clang_state.get("status") != "clang_verified" or
@@ -376,6 +384,7 @@ def build_host_tools(args):
             outputs += [clt / "libexec/migcom", xct / "bin/iig", prefix / "bin/lzfse"]
             if not args.components_only:
                 outputs += [Path("/usr/bin") / name for name in ("xcrun", "plutil", "codesign")]
+                outputs += [clt / "bin" / name for name in module.CLT_SHIMS]
             outputs += [clt / "lib" / name for name in ("libmacho.a", "libstuff.a")]
             for output in outputs:
                 if not output.is_file():

@@ -51,6 +51,64 @@ class ToolchainBoundaryTests(unittest.TestCase):
         self.assertEqual(env["XNU_BOOT_PROGRESS"], "0")
         self.assertEqual(env["UNIXNU_SDK_BUILD"], "24A446")
 
+    def test_component_cache_rejects_changed_binary_or_source_identity(self):
+        with tempfile.TemporaryDirectory() as directory:
+            prefix = Path(directory)
+            binary = prefix / "CommandLineTools/usr/bin/ld"
+            binary.parent.mkdir(parents=True)
+            binary.write_bytes(b"owned build output")
+            identity = {"source": "fixed commit", "host": "fixed compiler"}
+            record = {"identity": identity, "outputs": MODULE.component_inventory(prefix)}
+            MODULE.validate_component_cache(prefix, record, identity)
+            with self.assertRaises(MODULE.ToolchainError):
+                MODULE.validate_component_cache(prefix, record, {**identity, "source": "different commit"})
+            binary.write_bytes(b"different build output")
+            with self.assertRaises(MODULE.ToolchainError):
+                MODULE.validate_component_cache(prefix, record, identity)
+
+    def test_component_symlinks_must_remain_inside_owned_prefix(self):
+        with tempfile.TemporaryDirectory() as directory:
+            prefix = Path(directory) / "owned"
+            bindir = prefix / "bin"
+            bindir.mkdir(parents=True)
+            (bindir / "tool").symlink_to("../../outside")
+            with self.assertRaises(MODULE.ToolchainError):
+                MODULE.component_inventory(prefix)
+
+    def test_installer_guard_adapter_refuses_unknown_or_duplicate_shape(self):
+        fixture = '''def cctools(clt, dispatch_prefix, src):
+    if all((clt / path).exists() for path in ('bin/ld', 'lib/libmacho.a', 'lib/libstuff.a')):
+        return
+    if not (dispatch_prefix / 'lib/libdispatch.so').exists():
+        calls.append("build dispatch")
+    tree = src / 'cctools'
+    calls.append("build cctools")
+def mig(clt):
+    if (clt / 'libexec/migcom').exists():
+        return
+    calls.append("build mig")
+def lzfse(prefix):
+    if (prefix / 'bin/lzfse').exists():
+        return
+    calls.append("build lzfse")
+'''
+        adapted = MODULE.installer_without_existence_shortcuts(fixture)
+        scope = {"calls": []}
+        exec(compile(adapted, "fixed-recipe-fixture", "exec"), scope)
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            for name in ("bin/ld", "lib/libmacho.a", "lib/libstuff.a", "lib/libdispatch.so", "libexec/migcom", "bin/lzfse"):
+                output = root / name
+                output.parent.mkdir(parents=True, exist_ok=True)
+                output.touch()
+            scope["cctools"](root, root, root)
+            scope["mig"](root)
+            scope["lzfse"](root)
+        self.assertEqual(scope["calls"], ["build dispatch", "build cctools", "build mig", "build lzfse"])
+        for unknown in (fixture.replace("libexec/migcom", "different-tool"), fixture + fixture):
+            with self.assertRaises(MODULE.ToolchainError):
+                MODULE.installer_without_existence_shortcuts(unknown)
+
 
 class ToolchainSourceTests(unittest.TestCase):
     def setUp(self):
