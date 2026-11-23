@@ -315,16 +315,32 @@ def symbol_closure(kernel_inputs: list[dict], components: list[dict]) -> dict:
             "unextracted_baseline_archive_members_included": False}
 
 
+def decode_link_map(data: bytes) -> tuple[str, dict]:
+    """Preserve ld64 literal-string payload bytes without treating them as UTF-8.
+
+    The surrounding map and ordinary Unicode remain UTF-8. Invalid bytes are
+    represented by reversible surrogates, never discarded or replaced. Only
+    ASCII structural fields and qualified names are used for link acceptance.
+    """
+    text = data.decode("utf-8", "surrogateescape")
+    require(text.encode("utf-8", "surrogateescape") == data, "link map decoding is not byte preserving")
+    return text, {"encoding": "utf-8", "errors": "surrogateescape", "lossless_roundtrip_verified": True,
+                  "surrogateescaped_byte_count": sum(0xdc80 <= ord(c) <= 0xdcff for c in text),
+                  "line_boundary": "LF", "structural_fields": "ASCII spaces/tabs, decimal digits and hexadecimal addresses"}
+
+
 def parse_link_map(text: str) -> tuple[dict, list[dict]]:
     objects, symbols = {}, []
-    for line in text.splitlines():
-        if line.startswith("# Dead Stripped Symbols:"):
+    # Unicode line separators and whitespace can occur inside a literal string;
+    # they must not create map records or stand in for ld64's ASCII delimiters.
+    for line in text.split("\n"):
+        if line == "# Dead Stripped Symbols:":
             break
-        obj = re.fullmatch(r"\[\s*(\d+)\]\s+(.+)", line)
+        obj = re.fullmatch(r"\[[ \t]*([0-9]+)\][ \t]+(.+)", line)
         if obj:
             require(int(obj[1]) not in objects, "duplicate object index in link map")
             objects[int(obj[1])] = obj[2]
-        sym = re.fullmatch(r"(0x[0-9A-Fa-f]+)\s+(0x[0-9A-Fa-f]+)\s+\[\s*(\d+)\]\s+(.+)", line)
+        sym = re.fullmatch(r"(0x[0-9A-Fa-f]+)[ \t]+(0x[0-9A-Fa-f]+)[ \t]+\[[ \t]*([0-9]+)\][ \t]+(.+)", line)
         if sym:
             symbols.append({"address": int(sym[1], 16), "size": int(sym[2], 16),
                             "object_index": int(sym[3]), "name": sym[4]})
@@ -353,6 +369,8 @@ def verify_link_map(text: str, components: list[dict], linked: dict, data: bytes
         require(constructors, f"archive member has no retained constructor: {component['name']}")
         metas = [s for s in allocated if "gMetaClass" in s["name"] and component["name"] in s["name"]]
         require(metas, f"archive member has no retained metaclass: {component['name']}")
+        require(all(re.fullmatch(r"[\x21-\x7e]+", s["name"]) for s in [*constructors, *metas]),
+                f"qualifying constructor/metaclass name is not printable ASCII: {component['name']}")
         marker = "_armdt_platform_configured" if component["name"] == "ArmDTPlatform" else "_armcpu_registered"
         require(any(s["name"] == marker for s in allocated), f"missing actual platform observation symbol: {marker}")
         evidence.append({"component": component["name"], "map_member": expected,
@@ -997,10 +1015,14 @@ def run(args) -> dict:
                 linked = macho(data, 2)
                 require(not linked["symbols"]["strong_undefined"] and not linked["symbols"]["common_external"],
                         "linked image retains strong undefined/common symbols")
-                members = verify_link_map(mapfile.read_text(), components, linked, data)
+                require(mapfile.is_file() and not mapfile.is_symlink(), "link map is not a regular output file")
+                map_bytes = mapfile.read_bytes()
+                map_text, report["link_map_decoding"] = decode_link_map(map_bytes)
+                report["link_map"] = {"path": str(mapfile.resolve()), "size": len(map_bytes), "sha256": sha256(map_bytes)}
+                members = verify_link_map(map_text, components, linked, data)
                 if callback is not None:
                     report["kernel_callback"]["actual_member_evidence"] = verify_callback_link_map(
-                        mapfile.read_text(), callback, linked)
+                        map_text, callback, linked)
                     report["kernel_callback_linked"] = True
                 report.update(status="platform_link_compatible", platform_link_compatible=True,
                               candidate={**identity(destination), "load_contract": linked["load_contract"],
@@ -1009,7 +1031,7 @@ def run(args) -> dict:
                                          "build_version": linked["build_version"],
                                          "strong_undefined": linked["symbols"]["strong_undefined"],
                                          "weak_undefined": linked["symbols"]["weak_undefined"]},
-                              link_map=identity(mapfile), actual_member_evidence=members)
+                              actual_member_evidence=members)
             finally:
                 recheck = check_unchanged(protected_inputs)
                 report["protected_inputs_recheck"] = recheck

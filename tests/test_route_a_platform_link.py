@@ -15,6 +15,11 @@ SPEC = importlib.util.spec_from_file_location("route_a_platform_link", ROOT / "s
 MODULE = importlib.util.module_from_spec(SPEC)
 SPEC.loader.exec_module(MODULE)
 
+# Exact shape of the binary OID literal emitted by ld64 in link-attempt-003.
+OID_MAP_ROW = bytes.fromhex(
+    "3078464646464646463030373039313141410930783030303030303043095b3238395d20"
+    "6c69746572616c20737472696e673a20065c74608648016503040201") + b"\n"
+
 
 def image(symbols=(), *, filetype=1, subtype=0, entry=None, constructors=(), platform=2, minos=27 << 16,
           data_section=False):
@@ -153,6 +158,12 @@ class PlatformCallbackContractsTests(unittest.TestCase):
                              (text.replace(f"0x{base + 0x60:X}", f"0x{base + 0x68:X}"), "map address")):
             with self.assertRaisesRegex(MODULE.LinkError, error):
                 MODULE.verify_callback_link_map(wrong, callback, parsed)
+        for original, changed in ((b"/new/cpu.o", b"/new/cpu\x86.o"),
+                                  (b"_ml_arm_sleep", b"_ml_arm_\x86sleep"),
+                                  (MODULE.CALLBACK_SYMBOL.encode(), b"_arm64_platform_sleep_\x86hook")):
+            altered, _ = MODULE.decode_link_map(text.encode().replace(original, changed))
+            with self.subTest(changed=changed), self.assertRaises(MODULE.LinkError):
+                MODULE.verify_callback_link_map(altered, callback, parsed)
 
     def test_codegen_consumes_real_decoder_evidence_and_rejects_changed_blr_bytes(self):
         from test_route_a_kernel_callback import object_fixture
@@ -409,6 +420,25 @@ class PlatformLinkMetadataTests(unittest.TestCase):
         first["macho"] = MODULE.macho(image([("_shared", 0xF, 0, 4)]), 1)
         self.assertIn("_shared", MODULE.symbol_closure([kernel], [first, second])["duplicate_strong_definitions"])
 
+    def test_map_preserves_binary_literals_and_uses_only_ascii_lf_structure(self):
+        raw = (b"[289] /kernel/oid.o\n" + OID_MAP_ROW +
+               "0x40 0x4 [289] literal string: ─ ∑ \u0085[900] /forged.o\u2028"
+               "0x80 0x4 [900] _forged\n".encode() +
+               "[\u0661] /unicode-digit.o\n[300]\u00a0/nonbreaking-space.o\n"
+               "0xA0\u20030x4 [289] _unicode_whitespace\n".encode())
+        text, decoding = MODULE.decode_link_map(raw)
+        self.assertEqual(text.encode("utf-8", "surrogateescape"), raw)
+        self.assertTrue(decoding["lossless_roundtrip_verified"])
+        self.assertEqual(decoding["surrogateescaped_byte_count"], 1)
+        self.assertEqual(json.loads(json.dumps(text)).encode("utf-8", "surrogateescape"), raw)
+        objects, symbols = MODULE.parse_link_map(text)
+        self.assertEqual(objects, {289: "/kernel/oid.o"})
+        self.assertEqual(len(symbols), 2)
+        self.assertEqual(symbols[0]["name"].encode("utf-8", "surrogateescape"),
+                         OID_MAP_ROW.split(b"] ", 1)[1][:-1])
+        self.assertIn("\u0085[900]", symbols[1]["name"])
+        self.assertIn("\u20280x80", symbols[1]["name"])
+
     def test_map_requires_member_constructor_metaclass_and_marker(self):
         base = 0xFFFFFFF007004000
         data = image(filetype=2, constructors=(base + 0x10, base + 0x20))
@@ -433,6 +463,18 @@ class PlatformLinkMetadataTests(unittest.TestCase):
             MODULE.verify_link_map(text.replace("/new/libArmCpu.a", "/stale/libArmCpu.a"), components, parsed, data)
         with self.assertRaisesRegex(MODULE.LinkError, "metaclass"):
             MODULE.verify_link_map(text.replace("gMetaClass", "otherGlobal"), components, parsed, data)
+        raw = text.encode() + b"\n[289] /kernel/oid.o\n" + OID_MAP_ROW
+        decoded, _ = MODULE.decode_link_map(raw)
+        self.assertEqual(len(MODULE.verify_link_map(decoded, components, parsed, data)["components"]), 2)
+        for original, changed in (
+                (b"/new/libArmCpu.a", b"/new/libArm\x86Cpu.a"),
+                (b"_armcpu_registered", b"_armcpu_\x86registered"),
+                (b"__ZNArmCpugMetaClassE", b"__ZNArmCpu\x86gMetaClassE"),
+                (b"__GLOBAL__sub_I_ArmCpu.cpp", "__GLOBAL__sub_I_ArmCpuλ.cpp".encode()),
+                (b"__GLOBAL__sub_I_ArmCpu.cpp", b"__GLOBAL__sub_I_ArmCpu\x06.cpp")):
+            altered, _ = MODULE.decode_link_map(raw.replace(original, changed))
+            with self.subTest(changed=changed), self.assertRaises(MODULE.LinkError):
+                MODULE.verify_link_map(altered, components, parsed, data)
 
     def test_platform_report_cannot_substitute_archive_bytes_or_stale_object(self):
         with tempfile.TemporaryDirectory() as temp:
@@ -807,7 +849,7 @@ class PlatformLinkReplayTests(unittest.TestCase):
                     f"0x{base + index * 16:X} 0x4 [{index:3}] __GLOBAL__sub_I_{name}.cpp",
                     f"0x{base + 0x70 + index * 4:X} 0x4 [{index:3}] __ZN{name}gMetaClassE",
                     f"0x{base + 0x80 + index * 4:X} 0x4 [{index:3}] {marker}"])
-            map_path.write_text("\n".join(lines))
+            map_path.write_bytes("\n".join(lines).encode() + b"\n[289] /kernel/oid.o\n" + OID_MAP_ROW)
             return {"exit_code": 0}
 
         result, calls = self.exercise_run(action, with_callback=True)
@@ -815,6 +857,9 @@ class PlatformLinkReplayTests(unittest.TestCase):
         self.assertEqual(len(calls), 2)
         self.assertTrue(result["baseline_reproduced"])
         self.assertTrue(result["kernel_callback_linked"])
+        self.assertTrue(result["link_map_decoding"]["lossless_roundtrip_verified"])
+        self.assertEqual(result["link_map_decoding"]["surrogateescaped_byte_count"], 1)
+        self.assertEqual(result["link_map"]["sha256"], MODULE.sha256(Path(result["link_map"]["path"]).read_bytes()))
         replacement = result["kernel_callback"]["filelist_replacement"]
         self.assertEqual(replacement["replacement_count"], 1)
         self.assertEqual(replacement["unchanged_original_linked_object_count"], 5)
