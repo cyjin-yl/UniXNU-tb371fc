@@ -1,0 +1,9 @@
+clang: warning: argument unused during compilation: '-mllvm -disable-atexit-based-global-dtor-lowering' [-Wunused-command-line-argument]
+ld: warning: directory not found for option '-L/work/route-a-continue-20261123/kernel-build/.cache/fakeroot/usr/local/lib/kernel/platform'
+ld: warning: directory not found for option '-L/work/route-a-continue-20261123/kernel-build/.cache/fakeroot/usr/local/lib/kernel/platform'
+ld: warning: directory not found for option '-F/System/Library/Frameworks/'
+Undefined symbols for architecture arm64:
+  "_arm64_platform_sleep_hook", referenced from:
+      __ZN6ArmCpu5startEP9IOService in libArmCpu.a(ArmCpu.o)
+ld: symbol(s) not found for architecture arm64
+clang: error: linker command failed with exit code 1 (use -v to see invocation)

@@ -92,6 +92,8 @@ ROUTE_A_XNU_PREPARED_DIR="$ROUTE_A_WORK/xnu-pager/tree" \
 - [普通 arm64 内核准备](docs/ROUTE_A_KERNEL_BUILD.md)：从固定的两个公开 Git 源仓库建立 XNU 12377 候选，逐项应用完整所选补丁，再编译普通 arm64 配置探针。它不链接完整内核。
 - [定制工具链](docs/ROUTE_A_TOOLCHAIN.md)：实际构建带 XNU type builtins 的 Clang，执行 19 项语义断言；cctools/MIG/IIG/lzfse 可并行构建，最终安装时重新核验组合工具链。
 - [第一次完整编译](docs/ROUTE_A_FIRST_KERNEL_BUILD.md)：`stage` 固定公开 reference 与缺失 headers，保留已适配文件；`run` 调用实际 upstream builder，记录退出码、部分对象及候选 Mach-O。一次构建使用一个新工作树，失败产物保留。
+- [平台组件实验](docs/ROUTE_A_PLATFORM_RESULT.md)：基于真实成功 kernel recipe 编译固定的 `ArmDTPlatform` / `ArmCpu`，保留源码与依赖身份、失败诊断及归档成员摘要。独立链接实验先要求逐字节重现原内核，再核验新成员及构造函数实际进入候选；全部输出使用新目录。
+- kernel callback 接线实验使用 `build_route_a_kernel_callback.py`：只选择固定上游的三个 `cpu.c` hunk，用原 C 配方编译外部副本；`link_route_a_platform.py --kernel-callback-report` 在通过原 baseline SHA 后替换唯一对象。完整睡眠策略、唤醒和设备运行分别验收。
 
 CI 的 `Prepare ordinary arm64 kernel sources` 作业实际执行 71 项 patch 准备及 source/header staging；它不在每次提交时编译整个 LLVM 或 XNU。准备报告、源码摘要和编译器诊断保存在该次 Actions 产物中。[191 项回归对应的实际 staging 报告](docs/evidence/route-a-kernel-staging-20261123.json) 记录了 7 份公开源码、21 个保留 header 和 5 个新增 header。
 
@@ -108,6 +110,9 @@ CI 的 `Prepare ordinary arm64 kernel sources` 作业实际执行 71 项 patch �
 | `scripts/prepare_route_a_kernel.py` | 71 项源码候选和普通 arm64 配置探针 |
 | `scripts/prepare_route_a_toolchain.py` | 定制 Clang、语义验证、主机组件与安装 |
 | `scripts/run_route_a_kernel_build.py` | source/header staging 和实际首次 XNU builder |
+| `scripts/build_route_a_platform.py` | 固定平台源码、真实 C++ 配方重放与独立归档 |
+| `scripts/build_route_a_kernel_callback.py` | 真实 `cpu.c` 配方重编译、来源绑定的接线与有限生成代码检查 |
+| `scripts/link_route_a_platform.py` | 原候选字节一致重放、平台成员装载与输入保护核验 |
 | `scripts/check_route_a_host_tools.py` | 已构建主机工具的实际语义小样本 |
 | `tests/test_route_a_*.py` | 回归检查；由统一入口发现 |
 | `patches/route-a-*.patch` | 本轮提取工具与内核补丁 |

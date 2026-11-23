@@ -1,0 +1,950 @@
+/work/route-a-platform-20261124/link-attempt-004/mach.platform-link-probe.unstripped.noctf:
+Mach header
+      magic cputype cpusubtype  caps    filetype ncmds sizeofcmds      flags
+MH_MAGIC_64   ARM64        ALL  0x00     EXECUTE    25       5856   NOUNDEFS PIE
+Load command 0
+      cmd LC_SEGMENT_64
+  cmdsize 552
+  segname __TEXT
+   vmaddr 0xfffffff007004000
+   vmsize 0x000000000018c000
+  fileoff 0
+ filesize 1622016
+  maxprot r--
+ initprot r--
+   nsects 6
+    flags (none)
+Section
+  sectname __const
+   segname __TEXT
+      addr 0xfffffff0070090e0
+      size 0x000000000003db88
+    offset 20704
+     align 2^5 (32)
+    reloff 0
+    nreloc 0
+      type S_REGULAR
+attributes (none)
+ reserved1 0
+ reserved2 0
+Section
+  sectname __cstring
+   segname __TEXT
+      addr 0xfffffff007046c68
+      size 0x0000000000104186
+    offset 273512
+     align 2^3 (8)
+    reloff 0
+    nreloc 0
+      type S_CSTRING_LITERALS
+attributes (none)
+ reserved1 0
+ reserved2 0
+Section
+  sectname __os_log
+   segname __TEXT
+      addr 0xfffffff00714adee
+      size 0x00000000000449f5
+    offset 1338862
+     align 2^0 (1)
+    reloff 0
+    nreloc 0
+      type S_REGULAR
+attributes (none)
+ reserved1 0
+ reserved2 0
+Section
+  sectname __copyio_vectors
+   segname __TEXT
+      addr 0xfffffff00718f7e3
+      size 0x0000000000000168
+    offset 1619939
+     align 2^0 (1)
+    reloff 0
+    nreloc 0
+      type S_REGULAR
+attributes (none)
+ reserved1 0
+ reserved2 0
+Section
+  sectname __thread_starts
+   segname __TEXT
+      addr 0xfffffff00718f94b
+      size 0x0000000000000000
+    offset 1620299
+     align 2^0 (1)
+    reloff 0
+    nreloc 0
+      type S_REGULAR
+attributes (none)
+ reserved1 0
+ reserved2 0
+Section
+  sectname __eh_frame
+   segname __TEXT
+      addr 0xfffffff00718f950
+      size 0x00000000000006b0
+    offset 1620304
+     align 2^3 (8)
+    reloff 0
+    nreloc 0
+      type S_REGULAR
+attributes (none)
+ reserved1 0
+ reserved2 0
+Load command 1
+      cmd LC_SEGMENT_64
+  cmdsize 792
+  segname __DATA_CONST
+   vmaddr 0xfffffff007190000
+   vmsize 0x000000000011c000
+  fileoff 1622016
+ filesize 1163264
+  maxprot r--
+ initprot r--
+   nsects 9
+    flags (none)
+Section
+  sectname __mod_init_func
+   segname __DATA_CONST
+      addr 0xfffffff007190000
+      size 0x0000000000000318
+    offset 1622016
+     align 2^3 (8)
+    reloff 0
+    nreloc 0
+      type S_MOD_INIT_FUNC_POINTERS
+attributes (none)
+ reserved1 0
+ reserved2 0
+Section
+  sectname __const
+   segname __DATA_CONST
+      addr 0xfffffff007191000
+      size 0x00000000000b7148
+    offset 1626112
+     align 2^12 (4096)
+    reloff 0
+    nreloc 0
+      type S_REGULAR
+attributes (none)
+ reserved1 0
+ reserved2 0
+Section
+  sectname __assert
+   segname __DATA_CONST
+      addr 0xfffffff007248148
+      size 0x000000000002ec6c
+    offset 2376008
+     align 2^2 (4)
+    reloff 0
+    nreloc 0
+      type S_REGULAR
+attributes (none)
+ reserved1 0
+ reserved2 0
+Section
+  sectname __kalloc_type
+   segname __DATA_CONST
+      addr 0xfffffff007276db8
+      size 0x00000000000148c0
+    offset 2567608
+     align 2^3 (8)
+    reloff 0
+    nreloc 0
+      type S_REGULAR
+attributes (none)
+ reserved1 0
+ reserved2 0
+Section
+  sectname __kalloc_var
+   segname __DATA_CONST
+      addr 0xfffffff00728b678
+      size 0x0000000000008f70
+    offset 2651768
+     align 2^3 (8)
+    reloff 0
+    nreloc 0
+      type S_REGULAR
+attributes (none)
+ reserved1 0
+ reserved2 0
+Section
+  sectname __sdt_cstring
+   segname __DATA_CONST
+      addr 0xfffffff0072945e8
+      size 0x0000000000006d81
+    offset 2688488
+     align 2^0 (1)
+    reloff 0
+    nreloc 0
+      type S_CSTRING_LITERALS
+attributes (none)
+ reserved1 0
+ reserved2 0
+Section
+  sectname __sdt
+   segname __DATA_CONST
+      addr 0xfffffff00729b370
+      size 0x000000000000d9f8
+    offset 2716528
+     align 2^3 (8)
+    reloff 0
+    nreloc 0
+      type S_REGULAR
+attributes (none)
+ reserved1 0
+ reserved2 0
+Section
+  sectname __hib_const
+   segname __DATA_CONST
+      addr 0xfffffff0072a8d70
+      size 0x0000000000000160
+    offset 2772336
+     align 2^4 (16)
+    reloff 0
+    nreloc 0
+      type S_16BYTE_LITERALS
+attributes (none)
+ reserved1 0
+ reserved2 0
+Section
+  sectname __kern_brk_desc
+   segname __DATA_CONST
+      addr 0xfffffff0072a8ed0
+      size 0x0000000000000078
+    offset 2772688
+     align 2^3 (8)
+    reloff 0
+    nreloc 0
+      type S_REGULAR
+attributes (none)
+ reserved1 0
+ reserved2 0
+Load command 2
+      cmd LC_SEGMENT_64
+  cmdsize 232
+  segname __TEXT_EXEC
+   vmaddr 0xfffffff0072ac000
+   vmsize 0x000000000087c000
+  fileoff 2785280
+ filesize 8896512
+  maxprot r-x
+ initprot r-x
+   nsects 2
+    flags (none)
+Section
+  sectname __text
+   segname __TEXT_EXEC
+      addr 0xfffffff0072ac000
+      size 0x000000000087b244
+    offset 2785280
+     align 2^12 (4096)
+    reloff 0
+    nreloc 0
+      type S_REGULAR
+attributes PURE_INSTRUCTIONS SOME_INSTRUCTIONS
+ reserved1 0
+ reserved2 0
+Section
+  sectname __hib_text
+   segname __TEXT_EXEC
+      addr 0xfffffff007b27260
+      size 0x0000000000000c44
+    offset 11678304
+     align 2^5 (32)
+    reloff 0
+    nreloc 0
+      type S_REGULAR
+attributes PURE_INSTRUCTIONS SOME_INSTRUCTIONS
+ reserved1 0
+ reserved2 0
+Load command 3
+      cmd LC_SEGMENT_64
+  cmdsize 152
+  segname __KLD
+   vmaddr 0xfffffff007b28000
+   vmsize 0x0000000000004000
+  fileoff 11681792
+ filesize 16384
+  maxprot r-x
+ initprot r-x
+   nsects 1
+    flags (none)
+Section
+  sectname __text
+   segname __KLD
+      addr 0xfffffff007b28000
+      size 0x0000000000001170
+    offset 11681792
+     align 2^2 (4)
+    reloff 0
+    nreloc 0
+      type S_REGULAR
+attributes PURE_INSTRUCTIONS SOME_INSTRUCTIONS
+ reserved1 0
+ reserved2 0
+Load command 4
+      cmd LC_SEGMENT_64
+  cmdsize 152
+  segname __LASTDATA_CONST
+   vmaddr 0xfffffff007b2c000
+   vmsize 0x0000000000004000
+  fileoff 11698176
+ filesize 16384
+  maxprot r--
+ initprot r--
+   nsects 1
+    flags (none)
+Section
+  sectname __mod_init_func
+   segname __LASTDATA_CONST
+      addr 0xfffffff007b2c000
+      size 0x0000000000000008
+    offset 11698176
+     align 2^3 (8)
+    reloff 0
+    nreloc 0
+      type S_MOD_INIT_FUNC_POINTERS
+attributes (none)
+ reserved1 0
+ reserved2 0
+Load command 5
+      cmd LC_SEGMENT_64
+  cmdsize 152
+  segname __LAST
+   vmaddr 0xfffffff007b30000
+   vmsize 0x0000000000000000
+  fileoff 0
+ filesize 0
+  maxprot r-x
+ initprot r-x
+   nsects 1
+    flags (none)
+Section
+  sectname __last
+   segname __LAST
+      addr 0xfffffff007b30000
+      size 0x0000000000000000
+    offset 0
+     align 2^0 (1)
+    reloff 0
+    nreloc 0
+      type S_ZEROFILL
+attributes (none)
+ reserved1 0
+ reserved2 0
+Load command 6
+      cmd LC_SEGMENT_64
+  cmdsize 472
+  segname __KLDDATA
+   vmaddr 0xfffffff007b30000
+   vmsize 0x0000000000008000
+  fileoff 11714560
+ filesize 32768
+  maxprot rw-
+ initprot rw-
+   nsects 5
+    flags (none)
+Section
+  sectname __const
+   segname __KLDDATA
+      addr 0xfffffff007b30000
+      size 0x0000000000003f40
+    offset 11714560
+     align 2^3 (8)
+    reloff 0
+    nreloc 0
+      type S_REGULAR
+attributes (none)
+ reserved1 0
+ reserved2 0
+Section
+  sectname __cstring
+   segname __KLDDATA
+      addr 0xfffffff007b33f40
+      size 0x000000000000071b
+    offset 11730752
+     align 2^0 (1)
+    reloff 0
+    nreloc 0
+      type S_CSTRING_LITERALS
+attributes (none)
+ reserved1 0
+ reserved2 0
+Section
+  sectname __mod_init_func
+   segname __KLDDATA
+      addr 0xfffffff007b34660
+      size 0x0000000000000008
+    offset 11732576
+     align 2^3 (8)
+    reloff 0
+    nreloc 0
+      type S_MOD_INIT_FUNC_POINTERS
+attributes (none)
+ reserved1 0
+ reserved2 0
+Section
+  sectname __mod_term_func
+   segname __KLDDATA
+      addr 0xfffffff007b34668
+      size 0x0000000000000008
+    offset 11732584
+     align 2^3 (8)
+    reloff 0
+    nreloc 0
+      type S_MOD_TERM_FUNC_POINTERS
+attributes (none)
+ reserved1 0
+ reserved2 0
+Section
+  sectname __bss
+   segname __KLDDATA
+      addr 0xfffffff007b34670
+      size 0x0000000000000001
+    offset 0
+     align 2^0 (1)
+    reloff 0
+    nreloc 0
+      type S_ZEROFILL
+attributes (none)
+ reserved1 0
+ reserved2 0
+Load command 7
+      cmd LC_SEGMENT_64
+  cmdsize 1112
+  segname __DATA
+   vmaddr 0xfffffff007b38000
+   vmsize 0x000000000014c000
+  fileoff 11747328
+ filesize 278528
+  maxprot rw-
+ initprot rw-
+   nsects 13
+    flags (none)
+Section
+  sectname __llvm_prf_cnts
+   segname __DATA
+      addr 0xfffffff007b38000
+      size 0x0000000000000000
+    offset 11747328
+     align 2^0 (1)
+    reloff 0
+    nreloc 0
+      type S_REGULAR
+attributes (none)
+ reserved1 0
+ reserved2 0
+Section
+  sectname __llvm_prf_data
+   segname __DATA
+      addr 0xfffffff007b38000
+      size 0x0000000000000000
+    offset 11747328
+     align 2^0 (1)
+    reloff 0
+    nreloc 0
+      type S_REGULAR
+attributes (none)
+ reserved1 0
+ reserved2 0
+Section
+  sectname __data
+   segname __DATA
+      addr 0xfffffff007b38000
+      size 0x0000000000024e74
+    offset 11747328
+     align 2^14 (16384)
+    reloff 0
+    nreloc 0
+      type S_REGULAR
+attributes (none)
+ reserved1 0
+ reserved2 0
+Section
+  sectname __lock_grp
+   segname __DATA
+      addr 0xfffffff007b5ce78
+      size 0x0000000000015388
+    offset 11898488
+     align 2^3 (8)
+    reloff 0
+    nreloc 0
+      type S_REGULAR
+attributes (none)
+ reserved1 0
+ reserved2 0
+Section
+  sectname __percpu
+   segname __DATA
+      addr 0xfffffff007b74000
+      size 0x0000000000003bf0
+    offset 11993088
+     align 2^14 (16384)
+    reloff 0
+    nreloc 0
+      type S_REGULAR
+attributes (none)
+ reserved1 0
+ reserved2 0
+Section
+  sectname __refgrps
+   segname __DATA
+      addr 0xfffffff007b77bf0
+      size 0x0000000000000c78
+    offset 12008432
+     align 2^3 (8)
+    reloff 0
+    nreloc 0
+      type S_REGULAR
+attributes (none)
+ reserved1 0
+ reserved2 0
+Section
+  sectname __llvm_prf_bits
+   segname __DATA
+      addr 0xfffffff007b78868
+      size 0x0000000000000000
+    offset 12011624
+     align 2^0 (1)
+    reloff 0
+    nreloc 0
+      type S_REGULAR
+attributes (none)
+ reserved1 0
+ reserved2 0
+Section
+  sectname __llvm_prf_names
+   segname __DATA
+      addr 0xfffffff007b78868
+      size 0x0000000000000000
+    offset 12011624
+     align 2^0 (1)
+    reloff 0
+    nreloc 0
+      type S_REGULAR
+attributes (none)
+ reserved1 0
+ reserved2 0
+Section
+  sectname __llvm_prf_vnds
+   segname __DATA
+      addr 0xfffffff007b78868
+      size 0x0000000000000000
+    offset 12011624
+     align 2^0 (1)
+    reloff 0
+    nreloc 0
+      type S_REGULAR
+attributes (none)
+ reserved1 0
+ reserved2 0
+Section
+  sectname __llvm_prf_vns
+   segname __DATA
+      addr 0xfffffff007b78868
+      size 0x0000000000000000
+    offset 12011624
+     align 2^0 (1)
+    reloff 0
+    nreloc 0
+      type S_REGULAR
+attributes (none)
+ reserved1 0
+ reserved2 0
+Section
+  sectname __llvm_prf_vtab
+   segname __DATA
+      addr 0xfffffff007b78868
+      size 0x0000000000000000
+    offset 12011624
+     align 2^0 (1)
+    reloff 0
+    nreloc 0
+      type S_REGULAR
+attributes (none)
+ reserved1 0
+ reserved2 0
+Section
+  sectname __common
+   segname __DATA
+      addr 0xfffffff007b79000
+      size 0x00000000000bef18
+    offset 0
+     align 2^12 (4096)
+    reloff 0
+    nreloc 0
+      type S_ZEROFILL
+attributes (none)
+ reserved1 0
+ reserved2 0
+Section
+  sectname __bss
+   segname __DATA
+      addr 0xfffffff007c38000
+      size 0x0000000000049ea8
+    offset 0
+     align 2^12 (4096)
+    reloff 0
+    nreloc 0
+      type S_ZEROFILL
+attributes (none)
+ reserved1 0
+ reserved2 0
+Load command 8
+      cmd LC_SEGMENT_64
+  cmdsize 472
+  segname __BOOTDATA
+   vmaddr 0xfffffff007c84000
+   vmsize 0x00000000000d4000
+  fileoff 12025856
+ filesize 868352
+  maxprot rw-
+ initprot rw-
+   nsects 5
+    flags (none)
+Section
+  sectname __static_if
+   segname __BOOTDATA
+      addr 0xfffffff007c84000
+      size 0x00000000000432f0
+    offset 12025856
+     align 2^3 (8)
+    reloff 0
+    nreloc 0
+      type S_REGULAR
+attributes (none)
+ reserved1 0
+ reserved2 0
+Section
+  sectname __init_entry_set
+   segname __BOOTDATA
+      addr 0xfffffff007cc72f0
+      size 0x000000000001b6d8
+    offset 12301040
+     align 2^3 (8)
+    reloff 0
+    nreloc 0
+      type S_REGULAR
+attributes (none)
+ reserved1 0
+ reserved2 0
+Section
+  sectname __init
+   segname __BOOTDATA
+      addr 0xfffffff007ce4000
+      size 0x000000000005ba28
+    offset 12419072
+     align 2^14 (16384)
+    reloff 0
+    nreloc 0
+      type S_REGULAR
+attributes (none)
+ reserved1 0
+ reserved2 0
+Section
+  sectname __static_ifinit
+   segname __BOOTDATA
+      addr 0xfffffff007d3fa28
+      size 0x0000000000000010
+    offset 12794408
+     align 2^3 (8)
+    reloff 0
+    nreloc 0
+      type S_REGULAR
+attributes (none)
+ reserved1 0
+ reserved2 0
+Section
+  sectname __data
+   segname __BOOTDATA
+      addr 0xfffffff007d40000
+      size 0x0000000000018000
+    offset 12795904
+     align 2^14 (16384)
+    reloff 0
+    nreloc 0
+      type S_REGULAR
+attributes (none)
+ reserved1 0
+ reserved2 0
+Load command 9
+      cmd LC_SEGMENT_64
+  cmdsize 152
+  segname __PRELINK_TEXT
+   vmaddr 0xfffffff004004000
+   vmsize 0x0000000000000000
+  fileoff 12894208
+ filesize 0
+  maxprot r-x
+ initprot r-x
+   nsects 1
+    flags NORELOC
+Section
+  sectname __text
+   segname __PRELINK_TEXT
+      addr 0xfffffff004004000
+      size 0x0000000000000000
+    offset 12894208
+     align 2^0 (1)
+    reloff 0
+    nreloc 0
+      type S_REGULAR
+attributes (none)
+ reserved1 0
+ reserved2 0
+Load command 10
+      cmd LC_SEGMENT_64
+  cmdsize 152
+  segname __PRELINK_INFO
+   vmaddr 0xfffffff007d58000
+   vmsize 0x0000000000000000
+  fileoff 12894208
+ filesize 0
+  maxprot rw-
+ initprot rw-
+   nsects 1
+    flags NORELOC
+Section
+  sectname __info
+   segname __PRELINK_INFO
+      addr 0xfffffff007d58000
+      size 0x0000000000000000
+    offset 12894208
+     align 2^0 (1)
+    reloff 0
+    nreloc 0
+      type S_REGULAR
+attributes (none)
+ reserved1 0
+ reserved2 0
+Load command 11
+      cmd LC_SEGMENT_64
+  cmdsize 152
+  segname __PLK_TEXT_EXEC
+   vmaddr 0xfffffff007d58000
+   vmsize 0x0000000000000000
+  fileoff 12894208
+ filesize 0
+  maxprot rw-
+ initprot rw-
+   nsects 1
+    flags NORELOC
+Section
+  sectname __text
+   segname __PLK_TEXT_EXEC
+      addr 0xfffffff007d58000
+      size 0x0000000000000000
+    offset 12894208
+     align 2^0 (1)
+    reloff 0
+    nreloc 0
+      type S_REGULAR
+attributes (none)
+ reserved1 0
+ reserved2 0
+Load command 12
+      cmd LC_SEGMENT_64
+  cmdsize 152
+  segname __PRELINK_DATA
+   vmaddr 0xfffffff007d58000
+   vmsize 0x0000000000000000
+  fileoff 12894208
+ filesize 0
+  maxprot rw-
+ initprot rw-
+   nsects 1
+    flags NORELOC
+Section
+  sectname __data
+   segname __PRELINK_DATA
+      addr 0xfffffff007d58000
+      size 0x0000000000000000
+    offset 12894208
+     align 2^0 (1)
+    reloff 0
+    nreloc 0
+      type S_REGULAR
+attributes (none)
+ reserved1 0
+ reserved2 0
+Load command 13
+      cmd LC_SEGMENT_64
+  cmdsize 152
+  segname __PLK_DATA_CONST
+   vmaddr 0xfffffff007d58000
+   vmsize 0x0000000000000000
+  fileoff 12894208
+ filesize 0
+  maxprot rw-
+ initprot rw-
+   nsects 1
+    flags NORELOC
+Section
+  sectname __data
+   segname __PLK_DATA_CONST
+      addr 0xfffffff007d58000
+      size 0x0000000000000000
+    offset 12894208
+     align 2^0 (1)
+    reloff 0
+    nreloc 0
+      type S_REGULAR
+attributes (none)
+ reserved1 0
+ reserved2 0
+Load command 14
+      cmd LC_SEGMENT_64
+  cmdsize 152
+  segname __PLK_LLVM_COV
+   vmaddr 0xfffffff007d58000
+   vmsize 0x0000000000000000
+  fileoff 12894208
+ filesize 0
+  maxprot rw-
+ initprot rw-
+   nsects 1
+    flags NORELOC
+Section
+  sectname __llvm_covmap
+   segname __PLK_LLVM_COV
+      addr 0xfffffff007d58000
+      size 0x0000000000000000
+    offset 12894208
+     align 2^0 (1)
+    reloff 0
+    nreloc 0
+      type S_REGULAR
+attributes (none)
+ reserved1 0
+ reserved2 0
+Load command 15
+      cmd LC_SEGMENT_64
+  cmdsize 152
+  segname __PLK_LINKEDIT
+   vmaddr 0xfffffff007d58000
+   vmsize 0x0000000000000000
+  fileoff 12894208
+ filesize 0
+  maxprot rw-
+ initprot rw-
+   nsects 1
+    flags NORELOC
+Section
+  sectname __data
+   segname __PLK_LINKEDIT
+      addr 0xfffffff007d58000
+      size 0x0000000000000000
+    offset 12894208
+     align 2^0 (1)
+    reloff 0
+    nreloc 0
+      type S_REGULAR
+attributes (none)
+ reserved1 0
+ reserved2 0
+Load command 16
+      cmd LC_SEGMENT_64
+  cmdsize 152
+  segname __LINKINFO
+   vmaddr 0xfffffff007d58000
+   vmsize 0x0000000000048000
+  fileoff 12894208
+ filesize 294912
+  maxprot r--
+ initprot r--
+   nsects 1
+    flags NORELOC
+Section
+  sectname __symbolsets
+   segname __LINKINFO
+      addr 0xfffffff007d58000
+      size 0x0000000000046189
+    offset 12894208
+     align 2^0 (1)
+    reloff 0
+    nreloc 0
+      type S_REGULAR
+attributes (none)
+ reserved1 0
+ reserved2 0
+Load command 17
+      cmd LC_SEGMENT_64
+  cmdsize 72
+  segname __LINKEDIT
+   vmaddr 0xfffffff007da0000
+   vmsize 0x000000000085c000
+  fileoff 13189120
+ filesize 8753336
+  maxprot r--
+ initprot r--
+   nsects 0
+    flags (none)
+Load command 18
+     cmd LC_SYMTAB
+ cmdsize 24
+  symoff 14047816
+   nsyms 218920
+  stroff 17550536
+ strsize 4391920
+Load command 19
+            cmd LC_DYSYMTAB
+        cmdsize 80
+      ilocalsym 0
+      nlocalsym 195394
+     iextdefsym 195394
+     nextdefsym 23526
+      iundefsym 218920
+      nundefsym 0
+         tocoff 0
+           ntoc 0
+      modtaboff 0
+        nmodtab 0
+   extrefsymoff 0
+    nextrefsyms 0
+ indirectsymoff 0
+  nindirectsyms 0
+      extreloff 0
+        nextrel 0
+      locreloff 13189120
+        nlocrel 102103
+Load command 20
+     cmd LC_UUID
+ cmdsize 24
+    uuid 12432FB0-C0DF-39CD-B5C8-3278568208A9
+Load command 21
+       cmd LC_BUILD_VERSION
+   cmdsize 32
+  platform ios
+       sdk 27.0
+     minos 27.0
+    ntools 1
+      tool ld
+   version 956.6
+Load command 22
+      cmd LC_SOURCE_VERSION
+  cmdsize 16
+  version 12377.121.6
+Load command 23
+        cmd LC_UNIXTHREAD
+    cmdsize 288
+     flavor ARM_THREAD_STATE64
+      count ARM_THREAD_STATE64_COUNT
+	    x0  0x0000000000000000 x1  0x0000000000000000 x2  0x0000000000000000
+	    x3  0x0000000000000000 x4  0x0000000000000000 x5  0x0000000000000000
+	    x6  0x0000000000000000 x7  0x0000000000000000 x8  0x0000000000000000
+	    x9  0x0000000000000000 x10 0x0000000000000000 x11 0x0000000000000000
+	    x12 0x0000000000000000 x13 0x0000000000000000 x14 0x0000000000000000
+	    x15 0x0000000000000000 x16 0x0000000000000000 x17 0x0000000000000000
+	    x18 0x0000000000000000 x19 0x0000000000000000 x20 0x0000000000000000
+	    x21 0x0000000000000000 x22 0x0000000000000000 x23 0x0000000000000000
+	    x24 0x0000000000000000 x25 0x0000000000000000 x26 0x0000000000000000
+	    x27 0x0000000000000000 x28 0x0000000000000000  fp 0x0000000000000000
+	     lr 0x0000000000000000 sp  0x0000000000000000  pc 0xfffffff007511488
+	   cpsr 0x00000000
+Load command 24
+      cmd LC_FUNCTION_STARTS
+  cmdsize 16
+  dataoff 14005944
+ datasize 41872

@@ -1,0 +1,74 @@
+{
+  "schema_version": 1,
+  "scope": "public-platform-archives-against-generic-kernel",
+  "unixnu_commit": "8542980d02b4d2cc5c32ee3542de1760b2562aac",
+  "xnu_commit": "ac9718fb1af618d5ce8678d0dc6e8a58f252216f",
+  "upstream_catalog": {
+    "repository": "https://github.com/UniXNU/UniXNU.git",
+    "path": "components.toml",
+    "git_blob": "69a8cff85184ff002389b21c06e20c81e744f9d2"
+  },
+  "upstream_compile_policy": {
+    "path": "scripts/build-arm-driver.py",
+    "git_blob": "b027a9b922ec719d330054b4e14297b9a200faa6",
+    "remove_original_warnings": true,
+    "warnings": [
+      "-Wall",
+      "-Wextra",
+      "-Werror",
+      "-Wno-unused-parameter",
+      "-Wno-c99-designator",
+      "-Wno-reorder-init-list",
+      "-Wno-deprecated-enum-enum-conversion",
+      "-Wno-unnecessary-virtual-specifier"
+    ]
+  },
+  "retained_recipe_warnings": [
+    "-Wno-missing-designated-field-initializers",
+    "-Wno-unused-but-set-global"
+  ],
+  "retained_recipe_warning_basis": "Inherit only these two compiler compatibility options already present in the exact successful IOPlatformExpert recipe. Both must be observed in its original arguments. These are separate from the fixed upstream eight-warning driver policy.",
+  "baseline": {
+    "build_report_path": ".route-a/build-report.json",
+    "build_report_sha256": "34c40f71b43000dff0cc39b97264fc93ef1fd3b3027735c4a710817863b71044",
+    "kernel_path": "build/xnu/ios-obj/DEVELOPMENT_ARM64_BCM2837/mach.development.bcm2837.unstripped",
+    "kernel_sha256": "a58cdeedb9b7a4c152867c3487f28658a3799b0158f5046bbad6d2d58e741469",
+    "kernel_size": 21905888,
+    "recipe_path": "build/xnu/ios-obj/DEVELOPMENT_ARM64_BCM2837/iokit/DEVELOPMENT/IOPlatformExpert.cpo.json",
+    "recipe_sha256": "d6cc5213a5aba343dde41bdb3a1ea8c72e91605284af5e10b886bf3af71b3132",
+    "recipe_source": ".cache/xnu-work/iokit/Kernel/IOPlatformExpert.cpp",
+    "compiler_sha256": "85d220e32bd83d75de788c8beab0bea646a4684e1112f7c06266ca71e651bb04"
+  },
+  "target": {
+    "architecture": "arm64",
+    "cpu": "generic",
+    "platform": 2,
+    "minimum_os": "27.0",
+    "macho_subtype": 0
+  },
+  "components": [
+    {
+      "name": "ArmDTPlatform",
+      "repository": "https://github.com/UniXNU/ArmDTPlatform.git",
+      "commit": "417ff95d6a6e8607ddea9309ec45c3bfd4a67c60",
+      "license": "BSD-2-Clause-Patent",
+      "translation_unit": "ArmDTPlatform.cpp",
+      "files": [
+        {"path": "ArmDTPlatform.cpp", "git_blob": "fdafc430325eee5b6e8eb9d64341e604ac94744e"},
+        {"path": "LICENSE", "git_blob": "217b4df4b4037c3b6cd4522a3909d3223f1ec1ac"}
+      ]
+    },
+    {
+      "name": "ArmCpu",
+      "repository": "https://github.com/UniXNU/ArmCpu.git",
+      "commit": "5f3702697ed80fd2e98594de1af7e32b4b77b08b",
+      "license": "BSD-2-Clause-Patent",
+      "translation_unit": "ArmCpu.cpp",
+      "files": [
+        {"path": "ArmCpu.cpp", "git_blob": "372a2a4e9c3c06b803dae2b0fc2030b5a9228189"},
+        {"path": "ArmCpuSleep.h", "git_blob": "382621d7d62224c2547768021f6a4522ef8d95e8"},
+        {"path": "LICENSE", "git_blob": "6110342d021ed71bc40e6ecbc098376de546cd9d"}
+      ]
+    }
+  ]
+}

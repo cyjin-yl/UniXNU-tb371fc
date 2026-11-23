@@ -1,0 +1,53 @@
+{
+  "cpu_replacement": {
+    "original_object": {
+      "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/DEVELOPMENT_ARM64_BCM2837/osfmk/DEVELOPMENT/cpu.o",
+      "sha256": "25b913d235ed38f7d4e1910d54d79eaebdbc83003c501939822e288246ed12e4",
+      "size": 118200
+    },
+    "original_strong_definition_names_removed": [
+      "___machine_timeout_spec_arm64_ipi_test_timeout",
+      "_arm64_immediate_ipi_test_callback",
+      "_arm64_ipi_test",
+      "_arm64_ipi_test_callback",
+      "_arm64_ipi_test_data",
+      "_arm64_ipi_test_timeout",
+      "_cpu_bootstrap",
+      "_cpu_cluster_id",
+      "_cpu_data_init",
+      "_cpu_data_register",
+      "_cpu_idle",
+      "_cpu_idle_count",
+      "_cpu_idle_exit",
+      "_cpu_init",
+      "_cpu_interrupt_is_pending",
+      "_cpu_machine_idle_init",
+      "_cpu_sleep",
+      "_cpu_stack_alloc",
+      "_cpu_start",
+      "_cpu_timebase_init",
+      "_expecting_ipi_wfe_timeout_mt",
+      "_expecting_ipi_wfe_timeout_usec",
+      "_idle_proximate_io_wfe_masked",
+      "_idle_proximate_io_wfe_unmasked",
+      "_idle_proximate_timer_wfe",
+      "_machine_track_platform_idle",
+      "_ml_arm_sleep",
+      "_start_cpu_paddr",
+      "_wfe_allowed",
+      "_wfe_to_deadline_or_interrupt",
+      "_wfi"
+    ],
+    "replacement_object": {
+      "path": "/work/route-a-platform-20261124/callback-attempt-002/replacement/cpu.o",
+      "sha256": "c555d97897615fb786d375f5510906fb52a7a4102962ea09ad3ecf450a076d5d",
+      "size": 123440
+    },
+    "weak_definition_winner_inferred": false
+  },
+  "duplicate_strong_definitions": {},
+  "inventory_is_link_success": false,
+  "unextracted_baseline_archive_members_included": false,
+  "unresolved_platform_strong": [],
+  "unresolved_platform_weak": []
+}

@@ -1,0 +1,15 @@
+{
+  "audit": {
+    "path": "/work/route-a-platform-20261124/platform-kernel-audit-001/audit.json",
+    "realpath": "/work/route-a-platform-20261124/platform-kernel-audit-001/audit.json",
+    "sha256": "61bdea1cf7cb5f66e4afc407c58626ad6b96cf960b8d4f09e620de3c5dab17bd",
+    "size": 21686,
+    "symlink_target": null
+  },
+  "exit_code": 0,
+  "finished": 1795467829.3258927,
+  "pid": 107973,
+  "stage": "scanning_candidate_ranges",
+  "started": 1795467822.7835498,
+  "status": "completed"
+}

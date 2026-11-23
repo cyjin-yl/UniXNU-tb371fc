@@ -1,0 +1,3176 @@
+{
+  "common_external": [],
+  "defined_external": [
+    "__ZN6ArmCpu10gMetaClassE",
+    "__ZN6ArmCpu10getCPUNameEv",
+    "__ZN6ArmCpu10idleNotifyEPviPy",
+    "__ZN6ArmCpu10prepareGicEv",
+    "__ZN6ArmCpu10quiesceCPUEv",
+    "__ZN6ArmCpu10superClassE",
+    "__ZN6ArmCpu11startThreadEPvi",
+    "__ZN6ArmCpu12drainPendingEv",
+    "__ZN6ArmCpu14startSecondaryEv",
+    "__ZN6ArmCpu15finishSecondaryEv",
+    "__ZN6ArmCpu15initDistributorEv",
+    "__ZN6ArmCpu15signalCPUCancelEP5IOCPU",
+    "__ZN6ArmCpu17enableCPUTimeBaseEb",
+    "__ZN6ArmCpu17signalCPUDeferredEP5IOCPU",
+    "__ZN6ArmCpu17wakeRedistributorEb",
+    "__ZN6ArmCpu5probeEP9IOServicePi",
+    "__ZN6ArmCpu5startEP9IOService",
+    "__ZN6ArmCpu6mapGicEv",
+    "__ZN6ArmCpu7haltCPUEv",
+    "__ZN6ArmCpu7initCPUEb",
+    "__ZN6ArmCpu8dispatchEPvS0_S0_i",
+    "__ZN6ArmCpu8startCPUEmm",
+    "__ZN6ArmCpu9MetaClassC1Ev",
+    "__ZN6ArmCpu9MetaClassC2Ev",
+    "__ZN6ArmCpu9enableGicEv",
+    "__ZN6ArmCpu9interruptEv",
+    "__ZN6ArmCpu9metaClassE",
+    "__ZN6ArmCpu9signalCPUEP5IOCPU",
+    "__ZN6ArmCpuC1EPK11OSMetaClass",
+    "__ZN6ArmCpuC1Ev",
+    "__ZN6ArmCpuC2EPK11OSMetaClass",
+    "__ZN6ArmCpuC2Ev",
+    "__ZN6ArmCpuD0Ev",
+    "__ZN6ArmCpuD1Ev",
+    "__ZN6ArmCpuD2Ev",
+    "__ZN6ArmCpudlEPvm",
+    "__ZN6ArmCpunwEm",
+    "__ZNK6ArmCpu12getMetaClassEv",
+    "__ZNK6ArmCpu9MetaClass5allocEv",
+    "__ZTV6ArmCpu",
+    "__ZTVN6ArmCpu9MetaClassE",
+    "_armcpu_boot_mpidr",
+    "_armcpu_boot_sys",
+    "_armcpu_core_sgi",
+    "_armcpu_core_timer",
+    "_armcpu_cpu_init_completed",
+    "_armcpu_gic_boot",
+    "_armcpu_gic_diag",
+    "_armcpu_gic_diag_stage",
+    "_armcpu_gic_ready",
+    "_armcpu_gic_stride",
+    "_armcpu_gic_typer_probe",
+    "_armcpu_halt_calls",
+    "_armcpu_ipi_interrupts",
+    "_armcpu_ipi_selftest",
+    "_armcpu_ipi_selftest_sent",
+    "_armcpu_ipi_sent",
+    "_armcpu_irq_drain_most",
+    "_armcpu_irq_id",
+    "_armcpu_irq_long_drains",
+    "_armcpu_irq_phase",
+    "_armcpu_psci",
+    "_armcpu_quiesce_calls",
+    "_armcpu_registered",
+    "_armcpu_sgi_selfprobe",
+    "_armcpu_sleep_last_cpu_off_rc",
+    "_armcpu_sleep_register",
+    "_armcpu_sleep_stats",
+    "_armcpu_smp_conduit",
+    "_armcpu_smp_fail",
+    "_armcpu_smp_mpidr",
+    "_armcpu_smp_psci_rc",
+    "_armcpu_smp_requested",
+    "_armcpu_smp_running",
+    "_armcpu_smp_seen_mpidr",
+    "_armcpu_smp_step",
+    "_armcpu_smp_sys",
+    "_armcpu_spi_attach",
+    "_armcpu_spi_count",
+    "_armcpu_spi_mask",
+    "_armcpu_spi_share",
+    "_armcpu_spi_unhandled",
+    "_armcpu_spi_unhandled_id",
+    "_armcpu_stats_row",
+    "_armcpu_timer_interrupts"
+  ],
+  "records": [
+    {
+      "n_desc": 0,
+      "n_sect": 1,
+      "n_type": 14,
+      "name": "ltmp0",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 6,
+      "n_type": 14,
+      "name": "l_.str",
+      "value": 19248
+    },
+    {
+      "n_desc": 32,
+      "n_sect": 7,
+      "n_type": 14,
+      "name": "__ZL10ArmCpu_ktv",
+      "value": 20576
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 6,
+      "n_type": 14,
+      "name": "l_.str.3",
+      "value": 19301
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 6,
+      "n_type": 14,
+      "name": "l_.str.4",
+      "value": 19313
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 6,
+      "n_type": 14,
+      "name": "l_.str.5",
+      "value": 19317
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 6,
+      "n_type": 14,
+      "name": "l_.str.6",
+      "value": 19321
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 6,
+      "n_type": 14,
+      "name": "l_.str.7",
+      "value": 19325
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 6,
+      "n_type": 14,
+      "name": "l_.str.8",
+      "value": 19333
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 6,
+      "n_type": 14,
+      "name": "l_.str.9",
+      "value": 19346
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 6,
+      "n_type": 14,
+      "name": "l_.str.10",
+      "value": 19353
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 6,
+      "n_type": 14,
+      "name": "l_.str.11",
+      "value": 19364
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 6,
+      "n_type": 14,
+      "name": "l_.str.12",
+      "value": 19375
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 8,
+      "n_type": 14,
+      "name": "__ZL13gRedistStride",
+      "value": 260608
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 8,
+      "n_type": 14,
+      "name": "__ZL8gDistMap.0",
+      "value": 267792
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 8,
+      "n_type": 14,
+      "name": "__ZL10gRedistMap.0",
+      "value": 267800
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 8,
+      "n_type": 14,
+      "name": "__ZL5gDist",
+      "value": 260616
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 8,
+      "n_type": 14,
+      "name": "__ZL7gFrames",
+      "value": 260624
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 8,
+      "n_type": 14,
+      "name": "__ZL11gFramesSize",
+      "value": 260632
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 8,
+      "n_type": 14,
+      "name": "__ZL10gGicShared",
+      "value": 260640
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 8,
+      "n_type": 14,
+      "name": "__ZL10gRemoteGic",
+      "value": 260656
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 8,
+      "n_type": 14,
+      "name": "__ZL13gBootAffinity",
+      "value": 260648
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 6,
+      "n_type": 14,
+      "name": "l_.str.14",
+      "value": 19455
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 6,
+      "n_type": 14,
+      "name": "l_.str.13",
+      "value": 19396
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 6,
+      "n_type": 14,
+      "name": "l_.str.15",
+      "value": 19466
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 6,
+      "n_type": 14,
+      "name": "l_.str.16",
+      "value": 19482
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 6,
+      "n_type": 14,
+      "name": "l_.str.17",
+      "value": 19498
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 8,
+      "n_type": 14,
+      "name": "__ZL8gSelfIpi",
+      "value": 260657
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 6,
+      "n_type": 14,
+      "name": "l_.str.18",
+      "value": 19513
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 8,
+      "n_type": 14,
+      "name": "__ZL7gSpiIpi",
+      "value": 260658
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 6,
+      "n_type": 14,
+      "name": "l_.str.19",
+      "value": 19532
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 8,
+      "n_type": 14,
+      "name": "__ZL6gStats",
+      "value": 260672
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 6,
+      "n_type": 14,
+      "name": "l_.str.20",
+      "value": 19537
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 8,
+      "n_type": 14,
+      "name": "__ZL10gCounterHz",
+      "value": 260664
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 8,
+      "n_type": 14,
+      "name": "__ZL14gIdleLatencyNs",
+      "value": 260676
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 6,
+      "n_type": 14,
+      "name": "l_.str.21",
+      "value": 19560
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 8,
+      "n_type": 14,
+      "name": "__ZL8gPending",
+      "value": 260680
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 8,
+      "n_type": 14,
+      "name": "__ZL15gBootRegistered",
+      "value": 260744
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 6,
+      "n_type": 14,
+      "name": "l_.str.22",
+      "value": 19592
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 6,
+      "n_type": 14,
+      "name": "l_.str.23",
+      "value": 19607
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 8,
+      "n_type": 14,
+      "name": "__ZL16gSleepWakeAfterS",
+      "value": 260748
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 8,
+      "n_type": 14,
+      "name": "__ZL9gSleepHvc",
+      "value": 260752
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 1,
+      "n_type": 14,
+      "name": "__ZL11psciConduitPb",
+      "value": 5536
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 8,
+      "n_type": 14,
+      "name": "__ZL13gSleepEnabled",
+      "value": 260753
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 1,
+      "n_type": 14,
+      "name": "__ZL19armcpuPlatformSleepi",
+      "value": 5832
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 6,
+      "n_type": 14,
+      "name": "l_.str.24",
+      "value": 19633
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 8,
+      "n_type": 14,
+      "name": "__ZL9gCoreSeen",
+      "value": 260756
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 8,
+      "n_type": 14,
+      "name": "__ZL10gSmpWanted",
+      "value": 260760
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 6,
+      "n_type": 14,
+      "name": "l_.str.25",
+      "value": 19660
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 8,
+      "n_type": 14,
+      "name": "__ZL11gController",
+      "value": 260768
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 6,
+      "n_type": 14,
+      "name": "l_.str.26",
+      "value": 19668
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 6,
+      "n_type": 14,
+      "name": "l_.str.27",
+      "value": 19726
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 6,
+      "n_type": 14,
+      "name": "l_.str.28",
+      "value": 19776
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 6,
+      "n_type": 14,
+      "name": "l_.str.42",
+      "value": 20550
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 6,
+      "n_type": 14,
+      "name": "l_.str.43",
+      "value": 20556
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 6,
+      "n_type": 14,
+      "name": "l_.str.44",
+      "value": 20563
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 6,
+      "n_type": 14,
+      "name": "l_.str.45",
+      "value": 20567
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 2,
+      "n_type": 14,
+      "name": "ltmp1",
+      "value": 17584
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 2,
+      "n_type": 14,
+      "name": "lCPI22_0",
+      "value": 17584
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 8,
+      "n_type": 14,
+      "name": "__ZL11gSleepBoard",
+      "value": 262912
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 8,
+      "n_type": 14,
+      "name": "__ZL5gCore",
+      "value": 260864
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 6,
+      "n_type": 14,
+      "name": "l_.str.29",
+      "value": 19822
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 8,
+      "n_type": 14,
+      "name": "__ZZN6ArmCpu11startThreadEPviE7started",
+      "value": 260776
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 1,
+      "n_type": 14,
+      "name": "__ZL8parkCorev",
+      "value": 10920
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 8,
+      "n_type": 14,
+      "name": "__ZL4gSpi",
+      "value": 262928
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 8,
+      "n_type": 14,
+      "name": "__ZL10gSpiRoutes",
+      "value": 263696
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 6,
+      "n_type": 14,
+      "name": "l_.str.30",
+      "value": 19834
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 6,
+      "n_type": 14,
+      "name": "l_.str.31",
+      "value": 19903
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 6,
+      "n_type": 14,
+      "name": "l_.str.32",
+      "value": 19952
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 6,
+      "n_type": 14,
+      "name": "l_.str.33",
+      "value": 19997
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 8,
+      "n_type": 14,
+      "name": "__ZZN6ArmCpu8startCPUEmmE5asked",
+      "value": 262920
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 8,
+      "n_type": 14,
+      "name": "__ZL20gSpiRegistrationLock",
+      "value": 267808
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 1,
+      "n_type": 14,
+      "name": "__ZL17spiAttachUnlockedjbPFvPvES_PjPy",
+      "value": 14836
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 8,
+      "n_type": 14,
+      "name": "__ZL8gSpiUsed",
+      "value": 262924
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 6,
+      "n_type": 14,
+      "name": "l_.str.34",
+      "value": 20105
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 6,
+      "n_type": 14,
+      "name": "l_.str.36",
+      "value": 20232
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 6,
+      "n_type": 14,
+      "name": "l_.str.35",
+      "value": 20222
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 6,
+      "n_type": 14,
+      "name": "l_.str.37",
+      "value": 20243
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 6,
+      "n_type": 14,
+      "name": "l_.str.38",
+      "value": 20273
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 6,
+      "n_type": 14,
+      "name": "l_.str.39",
+      "value": 20353
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 1,
+      "n_type": 14,
+      "name": "__ZN6ArmCpu9MetaClassD1Ev",
+      "value": 17516
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 1,
+      "n_type": 14,
+      "name": "__ZN6ArmCpu9MetaClassD0Ev",
+      "value": 17520
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 1,
+      "n_type": 14,
+      "name": "__GLOBAL__sub_I_ArmCpu.cpp",
+      "value": 17524
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 3,
+      "n_type": 14,
+      "name": "ltmp2",
+      "value": 259920
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 4,
+      "n_type": 14,
+      "name": "ltmp3",
+      "value": 17592
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 5,
+      "n_type": 14,
+      "name": "ltmp4",
+      "value": 17600
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 6,
+      "n_type": 14,
+      "name": "ltmp5",
+      "value": 19248
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 6,
+      "n_type": 14,
+      "name": "l_.str.1",
+      "value": 19255
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 6,
+      "n_type": 14,
+      "name": "l_.str.2",
+      "value": 19267
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 7,
+      "n_type": 14,
+      "name": "ltmp6",
+      "value": 20576
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 8,
+      "n_type": 14,
+      "name": "ltmp7",
+      "value": 260608
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 9,
+      "n_type": 14,
+      "name": "ltmp8",
+      "value": 20640
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 3,
+      "n_type": 15,
+      "name": "__ZN6ArmCpu10gMetaClassE",
+      "value": 260520
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 1,
+      "n_type": 15,
+      "name": "__ZN6ArmCpu10getCPUNameEv",
+      "value": 14600
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 1,
+      "n_type": 15,
+      "name": "__ZN6ArmCpu10idleNotifyEPviPy",
+      "value": 8856
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 1,
+      "n_type": 15,
+      "name": "__ZN6ArmCpu10prepareGicEv",
+      "value": 3428
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 1,
+      "n_type": 15,
+      "name": "__ZN6ArmCpu10quiesceCPUEv",
+      "value": 13664
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 5,
+      "n_type": 15,
+      "name": "__ZN6ArmCpu10superClassE",
+      "value": 17608
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 1,
+      "n_type": 15,
+      "name": "__ZN6ArmCpu11startThreadEPvi",
+      "value": 9732
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 1,
+      "n_type": 15,
+      "name": "__ZN6ArmCpu12drainPendingEv",
+      "value": 5320
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 1,
+      "n_type": 15,
+      "name": "__ZN6ArmCpu14startSecondaryEv",
+      "value": 9636
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 1,
+      "n_type": 15,
+      "name": "__ZN6ArmCpu15finishSecondaryEv",
+      "value": 9112
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 1,
+      "n_type": 15,
+      "name": "__ZN6ArmCpu15initDistributorEv",
+      "value": 2620
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 1,
+      "n_type": 15,
+      "name": "__ZN6ArmCpu15signalCPUCancelEP5IOCPU",
+      "value": 12736
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 1,
+      "n_type": 15,
+      "name": "__ZN6ArmCpu17enableCPUTimeBaseEb",
+      "value": 13640
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 1,
+      "n_type": 15,
+      "name": "__ZN6ArmCpu17signalCPUDeferredEP5IOCPU",
+      "value": 12692
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 1,
+      "n_type": 15,
+      "name": "__ZN6ArmCpu17wakeRedistributorEb",
+      "value": 2908
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 1,
+      "n_type": 15,
+      "name": "__ZN6ArmCpu5probeEP9IOServicePi",
+      "value": 828
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 1,
+      "n_type": 15,
+      "name": "__ZN6ArmCpu5startEP9IOService",
+      "value": 3840
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 1,
+      "n_type": 15,
+      "name": "__ZN6ArmCpu6mapGicEv",
+      "value": 1216
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 1,
+      "n_type": 15,
+      "name": "__ZN6ArmCpu7haltCPUEv",
+      "value": 13876
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 1,
+      "n_type": 15,
+      "name": "__ZN6ArmCpu7initCPUEb",
+      "value": 9892
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 1,
+      "n_type": 15,
+      "name": "__ZN6ArmCpu8dispatchEPvS0_S0_i",
+      "value": 9108
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 1,
+      "n_type": 15,
+      "name": "__ZN6ArmCpu8startCPUEmm",
+      "value": 13908
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 1,
+      "n_type": 15,
+      "name": "__ZN6ArmCpu9MetaClassC1Ev",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 1,
+      "n_type": 15,
+      "name": "__ZN6ArmCpu9MetaClassC2Ev",
+      "value": 468
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 1,
+      "n_type": 15,
+      "name": "__ZN6ArmCpu9enableGicEv",
+      "value": 3504
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 1,
+      "n_type": 15,
+      "name": "__ZN6ArmCpu9interruptEv",
+      "value": 10972
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 5,
+      "n_type": 15,
+      "name": "__ZN6ArmCpu9metaClassE",
+      "value": 17600
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 1,
+      "n_type": 15,
+      "name": "__ZN6ArmCpu9signalCPUEP5IOCPU",
+      "value": 12292
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 1,
+      "n_type": 15,
+      "name": "__ZN6ArmCpuC1EPK11OSMetaClass",
+      "value": 108
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 1,
+      "n_type": 15,
+      "name": "__ZN6ArmCpuC1Ev",
+      "value": 644
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 1,
+      "n_type": 15,
+      "name": "__ZN6ArmCpuC2EPK11OSMetaClass",
+      "value": 52
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 1,
+      "n_type": 15,
+      "name": "__ZN6ArmCpuC2Ev",
+      "value": 736
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 1,
+      "n_type": 15,
+      "name": "__ZN6ArmCpuD0Ev",
+      "value": 332
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 1,
+      "n_type": 15,
+      "name": "__ZN6ArmCpuD1Ev",
+      "value": 248
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 1,
+      "n_type": 15,
+      "name": "__ZN6ArmCpuD2Ev",
+      "value": 164
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 1,
+      "n_type": 15,
+      "name": "__ZN6ArmCpudlEPvm",
+      "value": 436
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 1,
+      "n_type": 15,
+      "name": "__ZN6ArmCpunwEm",
+      "value": 628
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 1,
+      "n_type": 15,
+      "name": "__ZNK6ArmCpu12getMetaClassEv",
+      "value": 456
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 1,
+      "n_type": 15,
+      "name": "__ZNK6ArmCpu9MetaClass5allocEv",
+      "value": 520
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 5,
+      "n_type": 15,
+      "name": "__ZTV6ArmCpu",
+      "value": 17616
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 5,
+      "n_type": 15,
+      "name": "__ZTVN6ArmCpu9MetaClassE",
+      "value": 19112
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 3,
+      "n_type": 15,
+      "name": "_armcpu_boot_mpidr",
+      "value": 260224
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 3,
+      "n_type": 15,
+      "name": "_armcpu_boot_sys",
+      "value": 260388
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 3,
+      "n_type": 15,
+      "name": "_armcpu_core_sgi",
+      "value": 260024
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 3,
+      "n_type": 15,
+      "name": "_armcpu_core_timer",
+      "value": 259992
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 3,
+      "n_type": 15,
+      "name": "_armcpu_cpu_init_completed",
+      "value": 260440
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 3,
+      "n_type": 15,
+      "name": "_armcpu_gic_boot",
+      "value": 259960
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 1,
+      "n_type": 15,
+      "name": "_armcpu_gic_diag",
+      "value": 12772
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 3,
+      "n_type": 15,
+      "name": "_armcpu_gic_diag_stage",
+      "value": 260588
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 3,
+      "n_type": 15,
+      "name": "_armcpu_gic_ready",
+      "value": 259924
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 3,
+      "n_type": 15,
+      "name": "_armcpu_gic_stride",
+      "value": 260560
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 3,
+      "n_type": 15,
+      "name": "_armcpu_gic_typer_probe",
+      "value": 260564
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 3,
+      "n_type": 15,
+      "name": "_armcpu_halt_calls",
+      "value": 260080
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 3,
+      "n_type": 15,
+      "name": "_armcpu_ipi_interrupts",
+      "value": 259936
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 1,
+      "n_type": 15,
+      "name": "_armcpu_ipi_selftest",
+      "value": 13480
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 3,
+      "n_type": 15,
+      "name": "_armcpu_ipi_selftest_sent",
+      "value": 259952
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 3,
+      "n_type": 15,
+      "name": "_armcpu_ipi_sent",
+      "value": 259944
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 3,
+      "n_type": 15,
+      "name": "_armcpu_irq_drain_most",
+      "value": 260072
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 4,
+      "n_type": 15,
+      "name": "_armcpu_irq_id",
+      "value": 17592
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 3,
+      "n_type": 15,
+      "name": "_armcpu_irq_long_drains",
+      "value": 260064
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 3,
+      "n_type": 15,
+      "name": "_armcpu_irq_phase",
+      "value": 260056
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 3,
+      "n_type": 15,
+      "name": "_armcpu_psci",
+      "value": 260444
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 3,
+      "n_type": 15,
+      "name": "_armcpu_quiesce_calls",
+      "value": 260076
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 3,
+      "n_type": 15,
+      "name": "_armcpu_registered",
+      "value": 259920
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 1,
+      "n_type": 15,
+      "name": "_armcpu_sgi_selfprobe",
+      "value": 13124
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 3,
+      "n_type": 15,
+      "name": "_armcpu_sleep_last_cpu_off_rc",
+      "value": 260512
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 1,
+      "n_type": 15,
+      "name": "_armcpu_sleep_register",
+      "value": 13596
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 3,
+      "n_type": 15,
+      "name": "_armcpu_sleep_stats",
+      "value": 260464
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 3,
+      "n_type": 15,
+      "name": "_armcpu_smp_conduit",
+      "value": 260092
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 3,
+      "n_type": 15,
+      "name": "_armcpu_smp_fail",
+      "value": 260192
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 3,
+      "n_type": 15,
+      "name": "_armcpu_smp_mpidr",
+      "value": 260128
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 3,
+      "n_type": 15,
+      "name": "_armcpu_smp_psci_rc",
+      "value": 260408
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 3,
+      "n_type": 15,
+      "name": "_armcpu_smp_requested",
+      "value": 260084
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 3,
+      "n_type": 15,
+      "name": "_armcpu_smp_running",
+      "value": 260088
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 3,
+      "n_type": 15,
+      "name": "_armcpu_smp_seen_mpidr",
+      "value": 260160
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 3,
+      "n_type": 15,
+      "name": "_armcpu_smp_step",
+      "value": 260096
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 3,
+      "n_type": 15,
+      "name": "_armcpu_smp_sys",
+      "value": 260228
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 1,
+      "n_type": 15,
+      "name": "_armcpu_spi_attach",
+      "value": 14608
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 1,
+      "n_type": 15,
+      "name": "_armcpu_spi_count",
+      "value": 16184
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 1,
+      "n_type": 15,
+      "name": "_armcpu_spi_mask",
+      "value": 16048
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 1,
+      "n_type": 15,
+      "name": "_armcpu_spi_share",
+      "value": 15520
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 3,
+      "n_type": 15,
+      "name": "_armcpu_spi_unhandled",
+      "value": 260576
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 3,
+      "n_type": 15,
+      "name": "_armcpu_spi_unhandled_id",
+      "value": 260584
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 1,
+      "n_type": 15,
+      "name": "_armcpu_stats_row",
+      "value": 16248
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 3,
+      "n_type": 15,
+      "name": "_armcpu_timer_interrupts",
+      "value": 259928
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "_IOLockAlloc",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "_IOLockFree",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "_LowResetVectorBase",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "_OSObject_typed_operator_delete",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "_OSObject_typed_operator_new",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "_PE_parse_boot_argn",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "_ResetHandlerData",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN11OSMetaClassC2EPKcPKS_j",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN11OSMetaClassD2Ev",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN15IORegistryEntry11detachAboveEPK15IORegistryPlane",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN15IORegistryEntry11setLocationEPK8OSSymbolPK15IORegistryPlane",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN15IORegistryEntry11setLocationEPKcPK15IORegistryPlane",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN15IORegistryEntry11setPropertyEPK8OSStringP8OSObject",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN15IORegistryEntry11setPropertyEPKcP8OSObject",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN15IORegistryEntry11setPropertyEPKcPvj",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN15IORegistryEntry11setPropertyEPKcS1_",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN15IORegistryEntry11setPropertyEPKcb",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN15IORegistryEntry11setPropertyEPKcyj",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN15IORegistryEntry13attachToChildEPS_PK15IORegistryPlane",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN15IORegistryEntry13childFromPathEPKcPK15IORegistryPlanePcPi",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN15IORegistryEntry14attachToParentEPS_PK15IORegistryPlane",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN15IORegistryEntry14removePropertyEPK8OSString",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN15IORegistryEntry14removePropertyEPK8OSSymbol",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN15IORegistryEntry14removePropertyEPKc",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN15IORegistryEntry15detachFromChildEPS_PK15IORegistryPlane",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN15IORegistryEntry16detachFromParentEPS_PK15IORegistryPlane",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN15IORegistryEntry16setPropertyTableEP12OSDictionary",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN15IORegistryEntry17runPropertyActionEPFiP8OSObjectPvS2_S2_S2_ES1_S2_S2_S2_S2_",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN15IORegistryEntry7setNameEPK8OSSymbolPK15IORegistryPlane",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN15IORegistryEntry7setNameEPKcPK15IORegistryPlane",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN15IORegistryEntry8fromPathEPKcPK15IORegistryPlanePcPiPS_",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN15IORegistryEntry9detachAllEPK15IORegistryPlane",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN15OSMetaClassBase12safeMetaCastEPKS_PK11OSMetaClass",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN15OSMetaClassBase8DispatchE5IORPC",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN18IOMemoryDescriptor19withPhysicalAddressEyyj",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN24IOCPUInterruptControllerC1Ev",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN24IOCPUInterruptControllernwEm",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN5IOCPU10gMetaClassE",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN5IOCPU11getCPUGroupEv",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN5IOCPU11getCPUStateEv",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN5IOCPU11setCPUStateEj",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN5IOCPU11setPropertyEPK8OSSymbolP8OSObject",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN5IOCPU12getCPUNumberEv",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN5IOCPU12setCPUNumberEj",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN5IOCPU13setPropertiesEP8OSObject",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN5IOCPU15getCPUGroupSizeEv",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN5IOCPU16getMachProcessorEv",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN5IOCPU6detachEP9IOService",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN5IOCPUC2EPK11OSMetaClass",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN5IOCPUD2Ev",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN6OSData9metaClassE",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN8OSObject4initEv",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN8OSSymbol17withCStringNoCopyEPKc",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN9IOService10adjustBusyEi",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN9IOService10handleOpenEPS_jPv",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN9IOService10joinPMtreeEPS_",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN9IOService11handleCloseEPS_j",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN9IOService12didTerminateEPS_jPb",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN9IOService12getBusyStateEv",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN9IOService12getResourcesEv",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN9IOService12requestProbeEj",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN9IOService12tellChangeUpEm",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN9IOService12updateReportEP19IOReportChannelListjPvS2_",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN9IOService13addPowerChildEPS_",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN9IOService13askChangeDownEm",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN9IOService13matchLocationEPS_",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN9IOService13messageClientEjP8OSObjectPvm",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN9IOService13newUserClientEP4taskPvjP12OSDictionaryPP12IOUserClient",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN9IOService13newUserClientEP4taskPvjPP12IOUserClient",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN9IOService13setPowerStateEmPS_",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN9IOService13willTerminateEPS_j",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN9IOService14activityTickleEmm",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN9IOService14applyToClientsEPFvPS_PvES1_",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN9IOService14causeInterruptEi",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN9IOService14messageClientsEjPvm",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN9IOService14tellChangeDownEm",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN9IOService15comparePropertyEP12OSDictionaryPK8OSString",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN9IOService15comparePropertyEP12OSDictionaryPKc",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN9IOService15configureReportEP19IOReportChannelListjPvS2_",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN9IOService15enableInterruptEi",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN9IOService15errnoFromReturnEi",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN9IOService15getDeviceMemoryEv",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN9IOService15nextIdleTimeoutEyyj",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN9IOService15powerChangeDoneEm",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN9IOService15registerServiceEj",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN9IOService15setDeviceMemoryEP7OSArray",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN9IOService15terminateClientEPS_j",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN9IOService16allowPowerChangeEm",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN9IOService16applyToProvidersEPFvPS_PvES1_",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN9IOService16disableInterruptEi",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN9IOService16getInterruptTypeEiPi",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN9IOService16registerInterestEPK8OSSymbolPFiPvS3_jPS_S3_mES3_S3_",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN9IOService16removePowerChildEP17IOPowerConnection",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN9IOService16requestTerminateEPS_j",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN9IOService16stringFromReturnEi",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN9IOService16tellNoChangeDownEm",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN9IOService17addNeededResourceEPKc",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN9IOService17applyToInterestedEPK8OSSymbolPFvP8OSObjectPvES5_",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN9IOService17cancelPowerChangeEm",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN9IOService17comparePropertiesEP12OSDictionaryP12OSCollection",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN9IOService17getAggressivenessEmPm",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN9IOService17registerInterruptEiP8OSObjectPFvS1_PvPS_iES2_",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN9IOService17setAggressivenessEmm",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN9IOService18lockForArbitrationEb",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN9IOService18matchPropertyTableEP12OSDictionary",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN9IOService18matchPropertyTableEP12OSDictionaryPi",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN9IOService18setIdleTimerPeriodEm",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN9IOService18systemWillShutdownEj",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN9IOService19registerPowerDriverEPS_P14IOPMPowerStatem",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN9IOService19unregisterInterruptEi",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN9IOService20callPlatformFunctionEPK8OSSymbolbPvS3_S3_S3_",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN9IOService20callPlatformFunctionEPKcbPvS2_S2_S2_",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN9IOService20getDeviceMemoryCountEv",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN9IOService20unlockForArbitrationEv",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN9IOService21powerStateDidChangeToEmmPS_",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN9IOService22copyClientWithCategoryEPK8OSSymbol",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN9IOService22powerStateWillChangeToEmmPS_",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN9IOService23acknowledgeNotificationEPvj",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN9IOService23requestPowerDomainStateEmP17IOPowerConnectionm",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN9IOService24getDeviceMemoryWithIndexEj",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN9IOService24mapDeviceMemoryWithIndexEjj",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN9IOService24powerStateForDomainStateEm",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN9IOService27maxCapabilityForDomainStateEm",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN9IOService31initialPowerStateForDomainStateEm",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN9IOService4freeEv",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN9IOService4initEP12OSDictionary",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN9IOService4initEP15IORegistryEntryPK15IORegistryPlane",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN9IOService4openEPS_jPv",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN9IOService4stopEPS_",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN9IOService5closeEPS_j",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN9IOService6PMinitEv",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN9IOService6PMstopEv",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN9IOService6attachEPS_",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN9IOService7messageEjPS_Pv",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN9IOService8DispatchE5IORPC",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN9IOService8finalizeEj",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN9IOService9terminateEj",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZNK11OSMetaClass12getMetaClassEv",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZNK11OSMetaClass12taggedRetainEPKv",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZNK11OSMetaClass13taggedReleaseEPKv",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZNK11OSMetaClass13taggedReleaseEPKvi",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZNK11OSMetaClass14getRetainCountEv",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZNK11OSMetaClass19instanceConstructedEv",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZNK11OSMetaClass6retainEv",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZNK11OSMetaClass7releaseEi",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZNK11OSMetaClass7releaseEv",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZNK11OSMetaClass9serializeEP11OSSerialize",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZNK15IORegistryEntry11compareNameEP8OSStringPS1_",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZNK15IORegistryEntry11getLocationEPK15IORegistryPlane",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZNK15IORegistryEntry11getPropertyEPK8OSString",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZNK15IORegistryEntry11getPropertyEPK8OSStringPK15IORegistryPlanej",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZNK15IORegistryEntry11getPropertyEPK8OSSymbolPK15IORegistryPlanej",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZNK15IORegistryEntry11getPropertyEPKc",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZNK15IORegistryEntry11getPropertyEPKcPK15IORegistryPlanej",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZNK15IORegistryEntry12compareNamesEP8OSObjectPP8OSString",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZNK15IORegistryEntry12copyLocationEPK15IORegistryPlane",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZNK15IORegistryEntry12copyPropertyEPK8OSString",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZNK15IORegistryEntry12copyPropertyEPK8OSStringPK15IORegistryPlanej",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZNK15IORegistryEntry12copyPropertyEPK8OSSymbol",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZNK15IORegistryEntry12copyPropertyEPK8OSSymbolPK15IORegistryPlanej",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZNK15IORegistryEntry12copyPropertyEPKc",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZNK15IORegistryEntry12copyPropertyEPKcPK15IORegistryPlanej",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZNK15IORegistryEntry13getChildEntryEPK15IORegistryPlane",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZNK15IORegistryEntry14applyToParentsEPFvPS_PvES1_PK15IORegistryPlane",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZNK15IORegistryEntry14copyChildEntryEPK15IORegistryPlane",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZNK15IORegistryEntry14getParentEntryEPK15IORegistryPlane",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZNK15IORegistryEntry15applyToChildrenEPFvPS_PvES1_PK15IORegistryPlane",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZNK15IORegistryEntry15copyParentEntryEPK15IORegistryPlane",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZNK15IORegistryEntry16getChildIteratorEPK15IORegistryPlane",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZNK15IORegistryEntry16getPathComponentEPcPiPK15IORegistryPlane",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZNK15IORegistryEntry17getParentIteratorEPK15IORegistryPlane",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZNK15IORegistryEntry24dictionaryWithPropertiesEv",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZNK15IORegistryEntry7getNameEPK15IORegistryPlane",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZNK15IORegistryEntry7getPathEPcPiPK15IORegistryPlane",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZNK15IORegistryEntry7inPlaneEPK15IORegistryPlane",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZNK15IORegistryEntry7isChildEPS_PK15IORegistryPlaneb",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZNK15IORegistryEntry8copyNameEPK15IORegistryPlane",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZNK15IORegistryEntry8getDepthEPK15IORegistryPlane",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZNK15IORegistryEntry8isParentEPS_PK15IORegistryPlaneb",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZNK15OSMetaClassBase9isEqualToEPKS_",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZNK5IOCPU11getPropertyEPK8OSSymbol",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZNK5IOCPU19serializePropertiesEP11OSSerialize",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZNK8OSObject12taggedRetainEPKv",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZNK8OSObject13taggedReleaseEPKv",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZNK8OSObject13taggedReleaseEPKvi",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZNK8OSObject14getRetainCountEv",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZNK8OSObject6retainEv",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZNK8OSObject7releaseEi",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZNK8OSObject7releaseEv",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZNK8OSObject9serializeEP11OSSerialize",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZNK9IOService11getProviderEv",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZNK9IOService11getWorkLoopEv",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZNK9IOService12handleIsOpenEPKS_",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZNK9IOService17getClientIteratorEv",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZNK9IOService19getProviderIteratorEv",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZNK9IOService21getOpenClientIteratorEv",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZNK9IOService23getOpenProviderIteratorEv",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZNK9IOService6isOpenEPKS_",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZNK9IOService8getStateEv",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZNK9IOService9getClientEv",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZTV5IOCPU",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "___stack_chk_fail",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "___stack_chk_guard",
+      "value": 0
+    },
+    {
+      "n_desc": 64,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "_arm64_platform_sleep_hook",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "_const_boot_args",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "_current_thread",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "_gIODTPlane",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "_kernel_thread_start",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "_lck_mtx_lock",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "_lck_mtx_unlock",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "_memcmp",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "_ml_arm_sleep",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "_ml_cpu_init_completed",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "_ml_get_boot_cluster_type",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "_ml_get_boot_cpu_number",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "_ml_get_cluster_number",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "_ml_get_cpu_number",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "_ml_get_max_cpu_number",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "_ml_get_topology_info",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "_ml_install_interrupt_handler",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "_ml_is_quiescing",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "_ml_processor_register",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "_ml_static_vtop",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "_panic",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "_processor_start",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "_rtclock_intr",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "_snprintf",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "_strnlen",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "_thread_deallocate",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "_thread_terminate",
+      "value": 0
+    }
+  ],
+  "strong_undefined": [
+    "_IOLockAlloc",
+    "_IOLockFree",
+    "_LowResetVectorBase",
+    "_OSObject_typed_operator_delete",
+    "_OSObject_typed_operator_new",
+    "_PE_parse_boot_argn",
+    "_ResetHandlerData",
+    "__ZN11OSMetaClassC2EPKcPKS_j",
+    "__ZN11OSMetaClassD2Ev",
+    "__ZN15IORegistryEntry11detachAboveEPK15IORegistryPlane",
+    "__ZN15IORegistryEntry11setLocationEPK8OSSymbolPK15IORegistryPlane",
+    "__ZN15IORegistryEntry11setLocationEPKcPK15IORegistryPlane",
+    "__ZN15IORegistryEntry11setPropertyEPK8OSStringP8OSObject",
+    "__ZN15IORegistryEntry11setPropertyEPKcP8OSObject",
+    "__ZN15IORegistryEntry11setPropertyEPKcPvj",
+    "__ZN15IORegistryEntry11setPropertyEPKcS1_",
+    "__ZN15IORegistryEntry11setPropertyEPKcb",
+    "__ZN15IORegistryEntry11setPropertyEPKcyj",
+    "__ZN15IORegistryEntry13attachToChildEPS_PK15IORegistryPlane",
+    "__ZN15IORegistryEntry13childFromPathEPKcPK15IORegistryPlanePcPi",
+    "__ZN15IORegistryEntry14attachToParentEPS_PK15IORegistryPlane",
+    "__ZN15IORegistryEntry14removePropertyEPK8OSString",
+    "__ZN15IORegistryEntry14removePropertyEPK8OSSymbol",
+    "__ZN15IORegistryEntry14removePropertyEPKc",
+    "__ZN15IORegistryEntry15detachFromChildEPS_PK15IORegistryPlane",
+    "__ZN15IORegistryEntry16detachFromParentEPS_PK15IORegistryPlane",
+    "__ZN15IORegistryEntry16setPropertyTableEP12OSDictionary",
+    "__ZN15IORegistryEntry17runPropertyActionEPFiP8OSObjectPvS2_S2_S2_ES1_S2_S2_S2_S2_",
+    "__ZN15IORegistryEntry7setNameEPK8OSSymbolPK15IORegistryPlane",
+    "__ZN15IORegistryEntry7setNameEPKcPK15IORegistryPlane",
+    "__ZN15IORegistryEntry8fromPathEPKcPK15IORegistryPlanePcPiPS_",
+    "__ZN15IORegistryEntry9detachAllEPK15IORegistryPlane",
+    "__ZN15OSMetaClassBase12safeMetaCastEPKS_PK11OSMetaClass",
+    "__ZN15OSMetaClassBase8DispatchE5IORPC",
+    "__ZN18IOMemoryDescriptor19withPhysicalAddressEyyj",
+    "__ZN24IOCPUInterruptControllerC1Ev",
+    "__ZN24IOCPUInterruptControllernwEm",
+    "__ZN5IOCPU10gMetaClassE",
+    "__ZN5IOCPU11getCPUGroupEv",
+    "__ZN5IOCPU11getCPUStateEv",
+    "__ZN5IOCPU11setCPUStateEj",
+    "__ZN5IOCPU11setPropertyEPK8OSSymbolP8OSObject",
+    "__ZN5IOCPU12getCPUNumberEv",
+    "__ZN5IOCPU12setCPUNumberEj",
+    "__ZN5IOCPU13setPropertiesEP8OSObject",
+    "__ZN5IOCPU15getCPUGroupSizeEv",
+    "__ZN5IOCPU16getMachProcessorEv",
+    "__ZN5IOCPU6detachEP9IOService",
+    "__ZN5IOCPUC2EPK11OSMetaClass",
+    "__ZN5IOCPUD2Ev",
+    "__ZN6OSData9metaClassE",
+    "__ZN8OSObject4initEv",
+    "__ZN8OSSymbol17withCStringNoCopyEPKc",
+    "__ZN9IOService10adjustBusyEi",
+    "__ZN9IOService10handleOpenEPS_jPv",
+    "__ZN9IOService10joinPMtreeEPS_",
+    "__ZN9IOService11handleCloseEPS_j",
+    "__ZN9IOService12didTerminateEPS_jPb",
+    "__ZN9IOService12getBusyStateEv",
+    "__ZN9IOService12getResourcesEv",
+    "__ZN9IOService12requestProbeEj",
+    "__ZN9IOService12tellChangeUpEm",
+    "__ZN9IOService12updateReportEP19IOReportChannelListjPvS2_",
+    "__ZN9IOService13addPowerChildEPS_",
+    "__ZN9IOService13askChangeDownEm",
+    "__ZN9IOService13matchLocationEPS_",
+    "__ZN9IOService13messageClientEjP8OSObjectPvm",
+    "__ZN9IOService13newUserClientEP4taskPvjP12OSDictionaryPP12IOUserClient",
+    "__ZN9IOService13newUserClientEP4taskPvjPP12IOUserClient",
+    "__ZN9IOService13setPowerStateEmPS_",
+    "__ZN9IOService13willTerminateEPS_j",
+    "__ZN9IOService14activityTickleEmm",
+    "__ZN9IOService14applyToClientsEPFvPS_PvES1_",
+    "__ZN9IOService14causeInterruptEi",
+    "__ZN9IOService14messageClientsEjPvm",
+    "__ZN9IOService14tellChangeDownEm",
+    "__ZN9IOService15comparePropertyEP12OSDictionaryPK8OSString",
+    "__ZN9IOService15comparePropertyEP12OSDictionaryPKc",
+    "__ZN9IOService15configureReportEP19IOReportChannelListjPvS2_",
+    "__ZN9IOService15enableInterruptEi",
+    "__ZN9IOService15errnoFromReturnEi",
+    "__ZN9IOService15getDeviceMemoryEv",
+    "__ZN9IOService15nextIdleTimeoutEyyj",
+    "__ZN9IOService15powerChangeDoneEm",
+    "__ZN9IOService15registerServiceEj",
+    "__ZN9IOService15setDeviceMemoryEP7OSArray",
+    "__ZN9IOService15terminateClientEPS_j",
+    "__ZN9IOService16allowPowerChangeEm",
+    "__ZN9IOService16applyToProvidersEPFvPS_PvES1_",
+    "__ZN9IOService16disableInterruptEi",
+    "__ZN9IOService16getInterruptTypeEiPi",
+    "__ZN9IOService16registerInterestEPK8OSSymbolPFiPvS3_jPS_S3_mES3_S3_",
+    "__ZN9IOService16removePowerChildEP17IOPowerConnection",
+    "__ZN9IOService16requestTerminateEPS_j",
+    "__ZN9IOService16stringFromReturnEi",
+    "__ZN9IOService16tellNoChangeDownEm",
+    "__ZN9IOService17addNeededResourceEPKc",
+    "__ZN9IOService17applyToInterestedEPK8OSSymbolPFvP8OSObjectPvES5_",
+    "__ZN9IOService17cancelPowerChangeEm",
+    "__ZN9IOService17comparePropertiesEP12OSDictionaryP12OSCollection",
+    "__ZN9IOService17getAggressivenessEmPm",
+    "__ZN9IOService17registerInterruptEiP8OSObjectPFvS1_PvPS_iES2_",
+    "__ZN9IOService17setAggressivenessEmm",
+    "__ZN9IOService18lockForArbitrationEb",
+    "__ZN9IOService18matchPropertyTableEP12OSDictionary",
+    "__ZN9IOService18matchPropertyTableEP12OSDictionaryPi",
+    "__ZN9IOService18setIdleTimerPeriodEm",
+    "__ZN9IOService18systemWillShutdownEj",
+    "__ZN9IOService19registerPowerDriverEPS_P14IOPMPowerStatem",
+    "__ZN9IOService19unregisterInterruptEi",
+    "__ZN9IOService20callPlatformFunctionEPK8OSSymbolbPvS3_S3_S3_",
+    "__ZN9IOService20callPlatformFunctionEPKcbPvS2_S2_S2_",
+    "__ZN9IOService20getDeviceMemoryCountEv",
+    "__ZN9IOService20unlockForArbitrationEv",
+    "__ZN9IOService21powerStateDidChangeToEmmPS_",
+    "__ZN9IOService22copyClientWithCategoryEPK8OSSymbol",
+    "__ZN9IOService22powerStateWillChangeToEmmPS_",
+    "__ZN9IOService23acknowledgeNotificationEPvj",
+    "__ZN9IOService23requestPowerDomainStateEmP17IOPowerConnectionm",
+    "__ZN9IOService24getDeviceMemoryWithIndexEj",
+    "__ZN9IOService24mapDeviceMemoryWithIndexEjj",
+    "__ZN9IOService24powerStateForDomainStateEm",
+    "__ZN9IOService27maxCapabilityForDomainStateEm",
+    "__ZN9IOService31initialPowerStateForDomainStateEm",
+    "__ZN9IOService4freeEv",
+    "__ZN9IOService4initEP12OSDictionary",
+    "__ZN9IOService4initEP15IORegistryEntryPK15IORegistryPlane",
+    "__ZN9IOService4openEPS_jPv",
+    "__ZN9IOService4stopEPS_",
+    "__ZN9IOService5closeEPS_j",
+    "__ZN9IOService6PMinitEv",
+    "__ZN9IOService6PMstopEv",
+    "__ZN9IOService6attachEPS_",
+    "__ZN9IOService7messageEjPS_Pv",
+    "__ZN9IOService8DispatchE5IORPC",
+    "__ZN9IOService8finalizeEj",
+    "__ZN9IOService9terminateEj",
+    "__ZNK11OSMetaClass12getMetaClassEv",
+    "__ZNK11OSMetaClass12taggedRetainEPKv",
+    "__ZNK11OSMetaClass13taggedReleaseEPKv",
+    "__ZNK11OSMetaClass13taggedReleaseEPKvi",
+    "__ZNK11OSMetaClass14getRetainCountEv",
+    "__ZNK11OSMetaClass19instanceConstructedEv",
+    "__ZNK11OSMetaClass6retainEv",
+    "__ZNK11OSMetaClass7releaseEi",
+    "__ZNK11OSMetaClass7releaseEv",
+    "__ZNK11OSMetaClass9serializeEP11OSSerialize",
+    "__ZNK15IORegistryEntry11compareNameEP8OSStringPS1_",
+    "__ZNK15IORegistryEntry11getLocationEPK15IORegistryPlane",
+    "__ZNK15IORegistryEntry11getPropertyEPK8OSString",
+    "__ZNK15IORegistryEntry11getPropertyEPK8OSStringPK15IORegistryPlanej",
+    "__ZNK15IORegistryEntry11getPropertyEPK8OSSymbolPK15IORegistryPlanej",
+    "__ZNK15IORegistryEntry11getPropertyEPKc",
+    "__ZNK15IORegistryEntry11getPropertyEPKcPK15IORegistryPlanej",
+    "__ZNK15IORegistryEntry12compareNamesEP8OSObjectPP8OSString",
+    "__ZNK15IORegistryEntry12copyLocationEPK15IORegistryPlane",
+    "__ZNK15IORegistryEntry12copyPropertyEPK8OSString",
+    "__ZNK15IORegistryEntry12copyPropertyEPK8OSStringPK15IORegistryPlanej",
+    "__ZNK15IORegistryEntry12copyPropertyEPK8OSSymbol",
+    "__ZNK15IORegistryEntry12copyPropertyEPK8OSSymbolPK15IORegistryPlanej",
+    "__ZNK15IORegistryEntry12copyPropertyEPKc",
+    "__ZNK15IORegistryEntry12copyPropertyEPKcPK15IORegistryPlanej",
+    "__ZNK15IORegistryEntry13getChildEntryEPK15IORegistryPlane",
+    "__ZNK15IORegistryEntry14applyToParentsEPFvPS_PvES1_PK15IORegistryPlane",
+    "__ZNK15IORegistryEntry14copyChildEntryEPK15IORegistryPlane",
+    "__ZNK15IORegistryEntry14getParentEntryEPK15IORegistryPlane",
+    "__ZNK15IORegistryEntry15applyToChildrenEPFvPS_PvES1_PK15IORegistryPlane",
+    "__ZNK15IORegistryEntry15copyParentEntryEPK15IORegistryPlane",
+    "__ZNK15IORegistryEntry16getChildIteratorEPK15IORegistryPlane",
+    "__ZNK15IORegistryEntry16getPathComponentEPcPiPK15IORegistryPlane",
+    "__ZNK15IORegistryEntry17getParentIteratorEPK15IORegistryPlane",
+    "__ZNK15IORegistryEntry24dictionaryWithPropertiesEv",
+    "__ZNK15IORegistryEntry7getNameEPK15IORegistryPlane",
+    "__ZNK15IORegistryEntry7getPathEPcPiPK15IORegistryPlane",
+    "__ZNK15IORegistryEntry7inPlaneEPK15IORegistryPlane",
+    "__ZNK15IORegistryEntry7isChildEPS_PK15IORegistryPlaneb",
+    "__ZNK15IORegistryEntry8copyNameEPK15IORegistryPlane",
+    "__ZNK15IORegistryEntry8getDepthEPK15IORegistryPlane",
+    "__ZNK15IORegistryEntry8isParentEPS_PK15IORegistryPlaneb",
+    "__ZNK15OSMetaClassBase9isEqualToEPKS_",
+    "__ZNK5IOCPU11getPropertyEPK8OSSymbol",
+    "__ZNK5IOCPU19serializePropertiesEP11OSSerialize",
+    "__ZNK8OSObject12taggedRetainEPKv",
+    "__ZNK8OSObject13taggedReleaseEPKv",
+    "__ZNK8OSObject13taggedReleaseEPKvi",
+    "__ZNK8OSObject14getRetainCountEv",
+    "__ZNK8OSObject6retainEv",
+    "__ZNK8OSObject7releaseEi",
+    "__ZNK8OSObject7releaseEv",
+    "__ZNK8OSObject9serializeEP11OSSerialize",
+    "__ZNK9IOService11getProviderEv",
+    "__ZNK9IOService11getWorkLoopEv",
+    "__ZNK9IOService12handleIsOpenEPKS_",
+    "__ZNK9IOService17getClientIteratorEv",
+    "__ZNK9IOService19getProviderIteratorEv",
+    "__ZNK9IOService21getOpenClientIteratorEv",
+    "__ZNK9IOService23getOpenProviderIteratorEv",
+    "__ZNK9IOService6isOpenEPKS_",
+    "__ZNK9IOService8getStateEv",
+    "__ZNK9IOService9getClientEv",
+    "__ZTV5IOCPU",
+    "___stack_chk_fail",
+    "___stack_chk_guard",
+    "_const_boot_args",
+    "_current_thread",
+    "_gIODTPlane",
+    "_kernel_thread_start",
+    "_lck_mtx_lock",
+    "_lck_mtx_unlock",
+    "_memcmp",
+    "_ml_arm_sleep",
+    "_ml_cpu_init_completed",
+    "_ml_get_boot_cluster_type",
+    "_ml_get_boot_cpu_number",
+    "_ml_get_cluster_number",
+    "_ml_get_cpu_number",
+    "_ml_get_max_cpu_number",
+    "_ml_get_topology_info",
+    "_ml_install_interrupt_handler",
+    "_ml_is_quiescing",
+    "_ml_processor_register",
+    "_ml_static_vtop",
+    "_panic",
+    "_processor_start",
+    "_rtclock_intr",
+    "_snprintf",
+    "_strnlen",
+    "_thread_deallocate",
+    "_thread_terminate"
+  ],
+  "unsupported_external": [],
+  "weak_undefined": [
+    "_arm64_platform_sleep_hook"
+  ]
+}

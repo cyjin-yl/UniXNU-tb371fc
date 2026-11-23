@@ -1,0 +1,1093 @@
+{
+  "common_external": [],
+  "defined_external": [
+    "___machine_timeout_spec_arm64_ipi_test_timeout",
+    "_arm64_immediate_ipi_test_callback",
+    "_arm64_ipi_test",
+    "_arm64_ipi_test_callback",
+    "_arm64_ipi_test_data",
+    "_arm64_ipi_test_timeout",
+    "_arm64_platform_sleep_hook",
+    "_cpu_bootstrap",
+    "_cpu_cluster_id",
+    "_cpu_data_init",
+    "_cpu_data_register",
+    "_cpu_idle",
+    "_cpu_idle_count",
+    "_cpu_idle_exit",
+    "_cpu_init",
+    "_cpu_interrupt_is_pending",
+    "_cpu_machine_idle_init",
+    "_cpu_sleep",
+    "_cpu_stack_alloc",
+    "_cpu_start",
+    "_cpu_timebase_init",
+    "_expecting_ipi_wfe_timeout_mt",
+    "_expecting_ipi_wfe_timeout_usec",
+    "_idle_proximate_io_wfe_masked",
+    "_idle_proximate_io_wfe_unmasked",
+    "_idle_proximate_timer_wfe",
+    "_machine_track_platform_idle",
+    "_ml_arm_sleep",
+    "_start_cpu_paddr",
+    "_wfe_allowed",
+    "_wfe_to_deadline_or_interrupt",
+    "_wfi"
+  ],
+  "records": [
+    {
+      "n_desc": 0,
+      "n_sect": 1,
+      "n_type": 14,
+      "name": "ltmp0",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 8,
+      "n_type": 14,
+      "name": "l_.str.4",
+      "value": 4461
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 8,
+      "n_type": 14,
+      "name": "l_.str.1",
+      "value": 4333
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 8,
+      "n_type": 14,
+      "name": "l_.str.3",
+      "value": 4402
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 8,
+      "n_type": 14,
+      "name": "l_.str.2",
+      "value": 4339
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 8,
+      "n_type": 14,
+      "name": "l_.str",
+      "value": 4284
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 10,
+      "n_type": 14,
+      "name": "_wfi_delay",
+      "value": 112736
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 2,
+      "n_type": 14,
+      "name": "ltmp1",
+      "value": 3936
+    },
+    {
+      "n_desc": 32,
+      "n_sect": 9,
+      "n_type": 14,
+      "name": "_cpu_idle_exit.__desc",
+      "value": 4760
+    },
+    {
+      "n_desc": 32,
+      "n_sect": 9,
+      "n_type": 14,
+      "name": "_configure_coresight_registers.__desc",
+      "value": 4800
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 8,
+      "n_type": 14,
+      "name": "l_.str.7",
+      "value": 4613
+    },
+    {
+      "n_desc": 32,
+      "n_sect": 9,
+      "n_type": 14,
+      "name": "_cpu_init.__desc",
+      "value": 4780
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 8,
+      "n_type": 14,
+      "name": "l_.str.8",
+      "value": 4643
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 8,
+      "n_type": 14,
+      "name": "l_.str.9",
+      "value": 4664
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 8,
+      "n_type": 14,
+      "name": "l_.str.10",
+      "value": 4680
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 8,
+      "n_type": 14,
+      "name": "l_.str.11",
+      "value": 4685
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 10,
+      "n_type": 14,
+      "name": "_cpu_machine_idle_init.resume_idle_cpu_paddr",
+      "value": 112744
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 8,
+      "n_type": 14,
+      "name": "l_.str.12",
+      "value": 4694
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 8,
+      "n_type": 14,
+      "name": "l_.str.13",
+      "value": 4702
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 3,
+      "n_type": 14,
+      "name": "ltmp2",
+      "value": 112568
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 4,
+      "n_type": 14,
+      "name": "ltmp3",
+      "value": 4032
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 5,
+      "n_type": 14,
+      "name": "ltmp4",
+      "value": 4048
+    },
+    {
+      "n_desc": 32,
+      "n_sect": 5,
+      "n_type": 14,
+      "name": "___startup_TUNABLES_name_wfi",
+      "value": 4048
+    },
+    {
+      "n_desc": 32,
+      "n_sect": 5,
+      "n_type": 14,
+      "name": "___startup_TUNABLES_spec_wfi",
+      "value": 4056
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 6,
+      "n_type": 14,
+      "name": "ltmp5",
+      "value": 4136
+    },
+    {
+      "n_desc": 32,
+      "n_sect": 6,
+      "n_type": 14,
+      "name": "___startup_TUNABLES_entry_wfi_125",
+      "value": 4136
+    },
+    {
+      "n_desc": 32,
+      "n_sect": 5,
+      "n_type": 14,
+      "name": "___startup_TUNABLES_name_expecting_ipi_wfe_timeout_usec",
+      "value": 4080
+    },
+    {
+      "n_desc": 32,
+      "n_sect": 5,
+      "n_type": 14,
+      "name": "___startup_TUNABLES_spec_expecting_ipi_wfe_timeout_usec",
+      "value": 4112
+    },
+    {
+      "n_desc": 32,
+      "n_sect": 6,
+      "n_type": 14,
+      "name": "___startup_TUNABLES_entry_expecting_ipi_wfe_timeout_usec_143",
+      "value": 4160
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 7,
+      "n_type": 14,
+      "name": "ltmp6",
+      "value": 4208
+    },
+    {
+      "n_desc": 32,
+      "n_sect": 6,
+      "n_type": 14,
+      "name": "___startup_TIMEOUTS_entry_arm64_ipi_test_timeout_208",
+      "value": 4184
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 8,
+      "n_type": 14,
+      "name": "ltmp7",
+      "value": 4284
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 9,
+      "n_type": 14,
+      "name": "ltmp8",
+      "value": 4740
+    },
+    {
+      "n_desc": 32,
+      "n_sect": 9,
+      "n_type": 14,
+      "name": "_cpu_idle.__desc",
+      "value": 4740
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 8,
+      "n_type": 14,
+      "name": "l_.str.5",
+      "value": 4565
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 10,
+      "n_type": 14,
+      "name": "ltmp9",
+      "value": 112736
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 8,
+      "n_type": 14,
+      "name": "l_.str.6",
+      "value": 4582
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 8,
+      "n_type": 14,
+      "name": "l_.str.14",
+      "value": 4733
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 7,
+      "n_type": 15,
+      "name": "___machine_timeout_spec_arm64_ipi_test_timeout",
+      "value": 4216
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 1,
+      "n_type": 15,
+      "name": "_arm64_immediate_ipi_test_callback",
+      "value": 44
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 1,
+      "n_type": 15,
+      "name": "_arm64_ipi_test",
+      "value": 92
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 1,
+      "n_type": 15,
+      "name": "_arm64_ipi_test_callback",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 3,
+      "n_type": 15,
+      "name": "_arm64_ipi_test_data",
+      "value": 112592
+    },
+    {
+      "n_desc": 32,
+      "n_sect": 4,
+      "n_type": 15,
+      "name": "_arm64_ipi_test_timeout",
+      "value": 4040
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 3,
+      "n_type": 15,
+      "name": "_arm64_platform_sleep_hook",
+      "value": 112568
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 1,
+      "n_type": 15,
+      "name": "_cpu_bootstrap",
+      "value": 612
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 1,
+      "n_type": 15,
+      "name": "_cpu_cluster_id",
+      "value": 3148
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 1,
+      "n_type": 15,
+      "name": "_cpu_data_init",
+      "value": 2384
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 1,
+      "n_type": 15,
+      "name": "_cpu_data_register",
+      "value": 2568
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 1,
+      "n_type": 15,
+      "name": "_cpu_idle",
+      "value": 992
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 3,
+      "n_type": 15,
+      "name": "_cpu_idle_count",
+      "value": 112728
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 1,
+      "n_type": 15,
+      "name": "_cpu_idle_exit",
+      "value": 1784
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 1,
+      "n_type": 15,
+      "name": "_cpu_init",
+      "value": 1952
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 1,
+      "n_type": 15,
+      "name": "_cpu_interrupt_is_pending",
+      "value": 712
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 1,
+      "n_type": 15,
+      "name": "_cpu_machine_idle_init",
+      "value": 3504
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 1,
+      "n_type": 15,
+      "name": "_cpu_sleep",
+      "value": 616
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 1,
+      "n_type": 15,
+      "name": "_cpu_stack_alloc",
+      "value": 2204
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 1,
+      "n_type": 15,
+      "name": "_cpu_start",
+      "value": 2624
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 1,
+      "n_type": 15,
+      "name": "_cpu_timebase_init",
+      "value": 2912
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 3,
+      "n_type": 15,
+      "name": "_expecting_ipi_wfe_timeout_mt",
+      "value": 112576
+    },
+    {
+      "n_desc": 32,
+      "n_sect": 4,
+      "n_type": 15,
+      "name": "_expecting_ipi_wfe_timeout_usec",
+      "value": 4036
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 3,
+      "n_type": 15,
+      "name": "_idle_proximate_io_wfe_masked",
+      "value": 112584
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 7,
+      "n_type": 15,
+      "name": "_idle_proximate_io_wfe_unmasked",
+      "value": 4208
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 7,
+      "n_type": 15,
+      "name": "_idle_proximate_timer_wfe",
+      "value": 4212
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 1,
+      "n_type": 15,
+      "name": "_machine_track_platform_idle",
+      "value": 3880
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 1,
+      "n_type": 15,
+      "name": "_ml_arm_sleep",
+      "value": 3176
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 3,
+      "n_type": 15,
+      "name": "_start_cpu_paddr",
+      "value": 112720
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 7,
+      "n_type": 15,
+      "name": "_wfe_allowed",
+      "value": 4280
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 1,
+      "n_type": 15,
+      "name": "_wfe_to_deadline_or_interrupt",
+      "value": 728
+    },
+    {
+      "n_desc": 32,
+      "n_sect": 4,
+      "n_type": 15,
+      "name": "_wfi",
+      "value": 4032
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "_CleanPoC_Dcache",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "_CleanPoU_Dcache",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "_CleanPoU_DcacheRegion",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "_ClearIdlePop",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "_CpuDataEntries",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "_Idle_load_context",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "_PAGE_SHIFT_CONST",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "_PE_cpu_machine_quiesce",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "_PE_cpu_start_internal",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "_PE_parse_boot_argn",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "_RTClockData",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "_ResetHandlerData",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "_SecureDTGetProperty",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "_SecureDTLookupEntry",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "_SetIdlePop",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "___ubsan_handle_add_overflow_minimal",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "_absolutetime_to_nanoseconds",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "_arm64_force_wfi_clock_gate",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "_arm64_prepare_for_sleep",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "_arm_debug_set",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "_arm_init_cpu",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "_clean_dcache",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "_clock_absolutetime_interval_to_deadline",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "_clock_delay_until",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "_cpu_immediate_xcall",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "_cpu_machine_init",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "_cpu_number",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "_cpu_xcall",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "_cpuid_info",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "_current_processor",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "_current_thread",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "_do_cacheid",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "_do_cpuid",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "_do_debugid",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "_do_mvfpid",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "_flush_dcache",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "_idle_enable",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "_kdebug_enable",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "_kernel_debug",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "_kernel_map",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "_kernel_startup_tunable_init",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "_kmem_alloc_guard",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "_kprintf",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "_kptimer_stop_curcpu",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "_mach_absolute_time",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "_mach_assert_jump_key",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "_machine_timeout_init",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "_ml_cluster_wfe_timeout",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "_ml_get_hwclock",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "_ml_get_max_cpu_number",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "_ml_get_timebase",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "_ml_get_topology_info",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "_ml_is_quiescing",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "_ml_set_reset_time",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "_ml_static_vtop",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "_ml_vtophys",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "_nanoseconds_to_absolutetime",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "_panic",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "_percpu_slot_cpu_data",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "_percpu_slot_processor",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "_platform_cache_idle_enter",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "_pmap_cpu_data_init",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "_processor_should_kprintf",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "_real_ncpus",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "_resume_idle_cpu",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "_serial_go_to_sleep",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "_start_cpu",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "_timer_call_queue_init",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "_timer_resync_deadlines",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "_wake_abstime",
+      "value": 0
+    }
+  ],
+  "strong_undefined": [
+    "_CleanPoC_Dcache",
+    "_CleanPoU_Dcache",
+    "_CleanPoU_DcacheRegion",
+    "_ClearIdlePop",
+    "_CpuDataEntries",
+    "_Idle_load_context",
+    "_PAGE_SHIFT_CONST",
+    "_PE_cpu_machine_quiesce",
+    "_PE_cpu_start_internal",
+    "_PE_parse_boot_argn",
+    "_RTClockData",
+    "_ResetHandlerData",
+    "_SecureDTGetProperty",
+    "_SecureDTLookupEntry",
+    "_SetIdlePop",
+    "___ubsan_handle_add_overflow_minimal",
+    "_absolutetime_to_nanoseconds",
+    "_arm64_force_wfi_clock_gate",
+    "_arm64_prepare_for_sleep",
+    "_arm_debug_set",
+    "_arm_init_cpu",
+    "_clean_dcache",
+    "_clock_absolutetime_interval_to_deadline",
+    "_clock_delay_until",
+    "_cpu_immediate_xcall",
+    "_cpu_machine_init",
+    "_cpu_number",
+    "_cpu_xcall",
+    "_cpuid_info",
+    "_current_processor",
+    "_current_thread",
+    "_do_cacheid",
+    "_do_cpuid",
+    "_do_debugid",
+    "_do_mvfpid",
+    "_flush_dcache",
+    "_idle_enable",
+    "_kdebug_enable",
+    "_kernel_debug",
+    "_kernel_map",
+    "_kernel_startup_tunable_init",
+    "_kmem_alloc_guard",
+    "_kprintf",
+    "_kptimer_stop_curcpu",
+    "_mach_absolute_time",
+    "_mach_assert_jump_key",
+    "_machine_timeout_init",
+    "_ml_cluster_wfe_timeout",
+    "_ml_get_hwclock",
+    "_ml_get_max_cpu_number",
+    "_ml_get_timebase",
+    "_ml_get_topology_info",
+    "_ml_is_quiescing",
+    "_ml_set_reset_time",
+    "_ml_static_vtop",
+    "_ml_vtophys",
+    "_nanoseconds_to_absolutetime",
+    "_panic",
+    "_percpu_slot_cpu_data",
+    "_percpu_slot_processor",
+    "_platform_cache_idle_enter",
+    "_pmap_cpu_data_init",
+    "_processor_should_kprintf",
+    "_real_ncpus",
+    "_resume_idle_cpu",
+    "_serial_go_to_sleep",
+    "_start_cpu",
+    "_timer_call_queue_init",
+    "_timer_resync_deadlines",
+    "_wake_abstime"
+  ],
+  "unsupported_external": [],
+  "weak_undefined": []
+}

@@ -1,0 +1,73 @@
+{
+  "adapted_from": {
+    "audit_sha256": "93ed7e73be6cbda06d1888e7d3422fa234507cae64297a55714fe0042fc0164e",
+    "repository_path": "docs/evidence/route-a-kernel-audit-20261124/audit.py",
+    "source_manifest_sha256": "3ab63ba73d3c45763ffcee6a908020705181083c1e4908c7ca46a6d50e53d0d0"
+  },
+  "candidate_binding": {
+    "audited_binary_artifact_count": 1,
+    "before_after_are_same_artifact": true,
+    "mode": "required CLI path/SHA-256/byte-size and separately pinned successful platform link report",
+    "unbound_driver_is_not_a_candidate_audit_result": true
+  },
+  "changes_from_original_audit": [
+    "Separate immutable source bundle from a new report directory.",
+    "Require a successful identity-pinned platform link report and exact candidate path/SHA/size binding.",
+    "Audit one candidate only; no .noctf companion or second artifact is inferred.",
+    "Replace assertion-based gates with explicit errors; require python -I without -O/-OO.",
+    "Bind and recheck audit sources, link report, candidate and decoder/LLVM tool identities.",
+    "Compute excluded_data_bytes as sum(length) for parser (offset,length) ranges; report whole-word alignment expansion separately.",
+    "Return nonzero for scoped findings; preserve unknown-instruction and reachability limitations."
+  ],
+  "classifier_source_commit": "ce834a0e2e9d63803d920f39f30012e4759102cf",
+  "execution_contract": {
+    "capstone_version": "5.0.6",
+    "exit_codes": {
+      "0": "limited checks passed and protected inputs unchanged",
+      "1": "validation/operational failure or identity change",
+      "2": "completed census with scoped encodings or undefined symbols requiring review"
+    },
+    "python_isolated_required": true,
+    "python_optimization_forbidden": true
+  },
+  "files": {
+    "audit.py": {
+      "provenance": "new local adapter; not attributed to the classifier commit",
+      "repository_path": null,
+      "sha256": "65d36fe426382af40a89ba0a718eb58f71b57af88ef3c5af8d617519e44f52d8",
+      "size": 22020,
+      "source_commit": null
+    },
+    "classifiers/macho.py": {
+      "repository_path": "scripts/arm64_lowering/macho.py",
+      "sha256": "50539d0e8c9aac8c324adcd1cbb55ceae7049ac1dcaa41864120607bf78124cb",
+      "size": 20193,
+      "source_commit": "ce834a0e2e9d63803d920f39f30012e4759102cf"
+    },
+    "classifiers/poe2.py": {
+      "extracted_definition": "poe2_instruction",
+      "repository_path": "scripts/route_a_zeta/zeta_userland_code.py",
+      "sha256": "0aa872f2a8c95456723c5e49b22847dd9132a11a68c2ba0a18bbc250cc613915",
+      "size": 2264,
+      "source_commit": "ce834a0e2e9d63803d920f39f30012e4759102cf",
+      "source_file_sha256": "aecead05310cf6be2648154b9eb9399c58f74ccb0d447a500be32fc379b69ed0"
+    },
+    "classifiers/ptrauth.py": {
+      "repository_path": "scripts/arm64_lowering/instructions.py",
+      "sha256": "593d7981bb3bc85033748aaae8bae014ad65d1efe23f9dd39e1d225635953a2d",
+      "size": 9782,
+      "source_commit": "ce834a0e2e9d63803d920f39f30012e4759102cf"
+    }
+  },
+  "historic_accounting_note": "The old driver misread (offset,length) as (start,end). Its recorded original candidate had zero LC_DATA_IN_CODE entries, so that particular zero count is unaffected. No old artifact was edited.",
+  "historic_evidence_preserved": true,
+  "kind": "single-platform-link-candidate-scoped-encoding-audit",
+  "qualifications": {
+    "complete_board_qualification": false,
+    "os_boot_verified": false,
+    "reachability_proven": false,
+    "sleep_resume_verified": false,
+    "whole_instruction_set_verified": false
+  },
+  "schema_version": 1
+}

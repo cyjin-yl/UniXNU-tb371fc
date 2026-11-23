@@ -1,0 +1,635 @@
+{
+  "schema_version": 1,
+  "scope": "isolated-platform-link-compatibility",
+  "recorded_date": "2026-11-24",
+  "timezone": "Asia/Shanghai",
+  "source_repository": "https://github.com/cyjin-yl/UniXNU-tb371fc",
+  "attempts": [
+    {
+      "name": "link-attempt-001",
+      "driver_source_commit": "cd89a6210199a6fa4b2dd237c0e0ad31fa60725c",
+      "report": {
+        "path": "docs/evidence/route-a-platform-20261124/link-attempt-001/report.json",
+        "size": 8660,
+        "sha256": "d20a6afc1ffae2b1fc34a079ad23c183b7d357bee7e98d67f89a48f073586b11"
+      },
+      "status": "failed",
+      "failed_stage": "replaying_baseline",
+      "error": "baseline replay differs byte-for-byte from the successful kernel; platform link not attempted",
+      "finished_at_utc": "2026-11-23T19:51:14Z",
+      "driver": {
+        "path": "/work/route-a-platform-20261124/link-driver-v2/scripts/link_route_a_platform.py",
+        "sha256": "0440e10272546cae7080ce31af1cd19630ca2972ea9a475987e202578b23f779",
+        "size": 38664
+      },
+      "baseline": {
+        "path": "/work/route-a-platform-20261124/link-attempt-001/baseline.unstripped.noctf",
+        "sha256": "791d4cfce73dccc67e7c66a3c7a432488a27f77a65b003d70cf80a15f6aa497a",
+        "size": 21905888
+      },
+      "baseline_reproduced": false,
+      "platform_link_compatible": false,
+      "commands": [
+        {
+          "label": "baseline-link",
+          "exit_code": 0,
+          "stdout": {
+            "path": "/work/route-a-platform-20261124/link-attempt-001/baseline-link.stdout",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "size": 0
+          },
+          "stderr": {
+            "path": "/work/route-a-platform-20261124/link-attempt-001/baseline-link.stderr",
+            "sha256": "529b6342569c58158cc9ae2509b7012ad77fd03294843230b887208a64da0112",
+            "size": 491
+          }
+        }
+      ],
+      "protected_inputs_recheck": {
+        "changes": [],
+        "checked_file_count": 1114,
+        "unchanged": true
+      }
+    },
+    {
+      "name": "link-attempt-002",
+      "driver_source_commit": "7a6331344e721cff222f1e5af1642c3098d829b9",
+      "report": {
+        "path": "docs/evidence/route-a-platform-20261124/link-attempt-002/report.json",
+        "size": 15125,
+        "sha256": "d863658c8b5fec0415406984a6ac9aaf6449870aaa457867d39f20792628655a"
+      },
+      "status": "failed",
+      "failed_stage": "linking_platform",
+      "error": "platform compatibility link failed",
+      "finished_at_utc": "2026-11-23T20:01:04Z",
+      "driver": {
+        "path": "/work/route-a-platform-20261124/link-driver-v3/scripts/link_route_a_platform.py",
+        "sha256": "2b544209426e388d6d350d9db2d9e5181e390bb1b51024a5d46715888ba754b4",
+        "size": 39306
+      },
+      "baseline": {
+        "path": "/work/route-a-platform-20261124/link-attempt-002/mach.development.bcm2837.unstripped.noctf",
+        "sha256": "a58cdeedb9b7a4c152867c3487f28658a3799b0158f5046bbad6d2d58e741469",
+        "size": 21905888
+      },
+      "baseline_reproduced": true,
+      "platform_link_compatible": false,
+      "commands": [
+        {
+          "label": "baseline-link",
+          "exit_code": 0,
+          "stdout": {
+            "path": "/work/route-a-platform-20261124/link-attempt-002/baseline-link.stdout",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "size": 0
+          },
+          "stderr": {
+            "path": "/work/route-a-platform-20261124/link-attempt-002/baseline-link.stderr",
+            "sha256": "529b6342569c58158cc9ae2509b7012ad77fd03294843230b887208a64da0112",
+            "size": 491
+          }
+        },
+        {
+          "label": "platform-link",
+          "exit_code": 1,
+          "stdout": {
+            "path": "/work/route-a-platform-20261124/link-attempt-002/platform-link.stdout",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "size": 0
+          },
+          "stderr": {
+            "path": "/work/route-a-platform-20261124/link-attempt-002/platform-link.stderr",
+            "sha256": "27523066ab92d1e1c5c59b4eb29c2446b962b5d8fa4238f3dc6937f00bd519ea",
+            "size": 770
+          }
+        }
+      ],
+      "protected_inputs_recheck": {
+        "changes": [],
+        "checked_file_count": 1114,
+        "unchanged": true
+      }
+    },
+    {
+      "name": "link-attempt-003",
+      "driver_source_commit": "6dd4dd7c2f26b77e0e2817f3e1fd50d20cef8843",
+      "report": {
+        "path": "docs/evidence/route-a-platform-20261124/link-attempt-003/report.json",
+        "size": 27856,
+        "sha256": "0e5e47cb32da8e427eae5582befd15e6cf5af92baee2269b1b6cdea4144e760a"
+      },
+      "status": "failed",
+      "failed_stage": "linking_platform",
+      "error": "'utf-8' codec can't decode byte 0x86 in position 924961: invalid start byte",
+      "error_type": "UnicodeDecodeError",
+      "finished_at_utc": "2026-11-23T20:46:49Z",
+      "driver": {
+        "path": "/work/route-a-platform-20261124/callback-driver-v2/scripts/link_route_a_platform.py",
+        "sha256": "11c4f267946647d908c47fd0f56a82638e802e3198fd281ad955dfafe7d83527",
+        "size": 66703
+      },
+      "baseline": {
+        "path": "/work/route-a-platform-20261124/link-attempt-003/mach.development.bcm2837.unstripped.noctf",
+        "sha256": "a58cdeedb9b7a4c152867c3487f28658a3799b0158f5046bbad6d2d58e741469",
+        "size": 21905888
+      },
+      "baseline_reproduced": true,
+      "platform_link_compatible": false,
+      "kernel_callback_requested": true,
+      "kernel_callback_linked": false,
+      "protected_inputs_recheck": {
+        "changes": [],
+        "checked_file_count": 1134,
+        "unchanged": true
+      },
+      "commands": [
+        {
+          "label": "baseline-link",
+          "exit_code": 0,
+          "stdout": {
+            "path": "/work/route-a-platform-20261124/link-attempt-003/baseline-link.stdout",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "size": 0
+          },
+          "stderr": {
+            "path": "/work/route-a-platform-20261124/link-attempt-003/baseline-link.stderr",
+            "sha256": "529b6342569c58158cc9ae2509b7012ad77fd03294843230b887208a64da0112",
+            "size": 491
+          }
+        },
+        {
+          "label": "platform-link",
+          "exit_code": 0,
+          "stdout": {
+            "path": "/work/route-a-platform-20261124/link-attempt-003/platform-link.stdout",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "size": 0
+          },
+          "stderr": {
+            "path": "/work/route-a-platform-20261124/link-attempt-003/platform-link.stderr",
+            "sha256": "529b6342569c58158cc9ae2509b7012ad77fd03294843230b887208a64da0112",
+            "size": 491
+          }
+        }
+      ],
+      "callback_report": {
+        "path": "/work/route-a-platform-20261124/callback-attempt-002/report.json",
+        "sha256": "b358db0ec1087a80fcfc447d5fd128ed0630bf2eeb79b346e4be73a84d263432",
+        "size": 182661
+      },
+      "filelist_replacement": {
+        "line_index": 316,
+        "original_entry": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/DEVELOPMENT_ARM64_BCM2837/osfmk/DEVELOPMENT/cpu.o",
+        "original_filelist": {
+          "path": "/work/route-a-platform-20261124/link-attempt-003/inputs/link.filelist",
+          "sha256": "ef6d270d22291a6e43c8d91b8811a505d25ed1465e4c0dba9174f3d19eaa556d",
+          "size": 129089
+        },
+        "platform_filelist": {
+          "path": "/work/route-a-platform-20261124/link-attempt-003/inputs/platform-link.filelist",
+          "sha256": "6e565b3eba9c98f875a6da2dbd7762e175e75a97f8d79ec7041e854a9eda1d24",
+          "size": 129047
+        },
+        "replacement_count": 1,
+        "replacement_entry": "/work/route-a-platform-20261124/callback-attempt-002/replacement/cpu.o",
+        "unchanged_original_linked_object_count": 1070
+      },
+      "post_failure_diagnostic": {
+        "path": "docs/evidence/route-a-platform-20261124/link-attempt-003/map-decode-diagnostic.json",
+        "scope": "read-only; successful linker exits do not change failed validation status"
+      }
+    },
+    {
+      "name": "link-attempt-004",
+      "driver_source_commit": "09e02e6436aa39a945819bc1be0f9c57d6d6f8d7",
+      "report": {
+        "path": "docs/evidence/route-a-platform-20261124/link-attempt-004/report.json",
+        "size": 31408,
+        "sha256": "738a7af11b32c08d0a4261611ba69f325d5a29bf424791b18e98879864feff7c"
+      },
+      "status": "platform_link_compatible",
+      "finished_at_utc": "2026-11-23T21:00:30Z",
+      "driver": {
+        "path": "/work/route-a-platform-20261124/link-driver-v5/scripts/link_route_a_platform.py",
+        "sha256": "13a22e44c1e4e2e7a9ce6118e62fe0ddd0dd82ceeb5384fc04b2461d65fa5f9b",
+        "size": 68253
+      },
+      "baseline": {
+        "path": "/work/route-a-platform-20261124/link-attempt-004/mach.development.bcm2837.unstripped.noctf",
+        "sha256": "a58cdeedb9b7a4c152867c3487f28658a3799b0158f5046bbad6d2d58e741469",
+        "size": 21905888
+      },
+      "baseline_reproduced": true,
+      "platform_link_compatible": true,
+      "kernel_callback_requested": true,
+      "kernel_callback_linked": true,
+      "protected_inputs_recheck": {
+        "changes": [],
+        "checked_file_count": 1137,
+        "unchanged": true
+      },
+      "candidate": {
+        "build_version": {
+          "minos": 1769472,
+          "platform": 2,
+          "sdk": 1769472
+        },
+        "cpu_subtype": 0,
+        "entry": 18446744005112829064,
+        "file_type": 2,
+        "load_contract": {
+          "entry_offset": 5297288,
+          "memory_span": 23035904,
+          "required_physical_base_low_21_bits": 16384,
+          "virtual_base": 18446744005107531776
+        },
+        "path": "/work/route-a-platform-20261124/link-attempt-004/mach.platform-link-probe.unstripped.noctf",
+        "sha256": "46eff436250d905e9f3aec59dbcc8c04d594e614e790860236917c7cbfe39f1b",
+        "size": 21942456,
+        "strong_undefined": [],
+        "weak_undefined": []
+      },
+      "link_map": {
+        "path": "/work/route-a-platform-20261124/link-attempt-004/platform.map",
+        "sha256": "e9f2ff46924e73690c62f07eb6d70786fb2f54c815580a22484ad56674268165",
+        "size": 7555941
+      },
+      "link_map_decoding": {
+        "encoding": "utf-8",
+        "errors": "surrogateescape",
+        "line_boundary": "LF",
+        "lossless_roundtrip_verified": true,
+        "structural_fields": "ASCII spaces/tabs, decimal digits and hexadecimal addresses",
+        "surrogateescaped_byte_count": 2
+      },
+      "actual_member_evidence": {
+        "components": [
+          {
+            "allocated_symbol_count": 43,
+            "component": "ArmDTPlatform",
+            "constructor_symbols": [
+              {
+                "address": 18446744005119108912,
+                "name": "__GLOBAL__sub_I_ArmDTPlatform.cpp",
+                "object_index": 1080,
+                "size": 60
+              }
+            ],
+            "map_member": "/work/route-a-platform-20261124/attempt-002/ArmDTPlatform/libArmDTPlatform.a(ArmDTPlatform.o)",
+            "metaclass_symbols": [
+              {
+                "address": 18446744005120326736,
+                "name": "__ZN13ArmDTPlatform10gMetaClassE",
+                "object_index": 1080,
+                "size": 40
+              }
+            ],
+            "object_index": 1080,
+            "observation_symbol": "_armdt_platform_configured"
+          },
+          {
+            "allocated_symbol_count": 164,
+            "component": "ArmCpu",
+            "constructor_symbols": [
+              {
+                "address": 18446744005119126496,
+                "name": "__GLOBAL__sub_I_ArmCpu.cpp",
+                "object_index": 1081,
+                "size": 60
+              }
+            ],
+            "map_member": "/work/route-a-platform-20261124/attempt-002/ArmCpu/libArmCpu.a(ArmCpu.o)",
+            "metaclass_symbols": [
+              {
+                "address": 18446744005120327376,
+                "name": "__ZN6ArmCpu10gMetaClassE",
+                "object_index": 1081,
+                "size": 40
+              }
+            ],
+            "object_index": 1081,
+            "observation_symbol": "_armcpu_registered"
+          }
+        ],
+        "constructor_pointer_count": 101,
+        "runtime_driver_matching_verified": false
+      },
+      "commands": [
+        {
+          "label": "baseline-link",
+          "exit_code": 0,
+          "stdout": {
+            "path": "/work/route-a-platform-20261124/link-attempt-004/baseline-link.stdout",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "size": 0
+          },
+          "stderr": {
+            "path": "/work/route-a-platform-20261124/link-attempt-004/baseline-link.stderr",
+            "sha256": "529b6342569c58158cc9ae2509b7012ad77fd03294843230b887208a64da0112",
+            "size": 491
+          }
+        },
+        {
+          "label": "platform-link",
+          "exit_code": 0,
+          "stdout": {
+            "path": "/work/route-a-platform-20261124/link-attempt-004/platform-link.stdout",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "size": 0
+          },
+          "stderr": {
+            "path": "/work/route-a-platform-20261124/link-attempt-004/platform-link.stderr",
+            "sha256": "529b6342569c58158cc9ae2509b7012ad77fd03294843230b887208a64da0112",
+            "size": 491
+          }
+        }
+      ],
+      "callback_report": {
+        "path": "/work/route-a-platform-20261124/callback-attempt-002/report.json",
+        "sha256": "b358db0ec1087a80fcfc447d5fd128ed0630bf2eeb79b346e4be73a84d263432",
+        "size": 182661
+      },
+      "filelist_replacement": {
+        "line_index": 316,
+        "original_entry": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/DEVELOPMENT_ARM64_BCM2837/osfmk/DEVELOPMENT/cpu.o",
+        "original_filelist": {
+          "path": "/work/route-a-platform-20261124/link-attempt-004/inputs/link.filelist",
+          "sha256": "ef6d270d22291a6e43c8d91b8811a505d25ed1465e4c0dba9174f3d19eaa556d",
+          "size": 129089
+        },
+        "platform_filelist": {
+          "path": "/work/route-a-platform-20261124/link-attempt-004/inputs/platform-link.filelist",
+          "sha256": "6e565b3eba9c98f875a6da2dbd7762e175e75a97f8d79ec7041e854a9eda1d24",
+          "size": 129047
+        },
+        "replacement_count": 1,
+        "replacement_entry": "/work/route-a-platform-20261124/callback-attempt-002/replacement/cpu.o",
+        "unchanged_original_linked_object_count": 1070
+      },
+      "callback_member_evidence": {
+        "definition": {
+          "section": {
+            "addr": 18446744005119545344,
+            "flags": 1,
+            "index": 37,
+            "name": "__common",
+            "offset": 0,
+            "segment": "__DATA",
+            "size": 782104
+          },
+          "symbol": {
+            "n_desc": 0,
+            "n_sect": 37,
+            "n_type": 15,
+            "name": "_arm64_platform_sleep_hook",
+            "value": 18446744005120012936
+          }
+        },
+        "hook_symbol": {
+          "address": 18446744005120012936,
+          "name": "_arm64_platform_sleep_hook",
+          "object_index": 318,
+          "size": 8
+        },
+        "map_object": "/work/route-a-platform-20261124/callback-attempt-002/replacement/cpu.o",
+        "ml_arm_sleep_symbol": {
+          "address": 18446744005112770776,
+          "name": "_ml_arm_sleep",
+          "object_index": 318,
+          "size": 328
+        },
+        "object_index": 318,
+        "runtime_path_execution_verified": false
+      },
+      "public_filelists_rechecked": {
+        "line_count_each": 1067,
+        "changed_zero_based_line_indexes": [
+          316
+        ],
+        "unchanged_original_linked_object_count": 1070,
+        "baseline_linked_object_count": 1071,
+        "extra_baseline_objects": 4
+      }
+    }
+  ],
+  "latest_actual_result": {
+    "attempt": "link-attempt-004",
+    "baseline_reproduced": true,
+    "both_linker_exit_codes_zero": true,
+    "platform_link_compatible": true,
+    "kernel_callback_linked": true,
+    "candidate": {
+      "build_version": {
+        "minos": 1769472,
+        "platform": 2,
+        "sdk": 1769472
+      },
+      "cpu_subtype": 0,
+      "entry": 18446744005112829064,
+      "file_type": 2,
+      "load_contract": {
+        "entry_offset": 5297288,
+        "memory_span": 23035904,
+        "required_physical_base_low_21_bits": 16384,
+        "virtual_base": 18446744005107531776
+      },
+      "path": "/work/route-a-platform-20261124/link-attempt-004/mach.platform-link-probe.unstripped.noctf",
+      "sha256": "46eff436250d905e9f3aec59dbcc8c04d594e614e790860236917c7cbfe39f1b",
+      "size": 21942456,
+      "strong_undefined": [],
+      "weak_undefined": []
+    },
+    "protected_inputs_recheck": {
+      "changes": [],
+      "checked_file_count": 1137,
+      "unchanged": true
+    },
+    "remaining_scope": "Two public providers and one source-bound CPU callback replacement passed an isolated compatibility link. Full board/provider closure, complete ISA, runtime matching, sleep/resume and OS boot are separate qualifications."
+  },
+  "raw_evidence_files": [
+    {
+      "path": "docs/evidence/route-a-platform-20261124/link-attempt-001/baseline-difference.json",
+      "size": 4005,
+      "sha256": "7b007f2940999ac3267c764a63b51793c498abe25cfbe5bf4ecdbfeeaf2c9f0b"
+    },
+    {
+      "path": "docs/evidence/route-a-platform-20261124/link-attempt-001/baseline-link.stderr",
+      "size": 491,
+      "sha256": "529b6342569c58158cc9ae2509b7012ad77fd03294843230b887208a64da0112"
+    },
+    {
+      "path": "docs/evidence/route-a-platform-20261124/link-attempt-001/baseline-link.stdout",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "docs/evidence/route-a-platform-20261124/link-attempt-001/inputs/link-reconstruction.json",
+      "size": 4879,
+      "sha256": "c17d8a172dd21bc260eb548fd41d3df92ed6469a42de9cfbcb44d3eb9630ffde"
+    },
+    {
+      "path": "docs/evidence/route-a-platform-20261124/link-attempt-001/inputs/link.filelist",
+      "size": 129089,
+      "sha256": "ef6d270d22291a6e43c8d91b8811a505d25ed1465e4c0dba9174f3d19eaa556d"
+    },
+    {
+      "path": "docs/evidence/route-a-platform-20261124/link-attempt-001/inputs/protected-inputs.json",
+      "size": 273831,
+      "sha256": "15260ca2b9dc08d9760908f3a38ad4a84d040c69b218bc59bf2b2c2febe78da7"
+    },
+    {
+      "path": "docs/evidence/route-a-platform-20261124/link-attempt-001/report.json",
+      "size": 8660,
+      "sha256": "d20a6afc1ffae2b1fc34a079ad23c183b7d357bee7e98d67f89a48f073586b11"
+    },
+    {
+      "path": "docs/evidence/route-a-platform-20261124/link-attempt-001/symbol-closure.json",
+      "size": 296,
+      "sha256": "ce4bd12c3967d423071199649860f5370fb1e79c1fa4f170a2b2ae2b523905bc"
+    },
+    {
+      "path": "docs/evidence/route-a-platform-20261124/link-attempt-002/baseline-link.stderr",
+      "size": 491,
+      "sha256": "529b6342569c58158cc9ae2509b7012ad77fd03294843230b887208a64da0112"
+    },
+    {
+      "path": "docs/evidence/route-a-platform-20261124/link-attempt-002/baseline-link.stdout",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "docs/evidence/route-a-platform-20261124/link-attempt-002/inputs/link-reconstruction.json",
+      "size": 4879,
+      "sha256": "c17d8a172dd21bc260eb548fd41d3df92ed6469a42de9cfbcb44d3eb9630ffde"
+    },
+    {
+      "path": "docs/evidence/route-a-platform-20261124/link-attempt-002/inputs/protected-inputs.json",
+      "size": 273831,
+      "sha256": "15260ca2b9dc08d9760908f3a38ad4a84d040c69b218bc59bf2b2c2febe78da7"
+    },
+    {
+      "path": "docs/evidence/route-a-platform-20261124/link-attempt-002/platform-link.stderr",
+      "size": 770,
+      "sha256": "27523066ab92d1e1c5c59b4eb29c2446b962b5d8fa4238f3dc6937f00bd519ea"
+    },
+    {
+      "path": "docs/evidence/route-a-platform-20261124/link-attempt-002/platform-link.stdout",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "docs/evidence/route-a-platform-20261124/link-attempt-002/report.json",
+      "size": 15125,
+      "sha256": "d863658c8b5fec0415406984a6ac9aaf6449870aaa457867d39f20792628655a"
+    },
+    {
+      "path": "docs/evidence/route-a-platform-20261124/link-attempt-002/symbol-closure.json",
+      "size": 296,
+      "sha256": "ce4bd12c3967d423071199649860f5370fb1e79c1fa4f170a2b2ae2b523905bc"
+    },
+    {
+      "path": "docs/evidence/route-a-platform-20261124/link-attempt-003/baseline-link.stderr",
+      "size": 491,
+      "sha256": "529b6342569c58158cc9ae2509b7012ad77fd03294843230b887208a64da0112"
+    },
+    {
+      "path": "docs/evidence/route-a-platform-20261124/link-attempt-003/baseline-link.stdout",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "docs/evidence/route-a-platform-20261124/link-attempt-003/inputs/link-reconstruction.json",
+      "size": 4879,
+      "sha256": "c17d8a172dd21bc260eb548fd41d3df92ed6469a42de9cfbcb44d3eb9630ffde"
+    },
+    {
+      "path": "docs/evidence/route-a-platform-20261124/link-attempt-003/inputs/protected-inputs.json",
+      "size": 278394,
+      "sha256": "88db9dde32c3f715e2c2acebcfb193821134c2ef1d6e53f113f4e3a684c8ec0b"
+    },
+    {
+      "path": "docs/evidence/route-a-platform-20261124/link-attempt-003/map-decode-diagnostic.json",
+      "size": 2009,
+      "sha256": "76ec75816c7db08285b023432dd4443ee758e037c2f1e72793eff78be947e486"
+    },
+    {
+      "path": "docs/evidence/route-a-platform-20261124/link-attempt-003/platform-link.stderr",
+      "size": 491,
+      "sha256": "529b6342569c58158cc9ae2509b7012ad77fd03294843230b887208a64da0112"
+    },
+    {
+      "path": "docs/evidence/route-a-platform-20261124/link-attempt-003/platform-link.stdout",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "docs/evidence/route-a-platform-20261124/link-attempt-003/report.json",
+      "size": 27856,
+      "sha256": "0e5e47cb32da8e427eae5582befd15e6cf5af92baee2269b1b6cdea4144e760a"
+    },
+    {
+      "path": "docs/evidence/route-a-platform-20261124/link-attempt-003/symbol-closure.json",
+      "size": 1759,
+      "sha256": "7fe2e8101740c0370db307bb9ad6593aefb1a03730f36e815953b8f1e724d838"
+    },
+    {
+      "path": "docs/evidence/route-a-platform-20261124/link-attempt-004/baseline-link.stderr",
+      "size": 491,
+      "sha256": "529b6342569c58158cc9ae2509b7012ad77fd03294843230b887208a64da0112"
+    },
+    {
+      "path": "docs/evidence/route-a-platform-20261124/link-attempt-004/baseline-link.stdout",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "docs/evidence/route-a-platform-20261124/link-attempt-004/inputs/link-reconstruction.json",
+      "size": 4879,
+      "sha256": "c17d8a172dd21bc260eb548fd41d3df92ed6469a42de9cfbcb44d3eb9630ffde"
+    },
+    {
+      "path": "docs/evidence/route-a-platform-20261124/link-attempt-004/inputs/link.filelist",
+      "size": 129089,
+      "sha256": "ef6d270d22291a6e43c8d91b8811a505d25ed1465e4c0dba9174f3d19eaa556d"
+    },
+    {
+      "path": "docs/evidence/route-a-platform-20261124/link-attempt-004/inputs/platform-link.filelist",
+      "size": 129047,
+      "sha256": "6e565b3eba9c98f875a6da2dbd7762e175e75a97f8d79ec7041e854a9eda1d24"
+    },
+    {
+      "path": "docs/evidence/route-a-platform-20261124/link-attempt-004/inputs/protected-inputs.json",
+      "size": 279019,
+      "sha256": "cf7a98233804b6a62f53be4ca8a906bdd80b6bc896d10c985250b51350a3fe02"
+    },
+    {
+      "path": "docs/evidence/route-a-platform-20261124/link-attempt-004/platform-link.stderr",
+      "size": 491,
+      "sha256": "529b6342569c58158cc9ae2509b7012ad77fd03294843230b887208a64da0112"
+    },
+    {
+      "path": "docs/evidence/route-a-platform-20261124/link-attempt-004/platform-link.stdout",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "docs/evidence/route-a-platform-20261124/link-attempt-004/report.json",
+      "size": 31408,
+      "sha256": "738a7af11b32c08d0a4261611ba69f325d5a29bf424791b18e98879864feff7c"
+    },
+    {
+      "path": "docs/evidence/route-a-platform-20261124/link-attempt-004/symbol-closure.json",
+      "size": 1759,
+      "sha256": "7fe2e8101740c0370db307bb9ad6593aefb1a03730f36e815953b8f1e724d838"
+    }
+  ],
+  "tb371fc_kernel_qualified": false,
+  "complete_board_archive_closure": false,
+  "crypto_provider_selected": false,
+  "pthread_provider_selected": false,
+  "full_instruction_set_audited": false,
+  "runtime_driver_matching_verified": false,
+  "full_platform_sleep_verified": false,
+  "os_boot_verified": false
+}

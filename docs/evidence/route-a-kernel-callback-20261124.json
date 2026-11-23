@@ -1,0 +1,552 @@
+{
+  "schema_version": 1,
+  "scope": "arm64-platform-sleep-cpu-replacement",
+  "recorded_date": "2026-11-24",
+  "timezone": "Asia/Shanghai",
+  "attempts": [
+    {
+      "name": "callback-attempt-001",
+      "source_commit": "ede99e14ddcaba6916894d1c68da981531ee1bdb",
+      "status": "failed",
+      "failed_stage": "checking_generated_callback",
+      "error": "expected two relocation-backed hook calls with FALSE and TRUE arguments",
+      "finished_at_utc": "2026-11-23T20:31:09Z",
+      "report": {
+        "path": "docs/evidence/route-a-platform-20261124/callback-attempt-001/report.json",
+        "size": 182594,
+        "sha256": "91c8cee6413d271792d876a29c505f6328af8216a64fc5468d888a4d349b1578"
+      },
+      "source": {
+        "after": {
+          "path": "/work/route-a-platform-20261124/callback-attempt-001/source/osfmk/arm64/cpu.c",
+          "sha256": "7b8eb68b50971168a7bc3d8ec05b8c76dbc9ee0b77e5f280b02d0c34a8c89bfc",
+          "size": 39238
+        },
+        "before": {
+          "path": "/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/arm64/cpu.c",
+          "sha256": "6ea14e16fab1d5a16cf3483e630863b830e07190db35d1180850f29a27d9f968",
+          "size": 38492
+        }
+      },
+      "object": {
+        "macho": {
+          "build_version": {
+            "minos": 1769472,
+            "platform": 2,
+            "sdk": 0
+          },
+          "filetype": 1,
+          "full_instruction_set_audited": false,
+          "header_words": [
+            4277009103,
+            16777228,
+            0,
+            1,
+            5,
+            1896,
+            8192,
+            0
+          ],
+          "ordinary_arm64": true,
+          "relocations_audited": false,
+          "symbol_count": 140
+        },
+        "path": "/work/route-a-platform-20261124/callback-attempt-001/replacement/cpu.o",
+        "relocations": {
+          "path": "/work/route-a-platform-20261124/callback-attempt-001/replacement/relocations.json",
+          "sha256": "6da69c1e4b03387398e25f3b92d85ef18ac03fe56ba2f61bfeaecdcf4cfb927c",
+          "size": 111107
+        },
+        "sha256": "c0c63fb0c8d75a968f0c3914d91bd45c1d7d97bee3ca11c960b3523c1ae2ee68",
+        "size": 123440,
+        "symbols": {
+          "path": "/work/route-a-platform-20261124/callback-attempt-001/replacement/symbols.json",
+          "sha256": "7451cb16d13d6646f17a8c42cfa56c73bf58219a386d3bbc62d0d376cc76ead1",
+          "size": 20355
+        }
+      },
+      "compile_exit_code": 0,
+      "all_five_commands_exit_zero": true,
+      "compiler_stderr": {
+        "file": {
+          "path": "docs/evidence/route-a-platform-20261124/callback-attempt-001/logs/cpu-compile.stderr",
+          "size": 179542,
+          "sha256": "8b299db188b445737f3e49d7d3432c5927a9182c5cbd96017c262c551b0f7490"
+        },
+        "warning_lines": 303,
+        "categories": {
+          "-Wmissing-include-dirs": 2,
+          "-Wshadow-header": 190,
+          "-Wunsafe-buffer-usage": 111
+        },
+        "error_lines": 0
+      },
+      "recorded_dependency_files": 395,
+      "protected_inputs_recheck": {
+        "changes": [],
+        "checked_file_count": 415,
+        "unchanged": true
+      },
+      "kernel_callback_built": false
+    },
+    {
+      "name": "callback-attempt-002",
+      "source_commit": "6dd4dd7c2f26b77e0e2817f3e1fd50d20cef8843",
+      "status": "kernel_callback_built",
+      "finished_at_utc": "2026-11-23T20:45:00Z",
+      "report": {
+        "path": "docs/evidence/route-a-platform-20261124/callback-attempt-002/report.json",
+        "size": 182661,
+        "sha256": "b358db0ec1087a80fcfc447d5fd128ed0630bf2eeb79b346e4be73a84d263432"
+      },
+      "driver": {
+        "path": "/work/route-a-platform-20261124/callback-driver-v2/scripts/build_route_a_kernel_callback.py",
+        "sha256": "4ba0df5c65159714fec9f30b39221c8f3c2dc2a17a70d85e68f0b8260e76a651",
+        "size": 38817
+      },
+      "config": {
+        "path": "/work/route-a-platform-20261124/callback-driver-v2/configs/route-a-kernel-callback.json",
+        "sha256": "af71d539d6bee63dfa2be8351b8dc2d37ce3596d86feefaabe08029b3ea0fa33",
+        "size": 4136
+      },
+      "patch": {
+        "path": "/work/route-a-platform-20261124/callback-driver-v2/patches/route-a-kernel-sleep-callback-12377.patch",
+        "sha256": "e241b720a828d307daba0cd57fc956515641a19867e723a58d54295a98fdb760",
+        "size": 2159
+      },
+      "source": {
+        "after": {
+          "path": "/work/route-a-platform-20261124/callback-attempt-002/source/osfmk/arm64/cpu.c",
+          "sha256": "7b8eb68b50971168a7bc3d8ec05b8c76dbc9ee0b77e5f280b02d0c34a8c89bfc",
+          "size": 39238
+        },
+        "before": {
+          "path": "/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/arm64/cpu.c",
+          "sha256": "6ea14e16fab1d5a16cf3483e630863b830e07190db35d1180850f29a27d9f968",
+          "size": 38492
+        }
+      },
+      "original_object": {
+        "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/DEVELOPMENT_ARM64_BCM2837/osfmk/DEVELOPMENT/cpu.o",
+        "sha256": "25b913d235ed38f7d4e1910d54d79eaebdbc83003c501939822e288246ed12e4",
+        "size": 118200
+      },
+      "object": {
+        "macho": {
+          "build_version": {
+            "minos": 1769472,
+            "platform": 2,
+            "sdk": 0
+          },
+          "filetype": 1,
+          "full_instruction_set_audited": false,
+          "header_words": [
+            4277009103,
+            16777228,
+            0,
+            1,
+            5,
+            1896,
+            8192,
+            0
+          ],
+          "ordinary_arm64": true,
+          "relocations_audited": false,
+          "symbol_count": 140
+        },
+        "path": "/work/route-a-platform-20261124/callback-attempt-002/replacement/cpu.o",
+        "relocations": {
+          "path": "/work/route-a-platform-20261124/callback-attempt-002/replacement/relocations.json",
+          "sha256": "6da69c1e4b03387398e25f3b92d85ef18ac03fe56ba2f61bfeaecdcf4cfb927c",
+          "size": 111107
+        },
+        "sha256": "c555d97897615fb786d375f5510906fb52a7a4102962ea09ad3ecf450a076d5d",
+        "size": 123440,
+        "symbols": {
+          "path": "/work/route-a-platform-20261124/callback-attempt-002/replacement/symbols.json",
+          "sha256": "7451cb16d13d6646f17a8c42cfa56c73bf58219a386d3bbc62d0d376cc76ead1",
+          "size": 20355
+        }
+      },
+      "compile_exit_code": 0,
+      "all_five_commands_exit_zero": true,
+      "compiler_stderr": {
+        "file": {
+          "path": "docs/evidence/route-a-platform-20261124/callback-attempt-002/logs/cpu-compile.stderr",
+          "size": 179542,
+          "sha256": "8b7f06f53986ae269be5a4812c65ffeb2c6037a2769fb4f4ccf91cf079f04960"
+        },
+        "warning_lines": 303,
+        "categories": {
+          "-Wmissing-include-dirs": 2,
+          "-Wshadow-header": 190,
+          "-Wunsafe-buffer-usage": 111
+        },
+        "error_lines": 0,
+        "frontend_summary_warning_count": 301,
+        "driver_warning_lines": 2
+      },
+      "recorded_dependency_files": 395,
+      "protected_inputs_recheck": {
+        "changes": [],
+        "checked_file_count": 415,
+        "unchanged": true
+      },
+      "protected_input_unique_path_count": 414,
+      "duplicated_protected_input_paths": {
+        "/work/route-a-platform-20261124/callback-attempt-002/source/osfmk/arm64/cpu.c": 2
+      },
+      "bounded_code_check": {
+        "report": {
+          "path": "docs/evidence/route-a-platform-20261124/callback-attempt-002/callback-evidence.json",
+          "size": 14060,
+          "sha256": "abb30328dc42f67b62bac2192ffd2d6109c2beb1e6e2aa96821bd248d6ce3f1a"
+        },
+        "passed": true,
+        "scope": "bounded emitted callback sequences and relocations in ml_arm_sleep",
+        "object_sha256": "c555d97897615fb786d375f5510906fb52a7a4102962ea09ad3ecf450a076d5d",
+        "source_sha256": "7b8eb68b50971168a7bc3d8ec05b8c76dbc9ee0b77e5f280b02d0c34a8c89bfc",
+        "function": {
+          "address": "0xc68",
+          "boundary_basis": "defined-section symbol to next underscore symbol/section end",
+          "end": "0xdb0",
+          "file_offset": 5104,
+          "name": "_ml_arm_sleep",
+          "sha256": "916964422fab9ca833148bc3f022266c2fd3287015f9583d47cba5a365072fe9",
+          "size": 328
+        },
+        "hook_definition": {
+          "n_desc": 0,
+          "n_sect": 3,
+          "n_type": 15,
+          "name": "_arm64_platform_sleep_hook",
+          "null_initial_value_verified": true,
+          "section": {
+            "address": 112568,
+            "alignment": 3,
+            "flags": 1,
+            "index": 3,
+            "name": "__common",
+            "nreloc": 0,
+            "offset": 0,
+            "reloff": 0,
+            "segment": "__DATA",
+            "size": 164,
+            "zero_fill": true
+          },
+          "value": 112568
+        },
+        "dispatch_calls": [
+          {
+            "address": "0xcf0",
+            "argument_value": 1,
+            "control_flow_shape": "cbz-fallthrough",
+            "file_offset": 5240,
+            "instruction": "blr",
+            "instruction_index": 34,
+            "null_guard_address": "0xce8",
+            "pointer_load": {
+              "address": "0xce4",
+              "relocation": {
+                "address": 3300,
+                "external": true,
+                "length": 2,
+                "pcrel": false,
+                "section": 1,
+                "section_offset": 3300,
+                "symbol": "_arm64_platform_sleep_hook",
+                "symbol_index": 44,
+                "type": 4
+              }
+            },
+            "pointer_page": {
+              "address": "0xce0",
+              "relocation": {
+                "address": 3296,
+                "external": true,
+                "length": 2,
+                "pcrel": true,
+                "section": 1,
+                "section_offset": 3296,
+                "symbol": "_arm64_platform_sleep_hook",
+                "symbol_index": 44,
+                "type": 3
+              }
+            },
+            "target_register": "x8"
+          },
+          {
+            "address": "0xda4",
+            "argument_value": 0,
+            "control_flow_shape": "cbnz-taken-tail-block",
+            "file_offset": 5420,
+            "guard_taken_target": "0xda0",
+            "instruction": "blr",
+            "instruction_index": 79,
+            "local_direct_incoming": [
+              "0xd40"
+            ],
+            "null_guard_address": "0xd40",
+            "pointer_load": {
+              "address": "0xd3c",
+              "relocation": {
+                "address": 3388,
+                "external": true,
+                "length": 2,
+                "pcrel": false,
+                "section": 1,
+                "section_offset": 3388,
+                "symbol": "_arm64_platform_sleep_hook",
+                "symbol_index": 44,
+                "type": 4
+              }
+            },
+            "pointer_page": {
+              "address": "0xd38",
+              "relocation": {
+                "address": 3384,
+                "external": true,
+                "length": 2,
+                "pcrel": true,
+                "section": 1,
+                "section_offset": 3384,
+                "symbol": "_arm64_platform_sleep_hook",
+                "symbol_index": 44,
+                "type": 3
+              }
+            },
+            "tail_entry_predecessor": {
+              "address": "0xd9c",
+              "instruction": "b"
+            },
+            "target_register": "x8"
+          }
+        ],
+        "resume_call": {
+          "address": "0xcfc",
+          "after_boot_dispatch": true,
+          "file_offset": 5252,
+          "instruction": "bl",
+          "relocation": {
+            "address": 3324,
+            "external": true,
+            "length": 2,
+            "pcrel": true,
+            "section": 1,
+            "section_offset": 3324,
+            "symbol": "_arm_init_cpu",
+            "symbol_index": 90,
+            "type": 2
+          },
+          "second_argument": 0,
+          "symbol": "_arm_init_cpu"
+        },
+        "full_control_flow_proven": false,
+        "full_instruction_set_audited": false,
+        "runtime_path_execution_verified": false,
+        "sleep_resume_verified": false
+      },
+      "kernel_callback_built": true,
+      "provider_kernel_link_verified": false,
+      "platform_sleep_bootarg_enabled": false
+    }
+  ],
+  "raw_evidence_files": [
+    {
+      "path": "docs/evidence/route-a-platform-20261124/callback-attempt-001/logs/cpu-compile.stderr",
+      "size": 179542,
+      "sha256": "8b299db188b445737f3e49d7d3432c5927a9182c5cbd96017c262c551b0f7490"
+    },
+    {
+      "path": "docs/evidence/route-a-platform-20261124/callback-attempt-001/logs/cpu-compile.stdout",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "docs/evidence/route-a-platform-20261124/callback-attempt-001/logs/cpu-disassembly.stderr",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "docs/evidence/route-a-platform-20261124/callback-attempt-001/logs/cpu-disassembly.stdout",
+      "size": 61508,
+      "sha256": "befad889e78442e30b5c5610a22c6d546db60730c581f5a49c4e362caf63a889"
+    },
+    {
+      "path": "docs/evidence/route-a-platform-20261124/callback-attempt-001/logs/objdump-version.stderr",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "docs/evidence/route-a-platform-20261124/callback-attempt-001/logs/objdump-version.stdout",
+      "size": 1613,
+      "sha256": "8f851aeb4841527fde28d21bfa1a3b09298628c9a1b46f75a0f6d6e62d5116e8"
+    },
+    {
+      "path": "docs/evidence/route-a-platform-20261124/callback-attempt-001/logs/patch-apply.stderr",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "docs/evidence/route-a-platform-20261124/callback-attempt-001/logs/patch-apply.stdout",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "docs/evidence/route-a-platform-20261124/callback-attempt-001/logs/patch-check.stderr",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "docs/evidence/route-a-platform-20261124/callback-attempt-001/logs/patch-check.stdout",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "docs/evidence/route-a-platform-20261124/callback-attempt-001/replacement/dependencies.json",
+      "size": 129674,
+      "sha256": "05bc8d4fa56dbf7f7a1d4c52f5b32e50a78ffde82234d1a75cce30588b1bd9c9"
+    },
+    {
+      "path": "docs/evidence/route-a-platform-20261124/callback-attempt-001/replacement/relocations.json",
+      "size": 111107,
+      "sha256": "6da69c1e4b03387398e25f3b92d85ef18ac03fe56ba2f61bfeaecdcf4cfb927c"
+    },
+    {
+      "path": "docs/evidence/route-a-platform-20261124/callback-attempt-001/replacement/replay-compile-record.json",
+      "size": 12152,
+      "sha256": "94da1e14290ff49fe58fa5a3c52f5ca55a92815e48a30e7968543b9d22956f63"
+    },
+    {
+      "path": "docs/evidence/route-a-platform-20261124/callback-attempt-001/replacement/symbols.json",
+      "size": 20355,
+      "sha256": "7451cb16d13d6646f17a8c42cfa56c73bf58219a386d3bbc62d0d376cc76ead1"
+    },
+    {
+      "path": "docs/evidence/route-a-platform-20261124/callback-attempt-001/report.json",
+      "size": 182594,
+      "sha256": "91c8cee6413d271792d876a29c505f6328af8216a64fc5468d888a4d349b1578"
+    },
+    {
+      "path": "docs/evidence/route-a-platform-20261124/callback-attempt-002/callback-evidence.json",
+      "size": 14060,
+      "sha256": "abb30328dc42f67b62bac2192ffd2d6109c2beb1e6e2aa96821bd248d6ce3f1a"
+    },
+    {
+      "path": "docs/evidence/route-a-platform-20261124/callback-attempt-002/logs/cpu-compile.stderr",
+      "size": 179542,
+      "sha256": "8b7f06f53986ae269be5a4812c65ffeb2c6037a2769fb4f4ccf91cf079f04960"
+    },
+    {
+      "path": "docs/evidence/route-a-platform-20261124/callback-attempt-002/logs/cpu-compile.stdout",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "docs/evidence/route-a-platform-20261124/callback-attempt-002/logs/cpu-disassembly.stderr",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "docs/evidence/route-a-platform-20261124/callback-attempt-002/logs/cpu-disassembly.stdout",
+      "size": 61508,
+      "sha256": "f102909ba6d2f31929594eac42d97ada9eafc4e0b4c6ca34dc7e81ed3e92dbac"
+    },
+    {
+      "path": "docs/evidence/route-a-platform-20261124/callback-attempt-002/logs/objdump-version.stderr",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "docs/evidence/route-a-platform-20261124/callback-attempt-002/logs/objdump-version.stdout",
+      "size": 1613,
+      "sha256": "8f851aeb4841527fde28d21bfa1a3b09298628c9a1b46f75a0f6d6e62d5116e8"
+    },
+    {
+      "path": "docs/evidence/route-a-platform-20261124/callback-attempt-002/logs/patch-apply.stderr",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "docs/evidence/route-a-platform-20261124/callback-attempt-002/logs/patch-apply.stdout",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "docs/evidence/route-a-platform-20261124/callback-attempt-002/logs/patch-check.stderr",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "docs/evidence/route-a-platform-20261124/callback-attempt-002/logs/patch-check.stdout",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "docs/evidence/route-a-platform-20261124/callback-attempt-002/replacement/dependencies.json",
+      "size": 129674,
+      "sha256": "3b6c02adfb94e7546e12aacb15502bc7f8adf22a437d60f43d7e5117cce3d746"
+    },
+    {
+      "path": "docs/evidence/route-a-platform-20261124/callback-attempt-002/replacement/relocations.json",
+      "size": 111107,
+      "sha256": "6da69c1e4b03387398e25f3b92d85ef18ac03fe56ba2f61bfeaecdcf4cfb927c"
+    },
+    {
+      "path": "docs/evidence/route-a-platform-20261124/callback-attempt-002/replacement/replay-compile-record.json",
+      "size": 12152,
+      "sha256": "239554932e935f9e622e915fa34fdf88a299010dddda636e9514570ee485278a"
+    },
+    {
+      "path": "docs/evidence/route-a-platform-20261124/callback-attempt-002/replacement/symbols.json",
+      "size": 20355,
+      "sha256": "7451cb16d13d6646f17a8c42cfa56c73bf58219a386d3bbc62d0d376cc76ead1"
+    },
+    {
+      "path": "docs/evidence/route-a-platform-20261124/callback-attempt-002/report.json",
+      "size": 182661,
+      "sha256": "b358db0ec1087a80fcfc447d5fd128ed0630bf2eeb79b346e4be73a84d263432"
+    }
+  ],
+  "complete_sleep_patch_applied": false,
+  "sleep_resume_verified": false,
+  "runtime_path_execution_verified": false,
+  "tb371fc_kernel_qualified": false,
+  "os_boot_verified": false,
+  "local_readonly_recheck": {
+    "source_commit": "6dd4dd7c2f26b77e0e2817f3e1fd50d20cef8843",
+    "report": {
+      "path": "docs/evidence/route-a-platform-20261124/callback-matcher-v2-recheck.json",
+      "size": 19321,
+      "sha256": "f0b94bbbb04cf3cd3ce404e89e6e919a302fe4f16dcefc836f1d3f169aaaa46a"
+    },
+    "scope": "read-only local retest of original compiled object; no recompile or link",
+    "status": "local_bounded_object_check_passed",
+    "object": {
+      "path": "/workspace/scratch/f99a6599321f/route-a-callback-attempt001.cpu.o",
+      "sha256": "c0c63fb0c8d75a968f0c3914d91bd45c1d7d97bee3ca11c960b3523c1ae2ee68",
+      "size": 123440
+    },
+    "driver": {
+      "path": "/workspace/scratch/f99a6599321f/unixnu-tb371fc/scripts/build_route_a_kernel_callback.py",
+      "sha256": "4ba0df5c65159714fec9f30b39221c8f3c2dc2a17a70d85e68f0b8260e76a651",
+      "size": 38817
+    },
+    "in_memory_mutation_rejections": 11,
+    "original_object_unchanged": true,
+    "original_attempt_status_changed": false
+  },
+  "latest_actual_result": {
+    "attempt": "callback-attempt-002",
+    "status": "kernel_callback_built",
+    "kernel_callback_built": true,
+    "bounded_callback_evidence_passed": true,
+    "object": {
+      "path": "/work/route-a-platform-20261124/callback-attempt-002/replacement/cpu.o",
+      "size": 123440,
+      "sha256": "c555d97897615fb786d375f5510906fb52a7a4102962ea09ad3ecf450a076d5d"
+    },
+    "provider_kernel_link_verified": false,
+    "scope_note": "A new real compile and bounded emitted-code check succeeded. This does not change callback-attempt-001 or its separate local read-only recheck; kernel linking and runtime qualification remain separate."
+  }
+}

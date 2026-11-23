@@ -1,0 +1,1263 @@
+
+/work/route-a-platform-20261124/callback-attempt-002/replacement/cpu.o:	file format mach-o arm64
+
+Disassembly of section __TEXT,__text:
+
+0000000000000000 <ltmp0>:
+       0: a9be4ff4     	stp	x20, x19, [sp, #-0x20]!
+       4: a9017bfd     	stp	x29, x30, [sp, #0x10]
+       8: 910043fd     	add	x29, sp, #0x10
+       c: aa0003f3     	mov	x19, x0
+      10: 94000000     	bl	0x10 <ltmp0+0x10>
+		0000000000000010:  ARM64_RELOC_BRANCH26	_current_thread
+      14: f9411c08     	ldr	x8, [x0, #0x238]
+      18: 79400108     	ldrh	w8, [x8]
+      1c: f9000268     	str	x8, [x19]
+      20: a9417bfd     	ldp	x29, x30, [sp, #0x10]
+      24: a8c24ff4     	ldp	x20, x19, [sp], #0x20
+      28: d65f03c0     	ret
+
+000000000000002c <_arm64_immediate_ipi_test_callback>:
+      2c: a9be4ff4     	stp	x20, x19, [sp, #-0x20]!
+      30: a9017bfd     	stp	x29, x30, [sp, #0x10]
+      34: 910043fd     	add	x29, sp, #0x10
+      38: aa0003f3     	mov	x19, x0
+      3c: 94000000     	bl	0x3c <_arm64_immediate_ipi_test_callback+0x10>
+		000000000000003c:  ARM64_RELOC_BRANCH26	_current_thread
+      40: f9411c08     	ldr	x8, [x0, #0x238]
+      44: 79400108     	ldrh	w8, [x8]
+      48: 91002108     	add	x8, x8, #0x8
+      4c: f9000268     	str	x8, [x19]
+      50: a9417bfd     	ldp	x29, x30, [sp, #0x10]
+      54: a8c24ff4     	ldp	x20, x19, [sp], #0x20
+      58: d65f03c0     	ret
+
+000000000000005c <_arm64_ipi_test>:
+      5c: d102c3ff     	sub	sp, sp, #0xb0
+      60: a9056ffc     	stp	x28, x27, [sp, #0x50]
+      64: a90667fa     	stp	x26, x25, [sp, #0x60]
+      68: a9075ff8     	stp	x24, x23, [sp, #0x70]
+      6c: a90857f6     	stp	x22, x21, [sp, #0x80]
+      70: a9094ff4     	stp	x20, x19, [sp, #0x90]
+      74: a90a7bfd     	stp	x29, x30, [sp, #0xa0]
+      78: 910283fd     	add	x29, sp, #0xa0
+      7c: 90000008     	adrp	x8, 0x0 <ltmp0>
+		000000000000007c:  ARM64_RELOC_PAGE21	_arm64_ipi_test_timeout
+      80: f940011a     	ldr	x26, [x8]
+		0000000000000080:  ARM64_RELOC_PAGEOFF12	_arm64_ipi_test_timeout
+      84: f90027ff     	str	xzr, [sp, #0x48]
+      88: 94000000     	bl	0x88 <_arm64_ipi_test+0x2c>
+		0000000000000088:  ARM64_RELOC_BRANCH26	_current_thread
+      8c: 90000008     	adrp	x8, 0x0 <ltmp0>
+		000000000000008c:  ARM64_RELOC_GOT_LOAD_PAGE21	_real_ncpus
+      90: f9400108     	ldr	x8, [x8]
+		0000000000000090:  ARM64_RELOC_GOT_LOAD_PAGEOFF12	_real_ncpus
+      94: b9400108     	ldr	w8, [x8]
+      98: 7100051f     	cmp	w8, #0x1
+      9c: fa401b44     	ccmp	x26, #0x0, #0x4, ne
+      a0: 54000800     	b.eq	0x1a0 <_arm64_ipi_test+0x144>
+      a4: f9411c08     	ldr	x8, [x0, #0x238]
+      a8: 79400108     	ldrh	w8, [x8]
+      ac: f90023e8     	str	x8, [sp, #0x40]
+      b0: 94000000     	bl	0xb0 <_arm64_ipi_test+0x54>
+		00000000000000b0:  ARM64_RELOC_BRANCH26	_ml_get_max_cpu_number
+      b4: d2869b7c     	mov	x28, #0x34db            ; =13531
+      b8: 2a0003f4     	mov	w20, w0
+      bc: 2a1f03f8     	mov	w24, wzr
+      c0: f2baf6dc     	movk	x28, #0xd7b6, lsl #16
+      c4: aa1f03f7     	mov	x23, xzr
+      c8: 9000001b     	adrp	x27, 0x0 <ltmp0>
+		00000000000000c8:  ARM64_RELOC_PAGE21	_arm64_ipi_test_data
+      cc: 9100037b     	add	x27, x27, #0x0
+		00000000000000cc:  ARM64_RELOC_PAGEOFF12	_arm64_ipi_test_data
+      d0: f2dbd05c     	movk	x28, #0xde82, lsl #32
+      d4: 90000015     	adrp	x21, 0x0 <ltmp0>
+		00000000000000d4:  ARM64_RELOC_PAGE21	_arm64_ipi_test_callback
+      d8: 910002b5     	add	x21, x21, #0x0
+		00000000000000d8:  ARM64_RELOC_PAGEOFF12	_arm64_ipi_test_callback
+      dc: 90000016     	adrp	x22, 0x0 <ltmp0>
+		00000000000000dc:  ARM64_RELOC_PAGE21	_arm64_immediate_ipi_test_callback
+      e0: 910002d6     	add	x22, x22, #0x0
+		00000000000000e0:  ARM64_RELOC_PAGEOFF12	_arm64_immediate_ipi_test_callback
+      e4: f2e8637c     	movk	x28, #0x431b, lsl #48
+      e8: 8b384f62     	add	x2, x27, w24, uxtw #3
+      ec: 2a3803e8     	mvn	w8, w24
+      f0: 2a1803e0     	mov	w0, w24
+      f4: aa1503e1     	mov	x1, x21
+      f8: 2a1803f3     	mov	w19, w24
+      fc: f9000048     	str	x8, [x2]
+     100: 94000000     	bl	0x100 <_arm64_ipi_test+0xa4>
+		0000000000000100:  ARM64_RELOC_BRANCH26	_cpu_xcall
+     104: 350009e0     	cbnz	w0, 0x240 <_arm64_ipi_test+0x1e4>
+     108: 11002319     	add	w25, w24, #0x8
+     10c: 8b394f78     	add	x24, x27, w25, uxtw #3
+     110: 2a1303e0     	mov	w0, w19
+     114: aa1603e1     	mov	x1, x22
+     118: aa1803e2     	mov	x2, x24
+     11c: 94000000     	bl	0x11c <_arm64_ipi_test+0xc0>
+		000000000000011c:  ARM64_RELOC_BRANCH26	_cpu_immediate_xcall
+     120: 7100781f     	cmp	w0, #0x1e
+     124: 54000141     	b.ne	0x14c <_arm64_ipi_test+0xf0>
+     128: 94000000     	bl	0x128 <_arm64_ipi_test+0xcc>
+		0000000000000128:  ARM64_RELOC_BRANCH26	_mach_absolute_time
+     12c: cb170000     	sub	x0, x0, x23
+     130: 910123e1     	add	x1, sp, #0x48
+     134: 94000000     	bl	0x134 <_arm64_ipi_test+0xd8>
+		0000000000000134:  ARM64_RELOC_BRANCH26	_absolutetime_to_nanoseconds
+     138: f94027e8     	ldr	x8, [sp, #0x48]
+     13c: 9bdc7d08     	umulh	x8, x8, x28
+     140: eb484b5f     	cmp	x26, x8, lsr #18
+     144: 54fffe62     	b.hs	0x110 <_arm64_ipi_test+0xb4>
+     148: 14000033     	b	0x214 <_arm64_ipi_test+0x1b8>
+     14c: 35000520     	cbnz	w0, 0x1f0 <_arm64_ipi_test+0x194>
+     150: 94000000     	bl	0x150 <_arm64_ipi_test+0xf4>
+		0000000000000150:  ARM64_RELOC_BRANCH26	_mach_absolute_time
+     154: aa0003f7     	mov	x23, x0
+     158: 14000009     	b	0x17c <_arm64_ipi_test+0x120>
+     15c: 94000000     	bl	0x15c <_arm64_ipi_test+0x100>
+		000000000000015c:  ARM64_RELOC_BRANCH26	_mach_absolute_time
+     160: cb170000     	sub	x0, x0, x23
+     164: 910123e1     	add	x1, sp, #0x48
+     168: 94000000     	bl	0x168 <_arm64_ipi_test+0x10c>
+		0000000000000168:  ARM64_RELOC_BRANCH26	_absolutetime_to_nanoseconds
+     16c: f94027e8     	ldr	x8, [sp, #0x48]
+     170: 9bdc7d08     	umulh	x8, x8, x28
+     174: eb484b5f     	cmp	x26, x8, lsr #18
+     178: 54000243     	b.lo	0x1c0 <_arm64_ipi_test+0x164>
+     17c: f8737b68     	ldr	x8, [x27, x19, lsl #3]
+     180: eb13011f     	cmp	x8, x19
+     184: 54fffec1     	b.ne	0x15c <_arm64_ipi_test+0x100>
+     188: f8797b68     	ldr	x8, [x27, x25, lsl #3]
+     18c: eb19011f     	cmp	x8, x25
+     190: 54fffe61     	b.ne	0x15c <_arm64_ipi_test+0x100>
+     194: 11000678     	add	w24, w19, #0x1
+     198: 6b14031f     	cmp	w24, w20
+     19c: 54fffa69     	b.ls	0xe8 <_arm64_ipi_test+0x8c>
+     1a0: a94a7bfd     	ldp	x29, x30, [sp, #0xa0]
+     1a4: a9494ff4     	ldp	x20, x19, [sp, #0x90]
+     1a8: a94857f6     	ldp	x22, x21, [sp, #0x80]
+     1ac: a9475ff8     	ldp	x24, x23, [sp, #0x70]
+     1b0: a94667fa     	ldp	x26, x25, [sp, #0x60]
+     1b4: a9456ffc     	ldp	x28, x27, [sp, #0x50]
+     1b8: 9102c3ff     	add	sp, sp, #0xb0
+     1bc: d65f03c0     	ret
+     1c0: 528020aa     	mov	w10, #0x105             ; =261
+     1c4: 90000000     	adrp	x0, 0x0 <ltmp0>
+		00000000000001c4:  ARM64_RELOC_PAGE21	l_.str.4
+     1c8: 91000000     	add	x0, x0, #0x0
+		00000000000001c8:  ARM64_RELOC_PAGEOFF12	l_.str.4
+     1cc: f8737b68     	ldr	x8, [x27, x19, lsl #3]
+     1d0: f9400309     	ldr	x9, [x24]
+     1d4: f9001bea     	str	x10, [sp, #0x30]
+     1d8: 9000000a     	adrp	x10, 0x0 <ltmp0>
+		00000000000001d8:  ARM64_RELOC_PAGE21	l_.str.1
+     1dc: 9100014a     	add	x10, x10, #0x0
+		00000000000001dc:  ARM64_RELOC_PAGEOFF12	l_.str.1
+     1e0: a9022be9     	stp	x9, x10, [sp, #0x20]
+     1e4: a90123fa     	stp	x26, x8, [sp, #0x10]
+     1e8: f90007f3     	str	x19, [sp, #0x8]
+     1ec: 14000012     	b	0x234 <_arm64_ipi_test+0x1d8>
+     1f0: 52801f68     	mov	w8, #0xfb               ; =251
+     1f4: f90007f3     	str	x19, [sp, #0x8]
+     1f8: f90013e8     	str	x8, [sp, #0x20]
+     1fc: 90000008     	adrp	x8, 0x0 <ltmp0>
+		00000000000001fc:  ARM64_RELOC_PAGE21	l_.str.1
+     200: 91000108     	add	x8, x8, #0x0
+		0000000000000200:  ARM64_RELOC_PAGEOFF12	l_.str.1
+     204: a90123e0     	stp	x0, x8, [sp, #0x10]
+     208: 90000000     	adrp	x0, 0x0 <ltmp0>
+		0000000000000208:  ARM64_RELOC_PAGE21	l_.str.3
+     20c: 91000000     	add	x0, x0, #0x0
+		000000000000020c:  ARM64_RELOC_PAGEOFF12	l_.str.3
+     210: 14000009     	b	0x234 <_arm64_ipi_test+0x1d8>
+     214: 52801ec8     	mov	w8, #0xf6               ; =246
+     218: f90007f3     	str	x19, [sp, #0x8]
+     21c: f90013e8     	str	x8, [sp, #0x20]
+     220: 90000008     	adrp	x8, 0x0 <ltmp0>
+		0000000000000220:  ARM64_RELOC_PAGE21	l_.str.1
+     224: 91000108     	add	x8, x8, #0x0
+		0000000000000224:  ARM64_RELOC_PAGEOFF12	l_.str.1
+     228: a90123fa     	stp	x26, x8, [sp, #0x10]
+     22c: 90000000     	adrp	x0, 0x0 <ltmp0>
+		000000000000022c:  ARM64_RELOC_PAGE21	l_.str.2
+     230: 91000000     	add	x0, x0, #0x0
+		0000000000000230:  ARM64_RELOC_PAGEOFF12	l_.str.2
+     234: f94023e8     	ldr	x8, [sp, #0x40]
+     238: f90003e8     	str	x8, [sp]
+     23c: 94000000     	bl	0x23c <_arm64_ipi_test+0x1e0>
+		000000000000023c:  ARM64_RELOC_BRANCH26	_panic
+     240: 52801dc8     	mov	w8, #0xee               ; =238
+     244: f90007f3     	str	x19, [sp, #0x8]
+     248: f90013e8     	str	x8, [sp, #0x20]
+     24c: 90000008     	adrp	x8, 0x0 <ltmp0>
+		000000000000024c:  ARM64_RELOC_PAGE21	l_.str.1
+     250: 91000108     	add	x8, x8, #0x0
+		0000000000000250:  ARM64_RELOC_PAGEOFF12	l_.str.1
+     254: a90123e0     	stp	x0, x8, [sp, #0x10]
+     258: 90000000     	adrp	x0, 0x0 <ltmp0>
+		0000000000000258:  ARM64_RELOC_PAGE21	l_.str
+     25c: 91000000     	add	x0, x0, #0x0
+		000000000000025c:  ARM64_RELOC_PAGEOFF12	l_.str
+     260: 17fffff5     	b	0x234 <_arm64_ipi_test+0x1d8>
+
+0000000000000264 <_cpu_bootstrap>:
+     264: d65f03c0     	ret
+
+0000000000000268 <_cpu_sleep>:
+     268: a9be4ff4     	stp	x20, x19, [sp, #-0x20]!
+     26c: a9017bfd     	stp	x29, x30, [sp, #0x10]
+     270: 910043fd     	add	x29, sp, #0x10
+     274: 94000000     	bl	0x274 <_cpu_sleep+0xc>
+		0000000000000274:  ARM64_RELOC_BRANCH26	_current_thread
+     278: 90000008     	adrp	x8, 0x0 <ltmp0>
+		0000000000000278:  ARM64_RELOC_PAGE21	_start_cpu_paddr
+     27c: f9411c13     	ldr	x19, [x0, #0x238]
+     280: f9400108     	ldr	x8, [x8]
+		0000000000000280:  ARM64_RELOC_PAGEOFF12	_start_cpu_paddr
+     284: f9001a60     	str	x0, [x19, #0x30]
+     288: f9005e68     	str	x8, [x19, #0xb8]
+     28c: 91000a68     	add	x8, x19, #0x2
+     290: 485f7d09     	ldxrh	w9, [x8]
+     294: 32150129     	orr	w9, w9, #0x800
+     298: 480a7d09     	stxrh	w10, w9, [x8]
+     29c: 35ffffaa     	cbnz	w10, 0x290 <_cpu_sleep+0x28>
+     2a0: f940b668     	ldr	x8, [x19, #0x168]
+     2a4: b4000068     	cbz	x8, 0x2b0 <_cpu_sleep+0x48>
+     2a8: aa1f03e0     	mov	x0, xzr
+     2ac: 94000000     	bl	0x2ac <_cpu_sleep+0x44>
+		00000000000002ac:  ARM64_RELOC_BRANCH26	_arm_debug_set
+     2b0: 94000000     	bl	0x2b0 <_cpu_sleep+0x48>
+		00000000000002b0:  ARM64_RELOC_BRANCH26	_kptimer_stop_curcpu
+     2b4: 94000000     	bl	0x2b4 <_cpu_sleep+0x4c>
+		00000000000002b4:  ARM64_RELOC_BRANCH26	_CleanPoC_Dcache
+     2b8: a9417bfd     	ldp	x29, x30, [sp, #0x10]
+     2bc: f9402260     	ldr	x0, [x19, #0x40]
+     2c0: a8c24ff4     	ldp	x20, x19, [sp], #0x20
+     2c4: 14000000     	b	0x2c4 <_cpu_sleep+0x5c>
+		00000000000002c4:  ARM64_RELOC_BRANCH26	_PE_cpu_machine_quiesce
+
+00000000000002c8 <_cpu_interrupt_is_pending>:
+     2c8: d538c108     	mrs	x8, ISR_EL1
+     2cc: f100011f     	cmp	x8, #0x0
+     2d0: 1a9f07e0     	cset	w0, ne
+     2d4: d65f03c0     	ret
+
+00000000000002d8 <_wfe_to_deadline_or_interrupt>:
+     2d8: a9bb67fa     	stp	x26, x25, [sp, #-0x50]!
+     2dc: a9015ff8     	stp	x24, x23, [sp, #0x10]
+     2e0: a90257f6     	stp	x22, x21, [sp, #0x20]
+     2e4: a9034ff4     	stp	x20, x19, [sp, #0x30]
+     2e8: a9047bfd     	stp	x29, x30, [sp, #0x40]
+     2ec: 910103fd     	add	x29, sp, #0x40
+     2f0: 2a0403f5     	mov	w21, w4
+     2f4: 2a0303f4     	mov	w20, w3
+     2f8: aa0203f3     	mov	x19, x2
+     2fc: aa0103f6     	mov	x22, x1
+     300: 2a0003f7     	mov	w23, w0
+     304: 340000c3     	cbz	w3, 0x31c <_wfe_to_deadline_or_interrupt+0x44>
+     308: f9410678     	ldr	x24, [x19, #0x208]
+     30c: d50347ff     	msr	DAIFClr, #0x7
+     310: d538c108     	mrs	x8, ISR_EL1
+     314: b50000a8     	cbnz	x8, 0x328 <_wfe_to_deadline_or_interrupt+0x50>
+     318: 14000010     	b	0x358 <_wfe_to_deadline_or_interrupt+0x80>
+     31c: aa1f03f8     	mov	x24, xzr
+     320: d538c108     	mrs	x8, ISR_EL1
+     324: b40001a8     	cbz	x8, 0x358 <_wfe_to_deadline_or_interrupt+0x80>
+     328: 52800020     	mov	w0, #0x1                ; =1
+     32c: 340000b4     	cbz	w20, 0x340 <_wfe_to_deadline_or_interrupt+0x68>
+     330: d50347df     	msr	DAIFSet, #0x7
+     334: f9410668     	ldr	x8, [x19, #0x208]
+     338: eb18011f     	cmp	x8, x24
+     33c: 1a9f0400     	csinc	w0, w0, wzr, eq
+     340: a9447bfd     	ldp	x29, x30, [sp, #0x40]
+     344: a9434ff4     	ldp	x20, x19, [sp, #0x30]
+     348: a94257f6     	ldp	x22, x21, [sp, #0x20]
+     34c: a9415ff8     	ldp	x24, x23, [sp, #0x10]
+     350: a8c567fa     	ldp	x26, x25, [sp], #0x50
+     354: d65f03c0     	ret
+     358: 90000019     	adrp	x25, 0x0 <ltmp0>
+		0000000000000358:  ARM64_RELOC_PAGE21	_wfe_allowed
+     35c: 14000006     	b	0x374 <_wfe_to_deadline_or_interrupt+0x9c>
+     360: 94000000     	bl	0x360 <_wfe_to_deadline_or_interrupt+0x88>
+		0000000000000360:  ARM64_RELOC_BRANCH26	_mach_absolute_time
+     364: eb16001f     	cmp	x0, x22
+     368: 540002c2     	b.hs	0x3c0 <_wfe_to_deadline_or_interrupt+0xe8>
+     36c: d538c108     	mrs	x8, ISR_EL1
+     370: b5fffdc8     	cbnz	x8, 0x328 <_wfe_to_deadline_or_interrupt+0x50>
+     374: 34000094     	cbz	w20, 0x384 <_wfe_to_deadline_or_interrupt+0xac>
+     378: f9410668     	ldr	x8, [x19, #0x208]
+     37c: eb18011f     	cmp	x8, x24
+     380: 540002c1     	b.ne	0x3d8 <_wfe_to_deadline_or_interrupt+0x100>
+     384: b9400328     	ldr	w8, [x25]
+		0000000000000384:  ARM64_RELOC_PAGEOFF12	_wfe_allowed
+     388: 34000048     	cbz	w8, 0x390 <_wfe_to_deadline_or_interrupt+0xb8>
+     38c: d503205f     	wfe
+     390: f9425a68     	ldr	x8, [x19, #0x4b0]
+     394: b10006df     	cmn	x22, #0x1
+     398: 91000508     	add	x8, x8, #0x1
+     39c: f9025a68     	str	x8, [x19, #0x4b0]
+     3a0: 54fffe60     	b.eq	0x36c <_wfe_to_deadline_or_interrupt+0x94>
+     3a4: f9425e68     	ldr	x8, [x19, #0x4b8]
+     3a8: 91000508     	add	x8, x8, #0x1
+     3ac: f9025e68     	str	x8, [x19, #0x4b8]
+     3b0: 34fffd95     	cbz	w21, 0x360 <_wfe_to_deadline_or_interrupt+0x88>
+     3b4: 2a1703e0     	mov	w0, w23
+     3b8: 94000000     	bl	0x3b8 <_wfe_to_deadline_or_interrupt+0xe0>
+		00000000000003b8:  ARM64_RELOC_BRANCH26	_ml_cluster_wfe_timeout
+     3bc: b5fffd20     	cbnz	x0, 0x360 <_wfe_to_deadline_or_interrupt+0x88>
+     3c0: f9426268     	ldr	x8, [x19, #0x4c0]
+     3c4: 2a1f03e0     	mov	w0, wzr
+     3c8: 91000508     	add	x8, x8, #0x1
+     3cc: f9026268     	str	x8, [x19, #0x4c0]
+     3d0: 35fffb14     	cbnz	w20, 0x330 <_wfe_to_deadline_or_interrupt+0x58>
+     3d4: 17ffffdb     	b	0x340 <_wfe_to_deadline_or_interrupt+0x68>
+     3d8: 2a1f03e0     	mov	w0, wzr
+     3dc: 17ffffd5     	b	0x330 <_wfe_to_deadline_or_interrupt+0x58>
+
+00000000000003e0 <_cpu_idle>:
+     3e0: d10183ff     	sub	sp, sp, #0x60
+     3e4: a90167fa     	stp	x26, x25, [sp, #0x10]
+     3e8: a9025ff8     	stp	x24, x23, [sp, #0x20]
+     3ec: a90357f6     	stp	x22, x21, [sp, #0x30]
+     3f0: a9044ff4     	stp	x20, x19, [sp, #0x40]
+     3f4: a9057bfd     	stp	x29, x30, [sp, #0x50]
+     3f8: 910143fd     	add	x29, sp, #0x50
+     3fc: 94000000     	bl	0x3fc <_cpu_idle+0x1c>
+		00000000000003fc:  ARM64_RELOC_BRANCH26	_current_thread
+     400: f9411c18     	ldr	x24, [x0, #0x238]
+     404: aa0003f3     	mov	x19, x0
+     408: 94000000     	bl	0x408 <_cpu_idle+0x28>
+		0000000000000408:  ARM64_RELOC_BRANCH26	_current_processor
+     40c: 90000008     	adrp	x8, 0x0 <ltmp0>
+		000000000000040c:  ARM64_RELOC_GOT_LOAD_PAGE21	_idle_enable
+     410: f9400108     	ldr	x8, [x8]
+		0000000000000410:  ARM64_RELOC_GOT_LOAD_PAGEOFF12	_idle_enable
+     414: f90007ff     	str	xzr, [sp, #0x8]
+     418: b9400108     	ldr	w8, [x8]
+     41c: 34000828     	cbz	w8, 0x520 <_cpu_idle+0x140>
+     420: b9404b08     	ldr	w8, [x24, #0x48]
+     424: 37f807e8     	tbnz	w8, #0x1f, 0x520 <_cpu_idle+0x140>
+     428: b941eb14     	ldr	w20, [x24, #0x1e8]
+     42c: aa0003f6     	mov	x22, x0
+     430: 94000000     	bl	0x430 <_cpu_idle+0x50>
+		0000000000000430:  ARM64_RELOC_BRANCH26	_mach_absolute_time
+     434: 90000008     	adrp	x8, 0x0 <ltmp0>
+		0000000000000434:  ARM64_RELOC_PAGE21	_idle_proximate_io_wfe_masked
+     438: aa0003f5     	mov	x21, x0
+     43c: b9400108     	ldr	w8, [x8]
+		000000000000043c:  ARM64_RELOC_PAGEOFF12	_idle_proximate_io_wfe_masked
+     440: 7100051f     	cmp	w8, #0x1
+     444: 54000081     	b.ne	0x454 <_cpu_idle+0x74>
+     448: 2a1403e0     	mov	w0, w20
+     44c: 94000000     	bl	0x44c <_cpu_idle+0x6c>
+		000000000000044c:  ARM64_RELOC_BRANCH26	_ml_cluster_wfe_timeout
+     450: 14000002     	b	0x458 <_cpu_idle+0x78>
+     454: aa1f03e0     	mov	x0, xzr
+     458: 90000008     	adrp	x8, 0x0 <ltmp0>
+		0000000000000458:  ARM64_RELOC_PAGE21	_expecting_ipi_wfe_timeout_mt
+     45c: 3941cad9     	ldrb	w25, [x22, #0x72]
+     460: f9400108     	ldr	x8, [x8]
+		0000000000000460:  ARM64_RELOC_PAGEOFF12	_expecting_ipi_wfe_timeout_mt
+     464: 7200033f     	tst	w25, #0x1
+     468: 8b150109     	add	x9, x8, x21
+     46c: 9a801117     	csel	x23, x8, x0, ne
+     470: da9f1129     	csinv	x9, x9, xzr, ne
+     474: f9003ec9     	str	x9, [x22, #0x78]
+     478: b40007f7     	cbz	x23, 0x574 <_cpu_idle+0x194>
+     47c: 90000016     	adrp	x22, 0x0 <ltmp0>
+		000000000000047c:  ARM64_RELOC_GOT_LOAD_PAGE21	_kdebug_enable
+     480: f94002d6     	ldr	x22, [x22]
+		0000000000000480:  ARM64_RELOC_GOT_LOAD_PAGEOFF12	_kdebug_enable
+     484: b94002c8     	ldr	w8, [x22]
+     488: 721c791f     	tst	w8, #0xfffffff7
+     48c: 540004c1     	b.ne	0x524 <_cpu_idle+0x144>
+     490: d538c108     	mrs	x8, ISR_EL1
+     494: 8b1502f5     	add	x21, x23, x21
+     498: b5000388     	cbnz	x8, 0x508 <_cpu_idle+0x128>
+     49c: 90000017     	adrp	x23, 0x0 <ltmp0>
+		000000000000049c:  ARM64_RELOC_PAGE21	_wfe_allowed
+     4a0: 14000006     	b	0x4b8 <_cpu_idle+0xd8>
+     4a4: 94000000     	bl	0x4a4 <_cpu_idle+0xc4>
+		00000000000004a4:  ARM64_RELOC_BRANCH26	_mach_absolute_time
+     4a8: eb15001f     	cmp	x0, x21
+     4ac: 54000242     	b.hs	0x4f4 <_cpu_idle+0x114>
+     4b0: d538c108     	mrs	x8, ISR_EL1
+     4b4: b50002a8     	cbnz	x8, 0x508 <_cpu_idle+0x128>
+     4b8: b94002e8     	ldr	w8, [x23]
+		00000000000004b8:  ARM64_RELOC_PAGEOFF12	_wfe_allowed
+     4bc: 34000048     	cbz	w8, 0x4c4 <_cpu_idle+0xe4>
+     4c0: d503205f     	wfe
+     4c4: f9425b08     	ldr	x8, [x24, #0x4b0]
+     4c8: b10006bf     	cmn	x21, #0x1
+     4cc: 91000508     	add	x8, x8, #0x1
+     4d0: f9025b08     	str	x8, [x24, #0x4b0]
+     4d4: 54fffee0     	b.eq	0x4b0 <_cpu_idle+0xd0>
+     4d8: f9425f08     	ldr	x8, [x24, #0x4b8]
+     4dc: 91000508     	add	x8, x8, #0x1
+     4e0: f9025f08     	str	x8, [x24, #0x4b8]
+     4e4: 3707fe19     	tbnz	w25, #0x0, 0x4a4 <_cpu_idle+0xc4>
+     4e8: 2a1403e0     	mov	w0, w20
+     4ec: 94000000     	bl	0x4ec <_cpu_idle+0x10c>
+		00000000000004ec:  ARM64_RELOC_BRANCH26	_ml_cluster_wfe_timeout
+     4f0: b5fffda0     	cbnz	x0, 0x4a4 <_cpu_idle+0xc4>
+     4f4: f9426308     	ldr	x8, [x24, #0x4c0]
+     4f8: 2a1f03f4     	mov	w20, wzr
+     4fc: 91000508     	add	x8, x8, #0x1
+     500: f9026308     	str	x8, [x24, #0x4c0]
+     504: 14000002     	b	0x50c <_cpu_idle+0x12c>
+     508: 52800034     	mov	w20, #0x1               ; =1
+     50c: b94002c8     	ldr	w8, [x22]
+     510: 721c791f     	tst	w8, #0xfffffff7
+     514: 540001a1     	b.ne	0x548 <_cpu_idle+0x168>
+     518: 2a190288     	orr	w8, w20, w25
+     51c: 360002c8     	tbz	w8, #0x0, 0x574 <_cpu_idle+0x194>
+     520: 94000000     	bl	0x520 <_cpu_idle+0x140>
+		0000000000000520:  ARM64_RELOC_BRANCH26	_Idle_load_context
+     524: f9425b02     	ldr	x2, [x24, #0x4b0]
+     528: 52806020     	mov	w0, #0x301              ; =769
+     52c: 92400324     	and	x4, x25, #0x1
+     530: 72a0a620     	movk	w0, #0x531, lsl #16
+     534: aa1f03e1     	mov	x1, xzr
+     538: aa1703e3     	mov	x3, x23
+     53c: aa1f03e5     	mov	x5, xzr
+     540: 94000000     	bl	0x540 <_cpu_idle+0x160>
+		0000000000000540:  ARM64_RELOC_BRANCH26	_kernel_debug
+     544: 17ffffd3     	b	0x490 <_cpu_idle+0xb0>
+     548: 52806028     	mov	w8, #0x301              ; =769
+     54c: f9425b02     	ldr	x2, [x24, #0x4b0]
+     550: 2a1403e1     	mov	w1, w20
+     554: 72a0a628     	movk	w8, #0x531, lsl #16
+     558: 92400324     	and	x4, x25, #0x1
+     55c: aa1503e3     	mov	x3, x21
+     560: 11000500     	add	w0, w8, #0x1
+     564: aa1f03e5     	mov	x5, xzr
+     568: 94000000     	bl	0x568 <_cpu_idle+0x188>
+		0000000000000568:  ARM64_RELOC_BRANCH26	_kernel_debug
+     56c: 2a190288     	orr	w8, w20, w25
+     570: 3707fd88     	tbnz	w8, #0x0, 0x520 <_cpu_idle+0x140>
+     574: 94000000     	bl	0x574 <_cpu_idle+0x194>
+		0000000000000574:  ARM64_RELOC_BRANCH26	_SetIdlePop
+     578: 34000600     	cbz	w0, 0x638 <_cpu_idle+0x258>
+     57c: 90000014     	adrp	x20, 0x0 <ltmp0>
+		000000000000057c:  ARM64_RELOC_PAGE21	_wfi
+     580: f9408b15     	ldr	x21, [x24, #0x110]
+     584: f9001b13     	str	x19, [x24, #0x30]
+     588: b9400288     	ldr	w8, [x20]
+		0000000000000588:  ARM64_RELOC_PAGEOFF12	_wfi
+     58c: 340000e8     	cbz	w8, 0x5a8 <_cpu_idle+0x1c8>
+     590: f9405308     	ldr	x8, [x24, #0xa0]
+     594: b40000a8     	cbz	x8, 0x5a8 <_cpu_idle+0x1c8>
+     598: f9402300     	ldr	x0, [x24, #0x40]
+     59c: 910023e2     	add	x2, sp, #0x8
+     5a0: 52800021     	mov	w1, #0x1                ; =1
+     5a4: d63f0100     	blr	x8
+     5a8: f9407f08     	ldr	x8, [x24, #0xf8]
+     5ac: b4000188     	cbz	x8, 0x5dc <_cpu_idle+0x1fc>
+     5b0: f94007e0     	ldr	x0, [sp, #0x8]
+     5b4: b5000060     	cbnz	x0, 0x5c0 <_cpu_idle+0x1e0>
+     5b8: f900871f     	str	xzr, [x24, #0x108]
+     5bc: 14000003     	b	0x5c8 <_cpu_idle+0x1e8>
+     5c0: 91042301     	add	x1, x24, #0x108
+     5c4: 94000000     	bl	0x5c4 <_cpu_idle+0x1e4>
+		00000000000005c4:  ARM64_RELOC_BRANCH26	_clock_absolutetime_interval_to_deadline
+     5c8: 94000000     	bl	0x5c8 <_cpu_idle+0x1e8>
+		00000000000005c8:  ARM64_RELOC_BRANCH26	_timer_resync_deadlines
+     5cc: f9408b08     	ldr	x8, [x24, #0x110]
+     5d0: eb15011f     	cmp	x8, x21
+     5d4: 54000040     	b.eq	0x5dc <_cpu_idle+0x1fc>
+     5d8: 94000000     	bl	0x5d8 <_cpu_idle+0x1f8>
+		00000000000005d8:  ARM64_RELOC_BRANCH26	_SetIdlePop
+     5dc: b9400288     	ldr	w8, [x20]
+		00000000000005dc:  ARM64_RELOC_PAGEOFF12	_wfi
+     5e0: 34000248     	cbz	w8, 0x628 <_cpu_idle+0x248>
+     5e4: 94000000     	bl	0x5e4 <_cpu_idle+0x204>
+		00000000000005e4:  ARM64_RELOC_BRANCH26	_platform_cache_idle_enter
+     5e8: b9400288     	ldr	w8, [x20]
+		00000000000005e8:  ARM64_RELOC_PAGEOFF12	_wfi
+     5ec: 7100091f     	cmp	w8, #0x2
+     5f0: 54000041     	b.ne	0x5f8 <_cpu_idle+0x218>
+     5f4: 94000000     	bl	0x5f4 <_cpu_idle+0x214>
+		00000000000005f4:  ARM64_RELOC_BRANCH26	_arm64_force_wfi_clock_gate
+     5f8: d5033f9f     	dsb	sy
+     5fc: d503207f     	wfi
+     600: b9400288     	ldr	w8, [x20]
+		0000000000000600:  ARM64_RELOC_PAGEOFF12	_wfi
+     604: 7100091f     	cmp	w8, #0x2
+     608: 54000101     	b.ne	0x628 <_cpu_idle+0x248>
+     60c: 90000008     	adrp	x8, 0x0 <ltmp0>
+		000000000000060c:  ARM64_RELOC_PAGE21	_wfi_delay
+     610: 910003e1     	mov	x1, sp
+     614: f90003ff     	str	xzr, [sp]
+     618: f9400100     	ldr	x0, [x8]
+		0000000000000618:  ARM64_RELOC_PAGEOFF12	_wfi_delay
+     61c: 94000000     	bl	0x61c <_cpu_idle+0x23c>
+		000000000000061c:  ARM64_RELOC_BRANCH26	_clock_absolutetime_interval_to_deadline
+     620: f94003e0     	ldr	x0, [sp]
+     624: 94000000     	bl	0x624 <_cpu_idle+0x244>
+		0000000000000624:  ARM64_RELOC_BRANCH26	_clock_delay_until
+     628: 52800020     	mov	w0, #0x1                ; =1
+     62c: 94000000     	bl	0x62c <_cpu_idle+0x24c>
+		000000000000062c:  ARM64_RELOC_BRANCH26	_ClearIdlePop
+     630: 2a1f03e0     	mov	w0, wzr
+     634: 94000000     	bl	0x634 <_cpu_idle+0x254>
+		0000000000000634:  ARM64_RELOC_BRANCH26	_cpu_idle_exit
+     638: 90000008     	adrp	x8, 0x0 <ltmp0>
+		0000000000000638:  ARM64_RELOC_PAGE21	_idle_proximate_timer_wfe
+     63c: b9400108     	ldr	w8, [x8]
+		000000000000063c:  ARM64_RELOC_PAGEOFF12	_idle_proximate_timer_wfe
+     640: 7100051f     	cmp	w8, #0x1
+     644: 54fff6e1     	b.ne	0x520 <_cpu_idle+0x140>
+     648: 90000013     	adrp	x19, 0x0 <ltmp0>
+		0000000000000648:  ARM64_RELOC_GOT_LOAD_PAGE21	_kdebug_enable
+     64c: f9400273     	ldr	x19, [x19]
+		000000000000064c:  ARM64_RELOC_GOT_LOAD_PAGEOFF12	_kdebug_enable
+     650: b9400268     	ldr	w8, [x19]
+     654: 721c791f     	tst	w8, #0xfffffff7
+     658: 540001c1     	b.ne	0x690 <_cpu_idle+0x2b0>
+     65c: d538c108     	mrs	x8, ISR_EL1
+     660: b50002e8     	cbnz	x8, 0x6bc <_cpu_idle+0x2dc>
+     664: 90000008     	adrp	x8, 0x0 <ltmp0>
+		0000000000000664:  ARM64_RELOC_PAGE21	_wfe_allowed
+     668: 14000006     	b	0x680 <_cpu_idle+0x2a0>
+     66c: f9425b09     	ldr	x9, [x24, #0x4b0]
+     670: 91000529     	add	x9, x9, #0x1
+     674: f9025b09     	str	x9, [x24, #0x4b0]
+     678: d538c109     	mrs	x9, ISR_EL1
+     67c: b5000209     	cbnz	x9, 0x6bc <_cpu_idle+0x2dc>
+     680: b9400109     	ldr	w9, [x8]
+		0000000000000680:  ARM64_RELOC_PAGEOFF12	_wfe_allowed
+     684: 34ffff49     	cbz	w9, 0x66c <_cpu_idle+0x28c>
+     688: d503205f     	wfe
+     68c: 17fffff8     	b	0x66c <_cpu_idle+0x28c>
+     690: 52806028     	mov	w8, #0x301              ; =769
+     694: f9425b02     	ldr	x2, [x24, #0x4b0]
+     698: aa1f03e1     	mov	x1, xzr
+     69c: 72a0a628     	movk	w8, #0x531, lsl #16
+     6a0: 92800003     	mov	x3, #-0x1               ; =-1
+     6a4: aa1f03e4     	mov	x4, xzr
+     6a8: 321e0100     	orr	w0, w8, #0x4
+     6ac: aa1f03e5     	mov	x5, xzr
+     6b0: 94000000     	bl	0x6b0 <_cpu_idle+0x2d0>
+		00000000000006b0:  ARM64_RELOC_BRANCH26	_kernel_debug
+     6b4: d538c108     	mrs	x8, ISR_EL1
+     6b8: b4fffd68     	cbz	x8, 0x664 <_cpu_idle+0x284>
+     6bc: b9400268     	ldr	w8, [x19]
+     6c0: 721c791f     	tst	w8, #0xfffffff7
+     6c4: 54000061     	b.ne	0x6d0 <_cpu_idle+0x2f0>
+     6c8: 17ffff96     	b	0x520 <_cpu_idle+0x140>
+     6cc: 17ffff95     	b	0x520 <_cpu_idle+0x140>
+     6d0: 52806028     	mov	w8, #0x301              ; =769
+     6d4: f9425b02     	ldr	x2, [x24, #0x4b0]
+     6d8: 52800021     	mov	w1, #0x1                ; =1
+     6dc: 72a0a628     	movk	w8, #0x531, lsl #16
+     6e0: 92800003     	mov	x3, #-0x1               ; =-1
+     6e4: aa1f03e4     	mov	x4, xzr
+     6e8: 11001500     	add	w0, w8, #0x5
+     6ec: aa1f03e5     	mov	x5, xzr
+     6f0: 94000000     	bl	0x6f0 <_cpu_idle+0x310>
+		00000000000006f0:  ARM64_RELOC_BRANCH26	_kernel_debug
+     6f4: 17fffff5     	b	0x6c8 <_cpu_idle+0x2e8>
+
+00000000000006f8 <_cpu_idle_exit>:
+     6f8: d100c3ff     	sub	sp, sp, #0x30
+     6fc: a9014ff4     	stp	x20, x19, [sp, #0x10]
+     700: a9027bfd     	stp	x29, x30, [sp, #0x20]
+     704: 910083fd     	add	x29, sp, #0x20
+     708: 2a0003f3     	mov	w19, w0
+     70c: f90007ff     	str	xzr, [sp, #0x8]
+     710: 94000000     	bl	0x710 <_cpu_idle_exit+0x18>
+		0000000000000710:  ARM64_RELOC_BRANCH26	_current_thread
+     714: f9411c14     	ldr	x20, [x0, #0x238]
+     718: 14000017     	b	0x774 <_cpu_idle_exit+0x7c>
+     71c: 34000073     	cbz	w19, 0x728 <_cpu_idle_exit+0x30>
+     720: 1400001c     	b	0x790 <_cpu_idle_exit+0x98>
+     724: 94000000     	bl	0x724 <_cpu_idle_exit+0x2c>
+		0000000000000724:  ARM64_RELOC_BRANCH26	_ml_get_topology_info
+     728: 90000008     	adrp	x8, 0x0 <ltmp0>
+		0000000000000728:  ARM64_RELOC_PAGE21	_wfi
+     72c: b9400108     	ldr	w8, [x8]
+		000000000000072c:  ARM64_RELOC_PAGEOFF12	_wfi
+     730: 340000e8     	cbz	w8, 0x74c <_cpu_idle_exit+0x54>
+     734: f9405288     	ldr	x8, [x20, #0xa0]
+     738: b40000a8     	cbz	x8, 0x74c <_cpu_idle_exit+0x54>
+     73c: f9402280     	ldr	x0, [x20, #0x40]
+     740: 910023e2     	add	x2, sp, #0x8
+     744: 2a1f03e1     	mov	w1, wzr
+     748: d63f0100     	blr	x8
+     74c: f9407e88     	ldr	x8, [x20, #0xf8]
+     750: b4000108     	cbz	x8, 0x770 <_cpu_idle_exit+0x78>
+     754: f94007e0     	ldr	x0, [sp, #0x8]
+     758: b5000060     	cbnz	x0, 0x764 <_cpu_idle_exit+0x6c>
+     75c: f900869f     	str	xzr, [x20, #0x108]
+     760: 14000003     	b	0x76c <_cpu_idle_exit+0x74>
+     764: 91042281     	add	x1, x20, #0x108
+     768: 94000000     	bl	0x768 <_cpu_idle_exit+0x70>
+		0000000000000768:  ARM64_RELOC_BRANCH26	_clock_absolutetime_interval_to_deadline
+     76c: 94000000     	bl	0x76c <_cpu_idle_exit+0x74>
+		000000000000076c:  ARM64_RELOC_BRANCH26	_timer_resync_deadlines
+     770: 94000000     	bl	0x770 <_cpu_idle_exit+0x78>
+		0000000000000770:  ARM64_RELOC_BRANCH26	_Idle_load_context
+     774: d50041bf     	msr	SPSel, #0x1
+     778: 910003e8     	mov	x8, sp
+     77c: d50040bf     	msr	SPSel, #0x0
+     780: b5fffce8     	cbnz	x8, 0x71c <_cpu_idle_exit+0x24>
+     784: 90000008     	adrp	x8, 0x0 <ltmp0>
+		0000000000000784:  ARM64_RELOC_PAGE21	_cpu_idle_exit.__desc
+     788: 91000108     	add	x8, x8, #0x0
+		0000000000000788:  ARM64_RELOC_PAGEOFF12	_cpu_idle_exit.__desc
+     78c: d437ff80     	brk	#0xbffc
+     790: b5fffcb4     	cbnz	x20, 0x724 <_cpu_idle_exit+0x2c>
+     794: 90000008     	adrp	x8, 0x0 <ltmp0>
+		0000000000000794:  ARM64_RELOC_PAGE21	_configure_coresight_registers.__desc
+     798: 91000108     	add	x8, x8, #0x0
+		0000000000000798:  ARM64_RELOC_PAGEOFF12	_configure_coresight_registers.__desc
+     79c: d437ff80     	brk	#0xbffc
+
+00000000000007a0 <_cpu_init>:
+     7a0: d100c3ff     	sub	sp, sp, #0x30
+     7a4: a9014ff4     	stp	x20, x19, [sp, #0x10]
+     7a8: a9027bfd     	stp	x29, x30, [sp, #0x20]
+     7ac: 910083fd     	add	x29, sp, #0x20
+     7b0: 94000000     	bl	0x7b0 <_cpu_init+0x10>
+		00000000000007b0:  ARM64_RELOC_BRANCH26	_current_thread
+     7b4: f9411c13     	ldr	x19, [x0, #0x238]
+     7b8: 14000032     	b	0x880 <_cpu_init+0xe0>
+     7bc: b9400669     	ldr	w9, [x19, #0x4]
+     7c0: 52800188     	mov	w8, #0xc                ; =12
+     7c4: 72a02008     	movk	w8, #0x100, lsl #16
+     7c8: 6b08013f     	cmp	w9, w8
+     7cc: 54000360     	b.eq	0x838 <_cpu_init+0x98>
+     7d0: 91046260     	add	x0, x19, #0x118
+     7d4: b9000668     	str	w8, [x19, #0x4]
+     7d8: 94000000     	bl	0x7d8 <_cpu_init+0x38>
+		00000000000007d8:  ARM64_RELOC_BRANCH26	_timer_call_queue_init
+     7dc: 90000008     	adrp	x8, 0x0 <ltmp0>
+		00000000000007dc:  ARM64_RELOC_GOT_LOAD_PAGE21	_percpu_slot_cpu_data
+     7e0: 92800009     	mov	x9, #-0x1               ; =-1
+     7e4: f9400108     	ldr	x8, [x8]
+		00000000000007e4:  ARM64_RELOC_GOT_LOAD_PAGEOFF12	_percpu_slot_cpu_data
+     7e8: f900aa69     	str	x9, [x19, #0x150]
+     7ec: eb08027f     	cmp	x19, x8
+     7f0: 54000060     	b.eq	0x7fc <_cpu_init+0x5c>
+     7f4: 94000000     	bl	0x7f4 <_cpu_init+0x54>
+		00000000000007f4:  ARM64_RELOC_BRANCH26	_pmap_cpu_data_init
+     7f8: 14000003     	b	0x804 <_cpu_init+0x64>
+     7fc: 94000000     	bl	0x7fc <_cpu_init+0x5c>
+		00000000000007fc:  ARM64_RELOC_BRANCH26	_do_cpuid
+     800: 94000000     	bl	0x800 <_cpu_init+0x60>
+		0000000000000800:  ARM64_RELOC_BRANCH26	_do_mvfpid
+     804: 94000000     	bl	0x804 <_cpu_init+0x64>
+		0000000000000804:  ARM64_RELOC_BRANCH26	_do_cacheid
+     808: 94000000     	bl	0x808 <_cpu_init+0x68>
+		0000000000000808:  ARM64_RELOC_BRANCH26	_do_debugid
+     80c: 94000000     	bl	0x80c <_cpu_init+0x6c>
+		000000000000080c:  ARM64_RELOC_BRANCH26	_cpuid_info
+     810: 79400408     	ldrh	w8, [x0, #0x2]
+     814: 12000d08     	and	w8, w8, #0xf
+     818: 7100311f     	cmp	w8, #0xc
+     81c: 540000a0     	b.eq	0x830 <_cpu_init+0x90>
+     820: 7100351f     	cmp	w8, #0xd
+     824: 54000201     	b.ne	0x864 <_cpu_init+0xc4>
+     828: 52800048     	mov	w8, #0x2                ; =2
+     82c: 14000002     	b	0x834 <_cpu_init+0x94>
+     830: 52800028     	mov	w8, #0x1                ; =1
+     834: 29017e68     	stp	w8, wzr, [x19, #0x8]
+     838: 52800028     	mov	w8, #0x1                ; =1
+     83c: f901067f     	str	xzr, [x19, #0x208]
+     840: f9010e7f     	str	xzr, [x19, #0x218]
+     844: 3901a668     	strb	w8, [x19, #0x69]
+     848: b941de68     	ldr	w8, [x19, #0x1dc]
+     84c: b901e268     	str	w8, [x19, #0x1e0]
+     850: b901de7f     	str	wzr, [x19, #0x1dc]
+     854: a9427bfd     	ldp	x29, x30, [sp, #0x20]
+     858: a9414ff4     	ldp	x20, x19, [sp, #0x10]
+     85c: 9100c3ff     	add	sp, sp, #0x30
+     860: d65f03c0     	ret
+     864: 90000008     	adrp	x8, 0x0 <ltmp0>
+		0000000000000864:  ARM64_RELOC_PAGE21	l_.str.1
+     868: 91000108     	add	x8, x8, #0x0
+		0000000000000868:  ARM64_RELOC_PAGEOFF12	l_.str.1
+     86c: 52805d69     	mov	w9, #0x2eb              ; =747
+     870: 90000000     	adrp	x0, 0x0 <ltmp0>
+		0000000000000870:  ARM64_RELOC_PAGE21	l_.str.7
+     874: 91000000     	add	x0, x0, #0x0
+		0000000000000874:  ARM64_RELOC_PAGEOFF12	l_.str.7
+     878: a90027e8     	stp	x8, x9, [sp]
+     87c: 94000000     	bl	0x87c <_cpu_init+0xdc>
+		000000000000087c:  ARM64_RELOC_BRANCH26	_panic
+     880: d50041bf     	msr	SPSel, #0x1
+     884: 910003e8     	mov	x8, sp
+     888: d50040bf     	msr	SPSel, #0x0
+     88c: b5fff988     	cbnz	x8, 0x7bc <_cpu_init+0x1c>
+     890: 90000008     	adrp	x8, 0x0 <ltmp0>
+		0000000000000890:  ARM64_RELOC_PAGE21	_cpu_init.__desc
+     894: 91000108     	add	x8, x8, #0x0
+		0000000000000894:  ARM64_RELOC_PAGEOFF12	_cpu_init.__desc
+     898: d437ff80     	brk	#0xbffc
+
+000000000000089c <_cpu_stack_alloc>:
+     89c: a9bc5ff8     	stp	x24, x23, [sp, #-0x40]!
+     8a0: a90157f6     	stp	x22, x21, [sp, #0x10]
+     8a4: a9024ff4     	stp	x20, x19, [sp, #0x20]
+     8a8: a9037bfd     	stp	x29, x30, [sp, #0x30]
+     8ac: 9100c3fd     	add	x29, sp, #0x30
+     8b0: 90000014     	adrp	x20, 0x0 <ltmp0>
+		00000000000008b0:  ARM64_RELOC_GOT_LOAD_PAGE21	_PAGE_SHIFT_CONST
+     8b4: 90000015     	adrp	x21, 0x0 <ltmp0>
+		00000000000008b4:  ARM64_RELOC_GOT_LOAD_PAGE21	_kernel_map
+     8b8: 52800056     	mov	w22, #0x2               ; =2
+     8bc: f9400294     	ldr	x20, [x20]
+		00000000000008bc:  ARM64_RELOC_GOT_LOAD_PAGEOFF12	_PAGE_SHIFT_CONST
+     8c0: f94002b5     	ldr	x21, [x21]
+		00000000000008c0:  ARM64_RELOC_GOT_LOAD_PAGEOFF12	_kernel_map
+     8c4: 52803023     	mov	w3, #0x181              ; =385
+     8c8: aa0003f3     	mov	x19, x0
+     8cc: aa1f03e2     	mov	x2, xzr
+     8d0: 72a03c03     	movk	w3, #0x1e0, lsl #16
+     8d4: b9400289     	ldr	w9, [x20]
+     8d8: f94002a8     	ldr	x8, [x21]
+     8dc: 52800104     	mov	w4, #0x8                ; =8
+     8e0: 9ac922c9     	lsl	x9, x22, x9
+     8e4: aa0803e0     	mov	x0, x8
+     8e8: 91401121     	add	x1, x9, #0x4, lsl #12   ; =0x4000
+     8ec: 94000000     	bl	0x8ec <_cpu_stack_alloc+0x50>
+		00000000000008ec:  ARM64_RELOC_BRANCH26	_kmem_alloc_guard
+     8f0: b9400288     	ldr	w8, [x20]
+     8f4: 52800037     	mov	w23, #0x1               ; =1
+     8f8: f94002a0     	ldr	x0, [x21]
+     8fc: 52803023     	mov	w3, #0x181              ; =385
+     900: aa1f03e2     	mov	x2, xzr
+     904: 52800104     	mov	w4, #0x8                ; =8
+     908: 1ac822e9     	lsl	w9, w23, w8
+     90c: 9ac822c8     	lsl	x8, x22, x8
+     910: 72a03c03     	movk	w3, #0x1e0, lsl #16
+     914: 8b29c029     	add	x9, x1, w9, sxtw
+     918: 91401101     	add	x1, x8, #0x4, lsl #12   ; =0x4000
+     91c: 91401129     	add	x9, x9, #0x4, lsl #12   ; =0x4000
+     920: a9012669     	stp	x9, x9, [x19, #0x10]
+     924: 94000000     	bl	0x924 <_cpu_stack_alloc+0x88>
+		0000000000000924:  ARM64_RELOC_BRANCH26	_kmem_alloc_guard
+     928: b9400288     	ldr	w8, [x20]
+     92c: a9437bfd     	ldp	x29, x30, [sp, #0x30]
+     930: a94157f6     	ldp	x22, x21, [sp, #0x10]
+     934: 1ac822e8     	lsl	w8, w23, w8
+     938: 8b28c028     	add	x8, x1, w8, sxtw
+     93c: 91401108     	add	x8, x8, #0x4, lsl #12   ; =0x4000
+     940: a9022268     	stp	x8, x8, [x19, #0x20]
+     944: a9424ff4     	ldp	x20, x19, [sp, #0x20]
+     948: a8c45ff8     	ldp	x24, x23, [sp], #0x40
+     94c: d65f03c0     	ret
+
+0000000000000950 <_cpu_data_init>:
+     950: 92800008     	mov	x8, #-0x1               ; =-1
+     954: 7900041f     	strh	wzr, [x0, #0x2]
+     958: 6f00e400     	movi.2d	v0, #0000000000000000
+     95c: f900681f     	str	xzr, [x0, #0xd0]
+     960: b9004c1f     	str	wzr, [x0, #0x4c]
+     964: f9008808     	str	x8, [x0, #0x110]
+     968: 90000008     	adrp	x8, 0x0 <ltmp0>
+		0000000000000968:  ARM64_RELOC_GOT_LOAD_PAGE21	_RTClockData
+     96c: f9400108     	ldr	x8, [x8]
+		000000000000096c:  ARM64_RELOC_GOT_LOAD_PAGEOFF12	_RTClockData
+     970: a9057c1f     	stp	xzr, xzr, [x0, #0x50]
+     974: f900e01f     	str	xzr, [x0, #0x1c0]
+     978: a9167c08     	stp	x8, xzr, [x0, #0x160]
+     97c: 91079008     	add	x8, x0, #0x1e4
+     980: a900fd1f     	stp	xzr, xzr, [x8, #0x8]
+     984: f900011f     	str	xzr, [x8]
+     988: 52b00008     	mov	w8, #-0x80000000        ; =-2147483648
+     98c: b901c81f     	str	wzr, [x0, #0x1c8]
+     990: ad050000     	stp	q0, q0, [x0, #0xa0]
+     994: 3c8bc000     	stur	q0, [x0, #0xbc]
+     998: b9004808     	str	w8, [x0, #0x48]
+     99c: 528aaa68     	mov	w8, #0x5553             ; =21843
+     9a0: 72aa0a68     	movk	w8, #0x5053, lsl #16
+     9a4: 3c878000     	stur	q0, [x0, #0x78]
+     9a8: 3c888000     	stur	q0, [x0, #0x88]
+     9ac: f9004c1f     	str	xzr, [x0, #0x98]
+     9b0: b901dc08     	str	w8, [x0, #0x1dc]
+     9b4: 12800008     	mov	w8, #-0x1               ; =-1
+     9b8: b9027008     	str	w8, [x0, #0x270]
+     9bc: 910a6008     	add	x8, x0, #0x298
+     9c0: b901e01f     	str	wzr, [x0, #0x1e0]
+     9c4: ad0c0000     	stp	q0, q0, [x0, #0x180]
+     9c8: ad0d0000     	stp	q0, q0, [x0, #0x1a0]
+     9cc: f901401f     	str	xzr, [x0, #0x280]
+     9d0: b902881f     	str	wzr, [x0, #0x288]
+     9d4: f901481f     	str	xzr, [x0, #0x290]
+     9d8: f901281f     	str	xzr, [x0, #0x250]
+     9dc: ad000100     	stp	q0, q0, [x8]
+     9e0: ad010100     	stp	q0, q0, [x8, #0x20]
+     9e4: ad020100     	stp	q0, q0, [x8, #0x40]
+     9e8: ad030100     	stp	q0, q0, [x8, #0x60]
+     9ec: ad040100     	stp	q0, q0, [x8, #0x80]
+     9f0: ad050100     	stp	q0, q0, [x8, #0xa0]
+     9f4: ad060100     	stp	q0, q0, [x8, #0xc0]
+     9f8: 3d803900     	str	q0, [x8, #0xe0]
+     9fc: 3c8ef100     	stur	q0, [x8, #0xef]
+     a00: b901fc1f     	str	wzr, [x0, #0x1fc]
+     a04: d65f03c0     	ret
+
+0000000000000a08 <_cpu_data_register>:
+     a08: a9be4ff4     	stp	x20, x19, [sp, #-0x20]!
+     a0c: a9017bfd     	stp	x29, x30, [sp, #0x10]
+     a10: 910043fd     	add	x29, sp, #0x10
+     a14: 90000008     	adrp	x8, 0x0 <ltmp0>
+		0000000000000a14:  ARM64_RELOC_GOT_LOAD_PAGE21	_CpuDataEntries
+     a18: f9400108     	ldr	x8, [x8]
+		0000000000000a18:  ARM64_RELOC_GOT_LOAD_PAGEOFF12	_CpuDataEntries
+     a1c: 79400009     	ldrh	w9, [x0]
+     a20: d5033bbf     	dmb	ish
+     a24: 8b091113     	add	x19, x8, x9, lsl #4
+     a28: f9000660     	str	x0, [x19, #0x8]
+     a2c: 94000000     	bl	0xa2c <_cpu_data_register+0x24>
+		0000000000000a2c:  ARM64_RELOC_BRANCH26	_ml_vtophys
+     a30: a9417bfd     	ldp	x29, x30, [sp, #0x10]
+     a34: f9000260     	str	x0, [x19]
+     a38: a8c24ff4     	ldp	x20, x19, [sp], #0x20
+     a3c: d65f03c0     	ret
+
+0000000000000a40 <_cpu_start>:
+     a40: d10143ff     	sub	sp, sp, #0x50
+     a44: a9015ff8     	stp	x24, x23, [sp, #0x10]
+     a48: a90257f6     	stp	x22, x21, [sp, #0x20]
+     a4c: a9034ff4     	stp	x20, x19, [sp, #0x30]
+     a50: a9047bfd     	stp	x29, x30, [sp, #0x40]
+     a54: 910103fd     	add	x29, sp, #0x40
+     a58: 90000008     	adrp	x8, 0x0 <ltmp0>
+		0000000000000a58:  ARM64_RELOC_GOT_LOAD_PAGE21	_CpuDataEntries
+     a5c: 90000017     	adrp	x23, 0x0 <ltmp0>
+		0000000000000a5c:  ARM64_RELOC_GOT_LOAD_PAGE21	_percpu_slot_cpu_data
+     a60: 2a0003f6     	mov	w22, w0
+     a64: f9400108     	ldr	x8, [x8]
+		0000000000000a64:  ARM64_RELOC_GOT_LOAD_PAGEOFF12	_CpuDataEntries
+     a68: f94002f7     	ldr	x23, [x23]
+		0000000000000a68:  ARM64_RELOC_GOT_LOAD_PAGEOFF12	_percpu_slot_cpu_data
+     a6c: 52800021     	mov	w1, #0x1                ; =1
+     a70: 8b20d114     	add	x20, x8, w0, sxtw #4
+     a74: 90000008     	adrp	x8, 0x0 <ltmp0>
+		0000000000000a74:  ARM64_RELOC_GOT_LOAD_PAGE21	_percpu_slot_processor
+     a78: f9400108     	ldr	x8, [x8]
+		0000000000000a78:  ARM64_RELOC_GOT_LOAD_PAGEOFF12	_percpu_slot_processor
+     a7c: f9400693     	ldr	x19, [x20, #0x8]
+     a80: cb170108     	sub	x8, x8, x23
+     a84: 8b080275     	add	x21, x19, x8
+     a88: aa1503e0     	mov	x0, x21
+     a8c: 94000000     	bl	0xa8c <_cpu_start+0x4c>
+		0000000000000a8c:  ARM64_RELOC_BRANCH26	_processor_should_kprintf
+     a90: 340000a0     	cbz	w0, 0xaa4 <_cpu_start+0x64>
+     a94: 90000000     	adrp	x0, 0x0 <ltmp0>
+		0000000000000a94:  ARM64_RELOC_PAGE21	l_.str.8
+     a98: 91000000     	add	x0, x0, #0x0
+		0000000000000a98:  ARM64_RELOC_PAGEOFF12	l_.str.8
+     a9c: f90003f6     	str	x22, [sp]
+     aa0: 94000000     	bl	0xaa0 <_cpu_start+0x60>
+		0000000000000aa0:  ARM64_RELOC_BRANCH26	_kprintf
+     aa4: 94000000     	bl	0xaa4 <_cpu_start+0x64>
+		0000000000000aa4:  ARM64_RELOC_BRANCH26	_cpu_number
+     aa8: 6b0002df     	cmp	w22, w0
+     aac: 54000121     	b.ne	0xad0 <_cpu_start+0x90>
+     ab0: 94000000     	bl	0xab0 <_cpu_start+0x70>
+		0000000000000ab0:  ARM64_RELOC_BRANCH26	_cpu_machine_init
+     ab4: 14000027     	b	0xb50 <_cpu_start+0x110>
+     ab8: a9447bfd     	ldp	x29, x30, [sp, #0x40]
+     abc: a9434ff4     	ldp	x20, x19, [sp, #0x30]
+     ac0: a94257f6     	ldp	x22, x21, [sp, #0x20]
+     ac4: a9415ff8     	ldp	x24, x23, [sp, #0x10]
+     ac8: 910143ff     	add	sp, sp, #0x50
+     acc: 14000000     	b	0xacc <_cpu_start+0x8c>
+		0000000000000acc:  ARM64_RELOC_BRANCH26	_ml_get_topology_info
+     ad0: 90000008     	adrp	x8, 0x0 <ltmp0>
+		0000000000000ad0:  ARM64_RELOC_PAGE21	_start_cpu_paddr
+     ad4: f9012a7f     	str	xzr, [x19, #0x250]
+     ad8: f9400108     	ldr	x8, [x8]
+		0000000000000ad8:  ARM64_RELOC_PAGEOFF12	_start_cpu_paddr
+     adc: f9005e68     	str	x8, [x19, #0xb8]
+     ae0: f9400ea8     	ldr	x8, [x21, #0x18]
+     ae4: b5000048     	cbnz	x8, 0xaec <_cpu_start+0xac>
+     ae8: f9400aa8     	ldr	x8, [x21, #0x10]
+     aec: f9001a68     	str	x8, [x19, #0x30]
+     af0: cb17026a     	sub	x10, x19, x23
+     af4: f9011d13     	str	x19, [x8, #0x238]
+     af8: 79400269     	ldrh	w9, [x19]
+     afc: aa0a4129     	orr	x9, x9, x10, lsl #16
+     b00: f9011909     	str	x9, [x8, #0x230]
+     b04: 14000001     	b	0xb08 <_cpu_start+0xc8>
+     b08: 94000000     	bl	0xb08 <_cpu_start+0xc8>
+		0000000000000b08:  ARM64_RELOC_BRANCH26	_ml_get_topology_info
+     b0c: aa1403e0     	mov	x0, x20
+     b10: 52800201     	mov	w1, #0x10               ; =16
+     b14: 2a1f03e2     	mov	w2, wzr
+     b18: 94000000     	bl	0xb18 <_cpu_start+0xd8>
+		0000000000000b18:  ARM64_RELOC_BRANCH26	_flush_dcache
+     b1c: aa1303e0     	mov	x0, x19
+     b20: 52809e01     	mov	w1, #0x4f0              ; =1264
+     b24: 2a1f03e2     	mov	w2, wzr
+     b28: 94000000     	bl	0xb28 <_cpu_start+0xe8>
+		0000000000000b28:  ARM64_RELOC_BRANCH26	_flush_dcache
+     b2c: f9402260     	ldr	x0, [x19, #0x40]
+     b30: a9447bfd     	ldp	x29, x30, [sp, #0x40]
+     b34: a9434ff4     	ldp	x20, x19, [sp, #0x30]
+     b38: aa1f03e1     	mov	x1, xzr
+     b3c: a94257f6     	ldp	x22, x21, [sp, #0x20]
+     b40: aa1f03e2     	mov	x2, xzr
+     b44: a9415ff8     	ldp	x24, x23, [sp, #0x10]
+     b48: 910143ff     	add	sp, sp, #0x50
+     b4c: 14000000     	b	0xb4c <_cpu_start+0x10c>
+		0000000000000b4c:  ARM64_RELOC_BRANCH26	_PE_cpu_start_internal
+     b50: b5fffb53     	cbnz	x19, 0xab8 <_cpu_start+0x78>
+     b54: 90000008     	adrp	x8, 0x0 <ltmp0>
+		0000000000000b54:  ARM64_RELOC_PAGE21	_configure_coresight_registers.__desc
+     b58: 91000108     	add	x8, x8, #0x0
+		0000000000000b58:  ARM64_RELOC_PAGEOFF12	_configure_coresight_registers.__desc
+     b5c: d437ff80     	brk	#0xbffc
+
+0000000000000b60 <_cpu_timebase_init>:
+     b60: d10103ff     	sub	sp, sp, #0x40
+     b64: a90157f6     	stp	x22, x21, [sp, #0x10]
+     b68: a9024ff4     	stp	x20, x19, [sp, #0x20]
+     b6c: a9037bfd     	stp	x29, x30, [sp, #0x30]
+     b70: 9100c3fd     	add	x29, sp, #0x30
+     b74: 2a0003f3     	mov	w19, w0
+     b78: 94000000     	bl	0xb78 <_cpu_timebase_init+0x18>
+		0000000000000b78:  ARM64_RELOC_BRANCH26	_current_thread
+     b7c: f9411c14     	ldr	x20, [x0, #0x238]
+     b80: 90000015     	adrp	x21, 0x0 <ltmp0>
+		0000000000000b80:  ARM64_RELOC_GOT_LOAD_PAGE21	_RTClockData
+     b84: f9404688     	ldr	x8, [x20, #0x88]
+     b88: f94002b5     	ldr	x21, [x21]
+		0000000000000b88:  ARM64_RELOC_GOT_LOAD_PAGEOFF12	_RTClockData
+     b8c: f90007ff     	str	xzr, [sp, #0x8]
+     b90: b50000e8     	cbnz	x8, 0xbac <_cpu_timebase_init+0x4c>
+     b94: f94012a8     	ldr	x8, [x21, #0x20]
+     b98: 3cc282a0     	ldur	q0, [x21, #0x28]
+     b9c: 3cc382a1     	ldur	q1, [x21, #0x38]
+     ba0: f9004688     	str	x8, [x20, #0x88]
+     ba4: 3c878280     	stur	q0, [x20, #0x78]
+     ba8: 3d802681     	str	q1, [x20, #0x90]
+     bac: 90000008     	adrp	x8, 0x0 <ltmp0>
+		0000000000000bac:  ARM64_RELOC_GOT_LOAD_PAGE21	_percpu_slot_cpu_data
+     bb0: f9400108     	ldr	x8, [x8]
+		0000000000000bb0:  ARM64_RELOC_GOT_LOAD_PAGEOFF12	_percpu_slot_cpu_data
+     bb4: eb08029f     	cmp	x20, x8
+     bb8: 7a400a60     	ccmp	w19, #0x0, #0x0, eq
+     bbc: 54000161     	b.ne	0xbe8 <_cpu_timebase_init+0x88>
+     bc0: 94000000     	bl	0xbc0 <_cpu_timebase_init+0x60>
+		0000000000000bc0:  ARM64_RELOC_BRANCH26	_ml_is_quiescing
+     bc4: 34000300     	cbz	w0, 0xc24 <_cpu_timebase_init+0xc4>
+     bc8: 90000008     	adrp	x8, 0x0 <ltmp0>
+		0000000000000bc8:  ARM64_RELOC_GOT_LOAD_PAGE21	_wake_abstime
+     bcc: f9400108     	ldr	x8, [x8]
+		0000000000000bcc:  ARM64_RELOC_GOT_LOAD_PAGEOFF12	_wake_abstime
+     bd0: f9400113     	ldr	x19, [x8]
+     bd4: 94000000     	bl	0xbd4 <_cpu_timebase_init+0x74>
+		0000000000000bd4:  ARM64_RELOC_BRANCH26	_ml_get_hwclock
+     bd8: cb000269     	sub	x9, x19, x0
+     bdc: aa1f03e8     	mov	x8, xzr
+     be0: f9000aa9     	str	x9, [x21, #0x10]
+     be4: 14000011     	b	0xc28 <_cpu_timebase_init+0xc8>
+     be8: 340001f3     	cbz	w19, 0xc24 <_cpu_timebase_init+0xc4>
+     bec: 90000000     	adrp	x0, 0x0 <ltmp0>
+		0000000000000bec:  ARM64_RELOC_PAGE21	l_.str.9
+     bf0: 91000000     	add	x0, x0, #0x0
+		0000000000000bf0:  ARM64_RELOC_PAGEOFF12	l_.str.9
+     bf4: 910023e1     	add	x1, sp, #0x8
+     bf8: 52800102     	mov	w2, #0x8                ; =8
+     bfc: 94000000     	bl	0xbfc <_cpu_timebase_init+0x9c>
+		0000000000000bfc:  ARM64_RELOC_BRANCH26	_PE_parse_boot_argn
+     c00: 340000a0     	cbz	w0, 0xc14 <_cpu_timebase_init+0xb4>
+     c04: f94007e8     	ldr	x8, [sp, #0x8]
+     c08: f9400aa9     	ldr	x9, [x21, #0x10]
+     c0c: 8b080128     	add	x8, x9, x8
+     c10: f9000aa8     	str	x8, [x21, #0x10]
+     c14: 94000000     	bl	0xc14 <_cpu_timebase_init+0xb4>
+		0000000000000c14:  ARM64_RELOC_BRANCH26	_ml_get_hwclock
+     c18: 94000000     	bl	0xc18 <_cpu_timebase_init+0xb8>
+		0000000000000c18:  ARM64_RELOC_BRANCH26	_ml_set_reset_time
+     c1c: f94007e8     	ldr	x8, [sp, #0x8]
+     c20: 14000002     	b	0xc28 <_cpu_timebase_init+0xc8>
+     c24: aa1f03e8     	mov	x8, xzr
+     c28: f9400aaa     	ldr	x10, [x21, #0x10]
+     c2c: 12b00009     	mov	w9, #0x7fffffff         ; =2147483647
+     c30: b9007289     	str	w9, [x20, #0x70]
+     c34: a9437bfd     	ldp	x29, x30, [sp, #0x30]
+     c38: a905a28a     	stp	x10, x8, [x20, #0x58]
+     c3c: a9424ff4     	ldp	x20, x19, [sp, #0x20]
+     c40: a94157f6     	ldp	x22, x21, [sp, #0x10]
+     c44: 910103ff     	add	sp, sp, #0x40
+     c48: d65f03c0     	ret
+
+0000000000000c4c <_cpu_cluster_id>:
+     c4c: a9bf7bfd     	stp	x29, x30, [sp, #-0x10]!
+     c50: 910003fd     	mov	x29, sp
+     c54: 94000000     	bl	0xc54 <_cpu_cluster_id+0x8>
+		0000000000000c54:  ARM64_RELOC_BRANCH26	_current_thread
+     c58: f9411c08     	ldr	x8, [x0, #0x238]
+     c5c: b941e900     	ldr	w0, [x8, #0x1e8]
+     c60: a8c17bfd     	ldp	x29, x30, [sp], #0x10
+     c64: d65f03c0     	ret
+
+0000000000000c68 <_ml_arm_sleep>:
+     c68: a9bc5ff8     	stp	x24, x23, [sp, #-0x40]!
+     c6c: a90157f6     	stp	x22, x21, [sp, #0x10]
+     c70: a9024ff4     	stp	x20, x19, [sp, #0x20]
+     c74: a9037bfd     	stp	x29, x30, [sp, #0x30]
+     c78: 9100c3fd     	add	x29, sp, #0x30
+     c7c: 528aaa75     	mov	w21, #0x5553            ; =21843
+     c80: 72aa0a75     	movk	w21, #0x5053, lsl #16
+     c84: 94000000     	bl	0xc84 <_ml_arm_sleep+0x1c>
+		0000000000000c84:  ARM64_RELOC_BRANCH26	_current_thread
+     c88: 90000016     	adrp	x22, 0x0 <ltmp0>
+		0000000000000c88:  ARM64_RELOC_GOT_LOAD_PAGE21	_percpu_slot_cpu_data
+     c8c: f94002d6     	ldr	x22, [x22]
+		0000000000000c8c:  ARM64_RELOC_GOT_LOAD_PAGEOFF12	_percpu_slot_cpu_data
+     c90: f9411c13     	ldr	x19, [x0, #0x238]
+     c94: eb16027f     	cmp	x19, x22
+     c98: 54000381     	b.ne	0xd08 <_ml_arm_sleep+0xa0>
+     c9c: 94000000     	bl	0xc9c <_ml_arm_sleep+0x34>
+		0000000000000c9c:  ARM64_RELOC_BRANCH26	_ml_get_max_cpu_number
+     ca0: 36f80560     	tbz	w0, #0x1f, 0xd4c <_ml_arm_sleep+0xe4>
+     ca4: 94000000     	bl	0xca4 <_ml_arm_sleep+0x3c>
+		0000000000000ca4:  ARM64_RELOC_BRANCH26	_ml_get_timebase
+     ca8: 90000008     	adrp	x8, 0x0 <ltmp0>
+		0000000000000ca8:  ARM64_RELOC_GOT_LOAD_PAGE21	_wake_abstime
+     cac: f9400108     	ldr	x8, [x8]
+		0000000000000cac:  ARM64_RELOC_GOT_LOAD_PAGEOFF12	_wake_abstime
+     cb0: f9000100     	str	x0, [x8]
+     cb4: 92800000     	mov	x0, #-0x1               ; =-1
+     cb8: 94000000     	bl	0xcb8 <_ml_arm_sleep+0x50>
+		0000000000000cb8:  ARM64_RELOC_BRANCH26	_ml_set_reset_time
+     cbc: b901de75     	str	w21, [x19, #0x1dc]
+     cc0: f940d268     	ldr	x8, [x19, #0x1a0]
+     cc4: b40000c8     	cbz	x8, 0xcdc <_ml_arm_sleep+0x74>
+     cc8: 5299caa9     	mov	w9, #0xce55             ; =52821
+     ccc: 72b8b589     	movk	w9, #0xc5ac, lsl #16
+     cd0: b90fb109     	str	w9, [x8, #0xfb0]
+     cd4: f940d268     	ldr	x8, [x19, #0x1a0]
+     cd8: b903111f     	str	wzr, [x8, #0x310]
+     cdc: 94000000     	bl	0xcdc <_ml_arm_sleep+0x74>
+		0000000000000cdc:  ARM64_RELOC_BRANCH26	_serial_go_to_sleep
+     ce0: 90000008     	adrp	x8, 0x0 <ltmp0>
+		0000000000000ce0:  ARM64_RELOC_PAGE21	_arm64_platform_sleep_hook
+     ce4: f9400108     	ldr	x8, [x8]
+		0000000000000ce4:  ARM64_RELOC_PAGEOFF12	_arm64_platform_sleep_hook
+     ce8: b40002e8     	cbz	x8, 0xd44 <_ml_arm_sleep+0xdc>
+     cec: 52800020     	mov	w0, #0x1                ; =1
+     cf0: d63f0100     	blr	x8
+     cf4: aa1303e0     	mov	x0, x19
+     cf8: aa1f03e1     	mov	x1, xzr
+     cfc: 94000000     	bl	0xcfc <_ml_arm_sleep+0x94>
+		0000000000000cfc:  ARM64_RELOC_BRANCH26	_arm_init_cpu
+     d00: 52800020     	mov	w0, #0x1                ; =1
+     d04: 94000000     	bl	0xd04 <_ml_arm_sleep+0x9c>
+		0000000000000d04:  ARM64_RELOC_BRANCH26	_arm64_prepare_for_sleep
+     d08: 94000000     	bl	0xd08 <_ml_arm_sleep+0xa0>
+		0000000000000d08:  ARM64_RELOC_BRANCH26	_CleanPoU_Dcache
+     d0c: aa1303e0     	mov	x0, x19
+     d10: 52809e01     	mov	w1, #0x4f0              ; =1264
+     d14: b901de75     	str	w21, [x19, #0x1dc]
+     d18: 94000000     	bl	0xd18 <_ml_arm_sleep+0xb0>
+		0000000000000d18:  ARM64_RELOC_BRANCH26	_CleanPoU_DcacheRegion
+     d1c: f940d268     	ldr	x8, [x19, #0x1a0]
+     d20: b40000c8     	cbz	x8, 0xd38 <_ml_arm_sleep+0xd0>
+     d24: 5299caa9     	mov	w9, #0xce55             ; =52821
+     d28: 72b8b589     	movk	w9, #0xc5ac, lsl #16
+     d2c: b90fb109     	str	w9, [x8, #0xfb0]
+     d30: f940d268     	ldr	x8, [x19, #0x1a0]
+     d34: b903111f     	str	wzr, [x8, #0x310]
+     d38: 90000008     	adrp	x8, 0x0 <ltmp0>
+		0000000000000d38:  ARM64_RELOC_PAGE21	_arm64_platform_sleep_hook
+     d3c: f9400108     	ldr	x8, [x8]
+		0000000000000d3c:  ARM64_RELOC_PAGEOFF12	_arm64_platform_sleep_hook
+     d40: b5000308     	cbnz	x8, 0xda0 <_ml_arm_sleep+0x138>
+     d44: 52800020     	mov	w0, #0x1                ; =1
+     d48: 94000000     	bl	0xd48 <_ml_arm_sleep+0xe0>
+		0000000000000d48:  ARM64_RELOC_BRANCH26	_arm64_prepare_for_sleep
+     d4c: 90000017     	adrp	x23, 0x0 <ltmp0>
+		0000000000000d4c:  ARM64_RELOC_GOT_LOAD_PAGE21	_CpuDataEntries
+     d50: 2a0003f4     	mov	w20, w0
+     d54: 2a1f03f8     	mov	w24, wzr
+     d58: f94002f7     	ldr	x23, [x23]
+		0000000000000d58:  ARM64_RELOC_GOT_LOAD_PAGEOFF12	_CpuDataEntries
+     d5c: 8b38d2e8     	add	x8, x23, w24, sxtw #4
+     d60: f9400508     	ldr	x8, [x8, #0x8]
+     d64: f100011f     	cmp	x8, #0x0
+     d68: fa561104     	ccmp	x8, x22, #0x4, ne
+     d6c: 54000080     	b.eq	0xd7c <_ml_arm_sleep+0x114>
+     d70: b941dd09     	ldr	w9, [x8, #0x1dc]
+     d74: 6b15013f     	cmp	w9, w21
+     d78: 54ffffc1     	b.ne	0xd70 <_ml_arm_sleep+0x108>
+     d7c: 31000718     	adds	w24, w24, #0x1
+     d80: 54000086     	b.vs	0xd90 <_ml_arm_sleep+0x128>
+     d84: 6b14031f     	cmp	w24, w20
+     d88: 54fffead     	b.le	0xd5c <_ml_arm_sleep+0xf4>
+     d8c: 17ffffc6     	b	0xca4 <_ml_arm_sleep+0x3c>
+     d90: 94000000     	bl	0xd90 <_ml_arm_sleep+0x128>
+		0000000000000d90:  ARM64_RELOC_BRANCH26	___ubsan_handle_add_overflow_minimal
+     d94: 6b14031f     	cmp	w24, w20
+     d98: 54fffe2d     	b.le	0xd5c <_ml_arm_sleep+0xf4>
+     d9c: 17ffffc2     	b	0xca4 <_ml_arm_sleep+0x3c>
+     da0: 2a1f03e0     	mov	w0, wzr
+     da4: d63f0100     	blr	x8
+     da8: 52800020     	mov	w0, #0x1                ; =1
+     dac: 94000000     	bl	0xdac <_ml_arm_sleep+0x144>
+		0000000000000dac:  ARM64_RELOC_BRANCH26	_arm64_prepare_for_sleep
+
+0000000000000db0 <_cpu_machine_idle_init>:
+     db0: d10103ff     	sub	sp, sp, #0x40
+     db4: a9024ff4     	stp	x20, x19, [sp, #0x20]
+     db8: a9037bfd     	stp	x29, x30, [sp, #0x30]
+     dbc: 9100c3fd     	add	x29, sp, #0x30
+     dc0: 2a0003f4     	mov	w20, w0
+     dc4: 94000000     	bl	0xdc4 <_cpu_machine_idle_init+0x14>
+		0000000000000dc4:  ARM64_RELOC_BRANCH26	_current_thread
+     dc8: f9411c13     	ldr	x19, [x0, #0x238]
+     dcc: 340004d4     	cbz	w20, 0xe64 <_cpu_machine_idle_init+0xb4>
+     dd0: 90000000     	adrp	x0, 0x0 <ltmp0>
+		0000000000000dd0:  ARM64_RELOC_PAGE21	l_.str.10
+     dd4: 91000000     	add	x0, x0, #0x0
+		0000000000000dd4:  ARM64_RELOC_PAGEOFF12	l_.str.10
+     dd8: 910043e1     	add	x1, sp, #0x10
+     ddc: 52800102     	mov	w2, #0x8                ; =8
+     de0: a9017fff     	stp	xzr, xzr, [sp, #0x10]
+     de4: 94000000     	bl	0xde4 <_cpu_machine_idle_init+0x34>
+		0000000000000de4:  ARM64_RELOC_BRANCH26	_PE_parse_boot_argn
+     de8: f9400be8     	ldr	x8, [sp, #0x10]
+     dec: 7100001f     	cmp	w0, #0x0
+     df0: 90000009     	adrp	x9, 0x0 <ltmp0>
+		0000000000000df0:  ARM64_RELOC_GOT_LOAD_PAGE21	_idle_enable
+     df4: f9400129     	ldr	x9, [x9]
+		0000000000000df4:  ARM64_RELOC_GOT_LOAD_PAGEOFF12	_idle_enable
+     df8: 90000000     	adrp	x0, 0x0 <ltmp0>
+		0000000000000df8:  ARM64_RELOC_PAGE21	l_.str.11
+     dfc: 91000000     	add	x0, x0, #0x0
+		0000000000000dfc:  ARM64_RELOC_PAGEOFF12	l_.str.11
+     e00: fa401904     	ccmp	x8, #0x0, #0x4, ne
+     e04: 910033e1     	add	x1, sp, #0xc
+     e08: 52800082     	mov	w2, #0x4                ; =4
+     e0c: 1a9f17e8     	cset	w8, eq
+     e10: b9000fff     	str	wzr, [sp, #0xc]
+     e14: b9000128     	str	w8, [x9]
+     e18: 94000000     	bl	0xe18 <_cpu_machine_idle_init+0x68>
+		0000000000000e18:  ARM64_RELOC_BRANCH26	_PE_parse_boot_argn
+     e1c: 34000160     	cbz	w0, 0xe48 <_cpu_machine_idle_init+0x98>
+     e20: b9400fe8     	ldr	w8, [sp, #0xc]
+     e24: 90000009     	adrp	x9, 0x0 <ltmp0>
+		0000000000000e24:  ARM64_RELOC_PAGE21	_idle_proximate_timer_wfe
+     e28: 9000000c     	adrp	x12, 0x0 <ltmp0>
+		0000000000000e28:  ARM64_RELOC_PAGE21	_idle_proximate_io_wfe_masked
+     e2c: 1200010a     	and	w10, w8, #0x1
+     e30: 5301050b     	ubfx	w11, w8, #1, #1
+     e34: 53020908     	ubfx	w8, w8, #2, #1
+     e38: b900012a     	str	w10, [x9]
+		0000000000000e38:  ARM64_RELOC_PAGEOFF12	_idle_proximate_timer_wfe
+     e3c: 90000009     	adrp	x9, 0x0 <ltmp0>
+		0000000000000e3c:  ARM64_RELOC_PAGE21	_idle_proximate_io_wfe_unmasked
+     e40: b900018b     	str	w11, [x12]
+		0000000000000e40:  ARM64_RELOC_PAGEOFF12	_idle_proximate_io_wfe_masked
+     e44: b9000128     	str	w8, [x9]
+		0000000000000e44:  ARM64_RELOC_PAGEOFF12	_idle_proximate_io_wfe_unmasked
+     e48: 90000008     	adrp	x8, 0x0 <ltmp0>
+		0000000000000e48:  ARM64_RELOC_PAGE21	_wfi
+     e4c: 39400109     	ldrb	w9, [x8]
+		0000000000000e4c:  ARM64_RELOC_PAGEOFF12	_wfi
+     e50: 7100093f     	cmp	w9, #0x2
+     e54: 540000e0     	b.eq	0xe70 <_cpu_machine_idle_init+0xc0>
+     e58: 35000169     	cbnz	w9, 0xe84 <_cpu_machine_idle_init+0xd4>
+     e5c: b900011f     	str	wzr, [x8]
+		0000000000000e5c:  ARM64_RELOC_PAGEOFF12	_wfi
+     e60: 14000009     	b	0xe84 <_cpu_machine_idle_init+0xd4>
+     e64: 90000008     	adrp	x8, 0x0 <ltmp0>
+		0000000000000e64:  ARM64_RELOC_PAGE21	_cpu_machine_idle_init.resume_idle_cpu_paddr
+     e68: f9400100     	ldr	x0, [x8]
+		0000000000000e68:  ARM64_RELOC_PAGEOFF12	_cpu_machine_idle_init.resume_idle_cpu_paddr
+     e6c: 14000026     	b	0xf04 <_cpu_machine_idle_init+0x154>
+     e70: 90000001     	adrp	x1, 0x0 <ltmp0>
+		0000000000000e70:  ARM64_RELOC_PAGE21	_wfi_delay
+     e74: 91000021     	add	x1, x1, #0x0
+		0000000000000e74:  ARM64_RELOC_PAGEOFF12	_wfi_delay
+     e78: aa1f03e0     	mov	x0, xzr
+     e7c: b9000109     	str	w9, [x8]
+		0000000000000e7c:  ARM64_RELOC_PAGEOFF12	_wfi
+     e80: 94000000     	bl	0xe80 <_cpu_machine_idle_init+0xd0>
+		0000000000000e80:  ARM64_RELOC_BRANCH26	_nanoseconds_to_absolutetime
+     e84: 90000014     	adrp	x20, 0x0 <ltmp0>
+		0000000000000e84:  ARM64_RELOC_GOT_LOAD_PAGE21	_ResetHandlerData
+     e88: 90000000     	adrp	x0, 0x0 <ltmp0>
+		0000000000000e88:  ARM64_RELOC_GOT_LOAD_PAGE21	_CpuDataEntries
+     e8c: f9400294     	ldr	x20, [x20]
+		0000000000000e8c:  ARM64_RELOC_GOT_LOAD_PAGEOFF12	_ResetHandlerData
+     e90: f900029f     	str	xzr, [x20]
+     e94: f9400000     	ldr	x0, [x0]
+		0000000000000e94:  ARM64_RELOC_GOT_LOAD_PAGEOFF12	_CpuDataEntries
+     e98: 94000000     	bl	0xe98 <_cpu_machine_idle_init+0xe8>
+		0000000000000e98:  ARM64_RELOC_BRANCH26	_ml_static_vtop
+     e9c: f9000680     	str	x0, [x20, #0x8]
+     ea0: 90000001     	adrp	x1, 0x0 <ltmp0>
+		0000000000000ea0:  ARM64_RELOC_PAGE21	l_.str.12
+     ea4: 91000021     	add	x1, x1, #0x0
+		0000000000000ea4:  ARM64_RELOC_PAGEOFF12	l_.str.12
+     ea8: 910063e2     	add	x2, sp, #0x18
+     eac: aa1f03e0     	mov	x0, xzr
+     eb0: 94000000     	bl	0xeb0 <_cpu_machine_idle_init+0x100>
+		0000000000000eb0:  ARM64_RELOC_BRANCH26	_SecureDTLookupEntry
+     eb4: 7100041f     	cmp	w0, #0x1
+     eb8: 54000121     	b.ne	0xedc <_cpu_machine_idle_init+0x12c>
+     ebc: f9400fe0     	ldr	x0, [sp, #0x18]
+     ec0: 90000001     	adrp	x1, 0x0 <ltmp0>
+		0000000000000ec0:  ARM64_RELOC_PAGE21	l_.str.13
+     ec4: 91000021     	add	x1, x1, #0x0
+		0000000000000ec4:  ARM64_RELOC_PAGEOFF12	l_.str.13
+     ec8: 910003e2     	mov	x2, sp
+     ecc: 910023e3     	add	x3, sp, #0x8
+     ed0: b9000bff     	str	wzr, [sp, #0x8]
+     ed4: f90003ff     	str	xzr, [sp]
+     ed8: 94000000     	bl	0xed8 <_cpu_machine_idle_init+0x128>
+		0000000000000ed8:  ARM64_RELOC_BRANCH26	_SecureDTGetProperty
+     edc: 90000000     	adrp	x0, 0x0 <ltmp0>
+		0000000000000edc:  ARM64_RELOC_GOT_LOAD_PAGE21	_start_cpu
+     ee0: f9400000     	ldr	x0, [x0]
+		0000000000000ee0:  ARM64_RELOC_GOT_LOAD_PAGEOFF12	_start_cpu
+     ee4: 94000000     	bl	0xee4 <_cpu_machine_idle_init+0x134>
+		0000000000000ee4:  ARM64_RELOC_BRANCH26	_ml_static_vtop
+     ee8: 90000008     	adrp	x8, 0x0 <ltmp0>
+		0000000000000ee8:  ARM64_RELOC_PAGE21	_start_cpu_paddr
+     eec: f9000100     	str	x0, [x8]
+		0000000000000eec:  ARM64_RELOC_PAGEOFF12	_start_cpu_paddr
+     ef0: 90000000     	adrp	x0, 0x0 <ltmp0>
+		0000000000000ef0:  ARM64_RELOC_GOT_LOAD_PAGE21	_resume_idle_cpu
+     ef4: f9400000     	ldr	x0, [x0]
+		0000000000000ef4:  ARM64_RELOC_GOT_LOAD_PAGEOFF12	_resume_idle_cpu
+     ef8: 94000000     	bl	0xef8 <_cpu_machine_idle_init+0x148>
+		0000000000000ef8:  ARM64_RELOC_BRANCH26	_ml_static_vtop
+     efc: 90000008     	adrp	x8, 0x0 <ltmp0>
+		0000000000000efc:  ARM64_RELOC_PAGE21	_cpu_machine_idle_init.resume_idle_cpu_paddr
+     f00: f9000100     	str	x0, [x8]
+		0000000000000f00:  ARM64_RELOC_PAGEOFF12	_cpu_machine_idle_init.resume_idle_cpu_paddr
+     f04: f9005e60     	str	x0, [x19, #0xb8]
+     f08: aa1303e0     	mov	x0, x19
+     f0c: 52809e01     	mov	w1, #0x4f0              ; =1264
+     f10: 2a1f03e2     	mov	w2, wzr
+     f14: 94000000     	bl	0xf14 <_cpu_machine_idle_init+0x164>
+		0000000000000f14:  ARM64_RELOC_BRANCH26	_clean_dcache
+     f18: a9437bfd     	ldp	x29, x30, [sp, #0x30]
+     f1c: a9424ff4     	ldp	x20, x19, [sp, #0x20]
+     f20: 910103ff     	add	sp, sp, #0x40
+     f24: d65f03c0     	ret
+
+0000000000000f28 <_machine_track_platform_idle>:
+     f28: 90000008     	adrp	x8, 0x0 <ltmp0>
+		0000000000000f28:  ARM64_RELOC_PAGE21	_cpu_idle_count
+     f2c: 91000108     	add	x8, x8, #0x0
+		0000000000000f2c:  ARM64_RELOC_PAGEOFF12	_cpu_idle_count
+     f30: 340000c0     	cbz	w0, 0xf48 <_machine_track_platform_idle+0x20>
+     f34: 885f7d09     	ldxr	w9, [x8]
+     f38: 11000529     	add	w9, w9, #0x1
+     f3c: 880a7d09     	stxr	w10, w9, [x8]
+     f40: 35ffffaa     	cbnz	w10, 0xf34 <_machine_track_platform_idle+0xc>
+     f44: 14000005     	b	0xf58 <_machine_track_platform_idle+0x30>
+     f48: 885f7d09     	ldxr	w9, [x8]
+     f4c: 51000529     	sub	w9, w9, #0x1
+     f50: 880a7d09     	stxr	w10, w9, [x8]
+     f54: 35ffffaa     	cbnz	w10, 0xf48 <_machine_track_platform_idle+0x20>
+     f58: d65f03c0     	ret

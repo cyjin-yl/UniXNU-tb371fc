@@ -1,0 +1,364 @@
+{
+  "schema_version": 1,
+  "scope": "public-platform-archives-against-generic-kernel",
+  "recorded_date": "2026-11-24",
+  "timezone": "Asia/Shanghai",
+  "completed_at_utc": "2026-11-23T19:42:36Z",
+  "source_repository": "https://github.com/cyjin-yl/UniXNU-tb371fc",
+  "driver_source_commits": {
+    "first_attempt_bytes_archived_at": "627a2617551ad61dc1fd5bfd43fb07c4f2f4ab03",
+    "second_attempt": "fad85057a5f52ae28e3f017abb323d2907cb19b0"
+  },
+  "first_attempt": {
+    "status": "failed",
+    "driver": {
+      "path": "/work/route-a-platform-20261124/driver-v1/scripts/build_route_a_platform.py",
+      "sha256": "0863b178341e82d94c280b3adb36da2e8277faba4a6ee57eb4d6075cd34399ba",
+      "size": 35055
+    },
+    "report": {
+      "path": "docs/evidence/route-a-platform-20261124/attempt-001/report.json",
+      "size": 122839,
+      "sha256": "4681edc208e3a31ef40722fc388fc68b74a545b13b3005ee376f91e4d5e3785f"
+    },
+    "protected_inputs_unchanged": true,
+    "compiler_error_counts": {
+      "ArmDTPlatform": 9,
+      "ArmCpu": 10
+    },
+    "reason": "The driver reset discarded two Clang compatibility warning flags already present in the pinned successful kernel recipe."
+  },
+  "second_attempt": {
+    "status": "archives_built",
+    "driver": {
+      "path": "/work/route-a-platform-20261124/driver-v2/scripts/build_route_a_platform.py",
+      "sha256": "3593172a4cf9695e1cc0efd4d110e65af7ca293a91e276bab6df96b86788009f",
+      "size": 36539
+    },
+    "config": {
+      "path": "/work/route-a-platform-20261124/driver-v2/configs/route-a-platform.json",
+      "sha256": "a0c1d3b19dd639495e764a2e353c919f5c5bdf8c09cf45690664c5d167b985fc",
+      "size": 3118
+    },
+    "report": {
+      "path": "docs/evidence/route-a-platform-20261124/attempt-002/report.json",
+      "size": 83317,
+      "sha256": "15f04371f0d1b472d14ef4a69d739dcaecfdacd05df4f074b58563ce0f487a04"
+    },
+    "command_count": 10,
+    "all_commands_exit_zero": true,
+    "compiler_stderr_bytes": {
+      "ArmDTPlatform": 0,
+      "ArmCpu": 0
+    },
+    "protected_input_count": 9,
+    "protected_inputs_unchanged": true
+  },
+  "baseline_kernel": {
+    "build_report": {
+      "path": "/work/route-a-continue-20261123/kernel-build/.route-a/build-report.json",
+      "sha256": "34c40f71b43000dff0cc39b97264fc93ef1fd3b3027735c4a710817863b71044",
+      "size": 35257
+    },
+    "compiler": {
+      "path": "/work/route-a-continue-20261123/toolchain/llvm/bin/clang-24",
+      "realpath": "/work/route-a-continue-20261123/toolchain/llvm/bin/clang-24",
+      "sha256": "85d220e32bd83d75de788c8beab0bea646a4684e1112f7c06266ca71e651bb04",
+      "size": 155202456,
+      "version": "clang version 24.0.0git (/work/route-a-continue-20261123/toolchain-work/llvm-project/clang 58c46bae21181fb4240cf964461bea738d96d50e)\nTarget: unknown\nThread model: posix\nInstalledDir: /work/route-a-continue-20261123/toolchain/llvm/bin\nBuild config: +assertions\n"
+    },
+    "macho": {
+      "build_version": {
+        "minos": 1769472,
+        "platform": 2,
+        "sdk": 1769472
+      },
+      "filetype": 2,
+      "full_instruction_set_audited": false,
+      "header_words": [
+        4277009103,
+        16777228,
+        0,
+        2,
+        25,
+        5856,
+        2097153,
+        0
+      ],
+      "ordinary_arm64": true,
+      "relocations_audited": false,
+      "symbol_count": 218377
+    },
+    "original_recipe_object": {
+      "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/DEVELOPMENT_ARM64_BCM2837/iokit/DEVELOPMENT/IOPlatformExpert.cpo",
+      "sha256": "5616d97b13a0f8197935a550b4e494f2490b55d4b46a868ac3df719ce1599955",
+      "size": 477712
+    },
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/DEVELOPMENT_ARM64_BCM2837/mach.development.bcm2837.unstripped",
+    "recipe": {
+      "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/DEVELOPMENT_ARM64_BCM2837/iokit/DEVELOPMENT/IOPlatformExpert.cpo.json",
+      "sha256": "d6cc5213a5aba343dde41bdb3a1ea8c72e91605284af5e10b886bf3af71b3132",
+      "size": 10290
+    },
+    "sha256": "a58cdeedb9b7a4c152867c3487f28658a3799b0158f5046bbad6d2d58e741469",
+    "size": 21905888,
+    "symbols": {
+      "path": "/work/route-a-platform-20261124/attempt-002/inputs/kernel-symbols.json",
+      "sha256": "6ccbf41594ba4bc6e9de3d523f176c5a7ba3c215a014f35789c3a8a8b8372e30",
+      "size": 11153362
+    }
+  },
+  "components": [
+    {
+      "name": "ArmDTPlatform",
+      "source": {
+        "checkout": "/work/route-a-platform-20261124/sources/ArmDTPlatform",
+        "commit": "417ff95d6a6e8607ddea9309ec45c3bfd4a67c60",
+        "files": [
+          {
+            "git_blob": "fdafc430325eee5b6e8eb9d64341e604ac94744e",
+            "path": "/work/route-a-platform-20261124/attempt-002/sources/ArmDTPlatform/ArmDTPlatform.cpp",
+            "sha256": "07f96a42bdd638022960f5fcaf9e3a07dd73a82c869a70815781cac6d4873b3b",
+            "size": 7742,
+            "source_path": "ArmDTPlatform.cpp"
+          },
+          {
+            "git_blob": "217b4df4b4037c3b6cd4522a3909d3223f1ec1ac",
+            "path": "/work/route-a-platform-20261124/attempt-002/sources/ArmDTPlatform/LICENSE",
+            "sha256": "03a8ab50f4b3b4c65f070d07302a3522e7badbf54dde090cca59bb3e746bba3f",
+            "size": 2682,
+            "source_path": "LICENSE"
+          }
+        ],
+        "license": "BSD-2-Clause-Patent",
+        "repository": "https://github.com/UniXNU/ArmDTPlatform.git",
+        "tracked_checkout_clean": true,
+        "untracked_checkout_files_used": false
+      },
+      "object": {
+        "macho": {
+          "build_version": {
+            "minos": 1769472,
+            "platform": 2,
+            "sdk": 0
+          },
+          "filetype": 1,
+          "full_instruction_set_audited": false,
+          "header_words": [
+            4277009103,
+            16777228,
+            0,
+            1,
+            5,
+            1576,
+            8192,
+            0
+          ],
+          "ordinary_arm64": true,
+          "relocations_audited": false,
+          "symbol_count": 294
+        },
+        "path": "/work/route-a-platform-20261124/attempt-002/ArmDTPlatform/ArmDTPlatform.o",
+        "sha256": "c106ef44295f0f4b6dd9984e7b0f2eea774ea25c3404f96e430930b5ccc5c75e",
+        "size": 199384,
+        "symbols": {
+          "path": "/work/route-a-platform-20261124/attempt-002/ArmDTPlatform/symbols.json",
+          "sha256": "2fcfec394c8156827400d09e8e4be2189db4c216b5b763bcf8b05f70e1b6626d",
+          "size": 56213
+        }
+      },
+      "archive": {
+        "members": [
+          {
+            "name": "ArmDTPlatform.o",
+            "object_path": "/work/route-a-platform-20261124/attempt-002/ArmDTPlatform/ArmDTPlatform.o",
+            "sha256": "c106ef44295f0f4b6dd9984e7b0f2eea774ea25c3404f96e430930b5ccc5c75e"
+          }
+        ],
+        "path": "/work/route-a-platform-20261124/attempt-002/ArmDTPlatform/libArmDTPlatform.a",
+        "sha256": "e7ac03171cd30f9cb265e6445167898ec2ea3282148489dc1dd059729e759873",
+        "size": 200736
+      },
+      "recorded_dependency_files": 356
+    },
+    {
+      "name": "ArmCpu",
+      "source": {
+        "checkout": "/work/route-a-platform-20261124/sources/ArmCpu",
+        "commit": "5f3702697ed80fd2e98594de1af7e32b4b77b08b",
+        "files": [
+          {
+            "git_blob": "372a2a4e9c3c06b803dae2b0fc2030b5a9228189",
+            "path": "/work/route-a-platform-20261124/attempt-002/sources/ArmCpu/ArmCpu.cpp",
+            "sha256": "2518e60ea9cffce9664a1761e9280d18e6a3d9d0e0beb7756ac7b71d1b14edfd",
+            "size": 72191,
+            "source_path": "ArmCpu.cpp"
+          },
+          {
+            "git_blob": "382621d7d62224c2547768021f6a4522ef8d95e8",
+            "path": "/work/route-a-platform-20261124/attempt-002/sources/ArmCpu/ArmCpuSleep.h",
+            "sha256": "b5194745e8414caccfc801e5e925f52fca4c712872696eeaecb49374139e3830",
+            "size": 6159,
+            "source_path": "ArmCpuSleep.h"
+          },
+          {
+            "git_blob": "6110342d021ed71bc40e6ecbc098376de546cd9d",
+            "path": "/work/route-a-platform-20261124/attempt-002/sources/ArmCpu/LICENSE",
+            "sha256": "9e18e2c43ae4e51da2d11fd777b5b11056476d6ba395e5e2270467dbf02d0adf",
+            "size": 2673,
+            "source_path": "LICENSE"
+          }
+        ],
+        "license": "BSD-2-Clause-Patent",
+        "repository": "https://github.com/UniXNU/ArmCpu.git",
+        "tracked_checkout_clean": true,
+        "untracked_checkout_files_used": false
+      },
+      "object": {
+        "macho": {
+          "build_version": {
+            "minos": 1769472,
+            "platform": 2,
+            "sdk": 0
+          },
+          "filetype": 1,
+          "full_instruction_set_audited": false,
+          "header_words": [
+            4277009103,
+            16777228,
+            0,
+            1,
+            5,
+            1816,
+            8192,
+            0
+          ],
+          "ordinary_arm64": true,
+          "relocations_audited": false,
+          "symbol_count": 407
+        },
+        "path": "/work/route-a-platform-20261124/attempt-002/ArmCpu/ArmCpu.o",
+        "sha256": "84dc248bce8dbcaa30349859ea7d59ca79b6177cbf02ce8dc9e0134686a4dc33",
+        "size": 294368,
+        "symbols": {
+          "path": "/work/route-a-platform-20261124/attempt-002/ArmCpu/symbols.json",
+          "sha256": "8ec5529630e5763526ffd4b4333772ed4aa00b8c2804706db7d614c202e7f4c5",
+          "size": 68657
+        }
+      },
+      "archive": {
+        "members": [
+          {
+            "name": "ArmCpu.o",
+            "object_path": "/work/route-a-platform-20261124/attempt-002/ArmCpu/ArmCpu.o",
+            "sha256": "84dc248bce8dbcaa30349859ea7d59ca79b6177cbf02ce8dc9e0134686a4dc33"
+          }
+        ],
+        "path": "/work/route-a-platform-20261124/attempt-002/ArmCpu/libArmCpu.a",
+        "sha256": "34ca2e7a0f970608f8924b6a8fc755e3ae594259c825f6351ac9e436548e751a",
+        "size": 297152
+      },
+      "recorded_dependency_files": 358
+    }
+  ],
+  "retained_recipe_warning_options": [
+    "-Wno-missing-designated-field-initializers",
+    "-Wno-unused-but-set-global"
+  ],
+  "warning_policy": "Only retain these options when already present in the pinned recipe; keep upstream driver warnings and -Werror. No ABI or compiler trait check is removed.",
+  "symbol_name_comparison": {
+    "components": [
+      {
+        "common_external": [],
+        "name": "ArmDTPlatform",
+        "strong_unresolved": [],
+        "unsupported_external": [],
+        "weak_unresolved": []
+      },
+      {
+        "common_external": [],
+        "name": "ArmCpu",
+        "strong_unresolved": [],
+        "unsupported_external": [],
+        "weak_unresolved": [
+          "_arm64_platform_sleep_hook"
+        ]
+      }
+    ],
+    "duplicate_definition_strength_classified": false,
+    "kernel_unsupported_external": [],
+    "link_verified": false,
+    "potential_duplicate_names": [],
+    "scope": "external-symbol-name-set-comparison-only"
+  },
+  "provider_archives_built": true,
+  "provider_kernel_link_verified": false,
+  "complete_board_archive_closure": false,
+  "runtime_driver_matching_verified": false,
+  "full_instruction_set_audited": false,
+  "tb371fc_kernel_qualified": false,
+  "os_boot_verified": false,
+  "scope_note": "This archive-build record remains scoped to compilation, archiving, and symbol-name comparison; actual kernel linking is recorded separately.",
+  "raw_evidence_files": [
+    {
+      "path": "docs/evidence/route-a-platform-20261124/attempt-001/logs/ArmCpu-compile.stderr",
+      "size": 16732,
+      "sha256": "7b9dbe9ec01a95474c0ae1b3a5f3b4d137dfc6590f7b047a772ed81eeaec6611"
+    },
+    {
+      "path": "docs/evidence/route-a-platform-20261124/attempt-001/logs/ArmDTPlatform-compile.stderr",
+      "size": 13700,
+      "sha256": "e2b91f550e823f7f21420c9d824f3bd24756454374206c463842f4841ec35e84"
+    },
+    {
+      "path": "docs/evidence/route-a-platform-20261124/attempt-001/report.json",
+      "size": 122839,
+      "sha256": "4681edc208e3a31ef40722fc388fc68b74a545b13b3005ee376f91e4d5e3785f"
+    },
+    {
+      "path": "docs/evidence/route-a-platform-20261124/attempt-001/symbol-comparison.json",
+      "size": 229,
+      "sha256": "32c41474ca19288d291e54379b0dff23aff6c7711866b25db00922fec2267cfc"
+    },
+    {
+      "path": "docs/evidence/route-a-platform-20261124/attempt-002/ArmCpu/dependencies.json",
+      "size": 122194,
+      "sha256": "459da92de0473dd0a9d37bfb1510f84e3e47f44c75c39588938bde51a7b1ad93"
+    },
+    {
+      "path": "docs/evidence/route-a-platform-20261124/attempt-002/ArmCpu/symbols.json",
+      "size": 68657,
+      "sha256": "8ec5529630e5763526ffd4b4333772ed4aa00b8c2804706db7d614c202e7f4c5"
+    },
+    {
+      "path": "docs/evidence/route-a-platform-20261124/attempt-002/ArmDTPlatform/dependencies.json",
+      "size": 121628,
+      "sha256": "a75f28f3b08267d3516780adacf64a480f35a43679af4357e00af058b4130a69"
+    },
+    {
+      "path": "docs/evidence/route-a-platform-20261124/attempt-002/ArmDTPlatform/symbols.json",
+      "size": 56213,
+      "sha256": "2fcfec394c8156827400d09e8e4be2189db4c216b5b763bcf8b05f70e1b6626d"
+    },
+    {
+      "path": "docs/evidence/route-a-platform-20261124/attempt-002/logs/ArmCpu-compile.stderr",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "docs/evidence/route-a-platform-20261124/attempt-002/logs/ArmDTPlatform-compile.stderr",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "docs/evidence/route-a-platform-20261124/attempt-002/report.json",
+      "size": 83317,
+      "sha256": "15f04371f0d1b472d14ef4a69d739dcaecfdacd05df4f074b58563ce0f487a04"
+    },
+    {
+      "path": "docs/evidence/route-a-platform-20261124/attempt-002/symbol-comparison.json",
+      "size": 600,
+      "sha256": "5f24044797fdbb1a83de59588b5d73ef20e5c325dd227862e0b6a10bf48837bb"
+    }
+  ]
+}

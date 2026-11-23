@@ -1,0 +1,2150 @@
+[
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/.cache/fakeroot/usr/local/include/AvailabilityProhibitedInternal.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/.cache/fakeroot/usr/local/include/AvailabilityProhibitedInternal.h",
+    "sha256": "738b9b48107d22f85613bd8f9418140cbf09424d4fd78db33327bb8c25ac6dff",
+    "size": 1300
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/EXTERNAL_HEADERS/Availability.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/EXTERNAL_HEADERS/Availability.h",
+    "sha256": "9f2368b50f303c6f8313010e33323c52f385fe1a8f281746329f7f736a41f1ae",
+    "size": 16193
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/EXTERNAL_HEADERS/AvailabilityInternal.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/EXTERNAL_HEADERS/AvailabilityInternal.h",
+    "sha256": "b9a1e937266c181b8c61c6da7853303d811f3eeb2f65f9ea9fa1e97db0626aa3",
+    "size": 2638930
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/EXTERNAL_HEADERS/CoreEntitlements/CoreEntitlements.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/EXTERNAL_HEADERS/CoreEntitlements/CoreEntitlements.h",
+    "sha256": "62a7c7be31ce621feafa48e7bbc425d0700c6a97c9b628fffee0cfbee05df9f2",
+    "size": 2567
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/EXTERNAL_HEADERS/CoreEntitlements/Entitlements.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/EXTERNAL_HEADERS/CoreEntitlements/Entitlements.h",
+    "sha256": "9f69e97a9051e3eb176c6abfb26a877efaac37b3863a6ac308247f1661b9ef18",
+    "size": 6634
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/EXTERNAL_HEADERS/CoreEntitlements/Errors.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/EXTERNAL_HEADERS/CoreEntitlements/Errors.h",
+    "sha256": "828289945e92fce84c21361793389c5e5b7b9bfc9c9b19d3c9ecced1de62b7ea",
+    "size": 1381
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/EXTERNAL_HEADERS/CoreEntitlements/Index.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/EXTERNAL_HEADERS/CoreEntitlements/Index.h",
+    "sha256": "cf1b8450bb52c807615d6bd0a12154dc67925841ca48c14231f51b06835af739",
+    "size": 2112
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/EXTERNAL_HEADERS/CoreEntitlements/QueryHelpers.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/EXTERNAL_HEADERS/CoreEntitlements/QueryHelpers.h",
+    "sha256": "7b7cbe31a705edb33d94197a6485ab22844efc3b3701755e3c827306c73159f9",
+    "size": 9860
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/EXTERNAL_HEADERS/CoreEntitlements/Result.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/EXTERNAL_HEADERS/CoreEntitlements/Result.h",
+    "sha256": "593a15b66a7eb50e472429f65714c7c1e1534ddbe0d4af93a83d29f155d8bf92",
+    "size": 1129
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/EXTERNAL_HEADERS/CoreEntitlements/Runtime.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/EXTERNAL_HEADERS/CoreEntitlements/Runtime.h",
+    "sha256": "9c1b1b6f9a9611b73f6f7d14ea6957432f71e7e043a1774b5fc5c1898cb6b179",
+    "size": 3434
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/EXTERNAL_HEADERS/CoreEntitlements/Serialization.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/EXTERNAL_HEADERS/CoreEntitlements/Serialization.h",
+    "sha256": "633e568105037d86ef436b3c229efab6833f7dec06a95b59598a4105079988b0",
+    "size": 8014
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/EXTERNAL_HEADERS/architecture/byte_order.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/EXTERNAL_HEADERS/architecture/byte_order.h",
+    "sha256": "a512d027f26005bca984e49a7c8897223bad13e99528e837e847457a09f61347",
+    "size": 7006
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/EXTERNAL_HEADERS/mach-o/loader.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/EXTERNAL_HEADERS/mach-o/loader.h",
+    "sha256": "f99be61ea63eb480f9ee6daba7c04af377be4932c62e04ef044895f2e556bbd3",
+    "size": 71385
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/EXTERNAL_HEADERS/mach-o/nlist.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/EXTERNAL_HEADERS/mach-o/nlist.h",
+    "sha256": "9e1a328c1a9632fae48d4d95b09d377f5007374ddb8addad97e0841052304c96",
+    "size": 13793
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/EXTERNAL_HEADERS/mach-o/reloc.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/EXTERNAL_HEADERS/mach-o/reloc.h",
+    "sha256": "2c011c2a5266c4f3966a3eed80fb3348e0c0dc3a545bff36319a8b46d984f327",
+    "size": 10506
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/EXTERNAL_HEADERS/ptrauth.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/EXTERNAL_HEADERS/ptrauth.h",
+    "sha256": "9a8eb54a418f84216e6c7f0ed0b4206d32917f73015e22e7965ca9075c37bd51",
+    "size": 17534
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/EXTERNAL_HEADERS/ptrcheck.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/EXTERNAL_HEADERS/ptrcheck.h",
+    "sha256": "8982ebc096991eae1ff977c7e9cd8f1208fbb0f6fe0258c113141459e8dee95f",
+    "size": 15341
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/EXTERNAL_HEADERS/stdarg.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/EXTERNAL_HEADERS/stdarg.h",
+    "sha256": "990404c67d712199daaad8d41af1c807417462867b69c82e21fb6a3464f02b81",
+    "size": 2497
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/EXTERNAL_HEADERS/stdatomic.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/EXTERNAL_HEADERS/stdatomic.h",
+    "sha256": "782e502115fa053b32fe805a9a1191a7a2a7788a52578490617f99c2d99e4d25",
+    "size": 8722
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/EXTERNAL_HEADERS/stdbool.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/EXTERNAL_HEADERS/stdbool.h",
+    "sha256": "446ec4556c41c5c4c88ec8c895a179111427e403818d3a0422a88f4ae51ef50b",
+    "size": 2202
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/EXTERNAL_HEADERS/stddef.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/EXTERNAL_HEADERS/stddef.h",
+    "sha256": "a9bf26094aa1fc7493589a94776047cde29bfe6917cdb41c605c7d1cddc73939",
+    "size": 2603
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/EXTERNAL_HEADERS/stdint.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/EXTERNAL_HEADERS/stdint.h",
+    "sha256": "2291ecc66967238af4c871f5a85e25d8c31769ef6c493cadd4601466715e22c7",
+    "size": 6798
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/iokit/IOKit/IOCPU.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/iokit/IOKit/IOCPU.h",
+    "sha256": "8292b37feace49994f844eec9b9e3f46c7703391084f8430afa3a15f5bffc131",
+    "size": 5459
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/iokit/IOKit/IODeviceMemory.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/iokit/IOKit/IODeviceMemory.h",
+    "sha256": "13127f899ead3da37394532afa6011b817f8b2070d1b3ea806db47b0cf2bccc9",
+    "size": 4857
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/iokit/IOKit/IODeviceTreeSupport.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/iokit/IOKit/IODeviceTreeSupport.h",
+    "sha256": "88d2ab88f94a50fe24534604750d48023e281d65f2091bd41166e9533a83f1ab",
+    "size": 4747
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/iokit/IOKit/IOInterruptController.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/iokit/IOKit/IOInterruptController.h",
+    "sha256": "e133249eb223dc610a8648359ed1ddf65b9769ef47ca04965d9d19b518f13d0a",
+    "size": 6347
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/iokit/IOKit/IOInterrupts.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/iokit/IOKit/IOInterrupts.h",
+    "sha256": "12ed6bf742f5c5765fc7ba5bb6566e212117d73a9f183dcc05ee0df87922f8a8",
+    "size": 2138
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/iokit/IOKit/IOKitDebug.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/iokit/IOKit/IOKitDebug.h",
+    "sha256": "62d2663cac9acfed247918ebd711388e3fa514174ef40d922f8bb3c01dedfd3e",
+    "size": 10793
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/iokit/IOKit/IOLib.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/iokit/IOKit/IOLib.h",
+    "sha256": "4c24fbfd9577ab19b8a36f2a5ee82831343e461482eaf41cba2161bdc9c9f46b",
+    "size": 43442
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/iokit/IOKit/IOLocks.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/iokit/IOKit/IOLocks.h",
+    "sha256": "2b0c7209d5c1ad12fbe6993b2c99c12076f87666dc3cc6edc3be514e845a83e8",
+    "size": 22889
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/iokit/IOKit/IOMapTypes.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/iokit/IOKit/IOMapTypes.h",
+    "sha256": "b1f69f417aba9a7bb08b39299b907da369a0d224f23a25a167809227393770c7",
+    "size": 3366
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/iokit/IOKit/IOMemoryDescriptor.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/iokit/IOKit/IOMemoryDescriptor.h",
+    "sha256": "f55ae31c85a90790731b943898a8ad8bf7123c96604b3b12a8f055d519f3189e",
+    "size": 63702
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/iokit/IOKit/IOMessage.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/iokit/IOKit/IOMessage.h",
+    "sha256": "f8b13759a23d60957e0547915f4413bc12f393664c6056a1e785405ad4ce77cb",
+    "size": 9760
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/iokit/IOKit/IONotifier.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/iokit/IOKit/IONotifier.h",
+    "sha256": "d9bd546bbda8a61b6f9f9cd3e05b4585a34690b40d12d14af09c46f2728bbdee",
+    "size": 3244
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/iokit/IOKit/IOPlatformActions.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/iokit/IOKit/IOPlatformActions.h",
+    "sha256": "c13814cd6e55761535baa657e31a0d87bb66831b658cfae0239cdf9faaf9c433",
+    "size": 1849
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/iokit/IOKit/IORPC.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/iokit/IOKit/IORPC.h",
+    "sha256": "3463c83ffccead1f69c474d0d0ffcb5389cdcff923236d35600e31bcdbd229ce",
+    "size": 7377
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/iokit/IOKit/IORegistryEntry.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/iokit/IOKit/IORegistryEntry.h",
+    "sha256": "3eedbdac6256e6983eaf4d294ba586d4cef016fa3b4345e039063c8760996ccc",
+    "size": 78941
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/iokit/IOKit/IOReportTypes.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/iokit/IOKit/IOReportTypes.h",
+    "sha256": "d6b1a66d6e5933416e025efada06367fe15e642b9120eb0c24c13196a76e705f",
+    "size": 17208
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/iokit/IOKit/IOReturn.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/iokit/IOKit/IOReturn.h",
+    "sha256": "4767dd8a847d4b7dcff0b74c7a67013f0462f3ea6313e5a483f49fe046f93ab1",
+    "size": 9741
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/iokit/IOKit/IOService.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/iokit/IOKit/IOService.h",
+    "sha256": "620eec0e4e4cb7cb077c4f4d78770a0ca409dd8efcd8cbc2fa2dafc40014f71c",
+    "size": 165095
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/iokit/IOKit/IOServicePM.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/iokit/IOKit/IOServicePM.h",
+    "sha256": "7d90a526a5b2e5bbaf0d1fa180ed795347587737817120e1bf59407f7c409136",
+    "size": 3632
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/iokit/IOKit/IOTimeStamp.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/iokit/IOKit/IOTimeStamp.h",
+    "sha256": "30b49ef0de0663f8eac4ab52ed37c156161895e745b76255b1bc4712ccc7c449",
+    "size": 11927
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/iokit/IOKit/IOTypes.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/iokit/IOKit/IOTypes.h",
+    "sha256": "f9cdd0f877589fe98b1dba6d3566c7ed6a2122ff1fac199ad6a4737c3a19f2d5",
+    "size": 7490
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/iokit/IOKit/assert.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/iokit/IOKit/assert.h",
+    "sha256": "d67228bd894e89517c03fb73fd8993f1b7bf2b055eeb994fab3fe1799a86e6ef",
+    "size": 1763
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/iokit/IOKit/pwr_mgt/IOPM.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/iokit/IOKit/pwr_mgt/IOPM.h",
+    "sha256": "93d7cf740698bb058ae5cb9cf80d55c05c50c0183f413a8250644d7411500f27",
+    "size": 42188
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/iokit/IOKit/pwr_mgt/IOPMpowerState.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/iokit/IOKit/pwr_mgt/IOPMpowerState.h",
+    "sha256": "66e19c7c0544e2523d1dc3617cbf436f0b0b7eff7205651b9f36c3798516a424",
+    "size": 3972
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/iokit/IOKit/system.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/iokit/IOKit/system.h",
+    "sha256": "0fb1b02f26511e6fc857a6dbc68e0685c54be8fc7aa268256c00ba9fcbc3652c",
+    "size": 2372
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/bsd/arm/_endian.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/bsd/arm/_endian.h",
+    "sha256": "488530aceccfa1f364f2850a5f2956e22436db8b12b33d2a41567c4ac9d60788",
+    "size": 5063
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/bsd/arm/_limits.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/bsd/arm/_limits.h",
+    "sha256": "b64325f6b5aba08a361b7b8e537df3d8d193538c1d6329a4c4a7e72f5aa63478",
+    "size": 318
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/bsd/arm/_types.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/bsd/arm/_types.h",
+    "sha256": "dea174bb0a2621285e0380e1044283d04d7911c0c0c7507ae370e154b5a2d963",
+    "size": 4727
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/bsd/arm/endian.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/bsd/arm/endian.h",
+    "sha256": "60bd5d1363d89d52e5cfc95b83a35d392a8315835f9d60089d4e05b8f4d1cc68",
+    "size": 2622
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/bsd/arm/limits.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/bsd/arm/limits.h",
+    "sha256": "25601a7f5536e86447b47fb24dd5ea12310df2d7b0056f50db80f4c91de8c6b9",
+    "size": 5958
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/bsd/arm/types.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/bsd/arm/types.h",
+    "sha256": "4b6d31fc15d19635ae7179647145130a86d0dff5ee9157e632e9bd3828ba3b73",
+    "size": 6093
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/bsd/libkern/copyio.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/bsd/libkern/copyio.h",
+    "sha256": "e4c53c7f0164f5cad7be1c958d76df66d5e9033e577c62cfa15863b2e181362e",
+    "size": 3334
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/bsd/libkern/libkern.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/bsd/libkern/libkern.h",
+    "sha256": "b5036cd85a9d75e56189d6f80336a818eab16e776cd3b854e494a1900f13cc3d",
+    "size": 9702
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/bsd/machine/_endian.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/bsd/machine/_endian.h",
+    "sha256": "17eb7d38845502ce04aac3ab709dffeb4ec253781051b5d7894703e9786730de",
+    "size": 1685
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/bsd/machine/_types.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/bsd/machine/_types.h",
+    "sha256": "f27264f8fdec9f164b4fc2b556f666ed7c5c0e5b88fd9f23db0b731ffa6cf864",
+    "size": 1614
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/bsd/machine/endian.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/bsd/machine/endian.h",
+    "sha256": "37f9e1c8599a729e605477a5b6a77cea727fa66816e4585d0dd32e3ba377f450",
+    "size": 1680
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/bsd/machine/limits.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/bsd/machine/limits.h",
+    "sha256": "50345f1ab843fca787a38c552a84177e678d79dab86e714434f94f2546839357",
+    "size": 511
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/bsd/machine/types.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/bsd/machine/types.h",
+    "sha256": "76e7c59451d996fe674a6fc7e518366609a95875c9b9aec9fd590a3ac138dddd",
+    "size": 1675
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/bsd/sys/__endian.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/bsd/sys/__endian.h",
+    "sha256": "8697850f0ec13e9082081e9b8dda8f94053970f3546e4a8d42738b16400eac91",
+    "size": 5302
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/bsd/sys/_endian.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/bsd/sys/_endian.h",
+    "sha256": "24171f03b0c9174673da0d86280692df519ab22b704c2a6fc316d76fcbaad7cc",
+    "size": 7120
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/bsd/sys/_types.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/bsd/sys/_types.h",
+    "sha256": "508393c2752392fb306f3f9540f848e766f9bb4b52a5f616739a9cc63006f9ec",
+    "size": 4612
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/bsd/sys/_types/_blkcnt_t.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/bsd/sys/_types/_blkcnt_t.h",
+    "sha256": "3526cf25ca7734bf6bc945c9483727b8c1ab3fde5ad8fb23acad7489e231330d",
+    "size": 1476
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/bsd/sys/_types/_blksize_t.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/bsd/sys/_types/_blksize_t.h",
+    "sha256": "4331ba446f9b5930e5da1dc065c97e258672ed0cbec5b3f0816c228fd0198955",
+    "size": 1482
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/bsd/sys/_types/_caddr_t.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/bsd/sys/_types/_caddr_t.h",
+    "sha256": "ce35ab3f966e02483951de5c54de4ad3a4acc4a70bca3e97ef476738897706a0",
+    "size": 1600
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/bsd/sys/_types/_clock_t.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/bsd/sys/_types/_clock_t.h",
+    "sha256": "e7be094e48f450875288ef68a59409e530dbe2d9449c78ff3d9ea9d654e0e857",
+    "size": 1472
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/bsd/sys/_types/_dev_t.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/bsd/sys/_types/_dev_t.h",
+    "sha256": "4ba3d19759544b9f7bf424d2a16a518ff586e31ed968d525440e678cfbb07a5d",
+    "size": 1481
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/bsd/sys/_types/_errno_t.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/bsd/sys/_types/_errno_t.h",
+    "sha256": "ca230b22b22becab1bb191bfe5a8dd4595ea0566f5c8cc9b299eca308ee5a271",
+    "size": 1422
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/bsd/sys/_types/_fd_clr.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/bsd/sys/_types/_fd_clr.h",
+    "sha256": "ccb785f37fdf5503df860a3fba82d8570a65f7ecbd754a5558254483b996747c",
+    "size": 1438
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/bsd/sys/_types/_fd_copy.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/bsd/sys/_types/_fd_copy.h",
+    "sha256": "f4f4289b3da098621b7ed0115faa7d4b85b65852c4615c9bad5e222a8ceb0078",
+    "size": 1441
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/bsd/sys/_types/_fd_def.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/bsd/sys/_types/_fd_def.h",
+    "sha256": "78f8810f1080b28e7857d2b068076ee00912b9a72dbecc470218049f39798579",
+    "size": 5175
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/bsd/sys/_types/_fd_isset.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/bsd/sys/_types/_fd_isset.h",
+    "sha256": "17bdc86c26b6c82411601e955af5e2563a86f2fdd345568b78ab8642b895d1ae",
+    "size": 1444
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/bsd/sys/_types/_fd_set.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/bsd/sys/_types/_fd_set.h",
+    "sha256": "57009e7fed060e007604e0259788a7bea6afcb18fc4840fc30cd641f58655190",
+    "size": 1438
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/bsd/sys/_types/_fd_setsize.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/bsd/sys/_types/_fd_setsize.h",
+    "sha256": "7cd3a93f51f4521e60151c08b1fab36ea8efbb98988bb03db24264a1c434eaee",
+    "size": 1444
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/bsd/sys/_types/_fd_zero.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/bsd/sys/_types/_fd_zero.h",
+    "sha256": "e5c44af3534182fe3b0872f39617ae17cd2ada72339e6f388eead5472df64c6f",
+    "size": 1438
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/bsd/sys/_types/_fsblkcnt_t.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/bsd/sys/_types/_fsblkcnt_t.h",
+    "sha256": "f986ed21599c2e0e1fc2efb8e014aae5a99e9f40d374a3e1af9b7c98ac9815cf",
+    "size": 1492
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/bsd/sys/_types/_fsfilcnt_t.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/bsd/sys/_types/_fsfilcnt_t.h",
+    "sha256": "e56f6f9b9c48eb7c035d5241a611169cd130a6319a5d179522c818d9d3384cdb",
+    "size": 1492
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/bsd/sys/_types/_fsid_t.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/bsd/sys/_types/_fsid_t.h",
+    "sha256": "63908a097cb2628d6d652317974e416a0df39e46b1a9a0ab0a10b83ea8948a2f",
+    "size": 1494
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/bsd/sys/_types/_fsobj_id_t.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/bsd/sys/_types/_fsobj_id_t.h",
+    "sha256": "f411229eb775e55326d5f3e1e00c822c97fff57e474e5f66574aa1572d67259f",
+    "size": 1528
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/bsd/sys/_types/_gid_t.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/bsd/sys/_types/_gid_t.h",
+    "sha256": "e687ad58c03701c132a02ebf20699c8cacfd34c3a67271bd2a415a5a8e4a9ea7",
+    "size": 1438
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/bsd/sys/_types/_id_t.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/bsd/sys/_types/_id_t.h",
+    "sha256": "fb7255c9872e2a805c206796326e21d47146e22c93c09752126d7166bdaba5e5",
+    "size": 1494
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/bsd/sys/_types/_in_addr_t.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/bsd/sys/_types/_in_addr_t.h",
+    "sha256": "8da608117e441ff6e6b108d35334d7cf4b346b838522f97bcc621d925e0ba7fe",
+    "size": 1508
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/bsd/sys/_types/_in_port_t.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/bsd/sys/_types/_in_port_t.h",
+    "sha256": "cf4b90c7af861346ee46c6b9e5d57cfe20bd62a03b1533ee9a369480ace0bac9",
+    "size": 1474
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/bsd/sys/_types/_ino64_t.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/bsd/sys/_types/_ino64_t.h",
+    "sha256": "f143d5c0bfea65489ef89a866e96c9065d7ac28d62c0cec36f79d4dd7269fd13",
+    "size": 1502
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/bsd/sys/_types/_ino_t.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/bsd/sys/_types/_ino_t.h",
+    "sha256": "1e067108b372f2c81cfcad28413d6c0d2b9ef21d34fab740c3c8af059deadfea",
+    "size": 1488
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/bsd/sys/_types/_int16_t.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/bsd/sys/_types/_int16_t.h",
+    "sha256": "e40d40ad59c6dc98577b2c7cfdba1121ebfee17b29e093cbd10b7936df496d8e",
+    "size": 1417
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/bsd/sys/_types/_int32_t.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/bsd/sys/_types/_int32_t.h",
+    "sha256": "77127195e57f1690402377ddd72e3dcda684ddf591346f08ef4772dddcbbc281",
+    "size": 1417
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/bsd/sys/_types/_int64_t.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/bsd/sys/_types/_int64_t.h",
+    "sha256": "a2427b34e5e83996bd28d83cec920cf3b82a366af90e767234557bd11fa33a18",
+    "size": 1417
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/bsd/sys/_types/_int8_t.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/bsd/sys/_types/_int8_t.h",
+    "sha256": "607f6beede0251eb801e763493df26fd45d46eb951e4ff9cac17f1ac951b8cc0",
+    "size": 1411
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/bsd/sys/_types/_intptr_t.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/bsd/sys/_types/_intptr_t.h",
+    "sha256": "b2a7ba9b9b2d357d75e59114874658f893b23ea6d1357815b027d8189075daba",
+    "size": 1479
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/bsd/sys/_types/_key_t.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/bsd/sys/_types/_key_t.h",
+    "sha256": "42e8a3f076c5892d7b8ca5594b15a989eb206df5834070bd2b89b1febb3e9913",
+    "size": 1489
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/bsd/sys/_types/_mode_t.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/bsd/sys/_types/_mode_t.h",
+    "sha256": "7c4261bde41387fc23aefe5dee1e6298ae6b6f5592bca51947fdd9736e0640a6",
+    "size": 1465
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/bsd/sys/_types/_nlink_t.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/bsd/sys/_types/_nlink_t.h",
+    "sha256": "7cc46bfc5d0f4238c735ff28bb1a8dcefc26d1f0e52b7098a5c89e68bf87288a",
+    "size": 1483
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/bsd/sys/_types/_off_t.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/bsd/sys/_types/_off_t.h",
+    "sha256": "7b07626d71084f1b3220e045089f54fd30f4d736be9cd0449042c5fe411fc569",
+    "size": 1460
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/bsd/sys/_types/_offsetof.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/bsd/sys/_types/_offsetof.h",
+    "sha256": "5f2d44be2946e4b571597951f9e8ca6047ac736ae89947c3094f6e8d070aacf3",
+    "size": 1991
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/bsd/sys/_types/_os_inline.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/bsd/sys/_types/_os_inline.h",
+    "sha256": "0b4aa055199f1aa01485a7951a191aed5e3c8377be334e9a9e928988d52d1409",
+    "size": 1533
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/bsd/sys/_types/_pid_t.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/bsd/sys/_types/_pid_t.h",
+    "sha256": "052a6dbbec8e30623c2d33dd373992f6c5d0c57c57ed4949d2b48c4ab0976487",
+    "size": 1458
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/bsd/sys/_types/_rsize_t.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/bsd/sys/_types/_rsize_t.h",
+    "sha256": "5febac593aa617100cf0017a8147113cfec25cdc5975d9241a9d7e91fb09c4bb",
+    "size": 2040
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/bsd/sys/_types/_size_t.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/bsd/sys/_types/_size_t.h",
+    "sha256": "db84f57e9d0992b42649957a58f530f25a8e4bf417bf85592dca602cc79ca6fc",
+    "size": 2236
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/bsd/sys/_types/_ssize_t.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/bsd/sys/_types/_ssize_t.h",
+    "sha256": "58eb3bdea24b27e6b5fb45e203e476faf2510b5c0aa81a0b45c17b528aa9c192",
+    "size": 1473
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/bsd/sys/_types/_suseconds_t.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/bsd/sys/_types/_suseconds_t.h",
+    "sha256": "d799ffc16cf29b6559b36d879fc7d5fec80ec3c39502eaef078ae9178eeaf275",
+    "size": 1490
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/bsd/sys/_types/_time_t.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/bsd/sys/_types/_time_t.h",
+    "sha256": "c0a28cdc5c9c8cf99abea53556895bd8001a6cb13ae6ca9f366955500678b35a",
+    "size": 1468
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/bsd/sys/_types/_u_char.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/bsd/sys/_types/_u_char.h",
+    "sha256": "50e11dbb6152079cdefd9eaf854e3182496130b651142e0fc08fcd1456802e81",
+    "size": 1405
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/bsd/sys/_types/_u_int.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/bsd/sys/_types/_u_int.h",
+    "sha256": "85e9858c13fdc4fb614948fbcadec5f5973dbf6874b97464044a3b4e23486978",
+    "size": 1401
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/bsd/sys/_types/_u_int16_t.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/bsd/sys/_types/_u_int16_t.h",
+    "sha256": "9dabbd8280c28416a5ba115355678d2540588df1a7251bd9b4a13e30c309a71b",
+    "size": 1433
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/bsd/sys/_types/_u_int32_t.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/bsd/sys/_types/_u_int32_t.h",
+    "sha256": "196cba7a865c086bba457758d3b2605a4c1299c54a758366b7d420a585895f1d",
+    "size": 1425
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/bsd/sys/_types/_u_int64_t.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/bsd/sys/_types/_u_int64_t.h",
+    "sha256": "d096eee54a5acc2c3cd5cf71256d69198ada8f8d82cdb0a717bc8ed65650ad93",
+    "size": 1425
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/bsd/sys/_types/_u_int8_t.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/bsd/sys/_types/_u_int8_t.h",
+    "sha256": "7505dbbdf3ecca2b8e585871ad81c0e67a3cb63c97c47abe73fe262e071a3ebb",
+    "size": 1421
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/bsd/sys/_types/_u_short.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/bsd/sys/_types/_u_short.h",
+    "sha256": "f78b1ac66a04e293df9a08ce2466401f50075a773c5f64000864b9d59ec4edc9",
+    "size": 1409
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/bsd/sys/_types/_uid_t.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/bsd/sys/_types/_uid_t.h",
+    "sha256": "d2140a65a17943a857381757c0b73a920f35ade41dc9809437c168be457c276a",
+    "size": 1458
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/bsd/sys/_types/_uintptr_t.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/bsd/sys/_types/_uintptr_t.h",
+    "sha256": "e435f739013a22883da08b7d8b8819d6fd421756d025b369fecdee90ff40eb39",
+    "size": 1678
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/bsd/sys/_types/_useconds_t.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/bsd/sys/_types/_useconds_t.h",
+    "sha256": "37c49808a92cc4417181adb1530cc24ca11cc89f064c6c0494a1aff981f92870",
+    "size": 1484
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/bsd/sys/_types/_uuid_t.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/bsd/sys/_types/_uuid_t.h",
+    "sha256": "ba8364ff4aed847f5ca3259e27fc2d1920432d02e8e79c7ac57ec043f1dc2842",
+    "size": 1456
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/bsd/sys/appleapiopts.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/bsd/sys/appleapiopts.h",
+    "sha256": "efd9793f56c08917cf1ddf5108b78240ede88a5bbc8977d6fdaf1684b6b01c1c",
+    "size": 2065
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/bsd/sys/cdefs.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/bsd/sys/cdefs.h",
+    "sha256": "6bab328310e9d4f9ff47f763f1fa8cf0000e25ce6be04a9743bf176ccdf94682",
+    "size": 53744
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/bsd/sys/kdebug.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/bsd/sys/kdebug.h",
+    "sha256": "2de3dbf38a86e687251d1251d4c353ad0687895d4a3f75aeb7173d6e566e34ec",
+    "size": 69420
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/bsd/sys/kdebug_kernel.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/bsd/sys/kdebug_kernel.h",
+    "sha256": "63fd55de165f6cfc7f6289d1f22035bb92c89f11a0d74791fc493d65612c233a",
+    "size": 18271
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/bsd/sys/kdebug_private.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/bsd/sys/kdebug_private.h",
+    "sha256": "96647ce7e511e567e9c2640074adc92f5427cbb356b23110872aa5964f341db2",
+    "size": 17561
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/bsd/sys/kern_sysctl.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/bsd/sys/kern_sysctl.h",
+    "sha256": "8b342563abba376ebffb13618dea13aee0238fb676af9a119aec2aa040cc2e7a",
+    "size": 2206
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/bsd/sys/reason.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/bsd/sys/reason.h",
+    "sha256": "8dc6b5266fe2c21b6ddb6cc97ac2ef0f972bc400038f409a3a70ebf42ba157ce",
+    "size": 16402
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/bsd/sys/resource_private.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/bsd/sys/resource_private.h",
+    "sha256": "176d0d8496a718d30c8caca1738b339428903e33d79a99c3e90195765b3b46ed",
+    "size": 7021
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/bsd/sys/types.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/bsd/sys/types.h",
+    "sha256": "f8b136bb10d56bb604e7b253f1ec23858d0b4ae21fe85eaede0ccc66afdb554a",
+    "size": 8802
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/bsd/uuid/uuid.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/bsd/uuid/uuid.h",
+    "sha256": "50ce8ec9cee87771ff8d7dc668954ff059c3fe4e960d857b5e7c69de5a81acb2",
+    "size": 2790
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/libkern/libkern/OSAtomic.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/libkern/libkern/OSAtomic.h",
+    "sha256": "4b1944153e479b7f06eb676d3d799730f3b257f8f704197db7e1c359871cdc82",
+    "size": 30964
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/libkern/libkern/OSBase.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/libkern/libkern/OSBase.h",
+    "sha256": "d3d2697a914bc09d7542651866598c5ea8eac1a6e7a089b1b9573afd5edfd345",
+    "size": 2778
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/libkern/libkern/OSByteOrder.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/libkern/libkern/OSByteOrder.h",
+    "sha256": "d17d3304cb999d80a98165490aa38e0a550a8a3fa914b764e906dd68681bd3c9",
+    "size": 10968
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/libkern/libkern/OSReturn.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/libkern/libkern/OSReturn.h",
+    "sha256": "1019477a9f4505a137be2ed14613b9aab1fff1d886b52f06c85ae7ad5cb317d2",
+    "size": 6572
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/libkern/libkern/OSTypes.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/libkern/libkern/OSTypes.h",
+    "sha256": "d69bfc819b4c2974d47feef84a9e02b91d723f0901db89e1685d0138a0494f08",
+    "size": 3494
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/libkern/libkern/_OSByteOrder.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/libkern/libkern/_OSByteOrder.h",
+    "sha256": "f0febaef6f9ec75339ebdd896dab2a6d1a1934628d76098f165f1db1b4b74c14",
+    "size": 3989
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/libkern/libkern/arm/OSByteOrder.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/libkern/libkern/arm/OSByteOrder.h",
+    "sha256": "31573a442ed7264879a7a5830be7f8b654e907628c4c7cc8758ed28927a37871",
+    "size": 4758
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/libkern/libkern/arm/_OSByteOrder.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/libkern/libkern/arm/_OSByteOrder.h",
+    "sha256": "7c686aa04afa38a20a0163eccca9941aeb8328779884c2603d8a9a773896a677",
+    "size": 2801
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/libkern/libkern/c++/OSArray.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/libkern/libkern/c++/OSArray.h",
+    "sha256": "078641c07822cc38b2c7b4eafdf4b4fef9ced3d083b59458d82103d43c551545",
+    "size": 22923
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/libkern/libkern/c++/OSBoolean.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/libkern/libkern/c++/OSBoolean.h",
+    "sha256": "08eeeaa74fc879be3627605a97d085f0bac81ffd401f38c35550ffebb67b6e73",
+    "size": 7512
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/libkern/libkern/c++/OSCollection.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/libkern/libkern/c++/OSCollection.h",
+    "sha256": "12d1fbdace076c2ce609e98f351d2e58c46c7fd18ca0c54ac9aa2393c4a28813",
+    "size": 15196
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/libkern/libkern/c++/OSCollectionIterator.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/libkern/libkern/c++/OSCollectionIterator.h",
+    "sha256": "1daa3b1a9e3f634a058e69a311e99b197d6c3a3100ea5c621fdfba72407acebb",
+    "size": 7877
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/libkern/libkern/c++/OSContainers.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/libkern/libkern/c++/OSContainers.h",
+    "sha256": "9880d5d1bce842e3a3999ecd3453e42a7b584f3073f332a5e8771ca3b54da479",
+    "size": 2012
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/libkern/libkern/c++/OSData.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/libkern/libkern/c++/OSData.h",
+    "sha256": "2d0694f507d94133683c10a54e73224c95f6011b74a6e07ec4d236f68de92636",
+    "size": 28042
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/libkern/libkern/c++/OSDictionary.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/libkern/libkern/c++/OSDictionary.h",
+    "sha256": "bfede57a39004d92b59df3cd68b301a116fed830ba0147f841d7da48930bf8fb",
+    "size": 31686
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/libkern/libkern/c++/OSIterator.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/libkern/libkern/c++/OSIterator.h",
+    "sha256": "7e2decf6a33148fe7082b460eabc8c1c84a70fee4e190a687699588c85146517",
+    "size": 4148
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/libkern/libkern/c++/OSMetaClass.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/libkern/libkern/c++/OSMetaClass.h",
+    "sha256": "24930e8b98f4b49c7e1b9271f47c8fc9e8c6c0f56f6acb41a0ba6be3116da771",
+    "size": 85777
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/libkern/libkern/c++/OSNumber.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/libkern/libkern/c++/OSNumber.h",
+    "sha256": "cdad364e79c106548e30d3972e384d57e55ed043748c4637b8eb7303c6c6337c",
+    "size": 13285
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/libkern/libkern/c++/OSObject.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/libkern/libkern/c++/OSObject.h",
+    "sha256": "cde117af53211f8f5736f48f477f8821becd478c7310e42ce73f310f0efa1014",
+    "size": 14731
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/libkern/libkern/c++/OSOrderedSet.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/libkern/libkern/c++/OSOrderedSet.h",
+    "sha256": "c76aa09fd0c76400b8527de1f9b682dd66600a4a9df99d4d27abb46bfc6e36ec",
+    "size": 24863
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/libkern/libkern/c++/OSPtr.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/libkern/libkern/c++/OSPtr.h",
+    "sha256": "bf9909387748721dd796a0466bf5b58c72fea51b77a32c7bcbec50be31764d3b",
+    "size": 4661
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/libkern/libkern/c++/OSSerialize.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/libkern/libkern/c++/OSSerialize.h",
+    "sha256": "50ba832c24740c2e33afeca54c7fd200eb801bb85f8fcb2c75a98dbe6bd57f5b",
+    "size": 10560
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/libkern/libkern/c++/OSSet.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/libkern/libkern/c++/OSSet.h",
+    "sha256": "38a4c427eb56b84e62451147f58ce64e7ebbe1fd70fa778cc1308deea8f9d37b",
+    "size": 24351
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/libkern/libkern/c++/OSSharedPtr.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/libkern/libkern/c++/OSSharedPtr.h",
+    "sha256": "760920935fcb2964dd9a6b78071658a4728d333e7c2f162b92240203d1fc31ad",
+    "size": 4594
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/libkern/libkern/c++/OSString.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/libkern/libkern/c++/OSString.h",
+    "sha256": "92f2c3342283b19b5d37f66a79f108071ddb3bd1b100bf8aba86c528a088e88d",
+    "size": 13996
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/libkern/libkern/c++/OSSymbol.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/libkern/libkern/c++/OSSymbol.h",
+    "sha256": "d98fbeed85d0b4d0ad4729bdaee6e5c852df6ca975a8bee2f6a295700a9189e7",
+    "size": 13632
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/libkern/libkern/c++/OSUnserialize.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/libkern/libkern/c++/OSUnserialize.h",
+    "sha256": "7ad50664216e46a72e9404371f35e692eef136a480741d3e14246c40cef7cb2e",
+    "size": 4268
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/libkern/libkern/c++/OSValueObject.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/libkern/libkern/c++/OSValueObject.h",
+    "sha256": "23ca6411368afb8e9447f460c71c8aff158a823ae5a431ea5553661410cc8efa",
+    "size": 14326
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/libkern/libkern/c++/intrusive_shared_ptr.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/libkern/libkern/c++/intrusive_shared_ptr.h",
+    "sha256": "dfc3f7cfb972c53c5f3981946f40b9a574f4e21601845cf44c99b896c015fc1b",
+    "size": 22145
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/libkern/libkern/crc.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/libkern/libkern/crc.h",
+    "sha256": "ee72e1c66e7fb88760ec8970354045554f5b2cfaef677f066cf369c41b82c623",
+    "size": 1544
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/libkern/libkern/kernel_mach_header.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/libkern/libkern/kernel_mach_header.h",
+    "sha256": "2d8f4bafba61fa0bc0f978d23a6e6ae7c5cd4db3f1a13e830eb57582edb01cbc",
+    "size": 4863
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/libkern/libkern/locks.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/libkern/libkern/locks.h",
+    "sha256": "1e0d33b32c1bf246b882c9ecbaa1d7b930e844413b4bfe721fdd8059cd9875d4",
+    "size": 1463
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/libkern/libkern/section_keywords.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/libkern/libkern/section_keywords.h",
+    "sha256": "cea60e2253977baa4b9bee2c49413bbc7e6850d81e79ffffa32cb3206b2b2e90",
+    "size": 4069
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/libkern/libkern/zconf.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/libkern/libkern/zconf.h",
+    "sha256": "71d589d47bebbe0f7ce5fc05210faf1e993d9622e85c882439c32456ff12d6ed",
+    "size": 10805
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/libkern/libkern/zlib.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/libkern/libkern/zlib.h",
+    "sha256": "a3aa40faa1ecb75e48f7d384fbbe281aa01d126e73a3afa29fbbe030f5c2303d",
+    "size": 67707
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/libkern/os/alloc_util.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/libkern/os/alloc_util.h",
+    "sha256": "e280a623fc43169e4d1832d032f88e7382bd719a9da21225d06170baa6a7e19f",
+    "size": 4104
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/libkern/os/atomic.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/libkern/os/atomic.h",
+    "sha256": "e96f307c2924b8372367006a9816e92cc4158906d95164aa3e452e34e5d9d249",
+    "size": 4905
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/libkern/os/base.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/libkern/os/base.h",
+    "sha256": "a671fc6fc89d3b1bf40bb8580fa8fd6be02e422c5a7453cf9c182e463d1bc240",
+    "size": 14390
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/libkern/os/cpp_util.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/libkern/os/cpp_util.h",
+    "sha256": "e957f06cfd6e27e6e5ed04309a774c83222027ec1c644bbfcee693ffd2ac1861",
+    "size": 4126
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/libkern/os/overflow.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/libkern/os/overflow.h",
+    "sha256": "776965f5343582b345fbe5c6d6b135cc0628d146105639e9339ba53eb69dc1de",
+    "size": 4404
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/libkern/os/refcnt.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/libkern/os/refcnt.h",
+    "sha256": "c7f6cf7ab1ce342b16210076697f967595297ad0035dfa9c207cf1be334ddfe4",
+    "size": 14791
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/libkern/os/refcnt_internal.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/libkern/os/refcnt_internal.h",
+    "sha256": "382d52b4242d0d7db02b0402963f6e16ea634fc1d5b4f087eeb0c4a02e724eca",
+    "size": 16161
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/arm/arch.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/arm/arch.h",
+    "sha256": "9c6c2b16a06afddccc63421fb96e0ba9a444051ba4c9e3a3249e1dfa27bc38cc",
+    "size": 2512
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/arm/cpu_number.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/arm/cpu_number.h",
+    "sha256": "da610f5bcb8ff05bcce9aaa2b77f7a605a39095afed1036273b853a2b213960d",
+    "size": 2715
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/arm/cpu_topology.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/arm/cpu_topology.h",
+    "sha256": "79a8d5c8f6413c3cce1bd7ffdb3a5ef7159f261a10eb3f54212225a3acfcd970",
+    "size": 4915
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/arm/locks.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/arm/locks.h",
+    "sha256": "9f4c82859db9d282083b645f85afdb5f4af2f23ffc3720698fcb1862e942ebe9",
+    "size": 6023
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/arm/machine_routines.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/arm/machine_routines.h",
+    "sha256": "6809e5bea8edbee9ca42f44732242fd1973cf77d4dc672a8ecb0b37c55c07600",
+    "size": 54587
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/arm/trap.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/arm/trap.h",
+    "sha256": "89438e50998c1cc9fb553184196e288f6217c93e759f96c362502b202e5bcd3c",
+    "size": 5150
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/arm64/proc_reg.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/arm64/proc_reg.h",
+    "sha256": "5bdb14d2cc33dfa5d771f81794dea0a961801331be519904c02fdc6141f57ab5",
+    "size": 151666
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/arm64/static_if.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/arm64/static_if.h",
+    "sha256": "6cf27f4c957ccbce7728731f01dabce5a73893e01c4be9ded1c1e9743176ec7b",
+    "size": 2468
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/device/device_types.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/device/device_types.h",
+    "sha256": "7609567f53ad917d2f52453e82a7f7feaf2f6f28ab474686f50de2a57c8681c4",
+    "size": 5627
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/ipc/ipc_types.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/ipc/ipc_types.h",
+    "sha256": "6fb613d82ae5e191db3353c8ebdafb1a51632c0fc0041ddafd3ab701528a8e7e",
+    "size": 10692
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/kern/assert.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/kern/assert.h",
+    "sha256": "a3f21d07d49c9e0671377c0ddb13dc590b16b5303b95a820d3baaa6b53b84705",
+    "size": 11538
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/kern/block_hint.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/kern/block_hint.h",
+    "sha256": "0ca1b0b32e23e5974aa7bd913d40a0fc34190472dc39ac9462f3eac7057d0e17",
+    "size": 5208
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/kern/btlog.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/kern/btlog.h",
+    "sha256": "8db55ea43397198096eb3c214bf08f62673998fb850f093c4a17e052ae883d14",
+    "size": 8437
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/kern/clock.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/kern/clock.h",
+    "sha256": "a2657effae6e918f73f815d9c53e73054cd0a716a38a3ccd77b71050e957afe6",
+    "size": 11305
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/kern/counter.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/kern/counter.h",
+    "sha256": "0c588f39122e61bfc7dce5f70c38bed6a49659dccac84980f5c0d1d00e227f6b",
+    "size": 8629
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/kern/cpc.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/kern/cpc.h",
+    "sha256": "c9dab0234d05d73cd600c1cd0fdd5d70118516ebe942b0cecddadb647d268302",
+    "size": 16504
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/kern/cpu_number.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/kern/cpu_number.h",
+    "sha256": "fa78e634ed9d045b102f817cb00764a67383836a58473c7a29ea5c6c19b0854e",
+    "size": 2604
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/kern/cs_blobs.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/kern/cs_blobs.h",
+    "sha256": "71179676100bab2b321abd888237d4a6eda0088489f9930a77559c517d8c7c80",
+    "size": 14256
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/kern/debug.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/kern/debug.h",
+    "sha256": "f000deaef2758c3a884fd7c2b3b3ca60056ea969338cab02709ccd8dec14d83c",
+    "size": 44627
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/kern/ipc_mig.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/kern/ipc_mig.h",
+    "sha256": "87a9f61cbf25277030e4d65ca0fb84110f81303cc3b7afea81d8d00aa2cdb596",
+    "size": 10722
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/kern/kalloc.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/kern/kalloc.h",
+    "sha256": "e35c4a659309664b788505d43954a4e4156936fc4a34d9b7165f2e729cc5c321",
+    "size": 75621
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/kern/kcdata.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/kern/kcdata.h",
+    "sha256": "5d0b57dad21635f8447ac407a71f8c9af6289d964e65fe7cda6f7b6c3643d715",
+    "size": 82486
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/kern/kern_cdata.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/kern/kern_cdata.h",
+    "sha256": "5892a7086b6b40ec2c1854773a0c9f837b4e438d1311bd6210f87647f50f4084",
+    "size": 8851
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/kern/kern_types.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/kern/kern_types.h",
+    "sha256": "eaed49802a4fd326b48817aecdc98e41dba78333fd55b09406bf6b952b02bf2d",
+    "size": 15771
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/kern/lock_attr.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/kern/lock_attr.h",
+    "sha256": "84f330230c5bc88e70efc6d7d250482dec76740dc0eef2e0ff2376147ed9c5fd",
+    "size": 2954
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/kern/lock_group.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/kern/lock_group.h",
+    "sha256": "7b512edaa69af215ef4396d359ce66fe83acd0b03b67e3c714b067eebe472727",
+    "size": 7523
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/kern/lock_mtx.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/kern/lock_mtx.h",
+    "sha256": "ba43afe3ffce0455e4ec3cc93e2c5d94b9dfb97a60247896822ead169d5c9ab9",
+    "size": 6468
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/kern/lock_rw.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/kern/lock_rw.h",
+    "sha256": "ffea3f6d5f54dd11c0dfaf5a820e9e64d85c3c0707917132e84d7beb2cf79a0e",
+    "size": 36581
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/kern/lock_types.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/kern/lock_types.h",
+    "sha256": "30872d3a3a9d3a0d5a1c93af69511ebd76f598fd84d55e4e1db12545dde0159a",
+    "size": 10703
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/kern/locks.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/kern/locks.h",
+    "sha256": "3563a9b9641b1c0861d888821c9858900a8147a295d8b8cba9f1a048b5e4882a",
+    "size": 45605
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/kern/macro_help.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/kern/macro_help.h",
+    "sha256": "6bf35433d7fab3ea45dd0e19dd0998f59974bf87b2cf2b661be9d45ab3789d24",
+    "size": 3078
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/kern/panic_call.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/kern/panic_call.h",
+    "sha256": "5b53c476887fdd0bee0662f2dfd486aa9a381c5158075000541906b7a218d5c3",
+    "size": 2622
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/kern/percpu.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/kern/percpu.h",
+    "sha256": "5b825dd9f6fcd520986482b142113d2124659dc57b78a8d35a29b72b987a221f",
+    "size": 9833
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/kern/priority_queue.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/kern/priority_queue.h",
+    "sha256": "673ab1518e2812d69d72e528a614361b40dbe6b382fdc51fe69e3f9f92e45076",
+    "size": 27526
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/kern/queue.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/kern/queue.h",
+    "sha256": "22fcc280afe600720c7471a3203429069e6865f1299e1f21ed0c6a6a3efee4c0",
+    "size": 42651
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/kern/recount.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/kern/recount.h",
+    "sha256": "cf4258ee00a273d7799a60b713db1cd61a659e422dbfac1eaa6214d8de5c6868",
+    "size": 17231
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/kern/sched_hygiene.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/kern/sched_hygiene.h",
+    "sha256": "7f07b590859930b72ba792a278cf020797bfaf0eba83e43b9df876c7425c2baf",
+    "size": 3231
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/kern/sched_prim.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/kern/sched_prim.h",
+    "sha256": "2e93366606b6c9f63c2537a27645f1a3340fdb74715ec58eeb98da741bc0608f",
+    "size": 39558
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/kern/smr_types.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/kern/smr_types.h",
+    "sha256": "3a43b50e194a553fca166c8e42f5768df8585d091968d0b1d819ff14e2c473c7",
+    "size": 4855
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/kern/startup.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/kern/startup.h",
+    "sha256": "7ecdf4816b2ff5c4d0f71e6b1e39d770ce78f72b04f5e5d3cb135422aabe10cc",
+    "size": 32404
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/kern/task.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/kern/task.h",
+    "sha256": "102b0b08628f94dbea11ed2577a3d13c5b3ee97aaf1f528bdfd5965e3640abc9",
+    "size": 64518
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/kern/task_ref.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/kern/task_ref.h",
+    "sha256": "b0f722ecde6c46b489ef92ffbeb7a95d4c9ab6464b1172b72cae50d6fd5bd665",
+    "size": 3294
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/kern/thread.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/kern/thread.h",
+    "sha256": "8ec270cc709f96ec8cdbc81ffb16396b015d7c8dafb58494dca2c13f86197650",
+    "size": 84850
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/kern/thread_call.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/kern/thread_call.h",
+    "sha256": "cf5ffaba639866b36a05ef333b612d000081163cecf811cc00357de934865629",
+    "size": 20017
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/kern/ticket_lock.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/kern/ticket_lock.h",
+    "sha256": "6ec16304fd14864e353b585d77b0191e18a4859ad4f2637d232da92a4f75a2a9",
+    "size": 12881
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/kern/trustcache.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/kern/trustcache.h",
+    "sha256": "60a71bb9b8fc7f1ee2d922c35acd04b606b7a6664cb4c0312f2293b5b80793e2",
+    "size": 3310
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/kern/upsi.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/kern/upsi.h",
+    "sha256": "f71506586c36e94daeee331f8702d59e5279f74f0681eddfac7c05c40e9f513a",
+    "size": 2915
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/kern/waitq.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/kern/waitq.h",
+    "sha256": "a7d899b33a212db114213b127085ac07cc99327a3e5f1c9c6314d9732c6ca84a",
+    "size": 34460
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/kern/zalloc.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/kern/zalloc.h",
+    "sha256": "3a0b2a1b7cd6c8c1c84eb9142782d856346c48e16a98c925fb63f03c6f688bf3",
+    "size": 76203
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/mach/arm/_structs.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/mach/arm/_structs.h",
+    "sha256": "3de0bd03d3a22417842b7fa9f68de09ce20a4bc3ace30d1124954f45b8c430a2",
+    "size": 33520
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/mach/arm/boolean.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/mach/arm/boolean.h",
+    "sha256": "03ceda8c88250b93a3bebca92e03dd558e13fe68e83eff6bba5db32f95b48b6d",
+    "size": 2677
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/mach/arm/exception.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/mach/arm/exception.h",
+    "sha256": "edeb4622bd932b3ac8bf46888fb8a44a9fa5aa63f94f26ca06793848d36972f4",
+    "size": 3709
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/mach/arm/kern_return.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/mach/arm/kern_return.h",
+    "sha256": "c06cb329babef0663cd8c86b5e5f545fafc8d8659bb83cef75506281187ef9f1",
+    "size": 2828
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/mach/arm/processor_info.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/mach/arm/processor_info.h",
+    "sha256": "221c68381baa90adc77aff8e73cb374f9818534ed6f1661ab1ac1313d3bbb7c6",
+    "size": 2779
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/mach/arm/sdt_isa.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/mach/arm/sdt_isa.h",
+    "sha256": "d1c70346443402e2e33603025bc61face4d7cc1d6513d9383f40d1ad541df2f5",
+    "size": 13981
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/mach/arm/thread_state.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/mach/arm/thread_state.h",
+    "sha256": "ab91af1d14bd3ff1e028709e7d4db215eac0df620ff81ad3aa38ae295a50aed0",
+    "size": 1695
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/mach/arm/thread_status.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/mach/arm/thread_status.h",
+    "sha256": "60434026c659eebe0137ad2dd6536637e7330cf355958f580afe95bc34a82e95",
+    "size": 37302
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/mach/arm/vm_param.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/mach/arm/vm_param.h",
+    "sha256": "26187787a868e33b75c2a5e5e289166ccf442589eac163f7d3e18954bfcf5d36",
+    "size": 15289
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/mach/arm/vm_types.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/mach/arm/vm_types.h",
+    "sha256": "b2deb6cfadc2972a42f698b1822393d240f96c1f91426f4f087e0cffc367225d",
+    "size": 5980
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/mach/boolean.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/mach/boolean.h",
+    "sha256": "c050da6ed29d186ac403c0ba187031aca3ac32da2b4e618e0d0c8ba1b7665523",
+    "size": 2823
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/mach/clock.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/mach/clock.h",
+    "sha256": "a585e3cd0647600450d10cbd9c04dd8b373e71bcee3ff0a6071521f2ed0d21cd",
+    "size": 6299
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/mach/clock_priv.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/mach/clock_priv.h",
+    "sha256": "86a9c286baf87975efaaf36326aa35b4e3819d063c62cfd735fc4778d7007e1a",
+    "size": 5357
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/mach/clock_reply_server.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/mach/clock_reply_server.h",
+    "sha256": "7f28a0ea82331d3110679065a4ad869ee13cec49f57ed342a4398c3e7e8be1c4",
+    "size": 4670
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/mach/clock_types.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/mach/clock_types.h",
+    "sha256": "713a82de87f460e5f03d7e29951166ebab75a387b8245ab8bff0725c04f689e3",
+    "size": 4947
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/mach/dyld_kernel.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/mach/dyld_kernel.h",
+    "sha256": "1fceeeca56348b1aad6e6c97d5b12c5616094459fad45676b0bd57cb603a9c83",
+    "size": 2623
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/mach/error.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/mach/error.h",
+    "sha256": "bd288ca8dab37bee91ab75cb3ed6238be9bbffae3c687f4cb54057bba6467d8d",
+    "size": 4396
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/mach/exc_server.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/mach/exc_server.h",
+    "sha256": "3fcd2e12e77ff2e82cac71098e5d33393fa230f8a7770e1f54a60ae9646f5843",
+    "size": 7744
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/mach/exception_types.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/mach/exception_types.h",
+    "sha256": "3db55e989a5f098fb0fc92faa0f855fbdeaaa5ed68c0f27eb4f8d28ecb560f60",
+    "size": 8926
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/mach/host_info.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/mach/host_info.h",
+    "sha256": "cd4868e7151b298ae314225d4d53d2e9e01849902e3c098f12947252a7d9fa26",
+    "size": 13652
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/mach/host_notify.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/mach/host_notify.h",
+    "sha256": "31b3050a653a792d3f40294224d5edd5d0257611b48c34e123ee3296b7bf181a",
+    "size": 1672
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/mach/host_priv.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/mach/host_priv.h",
+    "sha256": "d2e965e9026f2bf42d3ec05530fd6179e9c49160b4e783d767e1d73937ff0016",
+    "size": 28511
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/mach/host_security.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/mach/host_security.h",
+    "sha256": "4432dde9bd8a5a5dbad634c0e18d4dcba3d3ce828aeebbf1245fd0ebc0db1fd0",
+    "size": 6410
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/mach/host_special_ports.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/mach/host_special_ports.h",
+    "sha256": "41fd94666f924c5b9b00e31e0fe7a3d3ec6fc4b89d3c56b58212041f2a197582",
+    "size": 13272
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/mach/kern_return.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/mach/kern_return.h",
+    "sha256": "2d4b89f7cf91cf7bffafe457cdba8884c3f2e5596a9ef7d5e4a9ea4b239558d8",
+    "size": 10102
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/mach/kmod.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/mach/kmod.h",
+    "sha256": "a8fcc1de6620c9484ff96f699d20d37e2b1504615f2acfc547e8f0d14198a2f7",
+    "size": 7060
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/mach/mach_exc_server.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/mach/mach_exc_server.h",
+    "sha256": "ce661ff1d0e9b66667d9ce6f7701eb0c929e7fcd65828b6e33abb3ba5a19ded9",
+    "size": 8023
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/mach/mach_host.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/mach/mach_host.h",
+    "sha256": "448f30514d94bc753a3b8fec6e7b184448ef7e4432f3ac33425c46c1481d084a",
+    "size": 35082
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/mach/mach_interface.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/mach/mach_interface.h",
+    "sha256": "7cdd657ba2f518372b279cdd9f869ce668362984684d69d24e200f7a840f5f63",
+    "size": 2021
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/mach/mach_param.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/mach/mach_param.h",
+    "sha256": "eb32eacc91c909cdc66a60a13f79c16cbd7b79cd33aadc9d1772fe71800d8756",
+    "size": 3093
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/mach/mach_port.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/mach/mach_port.h",
+    "sha256": "1d02fff17e5a973573fd090ee7d1d6790d753dd0b3b456271bac10ac978e24d5",
+    "size": 47197
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/mach/mach_time.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/mach/mach_time.h",
+    "sha256": "290e3d9e024cc78eda74f48887acd805f529761e41985571ca61deb3fc4dee91",
+    "size": 2880
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/mach/mach_time_private.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/mach/mach_time_private.h",
+    "sha256": "5851df05aacc2651418ee83aaa0a1d808a1f22d49a53f2a74abd9f9110df1e9c",
+    "size": 2016
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/mach/mach_types.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/mach/mach_types.h",
+    "sha256": "0166774797ca719586f60a87da5e3cd44932a18388c5a613fc2c71ae548ad196",
+    "size": 15577
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/mach/mach_voucher_types.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/mach/mach_voucher_types.h",
+    "sha256": "4929276adfbc2c80a2df1d62ff0549037536cdf3e9b93b328fb28f70a63ec261",
+    "size": 11346
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/mach/machine.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/mach/machine.h",
+    "sha256": "75117a186aa6a2683690b487c1ce19b52b3151340dd5301877d46bbe832a11c5",
+    "size": 19330
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/mach/machine/_structs.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/mach/machine/_structs.h",
+    "sha256": "410350f04225bf139bd89f1a99418a55734e4ab2101bb93dc301f790a130f59c",
+    "size": 1633
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/mach/machine/boolean.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/mach/machine/boolean.h",
+    "sha256": "a22e0c8c541b9117a86d85ab4a977eda49917a9867b24576f5972b6fa6554f23",
+    "size": 1633
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/mach/machine/exception.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/mach/machine/exception.h",
+    "sha256": "50a572de0f7b9ddd7925debb3de372a1535baa0a6955c53e5709cbbf3947be94",
+    "size": 1643
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/mach/machine/kern_return.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/mach/machine/kern_return.h",
+    "sha256": "160d3b4460244b7f469a34f3030071bd717d2918cb748527c1207ca78310d51d",
+    "size": 1653
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/mach/machine/processor_info.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/mach/machine/processor_info.h",
+    "sha256": "806acb7cca13b111b07ca0aee27c12e72ea264d7e9220ceaeb2c24889129fd1b",
+    "size": 1668
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/mach/machine/sdt.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/mach/machine/sdt.h",
+    "sha256": "14ce6242f160de3837971d283c5671468f0070d69b329f48269dc4d68200132a",
+    "size": 18570
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/mach/machine/sdt_isa.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/mach/machine/sdt_isa.h",
+    "sha256": "f832143587113bde3dd0f22ae4d1633eae11fc3033cde1c7e9a60b7129fb7fb1",
+    "size": 1631
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/mach/machine/thread_state.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/mach/machine/thread_state.h",
+    "sha256": "c3f5251c26e2bd1eaad3d57df544254e8ce4ffadde120c5394badcf24f9d6086",
+    "size": 2151
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/mach/machine/thread_status.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/mach/machine/thread_status.h",
+    "sha256": "756a3db7289b7cea839f9bd9e9556427ab3c9effa77e552bdc9b2e6e096d2f7c",
+    "size": 1663
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/mach/machine/vm_param.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/mach/machine/vm_param.h",
+    "sha256": "574cf089b3d18d6334da1339692ffff16d15d5064692af27fc0a94042603a2d8",
+    "size": 1638
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/mach/machine/vm_types.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/mach/machine/vm_types.h",
+    "sha256": "1c2a4ff4b5843ded602775a447494f353a295015ca8d913a0a13439f4ee28654",
+    "size": 1638
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/mach/memory_object_types.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/mach/memory_object_types.h",
+    "sha256": "36ee8a97db3a6c75bea294e81516c99af2479ef5c21530ea0c76c6a8874d4939",
+    "size": 28826
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/mach/message.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/mach/message.h",
+    "sha256": "ce1b7c102909919c8a15e984ab4279c2a54f09301c3641b0a3151dd4d7242465",
+    "size": 64970
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/mach/mig.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/mach/mig.h",
+    "sha256": "f28d4093d58f9ea2e8f4b8fdc0a4d34793bbca0f963a15f54b5bb96012fde380",
+    "size": 8203
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/mach/mig_errors.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/mach/mig_errors.h",
+    "sha256": "5f9b82c31996cb2929d7bca5acb91ff5ffb1959e74da7e47deef1e25033a89c6",
+    "size": 4614
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/mach/mig_strncpy_zerofill_support.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/mach/mig_strncpy_zerofill_support.h",
+    "sha256": "20937df811221e2b01bed456cd369a326606ff6f020f9346941f4a688a77118e",
+    "size": 1750
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/mach/ndr.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/mach/ndr.h",
+    "sha256": "2fe22ecac00808ca9c927748c58f51844fdb3b70f4d0f95cebe1e7fe15ff400c",
+    "size": 6775
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/mach/notify.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/mach/notify.h",
+    "sha256": "27e62c4585f9b23413df9bf0ce50cf777d619e70d99a63f7132fedaed98b3343",
+    "size": 5121
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/mach/notify_server.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/mach/notify_server.h",
+    "sha256": "e0d7a13f849c48c543780d79024e2a036e73212a5b3fcfdec0e02ec19002f413",
+    "size": 8180
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/mach/policy.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/mach/policy.h",
+    "sha256": "a457c6acb170fab0e17c517959c01098c9625960e1d077d232a89a5b288595b8",
+    "size": 7826
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/mach/port.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/mach/port.h",
+    "sha256": "5e1ddb4f2f620636bbdc245c142504ac221bbc7c1694d55968925702d4b13367",
+    "size": 34495
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/mach/processor.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/mach/processor.h",
+    "sha256": "38346be85c982b3338d8b010b97e64971fb3aba669fbb431889d229b5a75e545",
+    "size": 9091
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/mach/processor_info.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/mach/processor_info.h",
+    "sha256": "d96524e982971ed9f369f12247484c8cd956f7aae70e13b7afdc506b80d2f0da",
+    "size": 6632
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/mach/processor_set.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/mach/processor_set.h",
+    "sha256": "dd9d122040de1765f297bb62724666cffb2df51ea9ea49486616133c9bde2102",
+    "size": 15032
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/mach/sdt.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/mach/sdt.h",
+    "sha256": "801a8b5ccfd9ec3c069a4c318f26cedd6611df0a4e0fc9565d1cf1f432756660",
+    "size": 1047
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/mach/semaphore.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/mach/semaphore.h",
+    "sha256": "7fed6106a3e3a677a617b1e2e35f083b97d3067b8c80146aa3e5d83bdc41190d",
+    "size": 4517
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/mach/sfi_class.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/mach/sfi_class.h",
+    "sha256": "41149e08268a99d4c218352487962cc1efebb80146543bcac6af45226e141bf6",
+    "size": 4801
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/mach/std_types.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/mach/std_types.h",
+    "sha256": "839d581eb7f1b8ac5d74ed9506fd11f49e287e0c2fb39ffc62f9139dffcdf3fb",
+    "size": 2741
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/mach/sync_policy.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/mach/sync_policy.h",
+    "sha256": "f6eefc41523b41dee1bac5023b5df3018174512fb265f7ce018ba9b3098bbcd2",
+    "size": 2193
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/mach/task.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/mach/task.h",
+    "sha256": "7fea7e1380bf4d0fb029cfbbfd9aa8a369abf8019a07ce80cba0375773ae6ebc",
+    "size": 70724
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/mach/task_info.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/mach/task_info.h",
+    "sha256": "cd6ba7987c82173c98727ed74f5fc651b04719fbeb36e292949618610f7c8c3a",
+    "size": 27219
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/mach/task_inspect.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/mach/task_inspect.h",
+    "sha256": "686e81a4c1c01904b6ce238d98341bc9652dffe7df3e78c2814f12957de04471",
+    "size": 2054
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/mach/task_policy.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/mach/task_policy.h",
+    "sha256": "5c36b1930eeba0bc4402bb92a602beb63779f93187d7ea686c03dd0b1105a75e",
+    "size": 7399
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/mach/task_policy_private.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/mach/task_policy_private.h",
+    "sha256": "23fe4782b6a9f3ceb75194a871390038eb41e66c4c5c6777e2d69758a098dcef",
+    "size": 13972
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/mach/task_special_ports.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/mach/task_special_ports.h",
+    "sha256": "1229346aa214a879cc8661c1e97752a2a8722b1734add4b43089c834731c088a",
+    "size": 5071
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/mach/thread_act.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/mach/thread_act.h",
+    "sha256": "1665792c2583dfd092b658bfad8cc1838c9f3069ed5f134138f188c9f8cdc160",
+    "size": 37028
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/mach/thread_info.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/mach/thread_info.h",
+    "sha256": "331d64126eec283f88dedb84a69561ebf8ed44c54306b58d941576ff6aa2215f",
+    "size": 8714
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/mach/thread_policy.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/mach/thread_policy.h",
+    "sha256": "cdc73aeb855ad0e5df527150affcba57ef3500da3f7a3632648de6748f15285f",
+    "size": 9353
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/mach/thread_policy_private.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/mach/thread_policy_private.h",
+    "sha256": "745d86aaf62b50c495fe946e3387f0b1e5de455a911d7ef75896d840685a0dc0",
+    "size": 12062
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/mach/thread_special_ports.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/mach/thread_special_ports.h",
+    "sha256": "e1bede553979e7d79b9035c351d303a68f1d0384de5e8098929f07d04f34beb1",
+    "size": 3326
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/mach/thread_status.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/mach/thread_status.h",
+    "sha256": "ebffe87f2b535072fb6d6da945fbcdd6da7e6eab26bcb5383807d34e0299162b",
+    "size": 3768
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/mach/time_value.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/mach/time_value.h",
+    "sha256": "b11b0606d2f5f44bd0fa1728928ff6dd301b42d67d5ab2c035a84be85f1f7b21",
+    "size": 3570
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/mach/upl.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/mach/upl.h",
+    "sha256": "eb71ec907e7cafa8aa30b7e38710effb6bdca874acc818b4fe44721153e5da82",
+    "size": 7012
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/mach/vm_attributes.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/mach/vm_attributes.h",
+    "sha256": "b00af7534a5025e955c6dec28e8ab2085f652fc59d000f45cf1f9fbe39579222",
+    "size": 3812
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/mach/vm_behavior.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/mach/vm_behavior.h",
+    "sha256": "e721e36e652826189f90425c7e6ba62b7f932e3a42201a0e7a7d44a82a1dab94",
+    "size": 3521
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/mach/vm_inherit.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/mach/vm_inherit.h",
+    "sha256": "db0db4c2ca0627076fab369bab78820d16dc156c83fcd62181c4fcf30507dacd",
+    "size": 3502
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/mach/vm_map.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/mach/vm_map.h",
+    "sha256": "5177468bd7116dd36e0ea23a8f219f0fab39d180100b0cc34cab8c398e4cf9fa",
+    "size": 35187
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/mach/vm_param.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/mach/vm_param.h",
+    "sha256": "a239321abc0bcdf480bfb7210fcfa58676e035f4c15eec6e6d9f284698e837cb",
+    "size": 23950
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/mach/vm_prot.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/mach/vm_prot.h",
+    "sha256": "9bd46e36981064d2bf7230d455284e5ffc0d810c3d5fa4b9a99dafe238cb13ef",
+    "size": 6889
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/mach/vm_purgable.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/mach/vm_purgable.h",
+    "sha256": "b92939147f96ca880e189829d6f134d88e766070052040fd4b3d22ac8abec4ba",
+    "size": 7478
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/mach/vm_region.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/mach/vm_region.h",
+    "sha256": "7f7538a6bb2fbff412ec57a518c11ba21556ba62f912e06e93792be185945dc6",
+    "size": 15958
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/mach/vm_statistics.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/mach/vm_statistics.h",
+    "sha256": "47bc5404b7d21b27a6a6b30c8f94c9c21bf217bcc8d167f27f3a3f8c85be384f",
+    "size": 39255
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/mach/vm_sync.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/mach/vm_sync.h",
+    "sha256": "8a55361f3fb89f212e4f1c57d29c5e32a9d72e346f989202748b1fe96d09d8f1",
+    "size": 3286
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/mach/vm_types.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/mach/vm_types.h",
+    "sha256": "78229ab12fce5873e9b92618d7762554b17e255bde1e8b51fe72e2c8dd95c0f3",
+    "size": 10021
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/mach/vm_types_unsafe.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/mach/vm_types_unsafe.h",
+    "sha256": "a4b9ae2dfb9478718b8204df5ea81f061c2066c086d3d68edf52adef8720086b",
+    "size": 8789
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/mach_debug/hash_info.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/mach_debug/hash_info.h",
+    "sha256": "43856caea0a9d8c799083e6ff5f2f1806e18ea66fad8e657f83fa4df77e94078",
+    "size": 2844
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/mach_debug/ipc_info.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/mach_debug/ipc_info.h",
+    "sha256": "99cc388f6be292feea3ecf344dacb5d0e43f9eae10eb7e3957dee679fc929828",
+    "size": 7970
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/mach_debug/lockgroup_info.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/mach_debug/lockgroup_info.h",
+    "sha256": "a009f5856efa59f9e6010447e4b9f38777ff2c624af23abb5dd028a35e99df2e",
+    "size": 2681
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/mach_debug/mach_debug_types.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/mach_debug/mach_debug_types.h",
+    "sha256": "40fd2fb8998d29e2dbfaaf4ef8540bdebb3e1ebae749b6e82b1d511c8f5113bd",
+    "size": 8927
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/mach_debug/page_info.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/mach_debug/page_info.h",
+    "sha256": "9c7143b9e06a8b94cc27d98374275699f930ba286e6cbe7193f65d06930d08e6",
+    "size": 2577
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/mach_debug/vm_info.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/mach_debug/vm_info.h",
+    "sha256": "6fff640b0422da5f051f6373c053a4bc56b800e79fd58baaab50ad3b76fb8892",
+    "size": 6030
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/mach_debug/zone_info.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/mach_debug/zone_info.h",
+    "sha256": "1f919b1ca0f8b4f6ea4f767701d50965c2a6d2b3e8bafca8f5ddb05f60c93cb1",
+    "size": 7423
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/machine/cpu_number.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/machine/cpu_number.h",
+    "sha256": "9b85c05365b8cf50ddce6724444afb6be9a32523e3dd8f56ba10a45e3453a900",
+    "size": 1674
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/machine/locks.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/machine/locks.h",
+    "sha256": "0650343b50c27f44e5a3f68ab742e2acdd3aaddfae50a107c4f554832120d08d",
+    "size": 1598
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/machine/machine_routines.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/machine/machine_routines.h",
+    "sha256": "7bad793d520b1b887657ac2b4f71be8bec2d1f8544f604b0dc19c81751dfc28d",
+    "size": 16780
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/machine/static_if.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/machine/static_if.h",
+    "sha256": "83be3de6d7f1f38f46f676e7c4e293b52e4ce7ab3a156bb4193e895876c4e9e5",
+    "size": 10129
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/machine/trap.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/machine/trap.h",
+    "sha256": "d19bf3d489a712646ab7ac8c4dce4e4ce00ffc864554a435851726f648f1d4a6",
+    "size": 3962
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/string.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/string.h",
+    "sha256": "630b7c4668cd1ed1995fd6b3fc4a1e1f33d592f1bb100f4c6a00e58a819fb514",
+    "size": 31064
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/vm/pmap.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/vm/pmap.h",
+    "sha256": "a9841f9ce3edf182c43f3205095a19221d5d17089a044166184951b6ba014c08",
+    "size": 39515
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/vm/vm_kern.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/vm/vm_kern.h",
+    "sha256": "bcec7a441c1ae0c71c8a35a58f77b9b208b415cf822edc3aaace9a8c21f73428",
+    "size": 14613
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/vm/vm_map.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/vm/vm_map.h",
+    "sha256": "afa99bb36339583e4a97c2e38a631c56406010d12bad26abea095b5a399ed142",
+    "size": 18399
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/vm/vm_memtag.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/vm/vm_memtag.h",
+    "sha256": "a574d3955cc5d6bf1e4c4c449600b8b276641b1b4b41867389c0511aec83f3e5",
+    "size": 7328
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/vm/vm_options.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/vm/vm_options.h",
+    "sha256": "caaeacc6a3a365f0f694ae95c8222f278b86f73601f049e13c42ef65b8266bf8",
+    "size": 2684
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/vm/vm_protos.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/vm/vm_protos.h",
+    "sha256": "139149bac8a9ab52922eec215ee4b0bea4512c88e6d36b2e9cf0cb57ca44d2d1",
+    "size": 18662
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/pexpert/pexpert/arm/consistent_debug.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/pexpert/pexpert/arm/consistent_debug.h",
+    "sha256": "b3fec17406455918e4b836e9f02d6329d8b39b89ea9ffb2709eba99f3fdf02a8",
+    "size": 5501
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/pexpert/pexpert/arm/protos.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/pexpert/pexpert/arm/protos.h",
+    "sha256": "b667af4a892e4ac96c76039a0e0771aa55c4ae80e6d065d4e11c36dedbf082cd",
+    "size": 1526
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/pexpert/pexpert/arm64/BCM2837.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/pexpert/pexpert/arm64/BCM2837.h",
+    "sha256": "72f19d77aeae88bbf67c75091f0041388fc41192ee5181d49d238889929c8d51",
+    "size": 868
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/pexpert/pexpert/arm64/board_config.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/pexpert/pexpert/arm64/board_config.h",
+    "sha256": "0e1e3e12f44de907a4fe70f5a7f865ebc4fbfbcdfa0731646a8041e47fe3e02f",
+    "size": 12281
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/pexpert/pexpert/arm64/boot.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/pexpert/pexpert/arm64/boot.h",
+    "sha256": "479a74f100116358a0e425d8deefc62c5bcbee72e49e69721c9e2d9c53465cd3",
+    "size": 2805
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/pexpert/pexpert/boot.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/pexpert/pexpert/boot.h",
+    "sha256": "3273a124a1b743e7bf53252e5a2ce158aa63090a25467d6b95e8024a39e3aa4b",
+    "size": 1446
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/pexpert/pexpert/machine/boot.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/pexpert/pexpert/machine/boot.h",
+    "sha256": "208e5c5cacd10b9f1c9c5c39a7e66dba22d88a8d3e71ad4b7acc2f455a774bd0",
+    "size": 1940
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/pexpert/pexpert/pexpert.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/pexpert/pexpert/pexpert.h",
+    "sha256": "ac8e38e00647ad7165a539cd4719cec4ab341668abe85d49e15ac9be6c672fbc",
+    "size": 17001
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/san/san/memintrinsics.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/san/san/memintrinsics.h",
+    "sha256": "985fccdd08b78522cf15159e031061e4678941ee22d83c1ba010f0e624a7b0eb",
+    "size": 8969
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/san/kasan-denylist-arm64",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/san/kasan-denylist-arm64",
+    "sha256": "f7204389edeff13a193f117f7d01e8f6292d12a617f700a44c43d339b2c65c3d",
+    "size": 5490
+  },
+  {
+    "path": "/work/route-a-continue-20261123/toolchain/llvm/lib/clang/24/include/__stdarg___gnuc_va_list.h",
+    "realpath": "/work/route-a-continue-20261123/toolchain/llvm/lib/clang/24/include/__stdarg___gnuc_va_list.h",
+    "sha256": "feca975bfdfb254d17458a8e3d51f8ad6d9bdc9fd6287727f0f8b2fb81fcb0b0",
+    "size": 467
+  },
+  {
+    "path": "/work/route-a-continue-20261123/toolchain/llvm/lib/clang/24/include/__stdarg___va_copy.h",
+    "realpath": "/work/route-a-continue-20261123/toolchain/llvm/lib/clang/24/include/__stdarg___va_copy.h",
+    "sha256": "f0a8d3c963338173f2d57b2cbc209dde38c90536107b15eb0cf78166d4caee1f",
+    "size": 445
+  },
+  {
+    "path": "/work/route-a-continue-20261123/toolchain/llvm/lib/clang/24/include/__stdarg_header_macro.h",
+    "realpath": "/work/route-a-continue-20261123/toolchain/llvm/lib/clang/24/include/__stdarg_header_macro.h",
+    "sha256": "7b3fbcc442af2508f36bb2dc98d9ad2b8a1f5c0f5333394fb2159c8bd5ecd5b8",
+    "size": 417
+  },
+  {
+    "path": "/work/route-a-continue-20261123/toolchain/llvm/lib/clang/24/include/__stdarg_va_arg.h",
+    "realpath": "/work/route-a-continue-20261123/toolchain/llvm/lib/clang/24/include/__stdarg_va_arg.h",
+    "sha256": "274c75a1db86f649439aa3bcc1dead4170725e6f803925c3fc38a2e93307afdc",
+    "size": 771
+  },
+  {
+    "path": "/work/route-a-continue-20261123/toolchain/llvm/lib/clang/24/include/__stdarg_va_copy.h",
+    "realpath": "/work/route-a-continue-20261123/toolchain/llvm/lib/clang/24/include/__stdarg_va_copy.h",
+    "sha256": "bb195f56cb08d4cee6a60bd9f62f34466e8ac4f89f6fed043b044cb2f7ead010",
+    "size": 451
+  },
+  {
+    "path": "/work/route-a-continue-20261123/toolchain/llvm/lib/clang/24/include/__stdarg_va_list.h",
+    "realpath": "/work/route-a-continue-20261123/toolchain/llvm/lib/clang/24/include/__stdarg_va_list.h",
+    "sha256": "81c3055f7033e26e7f53705653bc9d69b5202f25c2692e03b3a4f77ff44a7d76",
+    "size": 448
+  },
+  {
+    "path": "/work/route-a-continue-20261123/toolchain/llvm/lib/clang/24/include/stdarg.h",
+    "realpath": "/work/route-a-continue-20261123/toolchain/llvm/lib/clang/24/include/stdarg.h",
+    "sha256": "ce6e43d79dc89b50208ecf259b1ffd519f5a78cd3a2c7fcaac6386f376b89fef",
+    "size": 2497
+  },
+  {
+    "path": "/work/route-a-continue-20261123/toolchain/llvm/lib/clang/24/include/stdatomic.h",
+    "realpath": "/work/route-a-continue-20261123/toolchain/llvm/lib/clang/24/include/stdatomic.h",
+    "sha256": "728b690f127fc85faa32b9031e3a0019da92f77db92ca91b749571e45617a9ea",
+    "size": 8662
+  },
+  {
+    "path": "/work/route-a-continue-20261123/toolchain/llvm/lib/clang/24/include/stdbool.h",
+    "realpath": "/work/route-a-continue-20261123/toolchain/llvm/lib/clang/24/include/stdbool.h",
+    "sha256": "48655faf4ebd4ca0af26a1ee8e3e16f8dc68385c9cd550ffb3629320681305b3",
+    "size": 1172
+  },
+  {
+    "path": "/work/route-a-platform-20261124/attempt-002/sources/ArmCpu/ArmCpu.cpp",
+    "realpath": "/work/route-a-platform-20261124/attempt-002/sources/ArmCpu/ArmCpu.cpp",
+    "sha256": "2518e60ea9cffce9664a1761e9280d18e6a3d9d0e0beb7756ac7b71d1b14edfd",
+    "size": 72191
+  },
+  {
+    "path": "/work/route-a-platform-20261124/attempt-002/sources/ArmCpu/ArmCpuSleep.h",
+    "realpath": "/work/route-a-platform-20261124/attempt-002/sources/ArmCpu/ArmCpuSleep.h",
+    "sha256": "b5194745e8414caccfc801e5e925f52fca4c712872696eeaecb49374139e3830",
+    "size": 6159
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/DEVELOPMENT_ARM64_BCM2837/iokit/DEVELOPMENT/DriverKit/IOMemoryDescriptor.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/DEVELOPMENT_ARM64_BCM2837/iokit/DEVELOPMENT/DriverKit/IOMemoryDescriptor.h",
+    "sha256": "185fb4ce12ab0d370061c5dc0bf8fed1700af2daf423f2ea7ba59ab643e6bf56",
+    "size": 13001
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/DEVELOPMENT_ARM64_BCM2837/iokit/DEVELOPMENT/DriverKit/IOMemoryMap.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/DEVELOPMENT_ARM64_BCM2837/iokit/DEVELOPMENT/DriverKit/IOMemoryMap.h",
+    "sha256": "6ef8f7b33cf4b4bbfd1021fbad2ea7c73bec53ed80109074ce98a076f6a299a6",
+    "size": 5250
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/DEVELOPMENT_ARM64_BCM2837/iokit/DEVELOPMENT/DriverKit/IOService.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/DEVELOPMENT_ARM64_BCM2837/iokit/DEVELOPMENT/DriverKit/IOService.h",
+    "sha256": "4b779d160b3c59abdc1cd731303478c296d03b07c740fdb264e5cd6826b4e3f7",
+    "size": 53873
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/DEVELOPMENT_ARM64_BCM2837/iokit/DEVELOPMENT/DriverKit/OSObject.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/DEVELOPMENT_ARM64_BCM2837/iokit/DEVELOPMENT/DriverKit/OSObject.h",
+    "sha256": "f7a089df798052ebde3f2372e6ac39806042329c6b771d629a98988280af4d1c",
+    "size": 13727
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/DEVELOPMENT_ARM64_BCM2837/iokit/DEVELOPMENT/config_dtrace.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/DEVELOPMENT_ARM64_BCM2837/iokit/DEVELOPMENT/config_dtrace.h",
+    "sha256": "f8c1ac08c61f8115dc74a10c8cf23803d5d1ba6db06dbdad96562c66f60832c9",
+    "size": 24
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/DEVELOPMENT_ARM64_BCM2837/iokit/DEVELOPMENT/crypto.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/DEVELOPMENT_ARM64_BCM2837/iokit/DEVELOPMENT/crypto.h",
+    "sha256": "f539558eeb8cb90cb31c83651d0a990de9aba2c86b2b0e1dc680ced5a30d3a57",
+    "size": 17
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/DEVELOPMENT_ARM64_BCM2837/iokit/DEVELOPMENT/hibernation.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/DEVELOPMENT_ARM64_BCM2837/iokit/DEVELOPMENT/hibernation.h",
+    "sha256": "74e3720b223356e924a95605d1d4e5b5f2828de147cd9a01af5e869efd83b969",
+    "size": 22
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/DEVELOPMENT_ARM64_BCM2837/iokit/DEVELOPMENT/iokitcpp.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/DEVELOPMENT_ARM64_BCM2837/iokit/DEVELOPMENT/iokitcpp.h",
+    "sha256": "09da9be8942ea8ec0f176e304998f408834bf53d4c6f03c91d7195f10e89da81",
+    "size": 19
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/DEVELOPMENT_ARM64_BCM2837/iokit/DEVELOPMENT/kdebug.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/DEVELOPMENT_ARM64_BCM2837/iokit/DEVELOPMENT/kdebug.h",
+    "sha256": "63e021288b7e70888d209ffbec5c526f483d39019eb6e68fcc619824435fe9a0",
+    "size": 17
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/DEVELOPMENT_ARM64_BCM2837/iokit/DEVELOPMENT/mach_assert.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/DEVELOPMENT_ARM64_BCM2837/iokit/DEVELOPMENT/mach_assert.h",
+    "sha256": "a39983b09d4fab2f28a22ecaa9c8da5d4b991552aa9302967aa300d596ceb179",
+    "size": 22
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/DEVELOPMENT_ARM64_BCM2837/iokit/DEVELOPMENT/meta_features.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/DEVELOPMENT_ARM64_BCM2837/iokit/DEVELOPMENT/meta_features.h",
+    "sha256": "d157200a4e0481e11d6b148a049da72ade3206a14c6b77e0c69661c78f2c00b8",
+    "size": 163
+  },
+  {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/DEVELOPMENT_ARM64_BCM2837/iokit/DEVELOPMENT/networking.h",
+    "realpath": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/DEVELOPMENT_ARM64_BCM2837/iokit/DEVELOPMENT/networking.h",
+    "sha256": "18f691a09f699bfdadf0c5c78601bda0f5392bd38e4b088ffd0abe4cfce4787d",
+    "size": 21
+  }
+]

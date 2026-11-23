@@ -1,0 +1,2336 @@
+{
+  "common_external": [],
+  "defined_external": [
+    "__ZN13ArmDTPlatform10deleteListEv",
+    "__ZN13ArmDTPlatform10gMetaClassE",
+    "__ZN13ArmDTPlatform10superClassE",
+    "__ZN13ArmDTPlatform11excludeListEv",
+    "__ZN13ArmDTPlatform13hasNVRAMProxyEP9IOService",
+    "__ZN13ArmDTPlatform16createDeviceNubsEP9IOService",
+    "__ZN13ArmDTPlatform9MetaClassC1Ev",
+    "__ZN13ArmDTPlatform9MetaClassC2Ev",
+    "__ZN13ArmDTPlatform9configureEP9IOService",
+    "__ZN13ArmDTPlatform9metaClassE",
+    "__ZN13ArmDTPlatformC1EPK11OSMetaClass",
+    "__ZN13ArmDTPlatformC1Ev",
+    "__ZN13ArmDTPlatformC2EPK11OSMetaClass",
+    "__ZN13ArmDTPlatformC2Ev",
+    "__ZN13ArmDTPlatformD0Ev",
+    "__ZN13ArmDTPlatformD1Ev",
+    "__ZN13ArmDTPlatformD2Ev",
+    "__ZN13ArmDTPlatformdlEPvm",
+    "__ZN13ArmDTPlatformnwEm",
+    "__ZNK13ArmDTPlatform12getMetaClassEv",
+    "__ZNK13ArmDTPlatform9MetaClass5allocEv",
+    "__ZTV13ArmDTPlatform",
+    "__ZTVN13ArmDTPlatform9MetaClassE",
+    "_armdt_platform_bus_count",
+    "_armdt_platform_child_count",
+    "_armdt_platform_configured",
+    "_armdt_platform_cpu_count",
+    "_armdt_platform_defaults_count",
+    "_armdt_platform_device_count",
+    "_armdt_platform_nvram_proxy"
+  ],
+  "records": [
+    {
+      "n_desc": 0,
+      "n_sect": 1,
+      "n_type": 14,
+      "name": "ltmp0",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 4,
+      "n_type": 14,
+      "name": "l_.str",
+      "value": 4264
+    },
+    {
+      "n_desc": 32,
+      "n_sect": 5,
+      "n_type": 14,
+      "name": "__ZL17ArmDTPlatform_ktv",
+      "value": 4608
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 4,
+      "n_type": 14,
+      "name": "l_.str.3",
+      "value": 4328
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 4,
+      "n_type": 14,
+      "name": "l_.str.4",
+      "value": 4331
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 4,
+      "n_type": 14,
+      "name": "l_.str.5",
+      "value": 4338
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 4,
+      "n_type": 14,
+      "name": "l_.str.6",
+      "value": 4354
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 4,
+      "n_type": 14,
+      "name": "l_.str.7",
+      "value": 4371
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 4,
+      "n_type": 14,
+      "name": "l_.str.8",
+      "value": 4378
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 4,
+      "n_type": 14,
+      "name": "l_.str.9",
+      "value": 4383
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 4,
+      "n_type": 14,
+      "name": "l_.str.10",
+      "value": 4392
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 4,
+      "n_type": 14,
+      "name": "l_.str.13",
+      "value": 4544
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 4,
+      "n_type": 14,
+      "name": "l_.str.11",
+      "value": 4400
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 4,
+      "n_type": 14,
+      "name": "l_.str.12",
+      "value": 4478
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 4,
+      "n_type": 14,
+      "name": "l_.str.14",
+      "value": 4565
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 4,
+      "n_type": 14,
+      "name": "l_.str.15",
+      "value": 4577
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 4,
+      "n_type": 14,
+      "name": "l_.str.16",
+      "value": 4581
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 1,
+      "n_type": 14,
+      "name": "__ZN13ArmDTPlatform9MetaClassD1Ev",
+      "value": 2296
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 1,
+      "n_type": 14,
+      "name": "__ZN13ArmDTPlatform9MetaClassD0Ev",
+      "value": 2300
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 1,
+      "n_type": 14,
+      "name": "__GLOBAL__sub_I_ArmDTPlatform.cpp",
+      "value": 2304
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 2,
+      "n_type": 14,
+      "name": "ltmp1",
+      "value": 176552
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 3,
+      "n_type": 14,
+      "name": "ltmp2",
+      "value": 2368
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 4,
+      "n_type": 14,
+      "name": "ltmp3",
+      "value": 4264
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 4,
+      "n_type": 14,
+      "name": "l_.str.1",
+      "value": 4278
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 4,
+      "n_type": 14,
+      "name": "l_.str.2",
+      "value": 4297
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 5,
+      "n_type": 14,
+      "name": "ltmp4",
+      "value": 4608
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 6,
+      "n_type": 14,
+      "name": "ltmp5",
+      "value": 4672
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 1,
+      "n_type": 15,
+      "name": "__ZN13ArmDTPlatform10deleteListEv",
+      "value": 492
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 2,
+      "n_type": 15,
+      "name": "__ZN13ArmDTPlatform10gMetaClassE",
+      "value": 176584
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 3,
+      "n_type": 15,
+      "name": "__ZN13ArmDTPlatform10superClassE",
+      "value": 2376
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 1,
+      "n_type": 15,
+      "name": "__ZN13ArmDTPlatform11excludeListEv",
+      "value": 504
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 1,
+      "n_type": 15,
+      "name": "__ZN13ArmDTPlatform13hasNVRAMProxyEP9IOService",
+      "value": 516
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 1,
+      "n_type": 15,
+      "name": "__ZN13ArmDTPlatform16createDeviceNubsEP9IOService",
+      "value": 776
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 1,
+      "n_type": 15,
+      "name": "__ZN13ArmDTPlatform9MetaClassC1Ev",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 1,
+      "n_type": 15,
+      "name": "__ZN13ArmDTPlatform9MetaClassC2Ev",
+      "value": 204
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 1,
+      "n_type": 15,
+      "name": "__ZN13ArmDTPlatform9configureEP9IOService",
+      "value": 1140
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 3,
+      "n_type": 15,
+      "name": "__ZN13ArmDTPlatform9metaClassE",
+      "value": 2368
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 1,
+      "n_type": 15,
+      "name": "__ZN13ArmDTPlatformC1EPK11OSMetaClass",
+      "value": 84
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 1,
+      "n_type": 15,
+      "name": "__ZN13ArmDTPlatformC1Ev",
+      "value": 356
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 1,
+      "n_type": 15,
+      "name": "__ZN13ArmDTPlatformC2EPK11OSMetaClass",
+      "value": 52
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 1,
+      "n_type": 15,
+      "name": "__ZN13ArmDTPlatformC2Ev",
+      "value": 424
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 1,
+      "n_type": 15,
+      "name": "__ZN13ArmDTPlatformD0Ev",
+      "value": 124
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 1,
+      "n_type": 15,
+      "name": "__ZN13ArmDTPlatformD1Ev",
+      "value": 120
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 1,
+      "n_type": 15,
+      "name": "__ZN13ArmDTPlatformD2Ev",
+      "value": 116
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 1,
+      "n_type": 15,
+      "name": "__ZN13ArmDTPlatformdlEPvm",
+      "value": 172
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 1,
+      "n_type": 15,
+      "name": "__ZN13ArmDTPlatformnwEm",
+      "value": 340
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 1,
+      "n_type": 15,
+      "name": "__ZNK13ArmDTPlatform12getMetaClassEv",
+      "value": 192
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 1,
+      "n_type": 15,
+      "name": "__ZNK13ArmDTPlatform9MetaClass5allocEv",
+      "value": 256
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 3,
+      "n_type": 15,
+      "name": "__ZTV13ArmDTPlatform",
+      "value": 2384
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 3,
+      "n_type": 15,
+      "name": "__ZTVN13ArmDTPlatform9MetaClassE",
+      "value": 4128
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 2,
+      "n_type": 15,
+      "name": "_armdt_platform_bus_count",
+      "value": 176564
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 2,
+      "n_type": 15,
+      "name": "_armdt_platform_child_count",
+      "value": 176556
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 2,
+      "n_type": 15,
+      "name": "_armdt_platform_configured",
+      "value": 176552
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 2,
+      "n_type": 15,
+      "name": "_armdt_platform_cpu_count",
+      "value": 176560
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 2,
+      "n_type": 15,
+      "name": "_armdt_platform_defaults_count",
+      "value": 176568
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 2,
+      "n_type": 15,
+      "name": "_armdt_platform_device_count",
+      "value": 176576
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 2,
+      "n_type": 15,
+      "name": "_armdt_platform_nvram_proxy",
+      "value": 176572
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "_IOLog",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "_OSObject_typed_operator_delete",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "_OSObject_typed_operator_new",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "_PE_parse_boot_argn",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN11OSMetaClassC2EPKcPKS_j",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN11OSMetaClassD2Ev",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN15IORegistryEntry11detachAboveEPK15IORegistryPlane",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN15IORegistryEntry11setLocationEPK8OSSymbolPK15IORegistryPlane",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN15IORegistryEntry11setLocationEPKcPK15IORegistryPlane",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN15IORegistryEntry11setPropertyEPK8OSStringP8OSObject",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN15IORegistryEntry11setPropertyEPK8OSSymbolP8OSObject",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN15IORegistryEntry11setPropertyEPKcP8OSObject",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN15IORegistryEntry11setPropertyEPKcPvj",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN15IORegistryEntry11setPropertyEPKcS1_",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN15IORegistryEntry11setPropertyEPKcb",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN15IORegistryEntry11setPropertyEPKcyj",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN15IORegistryEntry13attachToChildEPS_PK15IORegistryPlane",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN15IORegistryEntry13childFromPathEPKcPK15IORegistryPlanePcPi",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN15IORegistryEntry13setPropertiesEP8OSObject",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN15IORegistryEntry14attachToParentEPS_PK15IORegistryPlane",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN15IORegistryEntry14removePropertyEPK8OSString",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN15IORegistryEntry14removePropertyEPK8OSSymbol",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN15IORegistryEntry14removePropertyEPKc",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN15IORegistryEntry15detachFromChildEPS_PK15IORegistryPlane",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN15IORegistryEntry16detachFromParentEPS_PK15IORegistryPlane",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN15IORegistryEntry16setPropertyTableEP12OSDictionary",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN15IORegistryEntry17runPropertyActionEPFiP8OSObjectPvS2_S2_S2_ES1_S2_S2_S2_S2_",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN15IORegistryEntry7setNameEPK8OSSymbolPK15IORegistryPlane",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN15IORegistryEntry7setNameEPKcPK15IORegistryPlane",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN15IORegistryEntry9detachAllEPK15IORegistryPlane",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN15IORegistryEntry9metaClassE",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN15OSMetaClassBase12safeMetaCastEPKS_PK11OSMetaClass",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN15OSMetaClassBase8DispatchE5IORPC",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN16IOPlatformExpert11sleepKernelEv",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN16IOPlatformExpert12CheckSubTreeEP7OSArrayP9IOServiceS3_P12OSDictionary",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN16IOPlatformExpert12hasPMFeatureEm",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN16IOPlatformExpert14getBootROMTypeEv",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN16IOPlatformExpert14getChipSetTypeEv",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN16IOPlatformExpert14getConsoleInfoEP8PE_Video",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN16IOPlatformExpert14getMachineTypeEv",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN16IOPlatformExpert14setBootROMTypeEl",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN16IOPlatformExpert14setChipSetTypeEl",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN16IOPlatformExpert14setConsoleInfoEP8PE_Videoj",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN16IOPlatformExpert14setMachineTypeEl",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN16IOPlatformExpert15getGMTTimeOfDayEv",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN16IOPlatformExpert15getUTCTimeOfDayEPmPj",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN16IOPlatformExpert15setGMTTimeOfDayEl",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN16IOPlatformExpert15setUTCTimeOfDayEmj",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN16IOPlatformExpert16PMRegisterDeviceEP9IOServiceS1_",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN16IOPlatformExpert16atInterruptLevelEv",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN16IOPlatformExpert16hasPrivPMFeatureEm",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN16IOPlatformExpert20callPlatformFunctionEPK8OSSymbolbPvS3_S3_S3_",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN16IOPlatformExpert21RegisterServiceInTreeEP9IOServiceP12OSDictionaryS3_S1_",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN16IOPlatformExpert21numBatteriesSupportedEv",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN16IOPlatformExpert21platformAdjustServiceEP9IOService",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN16IOPlatformExpert25PMInstantiatePowerDomainsEv",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN16IOPlatformExpert25getPhysicalRangeAllocatorEv",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN16IOPlatformExpert25lookUpInterruptControllerEP8OSSymbol",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN16IOPlatformExpert25setCPUInterruptPropertiesEP9IOService",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN16IOPlatformExpert27registerInterruptControllerEP8OSSymbolP21IOInterruptController",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN16IOPlatformExpert29deregisterInterruptControllerEP8OSSymbol",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN16IOPlatformExpert5PMLogEPKcmmm",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN16IOPlatformExpert5startEP9IOService",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN16IOPlatformExpert6attachEP9IOService",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN16IOPlatformExpert9createNubEP12OSDictionary",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN18IODTPlatformExpert10createNubsEP9IOServiceP10OSIterator",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN18IODTPlatformExpert10gMetaClassE",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN18IODTPlatformExpert11haltRestartEj",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN18IODTPlatformExpert12getModelNameEPci",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN18IODTPlatformExpert13getTargetNameEPci",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN18IODTPlatformExpert13savePanicInfoEPhy",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN18IODTPlatformExpert14getMachineNameEPci",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN18IODTPlatformExpert14getProductNameEPci",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN18IODTPlatformExpert15getNubResourcesEP9IOService",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN18IODTPlatformExpert15processTopLevelEP15IORegistryEntry",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN18IODTPlatformExpert17readNVRAMPropertyEP15IORegistryEntryPPK8OSSymbolPP6OSData",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN18IODTPlatformExpert18writeNVRAMPropertyEP15IORegistryEntryPK8OSSymbolP6OSData",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN18IODTPlatformExpert23registerNVRAMControllerEP17IONVRAMController",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN18IODTPlatformExpert30createSystemSerialNumberStringEP6OSData",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN18IODTPlatformExpert5probeEP9IOServicePi",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN18IODTPlatformExpert9createNubEP15IORegistryEntry",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN18IODTPlatformExpertC2EPK11OSMetaClass",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN18IODTPlatformExpertD2Ev",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN6OSData9metaClassE",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN8OSObject4initEv",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN9IOService10adjustBusyEi",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN9IOService10handleOpenEPS_jPv",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN9IOService10joinPMtreeEPS_",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN9IOService11handleCloseEPS_j",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN9IOService12didTerminateEPS_jPb",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN9IOService12getBusyStateEv",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN9IOService12getResourcesEv",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN9IOService12requestProbeEj",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN9IOService12tellChangeUpEm",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN9IOService12updateReportEP19IOReportChannelListjPvS2_",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN9IOService13addPowerChildEPS_",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN9IOService13askChangeDownEm",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN9IOService13matchLocationEPS_",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN9IOService13messageClientEjP8OSObjectPvm",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN9IOService13newUserClientEP4taskPvjP12OSDictionaryPP12IOUserClient",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN9IOService13newUserClientEP4taskPvjPP12IOUserClient",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN9IOService13setPowerStateEmPS_",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN9IOService13willTerminateEPS_j",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN9IOService14activityTickleEmm",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN9IOService14applyToClientsEPFvPS_PvES1_",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN9IOService14causeInterruptEi",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN9IOService14messageClientsEjPvm",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN9IOService14tellChangeDownEm",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN9IOService15comparePropertyEP12OSDictionaryPK8OSString",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN9IOService15comparePropertyEP12OSDictionaryPKc",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN9IOService15configureReportEP19IOReportChannelListjPvS2_",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN9IOService15enableInterruptEi",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN9IOService15errnoFromReturnEi",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN9IOService15getDeviceMemoryEv",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN9IOService15nextIdleTimeoutEyyj",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN9IOService15powerChangeDoneEm",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN9IOService15registerServiceEj",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN9IOService15setDeviceMemoryEP7OSArray",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN9IOService15terminateClientEPS_j",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN9IOService16allowPowerChangeEm",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN9IOService16applyToProvidersEPFvPS_PvES1_",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN9IOService16disableInterruptEi",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN9IOService16getInterruptTypeEiPi",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN9IOService16registerInterestEPK8OSSymbolPFiPvS3_jPS_S3_mES3_S3_",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN9IOService16removePowerChildEP17IOPowerConnection",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN9IOService16requestTerminateEPS_j",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN9IOService16stringFromReturnEi",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN9IOService16tellNoChangeDownEm",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN9IOService17addNeededResourceEPKc",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN9IOService17applyToInterestedEPK8OSSymbolPFvP8OSObjectPvES5_",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN9IOService17cancelPowerChangeEm",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN9IOService17comparePropertiesEP12OSDictionaryP12OSCollection",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN9IOService17getAggressivenessEmPm",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN9IOService17registerInterruptEiP8OSObjectPFvS1_PvPS_iES2_",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN9IOService17setAggressivenessEmm",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN9IOService18lockForArbitrationEb",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN9IOService18matchPropertyTableEP12OSDictionary",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN9IOService18matchPropertyTableEP12OSDictionaryPi",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN9IOService18setIdleTimerPeriodEm",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN9IOService18systemWillShutdownEj",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN9IOService19registerPowerDriverEPS_P14IOPMPowerStatem",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN9IOService19unregisterInterruptEi",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN9IOService20callPlatformFunctionEPKcbPvS2_S2_S2_",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN9IOService20getDeviceMemoryCountEv",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN9IOService20unlockForArbitrationEv",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN9IOService21powerStateDidChangeToEmmPS_",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN9IOService22copyClientWithCategoryEPK8OSSymbol",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN9IOService22powerStateWillChangeToEmmPS_",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN9IOService23acknowledgeNotificationEPvj",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN9IOService23requestPowerDomainStateEmP17IOPowerConnectionm",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN9IOService24getDeviceMemoryWithIndexEj",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN9IOService24mapDeviceMemoryWithIndexEjj",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN9IOService24powerStateForDomainStateEm",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN9IOService27maxCapabilityForDomainStateEm",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN9IOService31initialPowerStateForDomainStateEm",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN9IOService4freeEv",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN9IOService4initEP12OSDictionary",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN9IOService4initEP15IORegistryEntryPK15IORegistryPlane",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN9IOService4openEPS_jPv",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN9IOService4stopEPS_",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN9IOService5closeEPS_j",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN9IOService6PMinitEv",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN9IOService6PMstopEv",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN9IOService6detachEPS_",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN9IOService7messageEjPS_Pv",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN9IOService8DispatchE5IORPC",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN9IOService8finalizeEj",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZN9IOService9terminateEj",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZNK11OSMetaClass12getMetaClassEv",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZNK11OSMetaClass12taggedRetainEPKv",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZNK11OSMetaClass13taggedReleaseEPKv",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZNK11OSMetaClass13taggedReleaseEPKvi",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZNK11OSMetaClass14getRetainCountEv",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZNK11OSMetaClass19instanceConstructedEv",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZNK11OSMetaClass6retainEv",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZNK11OSMetaClass7releaseEi",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZNK11OSMetaClass7releaseEv",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZNK11OSMetaClass9serializeEP11OSSerialize",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZNK15IORegistryEntry11compareNameEP8OSStringPS1_",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZNK15IORegistryEntry11getLocationEPK15IORegistryPlane",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZNK15IORegistryEntry11getPropertyEPK8OSString",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZNK15IORegistryEntry11getPropertyEPK8OSStringPK15IORegistryPlanej",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZNK15IORegistryEntry11getPropertyEPK8OSSymbol",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZNK15IORegistryEntry11getPropertyEPK8OSSymbolPK15IORegistryPlanej",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZNK15IORegistryEntry11getPropertyEPKc",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZNK15IORegistryEntry11getPropertyEPKcPK15IORegistryPlanej",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZNK15IORegistryEntry12compareNamesEP8OSObjectPP8OSString",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZNK15IORegistryEntry12copyLocationEPK15IORegistryPlane",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZNK15IORegistryEntry12copyPropertyEPK8OSString",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZNK15IORegistryEntry12copyPropertyEPK8OSStringPK15IORegistryPlanej",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZNK15IORegistryEntry12copyPropertyEPK8OSSymbol",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZNK15IORegistryEntry12copyPropertyEPK8OSSymbolPK15IORegistryPlanej",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZNK15IORegistryEntry12copyPropertyEPKc",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZNK15IORegistryEntry12copyPropertyEPKcPK15IORegistryPlanej",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZNK15IORegistryEntry13getChildEntryEPK15IORegistryPlane",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZNK15IORegistryEntry14applyToParentsEPFvPS_PvES1_PK15IORegistryPlane",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZNK15IORegistryEntry14copyChildEntryEPK15IORegistryPlane",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZNK15IORegistryEntry14getParentEntryEPK15IORegistryPlane",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZNK15IORegistryEntry15applyToChildrenEPFvPS_PvES1_PK15IORegistryPlane",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZNK15IORegistryEntry15copyParentEntryEPK15IORegistryPlane",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZNK15IORegistryEntry16getChildIteratorEPK15IORegistryPlane",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZNK15IORegistryEntry16getPathComponentEPcPiPK15IORegistryPlane",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZNK15IORegistryEntry17getParentIteratorEPK15IORegistryPlane",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZNK15IORegistryEntry24dictionaryWithPropertiesEv",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZNK15IORegistryEntry7getNameEPK15IORegistryPlane",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZNK15IORegistryEntry7getPathEPcPiPK15IORegistryPlane",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZNK15IORegistryEntry7inPlaneEPK15IORegistryPlane",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZNK15IORegistryEntry7isChildEPS_PK15IORegistryPlaneb",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZNK15IORegistryEntry8copyNameEPK15IORegistryPlane",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZNK15IORegistryEntry8getDepthEPK15IORegistryPlane",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZNK15IORegistryEntry8isParentEPS_PK15IORegistryPlaneb",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZNK15OSMetaClassBase9isEqualToEPKS_",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZNK18IODTPlatformExpert14compareNubNameEPK9IOServiceP8OSStringPS4_",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZNK8OSObject12taggedRetainEPKv",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZNK8OSObject13taggedReleaseEPKv",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZNK8OSObject13taggedReleaseEPKvi",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZNK8OSObject14getRetainCountEv",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZNK8OSObject6retainEv",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZNK8OSObject7releaseEi",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZNK8OSObject7releaseEv",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZNK8OSObject9serializeEP11OSSerialize",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZNK9IOService11getProviderEv",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZNK9IOService11getWorkLoopEv",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZNK9IOService12handleIsOpenEPKS_",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZNK9IOService17getClientIteratorEv",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZNK9IOService19getProviderIteratorEv",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZNK9IOService19serializePropertiesEP11OSSerialize",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZNK9IOService21getOpenClientIteratorEv",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZNK9IOService23getOpenProviderIteratorEv",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZNK9IOService6isOpenEPKS_",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZNK9IOService8getStateEv",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZNK9IOService9getClientEv",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "__ZTV18IODTPlatformExpert",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "_gIODTPlane",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "_gIOServicePlane",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "_memcmp",
+      "value": 0
+    },
+    {
+      "n_desc": 0,
+      "n_sect": 0,
+      "n_type": 1,
+      "name": "_strcmp",
+      "value": 0
+    }
+  ],
+  "strong_undefined": [
+    "_IOLog",
+    "_OSObject_typed_operator_delete",
+    "_OSObject_typed_operator_new",
+    "_PE_parse_boot_argn",
+    "__ZN11OSMetaClassC2EPKcPKS_j",
+    "__ZN11OSMetaClassD2Ev",
+    "__ZN15IORegistryEntry11detachAboveEPK15IORegistryPlane",
+    "__ZN15IORegistryEntry11setLocationEPK8OSSymbolPK15IORegistryPlane",
+    "__ZN15IORegistryEntry11setLocationEPKcPK15IORegistryPlane",
+    "__ZN15IORegistryEntry11setPropertyEPK8OSStringP8OSObject",
+    "__ZN15IORegistryEntry11setPropertyEPK8OSSymbolP8OSObject",
+    "__ZN15IORegistryEntry11setPropertyEPKcP8OSObject",
+    "__ZN15IORegistryEntry11setPropertyEPKcPvj",
+    "__ZN15IORegistryEntry11setPropertyEPKcS1_",
+    "__ZN15IORegistryEntry11setPropertyEPKcb",
+    "__ZN15IORegistryEntry11setPropertyEPKcyj",
+    "__ZN15IORegistryEntry13attachToChildEPS_PK15IORegistryPlane",
+    "__ZN15IORegistryEntry13childFromPathEPKcPK15IORegistryPlanePcPi",
+    "__ZN15IORegistryEntry13setPropertiesEP8OSObject",
+    "__ZN15IORegistryEntry14attachToParentEPS_PK15IORegistryPlane",
+    "__ZN15IORegistryEntry14removePropertyEPK8OSString",
+    "__ZN15IORegistryEntry14removePropertyEPK8OSSymbol",
+    "__ZN15IORegistryEntry14removePropertyEPKc",
+    "__ZN15IORegistryEntry15detachFromChildEPS_PK15IORegistryPlane",
+    "__ZN15IORegistryEntry16detachFromParentEPS_PK15IORegistryPlane",
+    "__ZN15IORegistryEntry16setPropertyTableEP12OSDictionary",
+    "__ZN15IORegistryEntry17runPropertyActionEPFiP8OSObjectPvS2_S2_S2_ES1_S2_S2_S2_S2_",
+    "__ZN15IORegistryEntry7setNameEPK8OSSymbolPK15IORegistryPlane",
+    "__ZN15IORegistryEntry7setNameEPKcPK15IORegistryPlane",
+    "__ZN15IORegistryEntry9detachAllEPK15IORegistryPlane",
+    "__ZN15IORegistryEntry9metaClassE",
+    "__ZN15OSMetaClassBase12safeMetaCastEPKS_PK11OSMetaClass",
+    "__ZN15OSMetaClassBase8DispatchE5IORPC",
+    "__ZN16IOPlatformExpert11sleepKernelEv",
+    "__ZN16IOPlatformExpert12CheckSubTreeEP7OSArrayP9IOServiceS3_P12OSDictionary",
+    "__ZN16IOPlatformExpert12hasPMFeatureEm",
+    "__ZN16IOPlatformExpert14getBootROMTypeEv",
+    "__ZN16IOPlatformExpert14getChipSetTypeEv",
+    "__ZN16IOPlatformExpert14getConsoleInfoEP8PE_Video",
+    "__ZN16IOPlatformExpert14getMachineTypeEv",
+    "__ZN16IOPlatformExpert14setBootROMTypeEl",
+    "__ZN16IOPlatformExpert14setChipSetTypeEl",
+    "__ZN16IOPlatformExpert14setConsoleInfoEP8PE_Videoj",
+    "__ZN16IOPlatformExpert14setMachineTypeEl",
+    "__ZN16IOPlatformExpert15getGMTTimeOfDayEv",
+    "__ZN16IOPlatformExpert15getUTCTimeOfDayEPmPj",
+    "__ZN16IOPlatformExpert15setGMTTimeOfDayEl",
+    "__ZN16IOPlatformExpert15setUTCTimeOfDayEmj",
+    "__ZN16IOPlatformExpert16PMRegisterDeviceEP9IOServiceS1_",
+    "__ZN16IOPlatformExpert16atInterruptLevelEv",
+    "__ZN16IOPlatformExpert16hasPrivPMFeatureEm",
+    "__ZN16IOPlatformExpert20callPlatformFunctionEPK8OSSymbolbPvS3_S3_S3_",
+    "__ZN16IOPlatformExpert21RegisterServiceInTreeEP9IOServiceP12OSDictionaryS3_S1_",
+    "__ZN16IOPlatformExpert21numBatteriesSupportedEv",
+    "__ZN16IOPlatformExpert21platformAdjustServiceEP9IOService",
+    "__ZN16IOPlatformExpert25PMInstantiatePowerDomainsEv",
+    "__ZN16IOPlatformExpert25getPhysicalRangeAllocatorEv",
+    "__ZN16IOPlatformExpert25lookUpInterruptControllerEP8OSSymbol",
+    "__ZN16IOPlatformExpert25setCPUInterruptPropertiesEP9IOService",
+    "__ZN16IOPlatformExpert27registerInterruptControllerEP8OSSymbolP21IOInterruptController",
+    "__ZN16IOPlatformExpert29deregisterInterruptControllerEP8OSSymbol",
+    "__ZN16IOPlatformExpert5PMLogEPKcmmm",
+    "__ZN16IOPlatformExpert5startEP9IOService",
+    "__ZN16IOPlatformExpert6attachEP9IOService",
+    "__ZN16IOPlatformExpert9createNubEP12OSDictionary",
+    "__ZN18IODTPlatformExpert10createNubsEP9IOServiceP10OSIterator",
+    "__ZN18IODTPlatformExpert10gMetaClassE",
+    "__ZN18IODTPlatformExpert11haltRestartEj",
+    "__ZN18IODTPlatformExpert12getModelNameEPci",
+    "__ZN18IODTPlatformExpert13getTargetNameEPci",
+    "__ZN18IODTPlatformExpert13savePanicInfoEPhy",
+    "__ZN18IODTPlatformExpert14getMachineNameEPci",
+    "__ZN18IODTPlatformExpert14getProductNameEPci",
+    "__ZN18IODTPlatformExpert15getNubResourcesEP9IOService",
+    "__ZN18IODTPlatformExpert15processTopLevelEP15IORegistryEntry",
+    "__ZN18IODTPlatformExpert17readNVRAMPropertyEP15IORegistryEntryPPK8OSSymbolPP6OSData",
+    "__ZN18IODTPlatformExpert18writeNVRAMPropertyEP15IORegistryEntryPK8OSSymbolP6OSData",
+    "__ZN18IODTPlatformExpert23registerNVRAMControllerEP17IONVRAMController",
+    "__ZN18IODTPlatformExpert30createSystemSerialNumberStringEP6OSData",
+    "__ZN18IODTPlatformExpert5probeEP9IOServicePi",
+    "__ZN18IODTPlatformExpert9createNubEP15IORegistryEntry",
+    "__ZN18IODTPlatformExpertC2EPK11OSMetaClass",
+    "__ZN18IODTPlatformExpertD2Ev",
+    "__ZN6OSData9metaClassE",
+    "__ZN8OSObject4initEv",
+    "__ZN9IOService10adjustBusyEi",
+    "__ZN9IOService10handleOpenEPS_jPv",
+    "__ZN9IOService10joinPMtreeEPS_",
+    "__ZN9IOService11handleCloseEPS_j",
+    "__ZN9IOService12didTerminateEPS_jPb",
+    "__ZN9IOService12getBusyStateEv",
+    "__ZN9IOService12getResourcesEv",
+    "__ZN9IOService12requestProbeEj",
+    "__ZN9IOService12tellChangeUpEm",
+    "__ZN9IOService12updateReportEP19IOReportChannelListjPvS2_",
+    "__ZN9IOService13addPowerChildEPS_",
+    "__ZN9IOService13askChangeDownEm",
+    "__ZN9IOService13matchLocationEPS_",
+    "__ZN9IOService13messageClientEjP8OSObjectPvm",
+    "__ZN9IOService13newUserClientEP4taskPvjP12OSDictionaryPP12IOUserClient",
+    "__ZN9IOService13newUserClientEP4taskPvjPP12IOUserClient",
+    "__ZN9IOService13setPowerStateEmPS_",
+    "__ZN9IOService13willTerminateEPS_j",
+    "__ZN9IOService14activityTickleEmm",
+    "__ZN9IOService14applyToClientsEPFvPS_PvES1_",
+    "__ZN9IOService14causeInterruptEi",
+    "__ZN9IOService14messageClientsEjPvm",
+    "__ZN9IOService14tellChangeDownEm",
+    "__ZN9IOService15comparePropertyEP12OSDictionaryPK8OSString",
+    "__ZN9IOService15comparePropertyEP12OSDictionaryPKc",
+    "__ZN9IOService15configureReportEP19IOReportChannelListjPvS2_",
+    "__ZN9IOService15enableInterruptEi",
+    "__ZN9IOService15errnoFromReturnEi",
+    "__ZN9IOService15getDeviceMemoryEv",
+    "__ZN9IOService15nextIdleTimeoutEyyj",
+    "__ZN9IOService15powerChangeDoneEm",
+    "__ZN9IOService15registerServiceEj",
+    "__ZN9IOService15setDeviceMemoryEP7OSArray",
+    "__ZN9IOService15terminateClientEPS_j",
+    "__ZN9IOService16allowPowerChangeEm",
+    "__ZN9IOService16applyToProvidersEPFvPS_PvES1_",
+    "__ZN9IOService16disableInterruptEi",
+    "__ZN9IOService16getInterruptTypeEiPi",
+    "__ZN9IOService16registerInterestEPK8OSSymbolPFiPvS3_jPS_S3_mES3_S3_",
+    "__ZN9IOService16removePowerChildEP17IOPowerConnection",
+    "__ZN9IOService16requestTerminateEPS_j",
+    "__ZN9IOService16stringFromReturnEi",
+    "__ZN9IOService16tellNoChangeDownEm",
+    "__ZN9IOService17addNeededResourceEPKc",
+    "__ZN9IOService17applyToInterestedEPK8OSSymbolPFvP8OSObjectPvES5_",
+    "__ZN9IOService17cancelPowerChangeEm",
+    "__ZN9IOService17comparePropertiesEP12OSDictionaryP12OSCollection",
+    "__ZN9IOService17getAggressivenessEmPm",
+    "__ZN9IOService17registerInterruptEiP8OSObjectPFvS1_PvPS_iES2_",
+    "__ZN9IOService17setAggressivenessEmm",
+    "__ZN9IOService18lockForArbitrationEb",
+    "__ZN9IOService18matchPropertyTableEP12OSDictionary",
+    "__ZN9IOService18matchPropertyTableEP12OSDictionaryPi",
+    "__ZN9IOService18setIdleTimerPeriodEm",
+    "__ZN9IOService18systemWillShutdownEj",
+    "__ZN9IOService19registerPowerDriverEPS_P14IOPMPowerStatem",
+    "__ZN9IOService19unregisterInterruptEi",
+    "__ZN9IOService20callPlatformFunctionEPKcbPvS2_S2_S2_",
+    "__ZN9IOService20getDeviceMemoryCountEv",
+    "__ZN9IOService20unlockForArbitrationEv",
+    "__ZN9IOService21powerStateDidChangeToEmmPS_",
+    "__ZN9IOService22copyClientWithCategoryEPK8OSSymbol",
+    "__ZN9IOService22powerStateWillChangeToEmmPS_",
+    "__ZN9IOService23acknowledgeNotificationEPvj",
+    "__ZN9IOService23requestPowerDomainStateEmP17IOPowerConnectionm",
+    "__ZN9IOService24getDeviceMemoryWithIndexEj",
+    "__ZN9IOService24mapDeviceMemoryWithIndexEjj",
+    "__ZN9IOService24powerStateForDomainStateEm",
+    "__ZN9IOService27maxCapabilityForDomainStateEm",
+    "__ZN9IOService31initialPowerStateForDomainStateEm",
+    "__ZN9IOService4freeEv",
+    "__ZN9IOService4initEP12OSDictionary",
+    "__ZN9IOService4initEP15IORegistryEntryPK15IORegistryPlane",
+    "__ZN9IOService4openEPS_jPv",
+    "__ZN9IOService4stopEPS_",
+    "__ZN9IOService5closeEPS_j",
+    "__ZN9IOService6PMinitEv",
+    "__ZN9IOService6PMstopEv",
+    "__ZN9IOService6detachEPS_",
+    "__ZN9IOService7messageEjPS_Pv",
+    "__ZN9IOService8DispatchE5IORPC",
+    "__ZN9IOService8finalizeEj",
+    "__ZN9IOService9terminateEj",
+    "__ZNK11OSMetaClass12getMetaClassEv",
+    "__ZNK11OSMetaClass12taggedRetainEPKv",
+    "__ZNK11OSMetaClass13taggedReleaseEPKv",
+    "__ZNK11OSMetaClass13taggedReleaseEPKvi",
+    "__ZNK11OSMetaClass14getRetainCountEv",
+    "__ZNK11OSMetaClass19instanceConstructedEv",
+    "__ZNK11OSMetaClass6retainEv",
+    "__ZNK11OSMetaClass7releaseEi",
+    "__ZNK11OSMetaClass7releaseEv",
+    "__ZNK11OSMetaClass9serializeEP11OSSerialize",
+    "__ZNK15IORegistryEntry11compareNameEP8OSStringPS1_",
+    "__ZNK15IORegistryEntry11getLocationEPK15IORegistryPlane",
+    "__ZNK15IORegistryEntry11getPropertyEPK8OSString",
+    "__ZNK15IORegistryEntry11getPropertyEPK8OSStringPK15IORegistryPlanej",
+    "__ZNK15IORegistryEntry11getPropertyEPK8OSSymbol",
+    "__ZNK15IORegistryEntry11getPropertyEPK8OSSymbolPK15IORegistryPlanej",
+    "__ZNK15IORegistryEntry11getPropertyEPKc",
+    "__ZNK15IORegistryEntry11getPropertyEPKcPK15IORegistryPlanej",
+    "__ZNK15IORegistryEntry12compareNamesEP8OSObjectPP8OSString",
+    "__ZNK15IORegistryEntry12copyLocationEPK15IORegistryPlane",
+    "__ZNK15IORegistryEntry12copyPropertyEPK8OSString",
+    "__ZNK15IORegistryEntry12copyPropertyEPK8OSStringPK15IORegistryPlanej",
+    "__ZNK15IORegistryEntry12copyPropertyEPK8OSSymbol",
+    "__ZNK15IORegistryEntry12copyPropertyEPK8OSSymbolPK15IORegistryPlanej",
+    "__ZNK15IORegistryEntry12copyPropertyEPKc",
+    "__ZNK15IORegistryEntry12copyPropertyEPKcPK15IORegistryPlanej",
+    "__ZNK15IORegistryEntry13getChildEntryEPK15IORegistryPlane",
+    "__ZNK15IORegistryEntry14applyToParentsEPFvPS_PvES1_PK15IORegistryPlane",
+    "__ZNK15IORegistryEntry14copyChildEntryEPK15IORegistryPlane",
+    "__ZNK15IORegistryEntry14getParentEntryEPK15IORegistryPlane",
+    "__ZNK15IORegistryEntry15applyToChildrenEPFvPS_PvES1_PK15IORegistryPlane",
+    "__ZNK15IORegistryEntry15copyParentEntryEPK15IORegistryPlane",
+    "__ZNK15IORegistryEntry16getChildIteratorEPK15IORegistryPlane",
+    "__ZNK15IORegistryEntry16getPathComponentEPcPiPK15IORegistryPlane",
+    "__ZNK15IORegistryEntry17getParentIteratorEPK15IORegistryPlane",
+    "__ZNK15IORegistryEntry24dictionaryWithPropertiesEv",
+    "__ZNK15IORegistryEntry7getNameEPK15IORegistryPlane",
+    "__ZNK15IORegistryEntry7getPathEPcPiPK15IORegistryPlane",
+    "__ZNK15IORegistryEntry7inPlaneEPK15IORegistryPlane",
+    "__ZNK15IORegistryEntry7isChildEPS_PK15IORegistryPlaneb",
+    "__ZNK15IORegistryEntry8copyNameEPK15IORegistryPlane",
+    "__ZNK15IORegistryEntry8getDepthEPK15IORegistryPlane",
+    "__ZNK15IORegistryEntry8isParentEPS_PK15IORegistryPlaneb",
+    "__ZNK15OSMetaClassBase9isEqualToEPKS_",
+    "__ZNK18IODTPlatformExpert14compareNubNameEPK9IOServiceP8OSStringPS4_",
+    "__ZNK8OSObject12taggedRetainEPKv",
+    "__ZNK8OSObject13taggedReleaseEPKv",
+    "__ZNK8OSObject13taggedReleaseEPKvi",
+    "__ZNK8OSObject14getRetainCountEv",
+    "__ZNK8OSObject6retainEv",
+    "__ZNK8OSObject7releaseEi",
+    "__ZNK8OSObject7releaseEv",
+    "__ZNK8OSObject9serializeEP11OSSerialize",
+    "__ZNK9IOService11getProviderEv",
+    "__ZNK9IOService11getWorkLoopEv",
+    "__ZNK9IOService12handleIsOpenEPKS_",
+    "__ZNK9IOService17getClientIteratorEv",
+    "__ZNK9IOService19getProviderIteratorEv",
+    "__ZNK9IOService19serializePropertiesEP11OSSerialize",
+    "__ZNK9IOService21getOpenClientIteratorEv",
+    "__ZNK9IOService23getOpenProviderIteratorEv",
+    "__ZNK9IOService6isOpenEPKS_",
+    "__ZNK9IOService8getStateEv",
+    "__ZNK9IOService9getClientEv",
+    "__ZTV18IODTPlatformExpert",
+    "_gIODTPlane",
+    "_gIOServicePlane",
+    "_memcmp",
+    "_strcmp"
+  ],
+  "unsupported_external": [],
+  "weak_undefined": []
+}

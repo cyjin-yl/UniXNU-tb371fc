@@ -1,0 +1,12 @@
+{
+  "duplicate_strong_definitions": {},
+  "inventory_is_link_success": false,
+  "unextracted_baseline_archive_members_included": false,
+  "unresolved_platform_strong": [],
+  "unresolved_platform_weak": [
+    {
+      "component": "ArmCpu",
+      "symbol": "_arm64_platform_sleep_hook"
+    }
+  ]
+}
