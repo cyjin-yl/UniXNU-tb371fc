@@ -1,0 +1,1523 @@
+clang-24: warning: no such include directory: '/work/route-a-continue-20261123/kernel-build/.cache/fakeroot/usr/local/include/iBoot' [-Wmissing-include-dirs]
+clang-24: warning: no such include directory: '/work/route-a-continue-20261123/kernel-build/.cache/fakeroot//System/Library/Frameworks/Kernel.framework/Versions/A/PrivateHeaders/AppleFeatures' [-Wmissing-include-dirs]
+In file included from /work/route-a-platform-20261124/callback-attempt-002/source/osfmk/arm64/cpu.c:34:
+/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/pexpert/pexpert/arm64/board_config.h:17:10: warning: multiple candidates for header 'mach/machine.h' found; directory '/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/mach' chosen, ignoring others including '/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk' [-Wshadow-header]
+   17 | #include <mach/machine.h>
+      |          ^
+In file included from /work/route-a-platform-20261124/callback-attempt-002/source/osfmk/arm64/cpu.c:34:
+In file included from /work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/pexpert/pexpert/arm64/board_config.h:17:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/mach/machine.h:66:
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/EXTERNAL_HEADERS/stdint.h:23:10: warning: multiple candidates for header 'machine/types.h' found; directory '/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/bsd/machine' chosen, ignoring others including '/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/libsa' [-Wshadow-header]
+   23 | #include <machine/types.h>
+      |          ^
+In file included from /work/route-a-platform-20261124/callback-attempt-002/source/osfmk/arm64/cpu.c:34:
+In file included from /work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/pexpert/pexpert/arm64/board_config.h:17:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/mach/machine.h:66:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/EXTERNAL_HEADERS/stdint.h:23:
+/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/bsd/machine/types.h:37:10: warning: multiple candidates for header 'arm/types.h' found; directory '/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/bsd/arm' chosen, ignoring others including '/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/libsa' [-Wshadow-header]
+   37 | #include "arm/types.h"
+      |          ^
+In file included from /work/route-a-platform-20261124/callback-attempt-002/source/osfmk/arm64/cpu.c:34:
+In file included from /work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/pexpert/pexpert/arm64/board_config.h:17:
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/mach/machine.h:67:10: warning: multiple candidates for header 'mach/machine/vm_types.h' found; directory '/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/mach/machine' chosen, ignoring others including '/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk' [-Wshadow-header]
+   67 | #include <mach/machine/vm_types.h>
+      |          ^
+In file included from /work/route-a-platform-20261124/callback-attempt-002/source/osfmk/arm64/cpu.c:34:
+In file included from /work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/pexpert/pexpert/arm64/board_config.h:17:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/mach/machine.h:67:
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/mach/machine/vm_types.h:35:10: warning: multiple candidates for header 'mach/arm/vm_types.h' found; directory '/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/mach/arm' chosen, ignoring others including '/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk' [-Wshadow-header]
+   35 | #include "mach/arm/vm_types.h"
+      |          ^
+In file included from /work/route-a-platform-20261124/callback-attempt-002/source/osfmk/arm64/cpu.c:34:
+In file included from /work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/pexpert/pexpert/arm64/board_config.h:17:
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/mach/machine.h:68:10: warning: multiple candidates for header 'mach/boolean.h' found; directory '/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/mach' chosen, ignoring others including '/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk' [-Wshadow-header]
+   68 | #include <mach/boolean.h>
+      |          ^
+In file included from /work/route-a-platform-20261124/callback-attempt-002/source/osfmk/arm64/cpu.c:34:
+In file included from /work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/pexpert/pexpert/arm64/board_config.h:17:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/mach/machine.h:68:
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/mach/boolean.h:73:10: warning: multiple candidates for header 'mach/machine/boolean.h' found; directory '/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/mach/machine' chosen, ignoring others including '/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk' [-Wshadow-header]
+   73 | #include <mach/machine/boolean.h>
+      |          ^
+In file included from /work/route-a-platform-20261124/callback-attempt-002/source/osfmk/arm64/cpu.c:34:
+In file included from /work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/pexpert/pexpert/arm64/board_config.h:17:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/mach/machine.h:68:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/mach/boolean.h:73:
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/mach/machine/boolean.h:35:10: warning: multiple candidates for header 'mach/arm/boolean.h' found; directory '/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/mach/arm' chosen, ignoring others including '/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk' [-Wshadow-header]
+   35 | #include "mach/arm/boolean.h"
+      |          ^
+/work/route-a-platform-20261124/callback-attempt-002/source/osfmk/arm64/cpu.c:35:10: warning: multiple candidates for header 'kern/kalloc.h' found; directory '/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern' chosen, ignoring others including '/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk' [-Wshadow-header]
+   35 | #include <kern/kalloc.h>
+      |          ^
+In file included from /work/route-a-platform-20261124/callback-attempt-002/source/osfmk/arm64/cpu.c:35:
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/kalloc.h:64:10: warning: multiple candidates for header 'mach/vm_types.h' found; directory '/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/mach' chosen, ignoring others including '/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk' [-Wshadow-header]
+   64 | #include <mach/vm_types.h>
+      |          ^
+In file included from /work/route-a-platform-20261124/callback-attempt-002/source/osfmk/arm64/cpu.c:35:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/kalloc.h:64:
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/mach/vm_types.h:35:10: warning: multiple candidates for header 'mach/port.h' found; directory '/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/mach' chosen, ignoring others including '/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk' [-Wshadow-header]
+   35 | #include <mach/port.h>
+      |          ^
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/mach/vm_types.h:37:10: warning: multiple candidates for header 'mach/error.h' found; directory '/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/mach' chosen, ignoring others including '/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk' [-Wshadow-header]
+   37 | #include <mach/error.h>
+      |          ^
+In file included from /work/route-a-platform-20261124/callback-attempt-002/source/osfmk/arm64/cpu.c:35:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/kalloc.h:64:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/mach/vm_types.h:37:
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/mach/error.h:68:10: warning: multiple candidates for header 'mach/kern_return.h' found; directory '/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/mach' chosen, ignoring others including '/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk' [-Wshadow-header]
+   68 | #include <mach/kern_return.h>
+      |          ^
+In file included from /work/route-a-platform-20261124/callback-attempt-002/source/osfmk/arm64/cpu.c:35:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/kalloc.h:64:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/mach/vm_types.h:37:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/mach/error.h:68:
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/mach/kern_return.h:70:10: warning: multiple candidates for header 'mach/machine/kern_return.h' found; directory '/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/mach/machine' chosen, ignoring others including '/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk' [-Wshadow-header]
+   70 | #include <mach/machine/kern_return.h>
+      |          ^
+In file included from /work/route-a-platform-20261124/callback-attempt-002/source/osfmk/arm64/cpu.c:35:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/kalloc.h:64:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/mach/vm_types.h:37:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/mach/error.h:68:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/mach/kern_return.h:70:
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/mach/machine/kern_return.h:35:10: warning: multiple candidates for header 'mach/arm/kern_return.h' found; directory '/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/mach/arm' chosen, ignoring others including '/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk' [-Wshadow-header]
+   35 | #include "mach/arm/kern_return.h"
+      |          ^
+In file included from /work/route-a-platform-20261124/callback-attempt-002/source/osfmk/arm64/cpu.c:35:
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/kalloc.h:65:10: warning: multiple candidates for header 'kern/zalloc.h' found; directory '/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern' chosen, ignoring others including '/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk' [-Wshadow-header]
+   65 | #include <kern/zalloc.h>
+      |          ^
+In file included from /work/route-a-platform-20261124/callback-attempt-002/source/osfmk/arm64/cpu.c:35:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/kalloc.h:65:
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/zalloc.h:71:10: warning: multiple candidates for header 'mach_debug/zone_info.h' found; directory '/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/mach_debug' chosen, ignoring others including '/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk' [-Wshadow-header]
+   71 | #include <mach_debug/zone_info.h>
+      |          ^
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/zalloc.h:72:10: warning: multiple candidates for header 'kern/kern_types.h' found; directory '/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern' chosen, ignoring others including '/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk' [-Wshadow-header]
+   72 | #include <kern/kern_types.h>
+      |          ^
+In file included from /work/route-a-platform-20261124/callback-attempt-002/source/osfmk/arm64/cpu.c:35:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/kalloc.h:65:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/zalloc.h:72:
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/kern_types.h:36:10: warning: multiple candidates for header 'mach/mach_types.h' found; directory '/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/mach' chosen, ignoring others including '/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk' [-Wshadow-header]
+   36 | #include <mach/mach_types.h>
+      |          ^
+In file included from /work/route-a-platform-20261124/callback-attempt-002/source/osfmk/arm64/cpu.c:35:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/kalloc.h:65:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/zalloc.h:72:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/kern_types.h:36:
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/mach/mach_types.h:80:10: warning: multiple candidates for header 'mach/host_info.h' found; directory '/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/mach' chosen, ignoring others including '/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk' [-Wshadow-header]
+   80 | #include <mach/host_info.h>
+      |          ^
+In file included from /work/route-a-platform-20261124/callback-attempt-002/source/osfmk/arm64/cpu.c:35:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/kalloc.h:65:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/zalloc.h:72:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/kern_types.h:36:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/mach/mach_types.h:80:
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/mach/host_info.h:66:10: warning: multiple candidates for header 'mach/message.h' found; directory '/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/mach' chosen, ignoring others including '/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk' [-Wshadow-header]
+   66 | #include <mach/message.h>
+      |          ^
+In file included from /work/route-a-platform-20261124/callback-attempt-002/source/osfmk/arm64/cpu.c:35:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/kalloc.h:65:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/zalloc.h:72:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/kern_types.h:36:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/mach/mach_types.h:80:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/mach/host_info.h:66:
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/mach/message.h:944:10: warning: multiple candidates for header 'kern/debug.h' found; directory '/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern' chosen, ignoring others including '/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk' [-Wshadow-header]
+  944 | #include <kern/debug.h>
+      |          ^
+In file included from /work/route-a-platform-20261124/callback-attempt-002/source/osfmk/arm64/cpu.c:35:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/kalloc.h:65:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/zalloc.h:72:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/kern_types.h:36:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/mach/mach_types.h:80:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/mach/host_info.h:66:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/mach/message.h:944:
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/debug.h:32:10: warning: multiple candidates for header 'kern/kcdata.h' found; directory '/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern' chosen, ignoring others including '/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk' [-Wshadow-header]
+   32 | #include <kern/kcdata.h>
+      |          ^
+In file included from /work/route-a-platform-20261124/callback-attempt-002/source/osfmk/arm64/cpu.c:35:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/kalloc.h:65:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/zalloc.h:72:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/kern_types.h:36:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/mach/mach_types.h:80:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/mach/host_info.h:66:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/mach/message.h:944:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/debug.h:32:
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/kcdata.h:243:10: warning: multiple candidates for header 'string.h' found; directory '/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk' chosen, ignoring others including '/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/libsa' [-Wshadow-header]
+  243 | #include <string.h>
+      |          ^
+In file included from /work/route-a-platform-20261124/callback-attempt-002/source/osfmk/arm64/cpu.c:35:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/kalloc.h:65:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/zalloc.h:72:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/kern_types.h:36:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/mach/mach_types.h:80:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/mach/host_info.h:66:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/mach/message.h:944:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/debug.h:32:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/kcdata.h:243:
+/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/string.h:60:10: warning: multiple candidates for header 'machine/trap.h' found; directory '/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/machine' chosen, ignoring others including '/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk' [-Wshadow-header]
+   60 | #include <machine/trap.h>
+      |          ^
+In file included from /work/route-a-platform-20261124/callback-attempt-002/source/osfmk/arm64/cpu.c:35:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/kalloc.h:65:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/zalloc.h:72:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/kern_types.h:36:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/mach/mach_types.h:80:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/mach/host_info.h:66:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/mach/message.h:944:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/debug.h:32:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/kcdata.h:243:
+In file included from /work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/string.h:60:
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/machine/trap.h:34:10: warning: multiple candidates for header 'arm/trap.h' found; directory '/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/arm' chosen, ignoring others including '/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk' [-Wshadow-header]
+   34 | #include "arm/trap.h"
+      |          ^
+In file included from /work/route-a-platform-20261124/callback-attempt-002/source/osfmk/arm64/cpu.c:35:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/kalloc.h:65:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/zalloc.h:72:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/kern_types.h:36:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/mach/mach_types.h:80:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/mach/host_info.h:66:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/mach/message.h:944:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/debug.h:32:
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/kcdata.h:1920:10: warning: unsafe buffer access [-Wunsafe-buffer-usage]
+ 1920 |                 ((char*)kcdata_iter_payload(iter))[KCDATA_DESC_MAXLEN - 1] == 0;
+      |                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/kcdata.h:1931:12: warning: unsafe pointer arithmetic [-Wunsafe-buffer-usage]
+ 1931 |         char *s = ((char*)kcdata_iter_payload(iter)) + offset;
+      |                   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+In file included from /work/route-a-platform-20261124/callback-attempt-002/source/osfmk/arm64/cpu.c:35:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/kalloc.h:65:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/zalloc.h:72:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/kern_types.h:36:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/mach/mach_types.h:80:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/mach/host_info.h:66:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/mach/message.h:944:
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/debug.h:42:10: warning: multiple candidates for header 'kern/panic_call.h' found; directory '/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern' chosen, ignoring others including '/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk' [-Wshadow-header]
+   42 | #include <kern/panic_call.h>
+      |          ^
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/debug.h:45:10: warning: multiple candidates for header 'kern/percpu.h' found; directory '/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern' chosen, ignoring others including '/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk' [-Wshadow-header]
+   45 | #include <kern/percpu.h>
+      |          ^
+In file included from /work/route-a-platform-20261124/callback-attempt-002/source/osfmk/arm64/cpu.c:35:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/kalloc.h:65:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/zalloc.h:72:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/kern_types.h:36:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/mach/mach_types.h:80:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/mach/host_info.h:66:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/mach/message.h:944:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/debug.h:45:
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/percpu.h:33:10: warning: multiple candidates for header 'mach/machine/vm_param.h' found; directory '/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/mach/machine' chosen, ignoring others including '/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk' [-Wshadow-header]
+   33 | #include <mach/machine/vm_param.h> /* For PAGE_MASK */
+      |          ^
+In file included from /work/route-a-platform-20261124/callback-attempt-002/source/osfmk/arm64/cpu.c:35:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/kalloc.h:65:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/zalloc.h:72:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/kern_types.h:36:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/mach/mach_types.h:80:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/mach/host_info.h:66:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/mach/message.h:944:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/debug.h:45:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/percpu.h:33:
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/mach/machine/vm_param.h:35:10: warning: multiple candidates for header 'mach/arm/vm_param.h' found; directory '/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/mach/arm' chosen, ignoring others including '/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk' [-Wshadow-header]
+   35 | #include "mach/arm/vm_param.h"
+      |          ^
+In file included from /work/route-a-platform-20261124/callback-attempt-002/source/osfmk/arm64/cpu.c:35:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/kalloc.h:65:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/zalloc.h:72:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/kern_types.h:36:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/mach/mach_types.h:80:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/mach/host_info.h:66:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/mach/message.h:944:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/debug.h:45:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/percpu.h:33:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/mach/machine/vm_param.h:35:
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/mach/arm/vm_param.h:42:10: warning: multiple candidates for header 'arm64/proc_reg.h' found; directory '/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/arm64' chosen, ignoring others including '/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk' [-Wshadow-header]
+   42 | #include <arm64/proc_reg.h>
+      |          ^
+In file included from /work/route-a-platform-20261124/callback-attempt-002/source/osfmk/arm64/cpu.c:35:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/kalloc.h:65:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/zalloc.h:72:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/kern_types.h:36:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/mach/mach_types.h:80:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/mach/host_info.h:66:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/mach/message.h:944:
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/debug.h:46:10: warning: multiple candidates for header 'kern/upsi.h' found; directory '/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern' chosen, ignoring others including '/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk' [-Wshadow-header]
+   46 | #include <kern/upsi.h>
+      |          ^
+In file included from /work/route-a-platform-20261124/callback-attempt-002/source/osfmk/arm64/cpu.c:35:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/kalloc.h:65:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/zalloc.h:72:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/kern_types.h:36:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/mach/mach_types.h:80:
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/mach/host_info.h:67:10: warning: multiple candidates for header 'mach/vm_statistics.h' found; directory '/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/mach' chosen, ignoring others including '/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk' [-Wshadow-header]
+   67 | #include <mach/vm_statistics.h>
+      |          ^
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/mach/host_info.h:70:10: warning: multiple candidates for header 'mach/time_value.h' found; directory '/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/mach' chosen, ignoring others including '/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk' [-Wshadow-header]
+   70 | #include <mach/time_value.h>
+      |          ^
+In file included from /work/route-a-platform-20261124/callback-attempt-002/source/osfmk/arm64/cpu.c:35:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/kalloc.h:65:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/zalloc.h:72:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/kern_types.h:36:
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/mach/mach_types.h:81:10: warning: multiple candidates for header 'mach/host_notify.h' found; directory '/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/mach' chosen, ignoring others including '/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk' [-Wshadow-header]
+   81 | #include <mach/host_notify.h>
+      |          ^
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/mach/mach_types.h:82:10: warning: multiple candidates for header 'mach/host_special_ports.h' found; directory '/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/mach' chosen, ignoring others including '/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk' [-Wshadow-header]
+   82 | #include <mach/host_special_ports.h>
+      |          ^
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/mach/mach_types.h:85:10: warning: multiple candidates for header 'mach/memory_object_types.h' found; directory '/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/mach' chosen, ignoring others including '/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk' [-Wshadow-header]
+   85 | #include <mach/memory_object_types.h>
+      |          ^
+In file included from /work/route-a-platform-20261124/callback-attempt-002/source/osfmk/arm64/cpu.c:35:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/kalloc.h:65:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/zalloc.h:72:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/kern_types.h:36:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/mach/mach_types.h:85:
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/mach/memory_object_types.h:75:10: warning: multiple candidates for header 'mach/vm_prot.h' found; directory '/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/mach' chosen, ignoring others including '/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk' [-Wshadow-header]
+   75 | #include <mach/vm_prot.h>
+      |          ^
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/mach/memory_object_types.h:76:10: warning: multiple candidates for header 'mach/vm_sync.h' found; directory '/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/mach' chosen, ignoring others including '/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk' [-Wshadow-header]
+   76 | #include <mach/vm_sync.h>
+      |          ^
+In file included from /work/route-a-platform-20261124/callback-attempt-002/source/osfmk/arm64/cpu.c:35:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/kalloc.h:65:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/zalloc.h:72:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/kern_types.h:36:
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/mach/mach_types.h:87:10: warning: multiple candidates for header 'mach/exception_types.h' found; directory '/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/mach' chosen, ignoring others including '/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk' [-Wshadow-header]
+   87 | #include <mach/exception_types.h>
+      |          ^
+In file included from /work/route-a-platform-20261124/callback-attempt-002/source/osfmk/arm64/cpu.c:35:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/kalloc.h:65:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/zalloc.h:72:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/kern_types.h:36:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/mach/mach_types.h:87:
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/mach/exception_types.h:62:10: warning: multiple candidates for header 'mach/machine/exception.h' found; directory '/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/mach/machine' chosen, ignoring others including '/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk' [-Wshadow-header]
+   62 | #include <mach/machine/exception.h>
+      |          ^
+In file included from /work/route-a-platform-20261124/callback-attempt-002/source/osfmk/arm64/cpu.c:35:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/kalloc.h:65:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/zalloc.h:72:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/kern_types.h:36:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/mach/mach_types.h:87:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/mach/exception_types.h:62:
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/mach/machine/exception.h:35:10: warning: multiple candidates for header 'mach/arm/exception.h' found; directory '/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/mach/arm' chosen, ignoring others including '/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk' [-Wshadow-header]
+   35 | #include "mach/arm/exception.h"
+      |          ^
+In file included from /work/route-a-platform-20261124/callback-attempt-002/source/osfmk/arm64/cpu.c:35:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/kalloc.h:65:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/zalloc.h:72:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/kern_types.h:36:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/mach/mach_types.h:87:
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/mach/exception_types.h:205:10: warning: multiple candidates for header 'mach/thread_status.h' found; directory '/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/mach' chosen, ignoring others including '/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk' [-Wshadow-header]
+  205 | #include <mach/thread_status.h>
+      |          ^
+In file included from /work/route-a-platform-20261124/callback-attempt-002/source/osfmk/arm64/cpu.c:35:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/kalloc.h:65:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/zalloc.h:72:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/kern_types.h:36:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/mach/mach_types.h:87:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/mach/exception_types.h:205:
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/mach/thread_status.h:76:10: warning: multiple candidates for header 'mach/machine/thread_status.h' found; directory '/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/mach/machine' chosen, ignoring others including '/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk' [-Wshadow-header]
+   76 | #include <mach/machine/thread_status.h>
+      |          ^
+In file included from /work/route-a-platform-20261124/callback-attempt-002/source/osfmk/arm64/cpu.c:35:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/kalloc.h:65:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/zalloc.h:72:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/kern_types.h:36:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/mach/mach_types.h:87:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/mach/exception_types.h:205:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/mach/thread_status.h:76:
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/mach/machine/thread_status.h:35:10: warning: multiple candidates for header 'mach/arm/thread_status.h' found; directory '/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/mach/arm' chosen, ignoring others including '/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk' [-Wshadow-header]
+   35 | #include "mach/arm/thread_status.h"
+      |          ^
+In file included from /work/route-a-platform-20261124/callback-attempt-002/source/osfmk/arm64/cpu.c:35:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/kalloc.h:65:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/zalloc.h:72:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/kern_types.h:36:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/mach/mach_types.h:87:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/mach/exception_types.h:205:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/mach/thread_status.h:76:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/mach/machine/thread_status.h:35:
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/mach/arm/thread_status.h:38:10: warning: multiple candidates for header 'mach/machine/_structs.h' found; directory '/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/mach/machine' chosen, ignoring others including '/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk' [-Wshadow-header]
+   38 | #include <mach/machine/_structs.h>
+      |          ^
+In file included from /work/route-a-platform-20261124/callback-attempt-002/source/osfmk/arm64/cpu.c:35:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/kalloc.h:65:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/zalloc.h:72:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/kern_types.h:36:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/mach/mach_types.h:87:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/mach/exception_types.h:205:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/mach/thread_status.h:76:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/mach/machine/thread_status.h:35:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/mach/arm/thread_status.h:38:
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/mach/machine/_structs.h:35:10: warning: multiple candidates for header 'mach/arm/_structs.h' found; directory '/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/mach/arm' chosen, ignoring others including '/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk' [-Wshadow-header]
+   35 | #include "mach/arm/_structs.h"
+      |          ^
+In file included from /work/route-a-platform-20261124/callback-attempt-002/source/osfmk/arm64/cpu.c:35:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/kalloc.h:65:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/zalloc.h:72:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/kern_types.h:36:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/mach/mach_types.h:87:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/mach/exception_types.h:205:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/mach/thread_status.h:76:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/mach/machine/thread_status.h:35:
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/mach/arm/thread_status.h:39:10: warning: multiple candidates for header 'mach/machine/thread_state.h' found; directory '/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/mach/machine' chosen, ignoring others including '/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk' [-Wshadow-header]
+   39 | #include <mach/machine/thread_state.h>
+      |          ^
+In file included from /work/route-a-platform-20261124/callback-attempt-002/source/osfmk/arm64/cpu.c:35:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/kalloc.h:65:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/zalloc.h:72:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/kern_types.h:36:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/mach/mach_types.h:87:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/mach/exception_types.h:205:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/mach/thread_status.h:76:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/mach/machine/thread_status.h:35:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/mach/arm/thread_status.h:39:
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/mach/machine/thread_state.h:35:10: warning: multiple candidates for header 'mach/arm/thread_state.h' found; directory '/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/mach/arm' chosen, ignoring others including '/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk' [-Wshadow-header]
+   35 | #include "mach/arm/thread_state.h"
+      |          ^
+In file included from /work/route-a-platform-20261124/callback-attempt-002/source/osfmk/arm64/cpu.c:35:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/kalloc.h:65:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/zalloc.h:72:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/kern_types.h:36:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/mach/mach_types.h:87:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/mach/exception_types.h:205:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/mach/thread_status.h:76:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/mach/machine/thread_status.h:35:
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/mach/arm/thread_status.h:387:10: warning: multiple candidates for header 'kern/assert.h' found; directory '/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern' chosen, ignoring others including '/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk' [-Wshadow-header]
+  387 | #include <kern/assert.h>
+      |          ^
+In file included from /work/route-a-platform-20261124/callback-attempt-002/source/osfmk/arm64/cpu.c:35:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/kalloc.h:65:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/zalloc.h:72:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/kern_types.h:36:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/mach/mach_types.h:87:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/mach/exception_types.h:205:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/mach/thread_status.h:76:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/mach/machine/thread_status.h:35:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/mach/arm/thread_status.h:387:
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/assert.h:64:10: warning: multiple candidates for header 'kern/macro_help.h' found; directory '/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern' chosen, ignoring others including '/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk' [-Wshadow-header]
+   64 | #include <kern/macro_help.h>
+      |          ^
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/assert.h:69:10: warning: multiple candidates for header 'machine/static_if.h' found; directory '/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/machine' chosen, ignoring others including '/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk' [-Wshadow-header]
+   69 | #include <machine/static_if.h>
+      |          ^
+In file included from /work/route-a-platform-20261124/callback-attempt-002/source/osfmk/arm64/cpu.c:35:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/kalloc.h:65:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/zalloc.h:72:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/kern_types.h:36:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/mach/mach_types.h:87:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/mach/exception_types.h:205:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/mach/thread_status.h:76:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/mach/machine/thread_status.h:35:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/mach/arm/thread_status.h:387:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/assert.h:69:
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/machine/static_if.h:54:10: warning: multiple candidates for header 'arm64/static_if.h' found; directory '/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/arm64' chosen, ignoring others including '/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk' [-Wshadow-header]
+   54 | #include "arm64/static_if.h"
+      |          ^
+In file included from /work/route-a-platform-20261124/callback-attempt-002/source/osfmk/arm64/cpu.c:35:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/kalloc.h:65:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/zalloc.h:72:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/kern_types.h:36:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/mach/mach_types.h:87:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/mach/exception_types.h:205:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/mach/thread_status.h:76:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/mach/machine/thread_status.h:35:
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/mach/arm/thread_status.h:791:47: warning: unsafe buffer access [-Wunsafe-buffer-usage]
+  791 |         return (register_t)(is_saved_state32(iss) ? (const_saved_state32(iss)->r[reg]) : (const_saved_state64(iss)->x[reg]));
+      |                                                      ^~~~~~~~~~~~~~~~~~~~~~~~~~~
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/mach/arm/thread_status.h:791:84: warning: unsafe buffer access [-Wunsafe-buffer-usage]
+  791 |         return (register_t)(is_saved_state32(iss) ? (const_saved_state32(iss)->r[reg]) : (const_saved_state64(iss)->x[reg]));
+      |                                                                                           ^~~~~~~~~~~~~~~~~~~~~~~~~~~
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/mach/arm/thread_status.h:803:3: warning: unsafe buffer access [-Wunsafe-buffer-usage]
+  803 |                 saved_state32(iss)->r[reg] = CAST_ASSERT_SAFE(uint32_t, value);
+      |                 ^~~~~~~~~~~~~~~~~~~~~
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/mach/arm/thread_status.h:824:3: warning: unsafe buffer access [-Wunsafe-buffer-usage]
+  824 |                 saved_state64(iss)->x[reg] = (uint64_t)value;
+      |                 ^~~~~~~~~~~~~~~~~~~~~
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/mach/arm/thread_status.h:837:3: warning: unsafe buffer access [-Wunsafe-buffer-usage]
+  837 |                 saved_state32(iss)->r[reg] = CAST_ASSERT_SAFE(uint32_t, value);
+      |                 ^~~~~~~~~~~~~~~~~~~~~
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/mach/arm/thread_status.h:858:3: warning: unsafe buffer access [-Wunsafe-buffer-usage]
+  858 |                 saved_state64(iss)->x[reg] = (uint64_t)value;
+      |                 ^~~~~~~~~~~~~~~~~~~~~
+In file included from /work/route-a-platform-20261124/callback-attempt-002/source/osfmk/arm64/cpu.c:35:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/kalloc.h:65:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/zalloc.h:72:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/kern_types.h:36:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/mach/mach_types.h:87:
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/mach/exception_types.h:207:10: warning: multiple candidates for header 'mach_debug/ipc_info.h' found; directory '/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/mach_debug' chosen, ignoring others including '/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk' [-Wshadow-header]
+  207 | #include <mach_debug/ipc_info.h>
+      |          ^
+In file included from /work/route-a-platform-20261124/callback-attempt-002/source/osfmk/arm64/cpu.c:35:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/kalloc.h:65:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/zalloc.h:72:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/kern_types.h:36:
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/mach/mach_types.h:89:10: warning: multiple candidates for header 'mach/mach_voucher_types.h' found; directory '/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/mach' chosen, ignoring others including '/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk' [-Wshadow-header]
+   89 | #include <mach/mach_voucher_types.h>
+      |          ^
+In file included from /work/route-a-platform-20261124/callback-attempt-002/source/osfmk/arm64/cpu.c:35:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/kalloc.h:65:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/zalloc.h:72:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/kern_types.h:36:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/mach/mach_types.h:89:
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/mach/mach_voucher_types.h:32:10: warning: multiple candidates for header 'mach/std_types.h' found; directory '/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/mach' chosen, ignoring others including '/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk' [-Wshadow-header]
+   32 | #include <mach/std_types.h>
+      |          ^
+In file included from /work/route-a-platform-20261124/callback-attempt-002/source/osfmk/arm64/cpu.c:35:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/kalloc.h:65:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/zalloc.h:72:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/kern_types.h:36:
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/mach/mach_types.h:90:10: warning: multiple candidates for header 'mach/processor_info.h' found; directory '/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/mach' chosen, ignoring others including '/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk' [-Wshadow-header]
+   90 | #include <mach/processor_info.h>
+      |          ^
+In file included from /work/route-a-platform-20261124/callback-attempt-002/source/osfmk/arm64/cpu.c:35:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/kalloc.h:65:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/zalloc.h:72:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/kern_types.h:36:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/mach/mach_types.h:90:
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/mach/processor_info.h:72:10: warning: multiple candidates for header 'mach/machine/processor_info.h' found; directory '/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/mach/machine' chosen, ignoring others including '/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk' [-Wshadow-header]
+   72 | #include <mach/machine/processor_info.h>
+      |          ^
+In file included from /work/route-a-platform-20261124/callback-attempt-002/source/osfmk/arm64/cpu.c:35:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/kalloc.h:65:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/zalloc.h:72:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/kern_types.h:36:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/mach/mach_types.h:90:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/mach/processor_info.h:72:
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/mach/machine/processor_info.h:35:10: warning: multiple candidates for header 'mach/arm/processor_info.h' found; directory '/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/mach/arm' chosen, ignoring others including '/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk' [-Wshadow-header]
+   35 | #include "mach/arm/processor_info.h"
+      |          ^
+In file included from /work/route-a-platform-20261124/callback-attempt-002/source/osfmk/arm64/cpu.c:35:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/kalloc.h:65:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/zalloc.h:72:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/kern_types.h:36:
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/mach/mach_types.h:91:10: warning: multiple candidates for header 'mach/task_info.h' found; directory '/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/mach' chosen, ignoring others including '/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk' [-Wshadow-header]
+   91 | #include <mach/task_info.h>
+      |          ^
+In file included from /work/route-a-platform-20261124/callback-attempt-002/source/osfmk/arm64/cpu.c:35:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/kalloc.h:65:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/zalloc.h:72:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/kern_types.h:36:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/mach/mach_types.h:91:
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/mach/task_info.h:71:10: warning: multiple candidates for header 'mach/policy.h' found; directory '/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/mach' chosen, ignoring others including '/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk' [-Wshadow-header]
+   71 | #include <mach/policy.h>
+      |          ^
+In file included from /work/route-a-platform-20261124/callback-attempt-002/source/osfmk/arm64/cpu.c:35:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/kalloc.h:65:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/zalloc.h:72:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/kern_types.h:36:
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/mach/mach_types.h:92:10: warning: multiple candidates for header 'mach/task_inspect.h' found; directory '/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/mach' chosen, ignoring others including '/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk' [-Wshadow-header]
+   92 | #include <mach/task_inspect.h>
+      |          ^
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/mach/mach_types.h:93:10: warning: multiple candidates for header 'mach/task_policy.h' found; directory '/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/mach' chosen, ignoring others including '/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk' [-Wshadow-header]
+   93 | #include <mach/task_policy.h>
+      |          ^
+In file included from /work/route-a-platform-20261124/callback-attempt-002/source/osfmk/arm64/cpu.c:35:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/kalloc.h:65:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/zalloc.h:72:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/kern_types.h:36:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/mach/mach_types.h:93:
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/mach/task_policy.h:185:10: warning: multiple candidates for header 'mach/task_policy_private.h' found; directory '/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/mach' chosen, ignoring others including '/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk' [-Wshadow-header]
+  185 | #include <mach/task_policy_private.h>
+      |          ^
+In file included from /work/route-a-platform-20261124/callback-attempt-002/source/osfmk/arm64/cpu.c:35:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/kalloc.h:65:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/zalloc.h:72:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/kern_types.h:36:
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/mach/mach_types.h:94:10: warning: multiple candidates for header 'mach/task_special_ports.h' found; directory '/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/mach' chosen, ignoring others including '/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk' [-Wshadow-header]
+   94 | #include <mach/task_special_ports.h>
+      |          ^
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/mach/mach_types.h:95:10: warning: multiple candidates for header 'mach/thread_info.h' found; directory '/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/mach' chosen, ignoring others including '/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk' [-Wshadow-header]
+   95 | #include <mach/thread_info.h>
+      |          ^
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/mach/mach_types.h:96:10: warning: multiple candidates for header 'mach/thread_policy.h' found; directory '/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/mach' chosen, ignoring others including '/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk' [-Wshadow-header]
+   96 | #include <mach/thread_policy.h>
+      |          ^
+In file included from /work/route-a-platform-20261124/callback-attempt-002/source/osfmk/arm64/cpu.c:35:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/kalloc.h:65:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/zalloc.h:72:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/kern_types.h:36:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/mach/mach_types.h:96:
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/mach/thread_policy.h:268:10: warning: multiple candidates for header 'mach/thread_policy_private.h' found; directory '/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/mach' chosen, ignoring others including '/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk' [-Wshadow-header]
+  268 | #include <mach/thread_policy_private.h>
+      |          ^
+In file included from /work/route-a-platform-20261124/callback-attempt-002/source/osfmk/arm64/cpu.c:35:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/kalloc.h:65:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/zalloc.h:72:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/kern_types.h:36:
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/mach/mach_types.h:97:10: warning: multiple candidates for header 'mach/thread_special_ports.h' found; directory '/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/mach' chosen, ignoring others including '/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk' [-Wshadow-header]
+   97 | #include <mach/thread_special_ports.h>
+      |          ^
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/mach/mach_types.h:100:10: warning: multiple candidates for header 'mach/clock_types.h' found; directory '/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/mach' chosen, ignoring others including '/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk' [-Wshadow-header]
+  100 | #include <mach/clock_types.h>
+      |          ^
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/mach/mach_types.h:101:10: warning: multiple candidates for header 'mach/vm_attributes.h' found; directory '/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/mach' chosen, ignoring others including '/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk' [-Wshadow-header]
+  101 | #include <mach/vm_attributes.h>
+      |          ^
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/mach/mach_types.h:102:10: warning: multiple candidates for header 'mach/vm_inherit.h' found; directory '/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/mach' chosen, ignoring others including '/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk' [-Wshadow-header]
+  102 | #include <mach/vm_inherit.h>
+      |          ^
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/mach/mach_types.h:103:10: warning: multiple candidates for header 'mach/vm_purgable.h' found; directory '/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/mach' chosen, ignoring others including '/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk' [-Wshadow-header]
+  103 | #include <mach/vm_purgable.h>
+      |          ^
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/mach/mach_types.h:104:10: warning: multiple candidates for header 'mach/vm_behavior.h' found; directory '/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/mach' chosen, ignoring others including '/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk' [-Wshadow-header]
+  104 | #include <mach/vm_behavior.h>
+      |          ^
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/mach/mach_types.h:109:10: warning: multiple candidates for header 'mach/vm_region.h' found; directory '/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/mach' chosen, ignoring others including '/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk' [-Wshadow-header]
+  109 | #include <mach/vm_region.h>
+      |          ^
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/mach/mach_types.h:110:10: warning: multiple candidates for header 'mach/kmod.h' found; directory '/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/mach' chosen, ignoring others including '/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk' [-Wshadow-header]
+  110 | #include <mach/kmod.h>
+      |          ^
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/mach/mach_types.h:111:10: warning: multiple candidates for header 'mach/dyld_kernel.h' found; directory '/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/mach' chosen, ignoring others including '/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk' [-Wshadow-header]
+  111 | #include <mach/dyld_kernel.h>
+      |          ^
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/mach/mach_types.h:115:10: warning: multiple candidates for header 'mach/vm_types_unsafe.h' found; directory '/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/mach' chosen, ignoring others including '/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk' [-Wshadow-header]
+  115 | #include <mach/vm_types_unsafe.h>
+      |          ^
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/mach/mach_types.h:116:10: warning: multiple candidates for header 'mach/vm_param.h' found; directory '/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/mach' chosen, ignoring others including '/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk' [-Wshadow-header]
+  116 | #include <mach/vm_param.h>
+      |          ^
+In file included from /work/route-a-platform-20261124/callback-attempt-002/source/osfmk/arm64/cpu.c:35:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/kalloc.h:65:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/zalloc.h:72:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/kern_types.h:36:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/mach/mach_types.h:116:
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/mach/vm_param.h:271:10: warning: multiple candidates for header 'vm/vm_memtag.h' found; directory '/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/vm' chosen, ignoring others including '/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk' [-Wshadow-header]
+  271 | #include <vm/vm_memtag.h>
+      |          ^
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/mach/vm_param.h:429:9: warning: unsafe buffer access [-Wunsafe-buffer-usage]
+  429 |         return "BKMGTPE"[bits / 10];
+      |                ^~~~~~~~~
+In file included from /work/route-a-platform-20261124/callback-attempt-002/source/osfmk/arm64/cpu.c:35:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/kalloc.h:65:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/zalloc.h:72:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/kern_types.h:219:
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/misc_protos.h:47:10: warning: multiple candidates for header 'ipc/ipc_types.h' found; directory '/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/ipc' chosen, ignoring others including '/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk' [-Wshadow-header]
+   47 | #include <ipc/ipc_types.h>
+      |          ^
+In file included from /work/route-a-platform-20261124/callback-attempt-002/source/osfmk/arm64/cpu.c:35:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/kalloc.h:65:
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/zalloc.h:78:10: warning: multiple candidates for header 'kern/startup.h' found; directory '/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern' chosen, ignoring others including '/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk' [-Wshadow-header]
+   78 | #include <kern/startup.h>
+      |          ^
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/zalloc.h:1110:10: warning: multiple candidates for header 'kern/cpu_number.h' found; directory '/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern' chosen, ignoring others including '/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk' [-Wshadow-header]
+ 1110 | #include <kern/cpu_number.h>
+      |          ^
+In file included from /work/route-a-platform-20261124/callback-attempt-002/source/osfmk/arm64/cpu.c:35:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/kalloc.h:65:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/zalloc.h:1110:
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/cpu_number.h:64:10: warning: multiple candidates for header 'machine/cpu_number.h' found; directory '/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/machine' chosen, ignoring others including '/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk' [-Wshadow-header]
+   64 | #include <machine/cpu_number.h>
+      |          ^
+In file included from /work/route-a-platform-20261124/callback-attempt-002/source/osfmk/arm64/cpu.c:35:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/kalloc.h:65:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/zalloc.h:1110:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/cpu_number.h:64:
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/machine/cpu_number.h:36:10: warning: multiple candidates for header 'arm/cpu_number.h' found; directory '/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/arm' chosen, ignoring others including '/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk' [-Wshadow-header]
+   36 | #include "arm/cpu_number.h"
+      |          ^
+In file included from /work/route-a-platform-20261124/callback-attempt-002/source/osfmk/arm64/cpu.c:35:
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/kalloc.h:69:10: warning: multiple candidates for header 'kern/counter.h' found; directory '/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern' chosen, ignoring others including '/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk' [-Wshadow-header]
+   69 | #include <kern/counter.h>
+      |          ^
+In file included from /work/route-a-platform-20261124/callback-attempt-002/source/osfmk/arm64/cpu.c:36:
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/machine.h:40:10: warning: multiple candidates for header 'kern/thread_group.h' found; directory '/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern' chosen, ignoring others including '/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk' [-Wshadow-header]
+   40 | #include <kern/thread_group.h>
+      |          ^
+In file included from /work/route-a-platform-20261124/callback-attempt-002/source/osfmk/arm64/cpu.c:36:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/machine.h:40:
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/thread_group.h:55:10: warning: multiple candidates for header 'kern/queue.h' found; directory '/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern' chosen, ignoring others including '/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk' [-Wshadow-header]
+   55 | #include <kern/queue.h>
+      |          ^
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/thread_group.h:56:10: warning: multiple candidates for header 'machine/machine_routines.h' found; directory '/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/machine' chosen, ignoring others including '/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk' [-Wshadow-header]
+   56 | #include <machine/machine_routines.h>
+      |          ^
+In file included from /work/route-a-platform-20261124/callback-attempt-002/source/osfmk/arm64/cpu.c:36:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/machine.h:40:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/thread_group.h:56:
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/machine/machine_routines.h:37:10: warning: multiple candidates for header 'arm/machine_routines.h' found; directory '/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/arm' chosen, ignoring others including '/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk' [-Wshadow-header]
+   37 | #include "arm/machine_routines.h"
+      |          ^
+In file included from /work/route-a-platform-20261124/callback-attempt-002/source/osfmk/arm64/cpu.c:36:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/machine.h:40:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/thread_group.h:56:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/machine/machine_routines.h:37:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/arm/machine_routines.h:39:
+In file included from /work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/pexpert/pexpert/pexpert.h:39:
+In file included from /work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/libkern/libkern/kernel_mach_header.h:47:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/EXTERNAL_HEADERS/mach-o/loader.h:48:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/EXTERNAL_HEADERS/architecture/byte_order.h:34:
+In file included from /work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/libkern/libkern/OSByteOrder.h:55:
+/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/libkern/libkern/arm/OSByteOrder.h:37:10: warning: multiple candidates for header 'arm/arch.h' found; directory '/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/arm' chosen, ignoring others including '/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk' [-Wshadow-header]
+   37 | #include <arm/arch.h> /* for _ARM_ARCH_6 */
+      |          ^
+In file included from /work/route-a-platform-20261124/callback-attempt-002/source/osfmk/arm64/cpu.c:36:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/machine.h:40:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/thread_group.h:56:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/machine/machine_routines.h:37:
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/arm/machine_routines.h:48:10: warning: multiple candidates for header 'kern/sched_hygiene.h' found; directory '/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern' chosen, ignoring others including '/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk' [-Wshadow-header]
+   48 | #include <kern/sched_hygiene.h>
+      |          ^
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/arm/machine_routines.h:656:10: warning: multiple candidates for header 'machine/config.h' found; directory '/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/machine' chosen, ignoring others including '/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk' [-Wshadow-header]
+  656 | #include <machine/config.h>
+      |          ^
+In file included from /work/route-a-platform-20261124/callback-attempt-002/source/osfmk/arm64/cpu.c:36:
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/machine.h:41:10: warning: multiple candidates for header 'kern/work_interval.h' found; directory '/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern' chosen, ignoring others including '/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk' [-Wshadow-header]
+   41 | #include <kern/work_interval.h>
+      |          ^
+/work/route-a-platform-20261124/callback-attempt-002/source/osfmk/arm64/cpu.c:39:10: warning: multiple candidates for header 'kern/thread.h' found; directory '/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern' chosen, ignoring others including '/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk' [-Wshadow-header]
+   39 | #include <kern/thread.h>
+      |          ^
+In file included from /work/route-a-platform-20261124/callback-attempt-002/source/osfmk/arm64/cpu.c:39:
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/thread.h:89:10: warning: multiple candidates for header 'mach/mach_param.h' found; directory '/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/mach' chosen, ignoring others including '/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk' [-Wshadow-header]
+   89 | #include <mach/mach_param.h>
+      |          ^
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/thread.h:98:10: warning: multiple candidates for header 'vm/vm_kern.h' found; directory '/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/vm' chosen, ignoring others including '/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk' [-Wshadow-header]
+   98 | #include <vm/vm_kern.h>
+      |          ^
+In file included from /work/route-a-platform-20261124/callback-attempt-002/source/osfmk/arm64/cpu.c:39:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/thread.h:98:
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/vm/vm_kern.h:74:10: warning: multiple candidates for header 'kern/locks.h' found; directory '/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern' chosen, ignoring others including '/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk' [-Wshadow-header]
+   74 | #include <kern/locks.h>
+      |          ^
+In file included from /work/route-a-platform-20261124/callback-attempt-002/source/osfmk/arm64/cpu.c:39:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/thread.h:98:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/vm/vm_kern.h:74:
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/locks.h:36:10: warning: multiple candidates for header 'machine/locks.h' found; directory '/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/machine' chosen, ignoring others including '/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk' [-Wshadow-header]
+   36 | #include <machine/locks.h>
+      |          ^
+In file included from /work/route-a-platform-20261124/callback-attempt-002/source/osfmk/arm64/cpu.c:39:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/thread.h:98:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/vm/vm_kern.h:74:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/locks.h:36:
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/machine/locks.h:34:10: warning: multiple candidates for header 'arm/locks.h' found; directory '/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/arm' chosen, ignoring others including '/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk' [-Wshadow-header]
+   34 | #include "arm/locks.h"
+      |          ^
+In file included from /work/route-a-platform-20261124/callback-attempt-002/source/osfmk/arm64/cpu.c:39:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/thread.h:98:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/vm/vm_kern.h:74:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/locks.h:36:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/machine/locks.h:34:
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/arm/locks.h:38:10: warning: multiple candidates for header 'kern/lock_types.h' found; directory '/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern' chosen, ignoring others including '/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk' [-Wshadow-header]
+   38 | #include <kern/lock_types.h>
+      |          ^
+In file included from /work/route-a-platform-20261124/callback-attempt-002/source/osfmk/arm64/cpu.c:39:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/thread.h:98:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/vm/vm_kern.h:74:
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/locks.h:40:10: warning: multiple candidates for header 'kern/lock_attr.h' found; directory '/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern' chosen, ignoring others including '/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk' [-Wshadow-header]
+   40 | #include <kern/lock_attr.h>
+      |          ^
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/locks.h:41:10: warning: multiple candidates for header 'kern/lock_group.h' found; directory '/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern' chosen, ignoring others including '/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk' [-Wshadow-header]
+   41 | #include <kern/lock_group.h>
+      |          ^
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/locks.h:42:10: warning: multiple candidates for header 'kern/lock_mtx.h' found; directory '/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern' chosen, ignoring others including '/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk' [-Wshadow-header]
+   42 | #include <kern/lock_mtx.h>
+      |          ^
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/locks.h:43:10: warning: multiple candidates for header 'kern/lock_rw.h' found; directory '/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern' chosen, ignoring others including '/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk' [-Wshadow-header]
+   43 | #include <kern/lock_rw.h>
+      |          ^
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/locks.h:46:10: warning: multiple candidates for header 'kern/ticket_lock.h' found; directory '/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern' chosen, ignoring others including '/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk' [-Wshadow-header]
+   46 | #include <kern/ticket_lock.h>
+      |          ^
+In file included from /work/route-a-platform-20261124/callback-attempt-002/source/osfmk/arm64/cpu.c:39:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/thread.h:110:
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/smp.h:34:10: warning: multiple candidates for header 'machine/smp.h' found; directory '/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/machine' chosen, ignoring others including '/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk' [-Wshadow-header]
+   34 | #include <machine/smp.h>
+      |          ^
+In file included from /work/route-a-platform-20261124/callback-attempt-002/source/osfmk/arm64/cpu.c:39:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/thread.h:110:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/smp.h:34:
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/machine/smp.h:37:10: warning: multiple candidates for header 'arm/smp.h' found; directory '/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/arm' chosen, ignoring others including '/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk' [-Wshadow-header]
+   37 | #include "arm/smp.h"
+      |          ^
+In file included from /work/route-a-platform-20261124/callback-attempt-002/source/osfmk/arm64/cpu.c:39:
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/thread.h:111:10: warning: multiple candidates for header 'kern/smr_types.h' found; directory '/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern' chosen, ignoring others including '/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk' [-Wshadow-header]
+  111 | #include <kern/smr_types.h>
+      |          ^
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/thread.h:115:10: warning: multiple candidates for header 'kern/simple_lock.h' found; directory '/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern' chosen, ignoring others including '/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk' [-Wshadow-header]
+  115 | #include <kern/simple_lock.h>
+      |          ^
+In file included from /work/route-a-platform-20261124/callback-attempt-002/source/osfmk/arm64/cpu.c:39:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/thread.h:115:
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/simple_lock.h:76:10: warning: multiple candidates for header 'machine/simple_lock.h' found; directory '/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/machine' chosen, ignoring others including '/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk' [-Wshadow-header]
+   76 | #include <machine/simple_lock.h>
+      |          ^
+In file included from /work/route-a-platform-20261124/callback-attempt-002/source/osfmk/arm64/cpu.c:39:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/thread.h:115:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/simple_lock.h:76:
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/machine/simple_lock.h:36:10: warning: multiple candidates for header 'arm/simple_lock.h' found; directory '/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/arm' chosen, ignoring others including '/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk' [-Wshadow-header]
+   36 | #include "arm/simple_lock.h"
+      |          ^
+In file included from /work/route-a-platform-20261124/callback-attempt-002/source/osfmk/arm64/cpu.c:39:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/thread.h:115:
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/simple_lock.h:81:10: warning: multiple candidates for header 'machine/atomic.h' found; directory '/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/machine' chosen, ignoring others including '/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk' [-Wshadow-header]
+   81 | #include <machine/atomic.h>
+      |          ^
+In file included from /work/route-a-platform-20261124/callback-attempt-002/source/osfmk/arm64/cpu.c:39:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/thread.h:115:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/simple_lock.h:81:
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/machine/atomic.h:32:10: warning: multiple candidates for header 'os/atomic_private.h' found; directory '/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/libkern/os' chosen, ignoring others including '/work/route-a-continue-20261123/kernel-build/.cache/fakeroot/usr/local/include' [-Wshadow-header]
+   32 | #include <os/atomic_private.h>
+      |          ^
+In file included from /work/route-a-platform-20261124/callback-attempt-002/source/osfmk/arm64/cpu.c:39:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/thread.h:115:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/simple_lock.h:81:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/machine/atomic.h:32:
+/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/libkern/os/atomic_private.h:168:10: warning: multiple candidates for header 'os/atomic_private_impl.h' found; directory '/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/libkern/os' chosen, ignoring others including '/work/route-a-continue-20261123/kernel-build/.cache/fakeroot/usr/local/include' [-Wshadow-header]
+  168 | #include <os/atomic_private_impl.h> // Internal implementation details
+      |          ^
+/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/libkern/os/atomic_private.h:872:10: warning: multiple candidates for header 'os/atomic_private_arch.h' found; directory '/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/libkern/os' chosen, ignoring others including '/work/route-a-continue-20261123/kernel-build/.cache/fakeroot/usr/local/include' [-Wshadow-header]
+  872 | #include <os/atomic_private_arch.h> // Per architecture overrides
+      |          ^
+In file included from /work/route-a-platform-20261124/callback-attempt-002/source/osfmk/arm64/cpu.c:39:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/thread.h:115:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/simple_lock.h:81:
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/machine/atomic.h:37:10: warning: multiple candidates for header 'arm/atomic.h' found; directory '/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/arm' chosen, ignoring others including '/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk' [-Wshadow-header]
+   37 | #include "arm/atomic.h"
+      |          ^
+In file included from /work/route-a-platform-20261124/callback-attempt-002/source/osfmk/arm64/cpu.c:39:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/thread.h:117:
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/sched.h:73:10: warning: multiple candidates for header 'kern/circle_queue.h' found; directory '/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern' chosen, ignoring others including '/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk' [-Wshadow-header]
+   73 | #include <kern/circle_queue.h>
+      |          ^
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/sched.h:75:10: warning: multiple candidates for header 'kern/timer_call.h' found; directory '/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern' chosen, ignoring others including '/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk' [-Wshadow-header]
+   75 | #include <kern/timer_call.h>
+      |          ^
+In file included from /work/route-a-platform-20261124/callback-attempt-002/source/osfmk/arm64/cpu.c:39:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/thread.h:117:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/sched.h:75:
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/timer_call.h:56:10: warning: multiple candidates for header 'kern/priority_queue.h' found; directory '/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern' chosen, ignoring others including '/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk' [-Wshadow-header]
+   56 | #include <kern/priority_queue.h>
+      |          ^
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/timer_call.h:57:10: warning: multiple candidates for header 'kern/mpqueue.h' found; directory '/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern' chosen, ignoring others including '/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk' [-Wshadow-header]
+   57 | #include <kern/mpqueue.h>
+      |          ^
+In file included from /work/route-a-platform-20261124/callback-attempt-002/source/osfmk/arm64/cpu.c:39:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/thread.h:117:
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/sched.h:77:10: warning: multiple candidates for header 'kern/bits.h' found; directory '/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern' chosen, ignoring others including '/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk' [-Wshadow-header]
+   77 | #include <kern/bits.h>
+      |          ^
+In file included from /work/route-a-platform-20261124/callback-attempt-002/source/osfmk/arm64/cpu.c:39:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/thread.h:117:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/sched.h:77:
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/bits.h:240:3: warning: unsafe buffer access [-Wunsafe-buffer-usage]
+  240 |                 map[i] = ~((uint64_t)0);
+      |                 ^~~
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/bits.h:246:3: warning: unsafe buffer access [-Wunsafe-buffer-usage]
+  246 |                 map[i] = bits_mask(nbits - nbits_filled);
+      |                 ^~~
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/bits.h:256:7: warning: unsafe buffer access [-Wunsafe-buffer-usage]
+  256 |                 if (map[i]) {
+      |                     ^~~
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/bits.h:270:7: warning: unsafe buffer access [-Wunsafe-buffer-usage]
+  270 |                 if (map[i] != ~((uint64_t)0)) {
+      |                     ^~~
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/bits.h:278:10: warning: unsafe buffer access [-Wunsafe-buffer-usage]
+  278 |                 return map[i] == bits_mask(nbits - nbits_filled);
+      |                        ^~~
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/bits.h:301:10: warning: unsafe buffer access [-Wunsafe-buffer-usage]
+  301 |         bit_set(map[bitmap_index(n)], bitmap_bit(n));
+      |                 ^~~
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/bits.h:307:12: warning: unsafe buffer access [-Wunsafe-buffer-usage]
+  307 |         bit_clear(map[bitmap_index(n)], bitmap_bit(n));
+      |                   ^~~
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/bits.h:313:25: warning: unsafe buffer access [-Wunsafe-buffer-usage]
+  313 |         return atomic_bit_set(&map[bitmap_index(n)], bitmap_bit(n), mem_order);
+      |                                ^~~
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/bits.h:319:27: warning: unsafe buffer access [-Wunsafe-buffer-usage]
+  319 |         return atomic_bit_clear(&map[bitmap_index(n)], bitmap_bit(n), mem_order);
+      |                                  ^~~
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/bits.h:325:18: warning: unsafe buffer access [-Wunsafe-buffer-usage]
+  325 |         return bit_test(map[bitmap_index(n)], bitmap_bit(n));
+      |                         ^~~
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/bits.h:332:7: warning: unsafe buffer access [-Wunsafe-buffer-usage]
+  332 |                 if (map[i] == 0) {
+      |                     ^~~
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/bits.h:335:31: warning: unsafe buffer access [-Wunsafe-buffer-usage]
+  335 |                 return (i << 6) + bit_first(map[i]);
+      |                                             ^~~
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/bits.h:350:3: warning: unsafe buffer access [-Wunsafe-buffer-usage]
+  350 |                 out[i] = ~in[i];
+      |                 ^~~
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/bits.h:350:13: warning: unsafe buffer access [-Wunsafe-buffer-usage]
+  350 |                 out[i] = ~in[i];
+      |                           ^~
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/bits.h:356:3: warning: unsafe buffer access [-Wunsafe-buffer-usage]
+  356 |                 out[i] = ~in[i] & bits_mask(nbits - nbits_complete);
+      |                 ^~~
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/bits.h:356:13: warning: unsafe buffer access [-Wunsafe-buffer-usage]
+  356 |                 out[i] = ~in[i] & bits_mask(nbits - nbits_complete);
+      |                           ^~
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/bits.h:368:3: warning: unsafe buffer access [-Wunsafe-buffer-usage]
+  368 |                 out[i] = in1[i] & in2[i];
+      |                 ^~~
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/bits.h:368:12: warning: unsafe buffer access [-Wunsafe-buffer-usage]
+  368 |                 out[i] = in1[i] & in2[i];
+      |                          ^~~
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/bits.h:368:21: warning: unsafe buffer access [-Wunsafe-buffer-usage]
+  368 |                 out[i] = in1[i] & in2[i];
+      |                                   ^~~
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/bits.h:382:3: warning: unsafe buffer access [-Wunsafe-buffer-usage]
+  382 |                 out[i] = in1[i] & ~in2[i];
+      |                 ^~~
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/bits.h:382:12: warning: unsafe buffer access [-Wunsafe-buffer-usage]
+  382 |                 out[i] = in1[i] & ~in2[i];
+      |                          ^~~
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/bits.h:382:22: warning: unsafe buffer access [-Wunsafe-buffer-usage]
+  382 |                 out[i] = in1[i] & ~in2[i];
+      |                                    ^~~
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/bits.h:394:3: warning: unsafe buffer access [-Wunsafe-buffer-usage]
+  394 |                 out[i] = in1[i] | in2[i];
+      |                 ^~~
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/bits.h:394:12: warning: unsafe buffer access [-Wunsafe-buffer-usage]
+  394 |                 out[i] = in1[i] | in2[i];
+      |                          ^~~
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/bits.h:394:21: warning: unsafe buffer access [-Wunsafe-buffer-usage]
+  394 |                 out[i] = in1[i] | in2[i];
+      |                                   ^~~
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/bits.h:405:7: warning: unsafe buffer access [-Wunsafe-buffer-usage]
+  405 |                 if (in1[i] != in2[i]) {
+      |                     ^~~
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/bits.h:405:17: warning: unsafe buffer access [-Wunsafe-buffer-usage]
+  405 |                 if (in1[i] != in2[i]) {
+      |                               ^~~
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/bits.h:420:8: warning: unsafe buffer access [-Wunsafe-buffer-usage]
+  420 |                 if ((map[i] & ~mask[i]) == 0) {
+      |                      ^~~
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/bits.h:420:18: warning: unsafe buffer access [-Wunsafe-buffer-usage]
+  420 |                 if ((map[i] & ~mask[i]) == 0) {
+      |                                ^~~~
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/bits.h:423:31: warning: unsafe buffer access [-Wunsafe-buffer-usage]
+  423 |                 return (i << 6) + bit_first(map[i] & ~mask[i]);
+      |                                             ^~~
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/bits.h:423:41: warning: unsafe buffer access [-Wunsafe-buffer-usage]
+  423 |                 return (i << 6) + bit_first(map[i] & ~mask[i]);
+      |                                                       ^~~~
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/bits.h:433:7: warning: unsafe buffer access [-Wunsafe-buffer-usage]
+  433 |                 if (map[i] == 0) {
+      |                     ^~~
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/bits.h:436:47: warning: unsafe buffer access [-Wunsafe-buffer-usage]
+  436 |                 return (int)((i << 6) + (uint32_t)lsb_first(map[i]));
+      |                                                             ^~~
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/bits.h:450:23: warning: unsafe buffer access [-Wunsafe-buffer-usage]
+  450 |         int res = __bit_next(map[i], bits(prev, 5, 0));
+      |                              ^~~
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/bits.h:456:7: warning: unsafe buffer access [-Wunsafe-buffer-usage]
+  456 |                 if (map[i] == 0) {
+      |                     ^~~
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/bits.h:459:37: warning: unsafe buffer access [-Wunsafe-buffer-usage]
+  459 |                 return (int)((i << 6) + bit_first(map[i]));
+      |                                                   ^~~
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/bits.h:474:35: warning: unsafe buffer access [-Wunsafe-buffer-usage]
+  474 |         int32_t res = lsb_next((uint64_t)map[i], (int)b);
+      |                                          ^~~
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/bits.h:480:7: warning: unsafe buffer access [-Wunsafe-buffer-usage]
+  480 |                 if (map[i] == 0) {
+      |                     ^~~
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/bits.h:483:47: warning: unsafe buffer access [-Wunsafe-buffer-usage]
+  483 |                 return (int)((i << 6) + (uint64_t)lsb_first(map[i]));
+      |                                                             ^~~
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/bits.h:494:26: warning: unsafe buffer access [-Wunsafe-buffer-usage]
+  494 |                 res += (uint)bit_count(map[i]);
+      |                                        ^~~
+In file included from /work/route-a-platform-20261124/callback-attempt-002/source/osfmk/arm64/cpu.c:39:
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/thread.h:118:10: warning: multiple candidates for header 'kern/sched_prim.h' found; directory '/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern' chosen, ignoring others including '/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk' [-Wshadow-header]
+  118 | #include <kern/sched_prim.h>
+      |          ^
+In file included from /work/route-a-platform-20261124/callback-attempt-002/source/osfmk/arm64/cpu.c:39:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/thread.h:118:
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/sched_prim.h:73:10: warning: multiple candidates for header 'kern/clock.h' found; directory '/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern' chosen, ignoring others including '/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk' [-Wshadow-header]
+   73 | #include <kern/clock.h>
+      |          ^
+In file included from /work/route-a-platform-20261124/callback-attempt-002/source/osfmk/arm64/cpu.c:39:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/thread.h:118:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/sched_prim.h:73:
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/clock.h:41:10: warning: multiple candidates for header 'mach/mach_time.h' found; directory '/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/mach' chosen, ignoring others including '/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk' [-Wshadow-header]
+   41 | #include <mach/mach_time.h>
+      |          ^
+In file included from /work/route-a-platform-20261124/callback-attempt-002/source/osfmk/arm64/cpu.c:39:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/thread.h:118:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/sched_prim.h:73:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/clock.h:41:
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/mach/mach_time.h:88:10: warning: multiple candidates for header 'mach/mach_time_private.h' found; directory '/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/mach' chosen, ignoring others including '/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk' [-Wshadow-header]
+   88 | #include <mach/mach_time_private.h>
+      |          ^
+In file included from /work/route-a-platform-20261124/callback-attempt-002/source/osfmk/arm64/cpu.c:39:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/thread.h:118:
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/sched_prim.h:77:10: warning: multiple candidates for header 'kern/block_hint.h' found; directory '/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern' chosen, ignoring others including '/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk' [-Wshadow-header]
+   77 | #include <kern/block_hint.h>
+      |          ^
+In file included from /work/route-a-platform-20261124/callback-attempt-002/source/osfmk/arm64/cpu.c:39:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/thread.h:118:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/sched_prim.h:77:
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/block_hint.h:34:10: warning: multiple candidates for header 'kern/waitq.h' found; directory '/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern' chosen, ignoring others including '/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk' [-Wshadow-header]
+   34 | #include <kern/waitq.h>
+      |          ^
+In file included from /work/route-a-platform-20261124/callback-attempt-002/source/osfmk/arm64/cpu.c:39:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/thread.h:118:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/sched_prim.h:77:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/block_hint.h:34:
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/waitq.h:33:10: warning: multiple candidates for header 'mach/sync_policy.h' found; directory '/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/mach' chosen, ignoring others including '/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk' [-Wshadow-header]
+   33 | #include <mach/sync_policy.h>
+      |          ^
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/waitq.h:49:10: warning: multiple candidates for header 'kern/mpsc_queue.h' found; directory '/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern' chosen, ignoring others including '/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk' [-Wshadow-header]
+   49 | #include <kern/mpsc_queue.h>
+      |          ^
+In file included from /work/route-a-platform-20261124/callback-attempt-002/source/osfmk/arm64/cpu.c:39:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/thread.h:118:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/sched_prim.h:77:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/block_hint.h:34:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/waitq.h:49:
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/mpsc_queue.h:36:10: warning: multiple candidates for header 'kern/thread_call.h' found; directory '/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern' chosen, ignoring others including '/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk' [-Wshadow-header]
+   36 | #include <kern/thread_call.h>
+      |          ^
+In file included from /work/route-a-platform-20261124/callback-attempt-002/source/osfmk/arm64/cpu.c:39:
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/thread.h:119:10: warning: multiple candidates for header 'mach/sfi_class.h' found; directory '/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/mach' chosen, ignoring others including '/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk' [-Wshadow-header]
+  119 | #include <mach/sfi_class.h>
+      |          ^
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/thread.h:123:10: warning: multiple candidates for header 'kern/task.h' found; directory '/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern' chosen, ignoring others including '/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk' [-Wshadow-header]
+  123 | #include <kern/task.h>
+      |          ^
+In file included from /work/route-a-platform-20261124/callback-attempt-002/source/osfmk/arm64/cpu.c:39:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/thread.h:123:
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/task.h:95:10: warning: multiple candidates for header 'kern/task_ref.h' found; directory '/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern' chosen, ignoring others including '/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk' [-Wshadow-header]
+   95 | #include <kern/task_ref.h>
+      |          ^
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/task.h:100:10: warning: multiple candidates for header 'kern/btlog.h' found; directory '/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern' chosen, ignoring others including '/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk' [-Wshadow-header]
+  100 | #include <kern/btlog.h>
+      |          ^
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/task.h:101:10: warning: multiple candidates for header 'kern/kern_cdata.h' found; directory '/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern' chosen, ignoring others including '/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk' [-Wshadow-header]
+  101 | #include <kern/kern_cdata.h>
+      |          ^
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/task.h:104:10: warning: multiple candidates for header 'kern/cs_blobs.h' found; directory '/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern' chosen, ignoring others including '/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk' [-Wshadow-header]
+  104 | #include <kern/cs_blobs.h>
+      |          ^
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/task.h:106:10: warning: multiple candidates for header 'kern/recount.h' found; directory '/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern' chosen, ignoring others including '/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk' [-Wshadow-header]
+  106 | #include <kern/recount.h>
+      |          ^
+In file included from /work/route-a-platform-20261124/callback-attempt-002/source/osfmk/arm64/cpu.c:39:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/thread.h:123:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/task.h:106:
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/recount.h:35:10: warning: multiple candidates for header 'kern/cpc.h' found; directory '/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern' chosen, ignoring others including '/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk' [-Wshadow-header]
+   35 | #include <kern/cpc.h>
+      |          ^
+In file included from /work/route-a-platform-20261124/callback-attempt-002/source/osfmk/arm64/cpu.c:39:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/thread.h:123:
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/task.h:109:10: warning: multiple candidates for header 'sys/resource_private.h' found; directory '/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/bsd/sys' chosen, ignoring others including '/work/route-a-continue-20261123/kernel-build/.cache/fakeroot/usr/local/include' [-Wshadow-header]
+  109 | #include <sys/resource_private.h>
+      |          ^
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/task.h:110:10: warning: multiple candidates for header 'sys/reason.h' found; directory '/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/bsd/sys' chosen, ignoring others including '/work/route-a-continue-20261123/kernel-build/.cache/fakeroot/usr/local/include' [-Wshadow-header]
+  110 | #include <sys/reason.h>
+      |          ^
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/task.h:128:10: warning: multiple candidates for header 'kern/cpu_data.h' found; directory '/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern' chosen, ignoring others including '/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk' [-Wshadow-header]
+  128 | #include <kern/cpu_data.h>
+      |          ^
+In file included from /work/route-a-platform-20261124/callback-attempt-002/source/osfmk/arm64/cpu.c:39:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/thread.h:123:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/task.h:128:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/cpu_data.h:42:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/machine/cpu_data.h:34:
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/arm/cpu_data.h:41:10: warning: multiple candidates for header 'kern/processor.h' found; directory '/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern' chosen, ignoring others including '/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk' [-Wshadow-header]
+   41 | #include <kern/processor.h>
+      |          ^
+In file included from /work/route-a-platform-20261124/callback-attempt-002/source/osfmk/arm64/cpu.c:39:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/thread.h:123:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/task.h:128:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/cpu_data.h:42:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/machine/cpu_data.h:34:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/arm/cpu_data.h:41:
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/processor.h:92:10: warning: multiple candidates for header 'kern/sched_clutch.h' found; directory '/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern' chosen, ignoring others including '/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk' [-Wshadow-header]
+   92 | #include <kern/sched_clutch.h>
+      |          ^
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/processor.h:600:10: warning: unsafe buffer access [-Wunsafe-buffer-usage]
+  600 |         return &pset_array_actual[id];
+      |                 ^~~~~~~~~~~~~~~~~
+In file included from /work/route-a-platform-20261124/callback-attempt-002/source/osfmk/arm64/cpu.c:39:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/thread.h:123:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/task.h:128:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/cpu_data.h:42:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/machine/cpu_data.h:34:
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/arm/cpu_data.h:43:10: warning: multiple candidates for header 'arm/thread.h' found; directory '/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/arm' chosen, ignoring others including '/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk' [-Wshadow-header]
+   43 | #include <arm/thread.h>
+      |          ^
+In file included from /work/route-a-platform-20261124/callback-attempt-002/source/osfmk/arm64/cpu.c:39:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/thread.h:123:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/task.h:133:
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/ipc/ipc_port.h:85:10: warning: multiple candidates for header 'kern/turnstile.h' found; directory '/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern' chosen, ignoring others including '/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk' [-Wshadow-header]
+   85 | #include <kern/turnstile.h>
+      |          ^
+In file included from /work/route-a-platform-20261124/callback-attempt-002/source/osfmk/arm64/cpu.c:39:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/thread.h:123:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/task.h:133:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/ipc/ipc_port.h:88:
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/ipc/ipc_object.h:85:10: warning: multiple candidates for header 'libkern/OSAtomic.h' found; directory '/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/libkern/libkern' chosen, ignoring others including '/work/route-a-continue-20261123/kernel-build/.cache/fakeroot/usr/local/include' [-Wshadow-header]
+   85 | #include <libkern/OSAtomic.h>
+      |          ^
+In file included from /work/route-a-platform-20261124/callback-attempt-002/source/osfmk/arm64/cpu.c:39:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/thread.h:123:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/task.h:133:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/ipc/ipc_port.h:89:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/ipc/ipc_mqueue.h:77:
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/ipc/ipc_kmsg.h:85:10: warning: multiple candidates for header 'sys/kdebug.h' found; directory '/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/bsd/sys' chosen, ignoring others including '/work/route-a-continue-20261123/kernel-build/.cache/fakeroot/usr/local/include' [-Wshadow-header]
+   85 | #include <sys/kdebug.h>
+      |          ^
+In file included from /work/route-a-platform-20261124/callback-attempt-002/source/osfmk/arm64/cpu.c:39:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/thread.h:123:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/task.h:133:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/ipc/ipc_port.h:89:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/ipc/ipc_mqueue.h:77:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/ipc/ipc_kmsg.h:85:
+/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/bsd/sys/kdebug.h:1361:10: warning: multiple candidates for header 'sys/kdebug_private.h' found; directory '/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/bsd/sys' chosen, ignoring others including '/work/route-a-continue-20261123/kernel-build/.cache/fakeroot/usr/local/include' [-Wshadow-header]
+ 1361 | #include <sys/kdebug_private.h>
+      |          ^
+In file included from /work/route-a-platform-20261124/callback-attempt-002/source/osfmk/arm64/cpu.c:39:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/thread.h:123:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/task.h:133:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/ipc/ipc_port.h:89:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/ipc/ipc_mqueue.h:81:
+/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/bsd/sys/event.h:397:10: warning: multiple candidates for header 'sys/event_private.h' found; directory '/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/bsd/sys' chosen, ignoring others including '/work/route-a-continue-20261123/kernel-build/.cache/fakeroot/usr/local/include' [-Wshadow-header]
+  397 | #include <sys/event_private.h>
+      |          ^
+In file included from /work/route-a-platform-20261124/callback-attempt-002/source/osfmk/arm64/cpu.c:39:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/thread.h:123:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/task.h:133:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/ipc/ipc_port.h:89:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/ipc/ipc_mqueue.h:81:
+In file included from /work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/bsd/sys/event.h:397:
+/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/bsd/sys/event_private.h:71:10: warning: multiple candidates for header 'pthread/priority_private.h' found; directory '/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/bsd/pthread' chosen, ignoring others including '/work/route-a-continue-20261123/kernel-build/.cache/fakeroot/usr/local/include' [-Wshadow-header]
+   71 | #include <pthread/priority_private.h>
+      |          ^
+In file included from /work/route-a-platform-20261124/callback-attempt-002/source/osfmk/arm64/cpu.c:39:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/thread.h:123:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/task.h:133:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/ipc/ipc_port.h:89:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/ipc/ipc_mqueue.h:81:
+In file included from /work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/bsd/sys/event.h:397:
+In file included from /work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/bsd/sys/event_private.h:72:
+/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/bsd/sys/fcntl.h:779:10: warning: multiple candidates for header 'sys/fcntl_private.h' found; directory '/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/bsd/sys' chosen, ignoring others including '/work/route-a-continue-20261123/kernel-build/.cache/fakeroot/usr/local/include' [-Wshadow-header]
+  779 | #include <sys/fcntl_private.h>
+      |          ^
+In file included from /work/route-a-platform-20261124/callback-attempt-002/source/osfmk/arm64/cpu.c:39:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/thread.h:123:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/task.h:133:
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/ipc/ipc_port.h:117:1: warning: unsafe pointer arithmetic [-Wunsafe-buffer-usage]
+  117 | KALLOC_ARRAY_TYPE_DECL(ipc_port_request_table, struct ipc_port_request);
+      | ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/kalloc.h:1047:2: note: expanded from macro 'KALLOC_ARRAY_TYPE_DECL'
+ 1047 |         KALLOC_DISPATCH(KALLOC_ARRAY_TYPE_DECL, ##__VA_ARGS__)
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/kalloc.h:1579:2: note: expanded from macro 'KALLOC_DISPATCH'
+ 1579 |         KALLOC_DISPATCH1(base, KALLOC_COUNT_ARGS(__VA_ARGS__), ##__VA_ARGS__)
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/kalloc.h:1577:40: note: expanded from macro 'KALLOC_DISPATCH1'
+ 1577 | #define KALLOC_DISPATCH1(base, N, ...) __CONCAT(base, N)(__VA_ARGS__)
+      |                                        ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+note: (skipping 2 expansions in backtrace; use -fmacro-backtrace-limit=0 to see all)
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/kalloc.h:1275:2: note: expanded from macro 'KALLOC_ARRAY_TYPE_DECL_2'
+ 1275 |         KALLOC_ARRAY_TYPE_DECL_(name, e_type_t, 0, e_type_t, sizeof(e_type_t))
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/kalloc.h:1159:17: note: expanded from macro 'KALLOC_ARRAY_TYPE_DECL_'
+ 1159 |                 return name ## _begin(array) + i;                               \
+      |                        ^~~~~~~~~~~~~~~~~~~~~
+<scratch space>:91:1: note: expanded from here
+   91 | ipc_port_request_table_begin
+      | ^
+In file included from /work/route-a-platform-20261124/callback-attempt-002/source/osfmk/arm64/cpu.c:39:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/thread.h:123:
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/task.h:136:10: warning: multiple candidates for header 'mach/coalition.h' found; directory '/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/mach' chosen, ignoring others including '/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk' [-Wshadow-header]
+  136 | #include <mach/coalition.h>
+      |          ^
+In file included from /work/route-a-platform-20261124/callback-attempt-002/source/osfmk/arm64/cpu.c:39:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/thread.h:123:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/task.h:246:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/bank/bank_internal.h:41:
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/ipc/ipc_voucher.h:42:10: warning: multiple candidates for header 'voucher/ipc_pthread_priority_types.h' found; directory '/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/voucher' chosen, ignoring others including '/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk' [-Wshadow-header]
+   42 | #include <voucher/ipc_pthread_priority_types.h>
+      |          ^
+In file included from /work/route-a-platform-20261124/callback-attempt-002/source/osfmk/arm64/cpu.c:39:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/thread.h:123:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/task.h:246:
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/bank/bank_internal.h:42:10: warning: multiple candidates for header 'bank/bank_types.h' found; directory '/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/bank' chosen, ignoring others including '/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk' [-Wshadow-header]
+   42 | #include <bank/bank_types.h>
+      |          ^
+In file included from /work/route-a-platform-20261124/callback-attempt-002/source/osfmk/arm64/cpu.c:39:
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/thread.h:125:10: warning: multiple candidates for header 'kern/affinity.h' found; directory '/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern' chosen, ignoring others including '/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk' [-Wshadow-header]
+  125 | #include <kern/affinity.h>
+      |          ^
+In file included from /work/route-a-platform-20261124/callback-attempt-002/source/osfmk/arm64/cpu.c:39:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/thread.h:142:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/ipc/ipc_policy.h:33:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/ipc/port.h:70:
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/ipc/ipc_space.h:84:10: warning: multiple candidates for header 'kern/smr.h' found; directory '/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern' chosen, ignoring others including '/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk' [-Wshadow-header]
+   84 | #include <kern/smr.h>
+      |          ^
+In file included from /work/route-a-platform-20261124/callback-attempt-002/source/osfmk/arm64/cpu.c:39:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/thread.h:142:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/ipc/ipc_policy.h:33:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/ipc/port.h:70:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/ipc/ipc_space.h:85:
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/ipc/ipc_entry.h:80:10: warning: multiple candidates for header 'prng/random.h' found; directory '/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/prng' chosen, ignoring others including '/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk' [-Wshadow-header]
+   80 | #include <prng/random.h>
+      |          ^
+In file included from /work/route-a-platform-20261124/callback-attempt-002/source/osfmk/arm64/cpu.c:39:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/thread.h:142:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/ipc/ipc_policy.h:33:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/ipc/port.h:70:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/ipc/ipc_space.h:85:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/ipc/ipc_entry.h:80:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/prng/random.h:34:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/EXTERNAL_HEADERS/corecrypto/cckprng.h:15:
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/EXTERNAL_HEADERS/corecrypto/cc.h:196:9: warning: unsafe buffer access [-Wunsafe-buffer-usage]
+  196 |         _r[_size] = _s[_size] ^ _t[_size];
+      |         ^~
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/EXTERNAL_HEADERS/corecrypto/cc.h:196:21: warning: unsafe buffer access [-Wunsafe-buffer-usage]
+  196 |         _r[_size] = _s[_size] ^ _t[_size];
+      |                     ^~
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/EXTERNAL_HEADERS/corecrypto/cc.h:196:33: warning: unsafe buffer access [-Wunsafe-buffer-usage]
+  196 |         _r[_size] = _s[_size] ^ _t[_size];
+      |                                 ^~
+In file included from /work/route-a-platform-20261124/callback-attempt-002/source/osfmk/arm64/cpu.c:39:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/thread.h:142:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/ipc/ipc_policy.h:33:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/ipc/port.h:70:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/ipc/ipc_space.h:85:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/ipc/ipc_entry.h:80:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/prng/random.h:34:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/EXTERNAL_HEADERS/corecrypto/cckprng.h:16:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/EXTERNAL_HEADERS/corecrypto/ccrng_fortuna.h:17:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/EXTERNAL_HEADERS/corecrypto/cc_lock.h:15:
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/EXTERNAL_HEADERS/corecrypto/cc_priv.h:119:5: warning: unsafe buffer access [-Wunsafe-buffer-usage]
+  119 |     y[1] = (uint8_t)(x >> 48);
+      |     ^
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/EXTERNAL_HEADERS/corecrypto/cc_priv.h:120:5: warning: unsafe buffer access [-Wunsafe-buffer-usage]
+  120 |     y[2] = (uint8_t)(x >> 40);
+      |     ^
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/EXTERNAL_HEADERS/corecrypto/cc_priv.h:121:5: warning: unsafe buffer access [-Wunsafe-buffer-usage]
+  121 |     y[3] = (uint8_t)(x >> 32);
+      |     ^
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/EXTERNAL_HEADERS/corecrypto/cc_priv.h:122:5: warning: unsafe buffer access [-Wunsafe-buffer-usage]
+  122 |     y[4] = (uint8_t)(x >> 24);
+      |     ^
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/EXTERNAL_HEADERS/corecrypto/cc_priv.h:123:5: warning: unsafe buffer access [-Wunsafe-buffer-usage]
+  123 |     y[5] = (uint8_t)(x >> 16);
+      |     ^
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/EXTERNAL_HEADERS/corecrypto/cc_priv.h:124:5: warning: unsafe buffer access [-Wunsafe-buffer-usage]
+  124 |     y[6] = (uint8_t)(x >> 8);
+      |     ^
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/EXTERNAL_HEADERS/corecrypto/cc_priv.h:125:5: warning: unsafe buffer access [-Wunsafe-buffer-usage]
+  125 |     y[7] = (uint8_t)(x);
+      |     ^
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/EXTERNAL_HEADERS/corecrypto/cc_priv.h:129:54: warning: unsafe buffer access [-Wunsafe-buffer-usage]
+  129 |     return (((uint64_t)(y[0])) << 56) | (((uint64_t)(y[1])) << 48) | (((uint64_t)(y[2])) << 40) | (((uint64_t)(y[3])) << 32) |
+      |                                                      ^
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/EXTERNAL_HEADERS/corecrypto/cc_priv.h:129:83: warning: unsafe buffer access [-Wunsafe-buffer-usage]
+  129 |     return (((uint64_t)(y[0])) << 56) | (((uint64_t)(y[1])) << 48) | (((uint64_t)(y[2])) << 40) | (((uint64_t)(y[3])) << 32) |
+      |                                                                                   ^
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/EXTERNAL_HEADERS/corecrypto/cc_priv.h:129:112: warning: unsafe buffer access [-Wunsafe-buffer-usage]
+  129 |     return (((uint64_t)(y[0])) << 56) | (((uint64_t)(y[1])) << 48) | (((uint64_t)(y[2])) << 40) | (((uint64_t)(y[3])) << 32) |
+      |                                                                                                                ^
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/EXTERNAL_HEADERS/corecrypto/cc_priv.h:130:25: warning: unsafe buffer access [-Wunsafe-buffer-usage]
+  130 |            (((uint64_t)(y[4])) << 24) | (((uint64_t)(y[5])) << 16) | (((uint64_t)(y[6])) << 8) | ((uint64_t)(y[7]));
+      |                         ^
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/EXTERNAL_HEADERS/corecrypto/cc_priv.h:130:54: warning: unsafe buffer access [-Wunsafe-buffer-usage]
+  130 |            (((uint64_t)(y[4])) << 24) | (((uint64_t)(y[5])) << 16) | (((uint64_t)(y[6])) << 8) | ((uint64_t)(y[7]));
+      |                                                      ^
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/EXTERNAL_HEADERS/corecrypto/cc_priv.h:130:83: warning: unsafe buffer access [-Wunsafe-buffer-usage]
+  130 |            (((uint64_t)(y[4])) << 24) | (((uint64_t)(y[5])) << 16) | (((uint64_t)(y[6])) << 8) | ((uint64_t)(y[7]));
+      |                                                                                   ^
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/EXTERNAL_HEADERS/corecrypto/cc_priv.h:130:110: warning: unsafe buffer access [-Wunsafe-buffer-usage]
+  130 |            (((uint64_t)(y[4])) << 24) | (((uint64_t)(y[5])) << 16) | (((uint64_t)(y[6])) << 8) | ((uint64_t)(y[7]));
+      |                                                                                                              ^
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/EXTERNAL_HEADERS/corecrypto/cc_priv.h:157:5: warning: unsafe buffer access [-Wunsafe-buffer-usage]
+  157 |     y[1] = (uint8_t)(x >> 16);
+      |     ^
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/EXTERNAL_HEADERS/corecrypto/cc_priv.h:158:5: warning: unsafe buffer access [-Wunsafe-buffer-usage]
+  158 |     y[2] = (uint8_t)(x >> 8);
+      |     ^
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/EXTERNAL_HEADERS/corecrypto/cc_priv.h:159:5: warning: unsafe buffer access [-Wunsafe-buffer-usage]
+  159 |     y[3] = (uint8_t)(x);
+      |     ^
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/EXTERNAL_HEADERS/corecrypto/cc_priv.h:163:54: warning: unsafe buffer access [-Wunsafe-buffer-usage]
+  163 |     return (((uint32_t)(y[0])) << 24) | (((uint32_t)(y[1])) << 16) | (((uint32_t)(y[2])) << 8) | ((uint32_t)(y[3]));
+      |                                                      ^
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/EXTERNAL_HEADERS/corecrypto/cc_priv.h:163:83: warning: unsafe buffer access [-Wunsafe-buffer-usage]
+  163 |     return (((uint32_t)(y[0])) << 24) | (((uint32_t)(y[1])) << 16) | (((uint32_t)(y[2])) << 8) | ((uint32_t)(y[3]));
+      |                                                                                   ^
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/EXTERNAL_HEADERS/corecrypto/cc_priv.h:163:110: warning: unsafe buffer access [-Wunsafe-buffer-usage]
+  163 |     return (((uint32_t)(y[0])) << 24) | (((uint32_t)(y[1])) << 16) | (((uint32_t)(y[2])) << 8) | ((uint32_t)(y[3]));
+      |                                                                                                              ^
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/EXTERNAL_HEADERS/corecrypto/cc_priv.h:170:5: warning: unsafe buffer access [-Wunsafe-buffer-usage]
+  170 |     y[1] = (uint8_t)(x);
+      |     ^
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/EXTERNAL_HEADERS/corecrypto/cc_priv.h:174:63: warning: unsafe buffer access [-Wunsafe-buffer-usage]
+  174 |     return (uint16_t) (((uint16_t)(y[0])) << 8) | ((uint16_t)(y[1]));
+      |                                                               ^
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/EXTERNAL_HEADERS/corecrypto/cc_priv.h:180:5: warning: unsafe buffer access [-Wunsafe-buffer-usage]
+  180 |     y[7] = (uint8_t)(x >> 56);
+      |     ^
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/EXTERNAL_HEADERS/corecrypto/cc_priv.h:181:5: warning: unsafe buffer access [-Wunsafe-buffer-usage]
+  181 |     y[6] = (uint8_t)(x >> 48);
+      |     ^
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/EXTERNAL_HEADERS/corecrypto/cc_priv.h:182:5: warning: unsafe buffer access [-Wunsafe-buffer-usage]
+  182 |     y[5] = (uint8_t)(x >> 40);
+      |     ^
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/EXTERNAL_HEADERS/corecrypto/cc_priv.h:183:5: warning: unsafe buffer access [-Wunsafe-buffer-usage]
+  183 |     y[4] = (uint8_t)(x >> 32);
+      |     ^
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/EXTERNAL_HEADERS/corecrypto/cc_priv.h:184:5: warning: unsafe buffer access [-Wunsafe-buffer-usage]
+  184 |     y[3] = (uint8_t)(x >> 24);
+      |     ^
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/EXTERNAL_HEADERS/corecrypto/cc_priv.h:185:5: warning: unsafe buffer access [-Wunsafe-buffer-usage]
+  185 |     y[2] = (uint8_t)(x >> 16);
+      |     ^
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/EXTERNAL_HEADERS/corecrypto/cc_priv.h:186:5: warning: unsafe buffer access [-Wunsafe-buffer-usage]
+  186 |     y[1] = (uint8_t)(x >> 8);
+      |     ^
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/EXTERNAL_HEADERS/corecrypto/cc_priv.h:191:25: warning: unsafe buffer access [-Wunsafe-buffer-usage]
+  191 |     return (((uint64_t)(y[7])) << 56) | (((uint64_t)(y[6])) << 48) | (((uint64_t)(y[5])) << 40) | (((uint64_t)(y[4])) << 32) |
+      |                         ^
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/EXTERNAL_HEADERS/corecrypto/cc_priv.h:191:54: warning: unsafe buffer access [-Wunsafe-buffer-usage]
+  191 |     return (((uint64_t)(y[7])) << 56) | (((uint64_t)(y[6])) << 48) | (((uint64_t)(y[5])) << 40) | (((uint64_t)(y[4])) << 32) |
+      |                                                      ^
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/EXTERNAL_HEADERS/corecrypto/cc_priv.h:191:83: warning: unsafe buffer access [-Wunsafe-buffer-usage]
+  191 |     return (((uint64_t)(y[7])) << 56) | (((uint64_t)(y[6])) << 48) | (((uint64_t)(y[5])) << 40) | (((uint64_t)(y[4])) << 32) |
+      |                                                                                   ^
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/EXTERNAL_HEADERS/corecrypto/cc_priv.h:191:112: warning: unsafe buffer access [-Wunsafe-buffer-usage]
+  191 |     return (((uint64_t)(y[7])) << 56) | (((uint64_t)(y[6])) << 48) | (((uint64_t)(y[5])) << 40) | (((uint64_t)(y[4])) << 32) |
+      |                                                                                                                ^
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/EXTERNAL_HEADERS/corecrypto/cc_priv.h:192:25: warning: unsafe buffer access [-Wunsafe-buffer-usage]
+  192 |            (((uint64_t)(y[3])) << 24) | (((uint64_t)(y[2])) << 16) | (((uint64_t)(y[1])) << 8) | ((uint64_t)(y[0]));
+      |                         ^
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/EXTERNAL_HEADERS/corecrypto/cc_priv.h:192:54: warning: unsafe buffer access [-Wunsafe-buffer-usage]
+  192 |            (((uint64_t)(y[3])) << 24) | (((uint64_t)(y[2])) << 16) | (((uint64_t)(y[1])) << 8) | ((uint64_t)(y[0]));
+      |                                                      ^
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/EXTERNAL_HEADERS/corecrypto/cc_priv.h:192:83: warning: unsafe buffer access [-Wunsafe-buffer-usage]
+  192 |            (((uint64_t)(y[3])) << 24) | (((uint64_t)(y[2])) << 16) | (((uint64_t)(y[1])) << 8) | ((uint64_t)(y[0]));
+      |                                                                                   ^
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/EXTERNAL_HEADERS/corecrypto/cc_priv.h:198:5: warning: unsafe buffer access [-Wunsafe-buffer-usage]
+  198 |     y[3] = (uint8_t)(x >> 24);
+      |     ^
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/EXTERNAL_HEADERS/corecrypto/cc_priv.h:199:5: warning: unsafe buffer access [-Wunsafe-buffer-usage]
+  199 |     y[2] = (uint8_t)(x >> 16);
+      |     ^
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/EXTERNAL_HEADERS/corecrypto/cc_priv.h:200:5: warning: unsafe buffer access [-Wunsafe-buffer-usage]
+  200 |     y[1] = (uint8_t)(x >> 8);
+      |     ^
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/EXTERNAL_HEADERS/corecrypto/cc_priv.h:205:25: warning: unsafe buffer access [-Wunsafe-buffer-usage]
+  205 |     return (((uint32_t)(y[3])) << 24) | (((uint32_t)(y[2])) << 16) | (((uint32_t)(y[1])) << 8) | ((uint32_t)(y[0]));
+      |                         ^
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/EXTERNAL_HEADERS/corecrypto/cc_priv.h:205:54: warning: unsafe buffer access [-Wunsafe-buffer-usage]
+  205 |     return (((uint32_t)(y[3])) << 24) | (((uint32_t)(y[2])) << 16) | (((uint32_t)(y[1])) << 8) | ((uint32_t)(y[0]));
+      |                                                      ^
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/EXTERNAL_HEADERS/corecrypto/cc_priv.h:205:83: warning: unsafe buffer access [-Wunsafe-buffer-usage]
+  205 |     return (((uint32_t)(y[3])) << 24) | (((uint32_t)(y[2])) << 16) | (((uint32_t)(y[1])) << 8) | ((uint32_t)(y[0]));
+      |                                                                                   ^
+In file included from /work/route-a-platform-20261124/callback-attempt-002/source/osfmk/arm64/cpu.c:39:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/thread.h:142:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/ipc/ipc_policy.h:33:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/ipc/port.h:70:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/ipc/ipc_space.h:85:
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/ipc/ipc_entry.h:137:1: warning: unsafe pointer arithmetic [-Wunsafe-buffer-usage]
+  137 | KALLOC_ARRAY_TYPE_DECL(ipc_entry_table, struct ipc_entry);
+      | ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/kalloc.h:1047:2: note: expanded from macro 'KALLOC_ARRAY_TYPE_DECL'
+ 1047 |         KALLOC_DISPATCH(KALLOC_ARRAY_TYPE_DECL, ##__VA_ARGS__)
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/kalloc.h:1579:2: note: expanded from macro 'KALLOC_DISPATCH'
+ 1579 |         KALLOC_DISPATCH1(base, KALLOC_COUNT_ARGS(__VA_ARGS__), ##__VA_ARGS__)
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/kalloc.h:1577:40: note: expanded from macro 'KALLOC_DISPATCH1'
+ 1577 | #define KALLOC_DISPATCH1(base, N, ...) __CONCAT(base, N)(__VA_ARGS__)
+      |                                        ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+note: (skipping 2 expansions in backtrace; use -fmacro-backtrace-limit=0 to see all)
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/kalloc.h:1275:2: note: expanded from macro 'KALLOC_ARRAY_TYPE_DECL_2'
+ 1275 |         KALLOC_ARRAY_TYPE_DECL_(name, e_type_t, 0, e_type_t, sizeof(e_type_t))
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/kalloc.h:1159:17: note: expanded from macro 'KALLOC_ARRAY_TYPE_DECL_'
+ 1159 |                 return name ## _begin(array) + i;                               \
+      |                        ^~~~~~~~~~~~~~~~~~~~~
+<scratch space>:48:1: note: expanded from here
+   48 | ipc_entry_table_begin
+      | ^
+In file included from /work/route-a-platform-20261124/callback-attempt-002/source/osfmk/arm64/cpu.c:39:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern/thread.h:142:
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/ipc/ipc_policy.h:424:10: warning: unsafe buffer access [-Wunsafe-buffer-usage]
+  424 |         return &ipc_policy_array[otype];
+      |                 ^~~~~~~~~~~~~~~~
+/work/route-a-platform-20261124/callback-attempt-002/source/osfmk/arm64/cpu.c:42:10: warning: multiple candidates for header 'kern/monotonic.h' found; directory '/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern' chosen, ignoring others including '/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk' [-Wshadow-header]
+   42 | #include <kern/monotonic.h>
+      |          ^
+/work/route-a-platform-20261124/callback-attempt-002/source/osfmk/arm64/cpu.c:44:10: warning: multiple candidates for header 'arm/cpuid.h' found; directory '/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/arm' chosen, ignoring others including '/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk' [-Wshadow-header]
+   44 | #include <arm/cpuid.h>
+      |          ^
+In file included from /work/route-a-platform-20261124/callback-attempt-002/source/osfmk/arm64/cpu.c:44:
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/arm/cpuid.h:41:10: warning: multiple candidates for header 'machine/machine_cpuid.h' found; directory '/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/machine' chosen, ignoring others including '/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk' [-Wshadow-header]
+   41 | #include <machine/machine_cpuid.h>
+      |          ^
+In file included from /work/route-a-platform-20261124/callback-attempt-002/source/osfmk/arm64/cpu.c:44:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/arm/cpuid.h:41:
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/machine/machine_cpuid.h:36:10: warning: multiple candidates for header 'arm64/machine_cpuid.h' found; directory '/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/arm64' chosen, ignoring others including '/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk' [-Wshadow-header]
+   36 | #include <arm64/machine_cpuid.h>
+      |          ^
+/work/route-a-platform-20261124/callback-attempt-002/source/osfmk/arm64/cpu.c:45:10: warning: multiple candidates for header 'arm/caches_internal.h' found; directory '/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/arm' chosen, ignoring others including '/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk' [-Wshadow-header]
+   45 | #include <arm/caches_internal.h>
+      |          ^
+In file included from /work/route-a-platform-20261124/callback-attempt-002/source/osfmk/arm64/cpu.c:46:
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/arm/cpu_data_internal.h:43:10: warning: multiple candidates for header 'arm/dbgwrap.h' found; directory '/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/arm' chosen, ignoring others including '/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk' [-Wshadow-header]
+   43 | #include <arm/dbgwrap.h>
+      |          ^
+In file included from /work/route-a-platform-20261124/callback-attempt-002/source/osfmk/arm64/cpu.c:46:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/arm/cpu_data_internal.h:47:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/arm/pmap.h:46:
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/arm/pmap/pmap.h:53:10: warning: multiple candidates for header 'arm/pmap_public.h' found; directory '/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/arm' chosen, ignoring others including '/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk' [-Wshadow-header]
+   53 | #include <arm/pmap_public.h>
+      |          ^
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/arm/pmap/pmap.h:58:10: warning: multiple candidates for header 'arm64/tlb.h' found; directory '/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/arm64' chosen, ignoring others including '/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk' [-Wshadow-header]
+   58 | #include <arm64/tlb.h>
+      |          ^
+In file included from /work/route-a-platform-20261124/callback-attempt-002/source/osfmk/arm64/cpu.c:46:
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/arm/cpu_data_internal.h:48:10: warning: multiple candidates for header 'machine/monotonic.h' found; directory '/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/machine' chosen, ignoring others including '/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk' [-Wshadow-header]
+   48 | #include <machine/monotonic.h>
+      |          ^
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/arm/cpu_data_internal.h:50:10: warning: multiple candidates for header 'arm64/cpc_arm64.h' found; directory '/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/arm64' chosen, ignoring others including '/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk' [-Wshadow-header]
+   50 | #include <arm64/cpc_arm64.h>
+      |          ^
+In file included from /work/route-a-platform-20261124/callback-attempt-002/source/osfmk/arm64/cpu.c:48:
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/arm/misc_protos.h:36:10: warning: multiple candidates for header 'arm/cpu_capabilities_public.h' found; directory '/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/arm' chosen, ignoring others including '/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk' [-Wshadow-header]
+   36 | #include <arm/cpu_capabilities_public.h>
+      |          ^
+/work/route-a-platform-20261124/callback-attempt-002/source/osfmk/arm64/cpu.c:49:10: warning: multiple candidates for header 'arm/machine_cpu.h' found; directory '/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/arm' chosen, ignoring others including '/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk' [-Wshadow-header]
+   49 | #include <arm/machine_cpu.h>
+      |          ^
+/work/route-a-platform-20261124/callback-attempt-002/source/osfmk/arm64/cpu.c:53:10: warning: multiple candidates for header 'vm/pmap.h' found; directory '/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/vm' chosen, ignoring others including '/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk' [-Wshadow-header]
+   53 | #include <vm/pmap.h>
+      |          ^
+In file included from /work/route-a-platform-20261124/callback-attempt-002/source/osfmk/arm64/cpu.c:53:
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/vm/pmap.h:76:10: warning: multiple candidates for header 'kern/trustcache.h' found; directory '/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kern' chosen, ignoring others including '/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk' [-Wshadow-header]
+   76 | #include <kern/trustcache.h>
+      |          ^
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/vm/pmap.h:136:10: warning: multiple candidates for header 'vm/memory_types.h' found; directory '/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/vm' chosen, ignoring others including '/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk' [-Wshadow-header]
+  136 | #include <vm/memory_types.h>
+      |          ^
+In file included from /work/route-a-platform-20261124/callback-attempt-002/source/osfmk/arm64/cpu.c:53:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/vm/pmap.h:136:
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/vm/memory_types.h:33:10: warning: multiple candidates for header 'machine/memory_types.h' found; directory '/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/machine' chosen, ignoring others including '/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk' [-Wshadow-header]
+   33 | #include <machine/memory_types.h>
+      |          ^
+In file included from /work/route-a-platform-20261124/callback-attempt-002/source/osfmk/arm64/cpu.c:53:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/vm/pmap.h:136:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/vm/memory_types.h:33:
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/machine/memory_types.h:34:10: warning: multiple candidates for header 'arm/memory_types.h' found; directory '/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/arm' chosen, ignoring others including '/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk' [-Wshadow-header]
+   34 | #include "arm/memory_types.h"
+      |          ^
+/work/route-a-platform-20261124/callback-attempt-002/source/osfmk/arm64/cpu.c:54:10: warning: multiple candidates for header 'vm/vm_kern_xnu.h' found; directory '/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/vm' chosen, ignoring others including '/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk' [-Wshadow-header]
+   54 | #include <vm/vm_kern_xnu.h>
+      |          ^
+/work/route-a-platform-20261124/callback-attempt-002/source/osfmk/arm64/cpu.c:55:10: warning: multiple candidates for header 'vm/vm_map.h' found; directory '/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/vm' chosen, ignoring others including '/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk' [-Wshadow-header]
+   55 | #include <vm/vm_map.h>
+      |          ^
+In file included from /work/route-a-platform-20261124/callback-attempt-002/source/osfmk/arm64/cpu.c:55:
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/vm/vm_map.h:83:10: warning: multiple candidates for header 'mach/sdt.h' found; directory '/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/mach' chosen, ignoring others including '/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk' [-Wshadow-header]
+   83 | #include <mach/sdt.h>
+      |          ^
+In file included from /work/route-a-platform-20261124/callback-attempt-002/source/osfmk/arm64/cpu.c:55:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/vm/vm_map.h:83:
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/mach/sdt.h:30:10: warning: multiple candidates for header 'mach/machine/sdt.h' found; directory '/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/mach/machine' chosen, ignoring others including '/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk' [-Wshadow-header]
+   30 | #include <mach/machine/sdt.h>
+      |          ^
+In file included from /work/route-a-platform-20261124/callback-attempt-002/source/osfmk/arm64/cpu.c:55:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/vm/vm_map.h:83:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/mach/sdt.h:30:
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/mach/machine/sdt.h:42:10: warning: multiple candidates for header 'mach/machine/sdt_isa.h' found; directory '/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/mach/machine' chosen, ignoring others including '/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk' [-Wshadow-header]
+   42 | #include <mach/machine/sdt_isa.h>
+      |          ^
+In file included from /work/route-a-platform-20261124/callback-attempt-002/source/osfmk/arm64/cpu.c:55:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/vm/vm_map.h:83:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/mach/sdt.h:30:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/mach/machine/sdt.h:42:
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/mach/machine/sdt_isa.h:34:10: warning: multiple candidates for header 'mach/arm/sdt_isa.h' found; directory '/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/mach/arm' chosen, ignoring others including '/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk' [-Wshadow-header]
+   34 | #include <mach/arm/sdt_isa.h>
+      |          ^
+In file included from /work/route-a-platform-20261124/callback-attempt-002/source/osfmk/arm64/cpu.c:55:
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/vm/vm_map.h:87:10: warning: multiple candidates for header 'vm/vm_protos.h' found; directory '/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/vm' chosen, ignoring others including '/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk' [-Wshadow-header]
+   87 | #include <vm/vm_protos.h>
+      |          ^
+In file included from /work/route-a-platform-20261124/callback-attempt-002/source/osfmk/arm64/cpu.c:55:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/vm/vm_map.h:87:
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/vm/vm_protos.h:37:10: warning: multiple candidates for header 'vm/vm_options.h' found; directory '/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/vm' chosen, ignoring others including '/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk' [-Wshadow-header]
+   37 | #include <vm/vm_options.h>
+      |          ^
+In file included from /work/route-a-platform-20261124/callback-attempt-002/source/osfmk/arm64/cpu.c:55:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/vm/vm_map.h:91:
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/vm/vm_map_store_internal.h:32:10: warning: multiple candidates for header 'mach/shared_region.h' found; directory '/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/mach' chosen, ignoring others including '/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk' [-Wshadow-header]
+   32 | #include <mach/shared_region.h>
+      |          ^
+In file included from /work/route-a-platform-20261124/callback-attempt-002/source/osfmk/arm64/cpu.c:55:
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/vm/vm_map.h:92:10: warning: multiple candidates for header 'vm/vm_object_xnu.h' found; directory '/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/vm' chosen, ignoring others including '/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk' [-Wshadow-header]
+   92 | #include <vm/vm_object_xnu.h>
+      |          ^
+In file included from /work/route-a-platform-20261124/callback-attempt-002/source/osfmk/arm64/cpu.c:55:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/vm/vm_map.h:92:
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/vm/vm_object_xnu.h:93:10: warning: multiple candidates for header 'vm/vm_page.h' found; directory '/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/vm' chosen, ignoring others including '/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk' [-Wshadow-header]
+   93 | #include <vm/vm_page.h>
+      |          ^
+In file included from /work/route-a-platform-20261124/callback-attempt-002/source/osfmk/arm64/cpu.c:55:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/vm/vm_map.h:92:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/vm/vm_object_xnu.h:93:
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/vm/vm_page.h:73:10: warning: multiple candidates for header 'vm/vm_far.h' found; directory '/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/vm' chosen, ignoring others including '/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk' [-Wshadow-header]
+   73 | #include <vm/vm_far.h>
+      |          ^
+In file included from /work/route-a-platform-20261124/callback-attempt-002/source/osfmk/arm64/cpu.c:55:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/vm/vm_map.h:92:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/vm/vm_object_xnu.h:93:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/vm/vm_page.h:73:
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/vm/vm_far.h:38:10: warning: multiple candidates for header 'arm64/speculation.h' found; directory '/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/arm64' chosen, ignoring others including '/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk' [-Wshadow-header]
+   38 | #include <arm64/speculation.h>
+      |          ^
+/work/route-a-platform-20261124/callback-attempt-002/source/osfmk/arm64/cpu.c:61:10: warning: multiple candidates for header 'machine/machine_cpc.h' found; directory '/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/machine' chosen, ignoring others including '/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk' [-Wshadow-header]
+   61 | #include <machine/machine_cpc.h>
+      |          ^
+/work/route-a-platform-20261124/callback-attempt-002/source/osfmk/arm64/cpu.c:65:10: warning: multiple candidates for header 'kperf/kptimer.h' found; directory '/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/kperf' chosen, ignoring others including '/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk' [-Wshadow-header]
+   65 | #include <kperf/kptimer.h>
+      |          ^
+/work/route-a-platform-20261124/callback-attempt-002/source/osfmk/arm64/cpu.c:233:20: warning: unsafe buffer access [-Wunsafe-buffer-usage]
+  233 |                 ipi_test_data = &arm64_ipi_test_data[i];
+      |                                  ^~~~~~~~~~~~~~~~~~~
+/work/route-a-platform-20261124/callback-attempt-002/source/osfmk/arm64/cpu.c:234:30: warning: unsafe buffer access [-Wunsafe-buffer-usage]
+  234 |                 immediate_ipi_test_data = &arm64_ipi_test_data[i + MAX_CPUS];
+      |                                            ^~~~~~~~~~~~~~~~~~~
+/work/route-a-platform-20261124/callback-attempt-002/source/osfmk/arm64/cpu.c:274:35: warning: unsafe buffer access [-Wunsafe-buffer-usage]
+  274 |         vm_offset_t     coresight_regs = ml_get_topology_info()->cpus[cdp->cpu_number].coresight_regs;
+      |                                          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/work/route-a-platform-20261124/callback-attempt-002/source/osfmk/arm64/cpu.c:292:9: warning: unsafe buffer access [-Wunsafe-buffer-usage]
+  292 |                         if (!cdp->coresight_base[i]) {
+      |                              ^~~~~~~~~~~~~~~~~~~
+/work/route-a-platform-20261124/callback-attempt-002/source/osfmk/arm64/cpu.c:294:6: warning: unsafe buffer access [-Wunsafe-buffer-usage]
+  294 |                                         cdp->coresight_base[i] = coresight_regs + CORESIGHT_OFFSET(i);
+      |                                         ^~~~~~~~~~~~~~~~~~~
+/work/route-a-platform-20261124/callback-attempt-002/source/osfmk/arm64/cpu.c:297:6: warning: unsafe buffer access [-Wunsafe-buffer-usage]
+  297 |                                         cdp->coresight_base[i] = (vm_offset_t)ml_io_map(addr, CORESIGHT_SIZE);
+      |                                         ^~~~~~~~~~~~~~~~~~~
+/work/route-a-platform-20261124/callback-attempt-002/source/osfmk/arm64/cpu.c:302:28: warning: unsafe buffer access [-Wunsafe-buffer-usage]
+  302 |                                 *(volatile uint32_t *)(cdp->coresight_base[i] + ARM_DEBUG_OFFSET_DBGLAR) = ARM_DBG_LOCK_ACCESS_KEY;
+      |                                                        ^~~~~~~~~~~~~~~~~~~
+/work/route-a-platform-20261124/callback-attempt-002/source/osfmk/arm64/cpu.c:842:3: warning: unsafe buffer access [-Wunsafe-buffer-usage]
+  842 |                 cpu_data_ptr->coresight_base[i] = 0;
+      |                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/work/route-a-platform-20261124/callback-attempt-002/source/osfmk/arm64/cpu.c:883:2: warning: unsafe buffer access [-Wunsafe-buffer-usage]
+  883 |         CpuDataEntries[cpu].cpu_data_vaddr = cpu_data_ptr;
+      |         ^~~~~~~~~~~~~~
+/work/route-a-platform-20261124/callback-attempt-002/source/osfmk/arm64/cpu.c:884:2: warning: unsafe buffer access [-Wunsafe-buffer-usage]
+  884 |         CpuDataEntries[cpu].cpu_data_paddr = (void *)ml_vtophys((vm_offset_t)cpu_data_ptr);
+      |         ^~~~~~~~~~~~~~
+/work/route-a-platform-20261124/callback-attempt-002/source/osfmk/arm64/cpu.c:908:29: warning: unsafe buffer access [-Wunsafe-buffer-usage]
+  908 |         cpu_data_t *cpu_data_ptr = CpuDataEntries[cpu].cpu_data_vaddr;
+      |                                    ^~~~~~~~~~~~~~
+/work/route-a-platform-20261124/callback-attempt-002/source/osfmk/arm64/cpu.c:943:30: warning: unsafe buffer access [-Wunsafe-buffer-usage]
+  943 |                 flush_dcache((vm_offset_t)&CpuDataEntries[cpu], sizeof(cpu_data_entry_t), FALSE);
+      |                                            ^~~~~~~~~~~~~~
+/work/route-a-platform-20261124/callback-attempt-002/source/osfmk/arm64/cpu.c:1043:31: warning: unsafe buffer access [-Wunsafe-buffer-usage]
+ 1043 |                         target_cdp = (cpu_data_t *)CpuDataEntries[cpu].cpu_data_vaddr;
+      |                                                    ^~~~~~~~~~~~~~
+301 warnings generated.

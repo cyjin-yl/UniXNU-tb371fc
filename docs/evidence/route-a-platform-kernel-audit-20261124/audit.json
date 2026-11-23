@@ -1,0 +1,614 @@
+{
+  "accounting_correction": "sum(length) replaces the old audit's sum(length - offset); old evidence was not edited",
+  "alignment_expansion_bytes": 0,
+  "audited_binary_artifact_count": 1,
+  "candidate_bytes": 8900600,
+  "candidate_identity_after": {
+    "path": "/work/route-a-platform-20261124/link-attempt-004/mach.platform-link-probe.unstripped.noctf",
+    "realpath": "/work/route-a-platform-20261124/link-attempt-004/mach.platform-link-probe.unstripped.noctf",
+    "sha256": "46eff436250d905e9f3aec59dbcc8c04d594e614e790860236917c7cbfe39f1b",
+    "size": 21942456,
+    "symlink_target": null
+  },
+  "candidate_identity_before": {
+    "path": "/work/route-a-platform-20261124/link-attempt-004/mach.platform-link-probe.unstripped.noctf",
+    "realpath": "/work/route-a-platform-20261124/link-attempt-004/mach.platform-link-probe.unstripped.noctf",
+    "sha256": "46eff436250d905e9f3aec59dbcc8c04d594e614e790860236917c7cbfe39f1b",
+    "size": 21942456,
+    "symlink_target": null
+  },
+  "candidate_path": "/work/route-a-platform-20261124/link-attempt-004/mach.platform-link-probe.unstripped.noctf",
+  "candidate_range_count": 3,
+  "candidate_ranges_are_code_proof": false,
+  "candidate_unchanged": true,
+  "capstone_version": {
+    "core": [
+      5,
+      0,
+      1280
+    ],
+    "python": "5.0.6"
+  },
+  "classifier_source_commit": "ce834a0e2e9d63803d920f39f30012e4759102cf",
+  "commands": [
+    {
+      "argv": [
+        "/usr/bin/llvm-nm-19",
+        "--version"
+      ],
+      "cwd": "/work/route-a-platform-20261124/platform-kernel-audit-001",
+      "exit_code": 0,
+      "status": "completed",
+      "stderr": {
+        "path": "/work/route-a-platform-20261124/platform-kernel-audit-001/llvm-nm.version.stderr",
+        "realpath": "/work/route-a-platform-20261124/platform-kernel-audit-001/llvm-nm.version.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "size": 0,
+        "symlink_target": null
+      },
+      "stdout": {
+        "path": "/work/route-a-platform-20261124/platform-kernel-audit-001/llvm-nm.version.stdout",
+        "realpath": "/work/route-a-platform-20261124/platform-kernel-audit-001/llvm-nm.version.stdout",
+        "sha256": "7ec9f72f893c3ca98da0315e6d2f6d690cf3de2705bdb8f4dc345a3c2e0d101e",
+        "size": 78,
+        "symlink_target": null
+      }
+    },
+    {
+      "argv": [
+        "/usr/bin/llvm-objdump-19",
+        "--version"
+      ],
+      "cwd": "/work/route-a-platform-20261124/platform-kernel-audit-001",
+      "exit_code": 0,
+      "status": "completed",
+      "stderr": {
+        "path": "/work/route-a-platform-20261124/platform-kernel-audit-001/llvm-objdump.version.stderr",
+        "realpath": "/work/route-a-platform-20261124/platform-kernel-audit-001/llvm-objdump.version.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "size": 0,
+        "symlink_target": null
+      },
+      "stdout": {
+        "path": "/work/route-a-platform-20261124/platform-kernel-audit-001/llvm-objdump.version.stdout",
+        "realpath": "/work/route-a-platform-20261124/platform-kernel-audit-001/llvm-objdump.version.stdout",
+        "sha256": "8f851aeb4841527fde28d21bfa1a3b09298628c9a1b46f75a0f6d6e62d5116e8",
+        "size": 1613,
+        "symlink_target": null
+      }
+    },
+    {
+      "argv": [
+        "/usr/bin/llvm-objdump-19",
+        "--macho",
+        "--private-headers",
+        "/work/route-a-platform-20261124/link-attempt-004/mach.platform-link-probe.unstripped.noctf"
+      ],
+      "cwd": "/work/route-a-platform-20261124/platform-kernel-audit-001",
+      "exit_code": 0,
+      "status": "completed",
+      "stderr": {
+        "path": "/work/route-a-platform-20261124/platform-kernel-audit-001/macho-private-headers.stderr",
+        "realpath": "/work/route-a-platform-20261124/platform-kernel-audit-001/macho-private-headers.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "size": 0,
+        "symlink_target": null
+      },
+      "stdout": {
+        "path": "/work/route-a-platform-20261124/platform-kernel-audit-001/macho-private-headers.stdout",
+        "realpath": "/work/route-a-platform-20261124/platform-kernel-audit-001/macho-private-headers.stdout",
+        "sha256": "0669b4a24e2eca7fb0a41a5655e9dfe8c4b4b31fbf0cc776514ffcd6dc3dfa0b",
+        "size": 18703,
+        "symlink_target": null
+      }
+    },
+    {
+      "argv": [
+        "/usr/bin/llvm-nm-19",
+        "--undefined-only",
+        "--format=posix",
+        "/work/route-a-platform-20261124/link-attempt-004/mach.platform-link-probe.unstripped.noctf"
+      ],
+      "cwd": "/work/route-a-platform-20261124/platform-kernel-audit-001",
+      "exit_code": 0,
+      "status": "completed",
+      "stderr": {
+        "path": "/work/route-a-platform-20261124/platform-kernel-audit-001/undefined-symbols.stderr",
+        "realpath": "/work/route-a-platform-20261124/platform-kernel-audit-001/undefined-symbols.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "size": 0,
+        "symlink_target": null
+      },
+      "stdout": {
+        "path": "/work/route-a-platform-20261124/platform-kernel-audit-001/undefined-symbols.stdout",
+        "realpath": "/work/route-a-platform-20261124/platform-kernel-audit-001/undefined-symbols.stdout",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "size": 0,
+        "symlink_target": null
+      }
+    }
+  ],
+  "complete_board_qualification": false,
+  "counts": {
+    "compatible_pauth_hint": {
+      "XPACLRI": 181
+    },
+    "nonhint_pauth": {},
+    "poe2_tchange": {}
+  },
+  "data_in_code_declared_bytes_before_overlap_merge": 0,
+  "data_in_code_entry_count": 0,
+  "encoding_findings": {
+    "path": "/work/route-a-platform-20261124/platform-kernel-audit-001/encoding-findings.jsonl",
+    "realpath": "/work/route-a-platform-20261124/platform-kernel-audit-001/encoding-findings.jsonl",
+    "sha256": "728be4e0e2fb79477b73dbc2b0c2614b38a74b2c6956304acfb482c404c925c0",
+    "size": 89320,
+    "symlink_target": null
+  },
+  "excluded_candidate_word_bytes": 0,
+  "excluded_data_bytes": 0,
+  "excluded_data_ranges": [],
+  "excluded_data_ranges_representation": "file offset and byte length; merged, not start/end",
+  "executable_sections": [
+    {
+      "address": "0xfffffff0072ac000",
+      "declared_instructions": true,
+      "file_offset": "0x2a8000",
+      "flags": "0x80000400",
+      "name": "__text",
+      "segment": "__TEXT_EXEC",
+      "size": 8892996
+    },
+    {
+      "address": "0xfffffff007b27260",
+      "declared_instructions": true,
+      "file_offset": "0xb23260",
+      "flags": "0x80000400",
+      "name": "__hib_text",
+      "segment": "__TEXT_EXEC",
+      "size": 3140
+    },
+    {
+      "address": "0xfffffff007b28000",
+      "declared_instructions": true,
+      "file_offset": "0xb24000",
+      "flags": "0x80000400",
+      "name": "__text",
+      "segment": "__KLD",
+      "size": 4464
+    },
+    {
+      "address": "0xfffffff007b30000",
+      "declared_instructions": false,
+      "file_offset": "0x0",
+      "flags": "0x1",
+      "name": "__last",
+      "segment": "__LAST",
+      "size": 0
+    },
+    {
+      "address": "0xfffffff004004000",
+      "declared_instructions": false,
+      "file_offset": "0xc4c000",
+      "flags": "0x0",
+      "name": "__text",
+      "segment": "__PRELINK_TEXT",
+      "size": 0
+    }
+  ],
+  "expected_candidate_bytes": 21942456,
+  "expected_candidate_sha256": "46eff436250d905e9f3aec59dbcc8c04d594e614e790860236917c7cbfe39f1b",
+  "finished": 1795467829.3258927,
+  "geometry": {
+    "path": "/work/route-a-platform-20261124/platform-kernel-audit-001/geometry.json",
+    "realpath": "/work/route-a-platform-20261124/platform-kernel-audit-001/geometry.json",
+    "sha256": "601cd9d2225774b3753da225b25f5a635d37ad43213155bce566bf2efb1b2230",
+    "size": 19160,
+    "symlink_target": null
+  },
+  "instruction_section_bytes": 8900600,
+  "limitations": [
+    "Only the retained original Armv8.3 PAuth families and exact POE2 TCHANGEF/TCHANGEB forms are classified.",
+    "Instruction-section candidate ranges are not proof that their bytes are executed instructions.",
+    "LC_DATA_IN_CODE byte ranges and every partially overlapping AArch64 word are excluded.",
+    "Unmarked literal pools may remain in candidate ranges; matched words require interpretation, not automatic rewriting.",
+    "A Capstone decode or nearby section symbol is not a reachability or function-boundary proof.",
+    "Unmatched words are outside these rules, not evidence of Cortex-A77 compatibility.",
+    "No system-register, full instruction-feature, loader, device, sleep/resume or OS-boot qualification is supplied.",
+    "Before/after reads refer to the same single candidate, not two independently built artifacts."
+  ],
+  "limited_checks_passed": true,
+  "log": {
+    "path": "/work/route-a-platform-20261124/platform-kernel-audit-001/audit.log",
+    "realpath": "/work/route-a-platform-20261124/platform-kernel-audit-001/audit.log",
+    "sha256": "efec0e785beec955c6239bcc5c75efe1177f8ee54f9f48efa03f770c7649baaa",
+    "size": 134,
+    "symlink_target": null
+  },
+  "macho_header_words": [
+    4277009103,
+    16777228,
+    0,
+    2,
+    25,
+    5856,
+    2097153,
+    0
+  ],
+  "not_matched_by_scoped_rules": 2224969,
+  "ordinary_arm64_mh_execute": true,
+  "os_boot_verified": false,
+  "parser_blockers": [],
+  "parser_warnings": [],
+  "platform_link_binding": {
+    "baseline_sha256": "a58cdeedb9b7a4c152867c3487f28658a3799b0158f5046bbad6d2d58e741469",
+    "candidate": {
+      "path": "/work/route-a-platform-20261124/link-attempt-004/mach.platform-link-probe.unstripped.noctf",
+      "sha256": "46eff436250d905e9f3aec59dbcc8c04d594e614e790860236917c7cbfe39f1b",
+      "size": 21942456
+    },
+    "kernel_callback_linked": true,
+    "protected_inputs_recheck": {
+      "changes": [],
+      "checked_file_count": 1137,
+      "unchanged": true
+    },
+    "status": "platform_link_compatible"
+  },
+  "platform_link_report": {
+    "path": "/work/route-a-platform-20261124/link-attempt-004/report.json",
+    "realpath": "/work/route-a-platform-20261124/link-attempt-004/report.json",
+    "sha256": "738a7af11b32c08d0a4261611ba69f325d5a29bf424791b18e98879864feff7c",
+    "size": 31408,
+    "symlink_target": null
+  },
+  "protected_inputs_recheck": {
+    "changes": [],
+    "checked_file_count": 12,
+    "unchanged": true
+  },
+  "python_execution": {
+    "isolated": 1,
+    "optimize": 0,
+    "version": "3.13.5 (main, Aug 10 2026, 12:06:59) [GCC 14.2.0]"
+  },
+  "reachability_proven": false,
+  "rewritten": false,
+  "samples": {
+    "compatible_pauth_hint": [
+      {
+        "address": "0xfffffff0072f61b0",
+        "capstone": {
+          "mnemonic": "xpaclri",
+          "operands": ""
+        },
+        "category": "compatible_pauth_hint",
+        "family": "hint",
+        "file_offset": "0x2f21b0",
+        "mnemonic": "XPACLRI",
+        "nearest_defined_section_symbol": {
+          "address": "0xfffffff0072f61ac",
+          "distance": 4,
+          "is_function_or_reachability_proof": false,
+          "name": "_Debugger"
+        },
+        "pure_instruction_section": true,
+        "reachable_instruction_proven": false,
+        "section": "__text",
+        "segment": "__TEXT_EXEC",
+        "word": "0xd50320ff"
+      },
+      {
+        "address": "0xfffffff0072f77d4",
+        "capstone": {
+          "mnemonic": "xpaclri",
+          "operands": ""
+        },
+        "category": "compatible_pauth_hint",
+        "family": "hint",
+        "file_offset": "0x2f37d4",
+        "mnemonic": "XPACLRI",
+        "nearest_defined_section_symbol": {
+          "address": "0xfffffff0072f77c4",
+          "distance": 16,
+          "is_function_or_reachability_proof": false,
+          "name": "_log"
+        },
+        "pure_instruction_section": true,
+        "reachable_instruction_proven": false,
+        "section": "__text",
+        "segment": "__TEXT_EXEC",
+        "word": "0xd50320ff"
+      },
+      {
+        "address": "0xfffffff007310a64",
+        "capstone": {
+          "mnemonic": "xpaclri",
+          "operands": ""
+        },
+        "category": "compatible_pauth_hint",
+        "family": "hint",
+        "file_offset": "0x30ca64",
+        "mnemonic": "XPACLRI",
+        "nearest_defined_section_symbol": {
+          "address": "0xfffffff007310a50",
+          "distance": 20,
+          "is_function_or_reachability_proof": false,
+          "name": "_lck_rw_lock_exclusive"
+        },
+        "pure_instruction_section": true,
+        "reachable_instruction_proven": false,
+        "section": "__text",
+        "segment": "__TEXT_EXEC",
+        "word": "0xd50320ff"
+      },
+      {
+        "address": "0xfffffff007310c48",
+        "capstone": {
+          "mnemonic": "xpaclri",
+          "operands": ""
+        },
+        "category": "compatible_pauth_hint",
+        "family": "hint",
+        "file_offset": "0x30cc48",
+        "mnemonic": "XPACLRI",
+        "nearest_defined_section_symbol": {
+          "address": "0xfffffff007310c24",
+          "distance": 36,
+          "is_function_or_reachability_proof": false,
+          "name": "_lck_rw_lock_exclusive_b"
+        },
+        "pure_instruction_section": true,
+        "reachable_instruction_proven": false,
+        "section": "__text",
+        "segment": "__TEXT_EXEC",
+        "word": "0xd50320ff"
+      },
+      {
+        "address": "0xfffffff007310e24",
+        "capstone": {
+          "mnemonic": "xpaclri",
+          "operands": ""
+        },
+        "category": "compatible_pauth_hint",
+        "family": "hint",
+        "file_offset": "0x30ce24",
+        "mnemonic": "XPACLRI",
+        "nearest_defined_section_symbol": {
+          "address": "0xfffffff007310e10",
+          "distance": 20,
+          "is_function_or_reachability_proof": false,
+          "name": "_lck_rw_lock_shared"
+        },
+        "pure_instruction_section": true,
+        "reachable_instruction_proven": false,
+        "section": "__text",
+        "segment": "__TEXT_EXEC",
+        "word": "0xd50320ff"
+      },
+      {
+        "address": "0xfffffff007311060",
+        "capstone": {
+          "mnemonic": "xpaclri",
+          "operands": ""
+        },
+        "category": "compatible_pauth_hint",
+        "family": "hint",
+        "file_offset": "0x30d060",
+        "mnemonic": "XPACLRI",
+        "nearest_defined_section_symbol": {
+          "address": "0xfffffff007311038",
+          "distance": 40,
+          "is_function_or_reachability_proof": false,
+          "name": "_lck_rw_lock_shared_b"
+        },
+        "pure_instruction_section": true,
+        "reachable_instruction_proven": false,
+        "section": "__text",
+        "segment": "__TEXT_EXEC",
+        "word": "0xd50320ff"
+      },
+      {
+        "address": "0xfffffff007311754",
+        "capstone": {
+          "mnemonic": "xpaclri",
+          "operands": ""
+        },
+        "category": "compatible_pauth_hint",
+        "family": "hint",
+        "file_offset": "0x30d754",
+        "mnemonic": "XPACLRI",
+        "nearest_defined_section_symbol": {
+          "address": "0xfffffff00731128c",
+          "distance": 1224,
+          "is_function_or_reachability_proof": false,
+          "name": "_lck_rw_lock_shared_to_exclusive"
+        },
+        "pure_instruction_section": true,
+        "reachable_instruction_proven": false,
+        "section": "__text",
+        "segment": "__TEXT_EXEC",
+        "word": "0xd50320ff"
+      },
+      {
+        "address": "0xfffffff00731181c",
+        "capstone": {
+          "mnemonic": "xpaclri",
+          "operands": ""
+        },
+        "category": "compatible_pauth_hint",
+        "family": "hint",
+        "file_offset": "0x30d81c",
+        "mnemonic": "XPACLRI",
+        "nearest_defined_section_symbol": {
+          "address": "0xfffffff007311764",
+          "distance": 184,
+          "is_function_or_reachability_proof": false,
+          "name": "_lck_rw_lock_exclusive_to_shared"
+        },
+        "pure_instruction_section": true,
+        "reachable_instruction_proven": false,
+        "section": "__text",
+        "segment": "__TEXT_EXEC",
+        "word": "0xd50320ff"
+      },
+      {
+        "address": "0xfffffff007311958",
+        "capstone": {
+          "mnemonic": "xpaclri",
+          "operands": ""
+        },
+        "category": "compatible_pauth_hint",
+        "family": "hint",
+        "file_offset": "0x30d958",
+        "mnemonic": "XPACLRI",
+        "nearest_defined_section_symbol": {
+          "address": "0xfffffff007311944",
+          "distance": 20,
+          "is_function_or_reachability_proof": false,
+          "name": "_lck_rw_lock"
+        },
+        "pure_instruction_section": true,
+        "reachable_instruction_proven": false,
+        "section": "__text",
+        "segment": "__TEXT_EXEC",
+        "word": "0xd50320ff"
+      },
+      {
+        "address": "0xfffffff007311968",
+        "capstone": {
+          "mnemonic": "xpaclri",
+          "operands": ""
+        },
+        "category": "compatible_pauth_hint",
+        "family": "hint",
+        "file_offset": "0x30d968",
+        "mnemonic": "XPACLRI",
+        "nearest_defined_section_symbol": {
+          "address": "0xfffffff007311944",
+          "distance": 36,
+          "is_function_or_reachability_proof": false,
+          "name": "_lck_rw_lock"
+        },
+        "pure_instruction_section": true,
+        "reachable_instruction_proven": false,
+        "section": "__text",
+        "segment": "__TEXT_EXEC",
+        "word": "0xd50320ff"
+      },
+      {
+        "address": "0xfffffff007311d88",
+        "capstone": {
+          "mnemonic": "xpaclri",
+          "operands": ""
+        },
+        "category": "compatible_pauth_hint",
+        "family": "hint",
+        "file_offset": "0x30dd88",
+        "mnemonic": "XPACLRI",
+        "nearest_defined_section_symbol": {
+          "address": "0xfffffff007311d74",
+          "distance": 20,
+          "is_function_or_reachability_proof": false,
+          "name": "_lck_rw_try_lock_shared"
+        },
+        "pure_instruction_section": true,
+        "reachable_instruction_proven": false,
+        "section": "__text",
+        "segment": "__TEXT_EXEC",
+        "word": "0xd50320ff"
+      },
+      {
+        "address": "0xfffffff007311f18",
+        "capstone": {
+          "mnemonic": "xpaclri",
+          "operands": ""
+        },
+        "category": "compatible_pauth_hint",
+        "family": "hint",
+        "file_offset": "0x30df18",
+        "mnemonic": "XPACLRI",
+        "nearest_defined_section_symbol": {
+          "address": "0xfffffff007311f04",
+          "distance": 20,
+          "is_function_or_reachability_proof": false,
+          "name": "_lck_rw_try_lock_exclusive"
+        },
+        "pure_instruction_section": true,
+        "reachable_instruction_proven": false,
+        "section": "__text",
+        "segment": "__TEXT_EXEC",
+        "word": "0xd50320ff"
+      }
+    ],
+    "nonhint_pauth": [],
+    "poe2_tchange": []
+  },
+  "scanned_candidate_words": 2225150,
+  "schema_version": 2,
+  "scope": "retained PAuth and exact POE2 encoding census of one platform-link candidate",
+  "sleep_resume_verified": false,
+  "source_manifest": {
+    "path": "/work/route-a-platform-20261124/platform-audit-driver-v1/source-manifest.json",
+    "realpath": "/work/route-a-platform-20261124/platform-audit-driver-v1/source-manifest.json",
+    "sha256": "7d5578977c042115f4d2724a04ec933b215a9361c21ab811b30eec41f7f8648e",
+    "size": 3588,
+    "symlink_target": null
+  },
+  "status": "completed",
+  "tools": {
+    "capstone_module": {
+      "path": "/work/route-a-venv/lib/python3.13/site-packages/capstone/__init__.py",
+      "realpath": "/work/route-a-venv/lib/python3.13/site-packages/capstone/__init__.py",
+      "sha256": "de6aa463d9008ce52827d5b6074780bc141f5422ccc07e4163851d0fee7c1719",
+      "size": 42474,
+      "symlink_target": null
+    },
+    "capstone_native_library": {
+      "path": "/work/route-a-venv/lib/python3.13/site-packages/capstone/lib/libcapstone.so",
+      "realpath": "/work/route-a-venv/lib/python3.13/site-packages/capstone/lib/libcapstone.so",
+      "sha256": "fb3e851989440c51fa026fa5be0441a5d5f09d3c4018f6521138762bfbf473b8",
+      "size": 9596200,
+      "symlink_target": null
+    },
+    "llvm-nm": {
+      "path": "/usr/bin/llvm-nm-19",
+      "realpath": "/usr/lib/llvm-19/bin/llvm-nm",
+      "sha256": "ed2427f2e14ac235a12fc3ca878f3621dd347e1e0dba7a316824f4d2a5e78403",
+      "size": 151440,
+      "symlink_target": "../lib/llvm-19/bin/llvm-nm"
+    },
+    "llvm-objdump": {
+      "path": "/usr/bin/llvm-objdump-19",
+      "realpath": "/usr/lib/llvm-19/bin/llvm-objdump",
+      "sha256": "c904a20cf0caeb812b542b69488e5c79738951a92ca99098fbb8941505eb789d",
+      "size": 960928,
+      "symlink_target": "../lib/llvm-19/bin/llvm-objdump"
+    },
+    "python": {
+      "path": "/work/route-a-venv/bin/python",
+      "realpath": "/usr/bin/python3.13",
+      "sha256": "889c603f0d17cb54060951bcf4c4f9b8c9ebd9e52b392c70209bbb9755d797d9",
+      "size": 6832784,
+      "symlink_target": "python3"
+    }
+  },
+  "totals": {
+    "compatible_pauth_hint": 181,
+    "nonhint_pauth": 0,
+    "poe2_tchange": 0
+  },
+  "undefined_symbols": {
+    "count": 0,
+    "first_50": [],
+    "raw_output": {
+      "path": "/work/route-a-platform-20261124/platform-kernel-audit-001/undefined-symbols.stdout",
+      "realpath": "/work/route-a-platform-20261124/platform-kernel-audit-001/undefined-symbols.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size": 0,
+      "symlink_target": null
+    },
+    "truncated": false
+  },
+  "whole_instruction_set_verified": false
+}

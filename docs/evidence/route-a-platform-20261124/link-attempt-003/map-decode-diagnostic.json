@@ -1,0 +1,108 @@
+{
+  "map_bytes": 7555941,
+  "map_sha256": "b60010979cea9e692750d727ccf55cbd913c8d984637b72d69cc12b121cf663d",
+  "line_hex": "3078464646464646463030373039313141410930783030303030303043095b3238395d206c69746572616c20737472696e673a20065c74608648016503040201",
+  "context_repr": "b'0000000A\\t[268] literal string: %s @%s:%d\\n0xFFFFFFF00709119F\\t0x0000000B\\t[268] literal string: cc_abort.c\\n0xFFFFFFF0070911AA\\t0x0000000C\\t[289] literal string: \\x06\\\\t`\\x86H\\x01e\\x03\\x04\\x02\\x01\\n0xFFFFFFF0070911B6\\t0x0000000C\\t[294] literal string: \\x06\\\\t`\\x86H\\x01e\\x03\\x04\\x02\\x03\\n0xFFFFFFF0070911C2\\t0x0000000E\\t[295] literal string: prng_random.c\\n0xFFFFFFF0070911D0\\t0'",
+  "first_non_ascii": [
+    [
+      924961,
+      134
+    ],
+    [
+      925026,
+      134
+    ],
+    [
+      1490021,
+      226
+    ],
+    [
+      1490022,
+      148
+    ],
+    [
+      1490023,
+      140
+    ],
+    [
+      1490527,
+      226
+    ],
+    [
+      1490528,
+      148
+    ],
+    [
+      1490529,
+      148
+    ],
+    [
+      1492934,
+      226
+    ],
+    [
+      1492935,
+      148
+    ],
+    [
+      1492936,
+      140
+    ],
+    [
+      1493277,
+      226
+    ],
+    [
+      1493278,
+      148
+    ],
+    [
+      1493279,
+      148
+    ],
+    [
+      1494893,
+      226
+    ],
+    [
+      1494894,
+      148
+    ],
+    [
+      1494895,
+      140
+    ],
+    [
+      1495488,
+      226
+    ],
+    [
+      1495489,
+      148
+    ],
+    [
+      1495490,
+      148
+    ],
+    [
+      1926005,
+      226
+    ],
+    [
+      1926006,
+      137
+    ],
+    [
+      1926007,
+      165
+    ]
+  ],
+  "candidate": {
+    "size": 21942456,
+    "sha256": "46eff436250d905e9f3aec59dbcc8c04d594e614e790860236917c7cbfe39f1b"
+  },
+  "scope": "read-only diagnosis after link-attempt-003 validator failure",
+  "attempt_status": "failed",
+  "platform_link_compatible": false,
+  "note": "ld64 map contains literal-string bytes, including a non-UTF-8 byte in an OID; candidate identity is diagnostic, not a passed validation"
+}

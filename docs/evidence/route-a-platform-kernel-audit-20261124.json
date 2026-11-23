@@ -1,0 +1,563 @@
+{
+  "audit_duration_seconds": 6.542343,
+  "audit_entrypoint": {
+    "full_entrypoint_argv_captured": false,
+    "identity_arguments_bound_by_audit_report": true,
+    "note": "The four retained commands below are captured LLVM subprocess argv; no invented captured entrypoint argv is supplied.",
+    "remote_path": "/work/route-a-platform-20261124/platform-audit-driver-v1/audit.py",
+    "sha256": "65d36fe426382af40a89ba0a718eb58f71b57af88ef3c5af8d617519e44f52d8"
+  },
+  "audit_sources": {
+    "classifier_source_commit": "ce834a0e2e9d63803d920f39f30012e4759102cf",
+    "driver_provenance": "New adapter frozen by byte identity; the classifier commit is not attributed to this adapter.",
+    "driver_source_commit": null,
+    "files": {
+      "audit.py": {
+        "provenance": "new local adapter; not attributed to the classifier commit",
+        "repository_path": null,
+        "sha256": "65d36fe426382af40a89ba0a718eb58f71b57af88ef3c5af8d617519e44f52d8",
+        "size": 22020,
+        "source_commit": null
+      },
+      "classifiers/macho.py": {
+        "repository_path": "scripts/arm64_lowering/macho.py",
+        "sha256": "50539d0e8c9aac8c324adcd1cbb55ceae7049ac1dcaa41864120607bf78124cb",
+        "size": 20193,
+        "source_commit": "ce834a0e2e9d63803d920f39f30012e4759102cf"
+      },
+      "classifiers/poe2.py": {
+        "extracted_definition": "poe2_instruction",
+        "repository_path": "scripts/route_a_zeta/zeta_userland_code.py",
+        "sha256": "0aa872f2a8c95456723c5e49b22847dd9132a11a68c2ba0a18bbc250cc613915",
+        "size": 2264,
+        "source_commit": "ce834a0e2e9d63803d920f39f30012e4759102cf",
+        "source_file_sha256": "aecead05310cf6be2648154b9eb9399c58f74ccb0d447a500be32fc379b69ed0"
+      },
+      "classifiers/ptrauth.py": {
+        "repository_path": "scripts/arm64_lowering/instructions.py",
+        "sha256": "593d7981bb3bc85033748aaae8bae014ad65d1efe23f9dd39e1d225635953a2d",
+        "size": 9782,
+        "source_commit": "ce834a0e2e9d63803d920f39f30012e4759102cf"
+      }
+    },
+    "scope_expanded_beyond_retained_classifiers": false,
+    "source_manifest": {
+      "path": "docs/evidence/route-a-platform-kernel-audit-20261124/source-manifest.json",
+      "remote_path": "/work/route-a-platform-20261124/platform-audit-driver-v1/source-manifest.json",
+      "sha256": "7d5578977c042115f4d2724a04ec933b215a9361c21ab811b30eec41f7f8648e",
+      "size": 3588
+    }
+  },
+  "candidate": {
+    "audited_binary_artifact_count": 1,
+    "before_after_are_same_artifact": true,
+    "before_after_identity_equal": true,
+    "candidate_binary_in_evidence_bundle": false,
+    "ordinary_arm64_mh_execute": true,
+    "path": "/work/route-a-platform-20261124/link-attempt-004/mach.platform-link-probe.unstripped.noctf",
+    "separate_noctf_companion_audited": false,
+    "sha256": "46eff436250d905e9f3aec59dbcc8c04d594e614e790860236917c7cbfe39f1b",
+    "size": 21942456
+  },
+  "commands": [
+    {
+      "archived_outputs": {
+        "stderr": {
+          "path": "docs/evidence/route-a-platform-kernel-audit-20261124/llvm-nm.version.stderr",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "size": 0
+        },
+        "stdout": {
+          "path": "docs/evidence/route-a-platform-kernel-audit-20261124/llvm-nm.version.stdout",
+          "sha256": "7ec9f72f893c3ca98da0315e6d2f6d690cf3de2705bdb8f4dc345a3c2e0d101e",
+          "size": 78
+        }
+      },
+      "argv": [
+        "/usr/bin/llvm-nm-19",
+        "--version"
+      ],
+      "cwd": "/work/route-a-platform-20261124/platform-kernel-audit-001",
+      "exit_code": 0,
+      "status": "completed",
+      "stderr": {
+        "path": "/work/route-a-platform-20261124/platform-kernel-audit-001/llvm-nm.version.stderr",
+        "realpath": "/work/route-a-platform-20261124/platform-kernel-audit-001/llvm-nm.version.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "size": 0,
+        "symlink_target": null
+      },
+      "stdout": {
+        "path": "/work/route-a-platform-20261124/platform-kernel-audit-001/llvm-nm.version.stdout",
+        "realpath": "/work/route-a-platform-20261124/platform-kernel-audit-001/llvm-nm.version.stdout",
+        "sha256": "7ec9f72f893c3ca98da0315e6d2f6d690cf3de2705bdb8f4dc345a3c2e0d101e",
+        "size": 78,
+        "symlink_target": null
+      }
+    },
+    {
+      "archived_outputs": {
+        "stderr": {
+          "path": "docs/evidence/route-a-platform-kernel-audit-20261124/llvm-objdump.version.stderr",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "size": 0
+        },
+        "stdout": {
+          "path": "docs/evidence/route-a-platform-kernel-audit-20261124/llvm-objdump.version.stdout",
+          "sha256": "8f851aeb4841527fde28d21bfa1a3b09298628c9a1b46f75a0f6d6e62d5116e8",
+          "size": 1613
+        }
+      },
+      "argv": [
+        "/usr/bin/llvm-objdump-19",
+        "--version"
+      ],
+      "cwd": "/work/route-a-platform-20261124/platform-kernel-audit-001",
+      "exit_code": 0,
+      "status": "completed",
+      "stderr": {
+        "path": "/work/route-a-platform-20261124/platform-kernel-audit-001/llvm-objdump.version.stderr",
+        "realpath": "/work/route-a-platform-20261124/platform-kernel-audit-001/llvm-objdump.version.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "size": 0,
+        "symlink_target": null
+      },
+      "stdout": {
+        "path": "/work/route-a-platform-20261124/platform-kernel-audit-001/llvm-objdump.version.stdout",
+        "realpath": "/work/route-a-platform-20261124/platform-kernel-audit-001/llvm-objdump.version.stdout",
+        "sha256": "8f851aeb4841527fde28d21bfa1a3b09298628c9a1b46f75a0f6d6e62d5116e8",
+        "size": 1613,
+        "symlink_target": null
+      }
+    },
+    {
+      "archived_outputs": {
+        "stderr": {
+          "path": "docs/evidence/route-a-platform-kernel-audit-20261124/macho-private-headers.stderr",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "size": 0
+        },
+        "stdout": {
+          "path": "docs/evidence/route-a-platform-kernel-audit-20261124/macho-private-headers.stdout",
+          "sha256": "0669b4a24e2eca7fb0a41a5655e9dfe8c4b4b31fbf0cc776514ffcd6dc3dfa0b",
+          "size": 18703
+        }
+      },
+      "argv": [
+        "/usr/bin/llvm-objdump-19",
+        "--macho",
+        "--private-headers",
+        "/work/route-a-platform-20261124/link-attempt-004/mach.platform-link-probe.unstripped.noctf"
+      ],
+      "cwd": "/work/route-a-platform-20261124/platform-kernel-audit-001",
+      "exit_code": 0,
+      "status": "completed",
+      "stderr": {
+        "path": "/work/route-a-platform-20261124/platform-kernel-audit-001/macho-private-headers.stderr",
+        "realpath": "/work/route-a-platform-20261124/platform-kernel-audit-001/macho-private-headers.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "size": 0,
+        "symlink_target": null
+      },
+      "stdout": {
+        "path": "/work/route-a-platform-20261124/platform-kernel-audit-001/macho-private-headers.stdout",
+        "realpath": "/work/route-a-platform-20261124/platform-kernel-audit-001/macho-private-headers.stdout",
+        "sha256": "0669b4a24e2eca7fb0a41a5655e9dfe8c4b4b31fbf0cc776514ffcd6dc3dfa0b",
+        "size": 18703,
+        "symlink_target": null
+      }
+    },
+    {
+      "archived_outputs": {
+        "stderr": {
+          "path": "docs/evidence/route-a-platform-kernel-audit-20261124/undefined-symbols.stderr",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "size": 0
+        },
+        "stdout": {
+          "path": "docs/evidence/route-a-platform-kernel-audit-20261124/undefined-symbols.stdout",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "size": 0
+        }
+      },
+      "argv": [
+        "/usr/bin/llvm-nm-19",
+        "--undefined-only",
+        "--format=posix",
+        "/work/route-a-platform-20261124/link-attempt-004/mach.platform-link-probe.unstripped.noctf"
+      ],
+      "cwd": "/work/route-a-platform-20261124/platform-kernel-audit-001",
+      "exit_code": 0,
+      "status": "completed",
+      "stderr": {
+        "path": "/work/route-a-platform-20261124/platform-kernel-audit-001/undefined-symbols.stderr",
+        "realpath": "/work/route-a-platform-20261124/platform-kernel-audit-001/undefined-symbols.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "size": 0,
+        "symlink_target": null
+      },
+      "stdout": {
+        "path": "/work/route-a-platform-20261124/platform-kernel-audit-001/undefined-symbols.stdout",
+        "realpath": "/work/route-a-platform-20261124/platform-kernel-audit-001/undefined-symbols.stdout",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "size": 0,
+        "symlink_target": null
+      }
+    }
+  ],
+  "completed_at_utc": "2026-11-23T21:03:49.325893Z",
+  "data_in_code_accounting": {
+    "alignment_expansion_bytes": 0,
+    "data_in_code_declared_bytes_before_overlap_merge": 0,
+    "data_in_code_entry_count": 0,
+    "excluded_candidate_word_bytes": 0,
+    "excluded_data_bytes": 0,
+    "excluded_data_ranges": [],
+    "excluded_data_ranges_representation": "file offset and byte length; merged, not start/end"
+  },
+  "evidence_inventory": [
+    {
+      "path": "docs/evidence/route-a-platform-kernel-audit-20261124/audit.json",
+      "role": "raw_result",
+      "sha256": "61bdea1cf7cb5f66e4afc407c58626ad6b96cf960b8d4f09e620de3c5dab17bd",
+      "size": 21686
+    },
+    {
+      "path": "docs/evidence/route-a-platform-kernel-audit-20261124/audit.log",
+      "role": "raw_result",
+      "sha256": "efec0e785beec955c6239bcc5c75efe1177f8ee54f9f48efa03f770c7649baaa",
+      "size": 134
+    },
+    {
+      "path": "docs/evidence/route-a-platform-kernel-audit-20261124/audit.py",
+      "role": "frozen_source",
+      "sha256": "65d36fe426382af40a89ba0a718eb58f71b57af88ef3c5af8d617519e44f52d8",
+      "size": 22020
+    },
+    {
+      "path": "docs/evidence/route-a-platform-kernel-audit-20261124/classifiers/macho.py",
+      "role": "frozen_source",
+      "sha256": "50539d0e8c9aac8c324adcd1cbb55ceae7049ac1dcaa41864120607bf78124cb",
+      "size": 20193
+    },
+    {
+      "path": "docs/evidence/route-a-platform-kernel-audit-20261124/classifiers/poe2.py",
+      "role": "frozen_source",
+      "sha256": "0aa872f2a8c95456723c5e49b22847dd9132a11a68c2ba0a18bbc250cc613915",
+      "size": 2264
+    },
+    {
+      "path": "docs/evidence/route-a-platform-kernel-audit-20261124/classifiers/ptrauth.py",
+      "role": "frozen_source",
+      "sha256": "593d7981bb3bc85033748aaae8bae014ad65d1efe23f9dd39e1d225635953a2d",
+      "size": 9782
+    },
+    {
+      "path": "docs/evidence/route-a-platform-kernel-audit-20261124/encoding-findings.jsonl",
+      "role": "raw_result",
+      "sha256": "728be4e0e2fb79477b73dbc2b0c2614b38a74b2c6956304acfb482c404c925c0",
+      "size": 89320
+    },
+    {
+      "path": "docs/evidence/route-a-platform-kernel-audit-20261124/geometry.json",
+      "role": "raw_result",
+      "sha256": "601cd9d2225774b3753da225b25f5a635d37ad43213155bce566bf2efb1b2230",
+      "size": 19160
+    },
+    {
+      "path": "docs/evidence/route-a-platform-kernel-audit-20261124/llvm-nm.version.stderr",
+      "role": "raw_result",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size": 0
+    },
+    {
+      "path": "docs/evidence/route-a-platform-kernel-audit-20261124/llvm-nm.version.stdout",
+      "role": "raw_result",
+      "sha256": "7ec9f72f893c3ca98da0315e6d2f6d690cf3de2705bdb8f4dc345a3c2e0d101e",
+      "size": 78
+    },
+    {
+      "path": "docs/evidence/route-a-platform-kernel-audit-20261124/llvm-objdump.version.stderr",
+      "role": "raw_result",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size": 0
+    },
+    {
+      "path": "docs/evidence/route-a-platform-kernel-audit-20261124/llvm-objdump.version.stdout",
+      "role": "raw_result",
+      "sha256": "8f851aeb4841527fde28d21bfa1a3b09298628c9a1b46f75a0f6d6e62d5116e8",
+      "size": 1613
+    },
+    {
+      "path": "docs/evidence/route-a-platform-kernel-audit-20261124/macho-private-headers.stderr",
+      "role": "raw_result",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size": 0
+    },
+    {
+      "path": "docs/evidence/route-a-platform-kernel-audit-20261124/macho-private-headers.stdout",
+      "role": "raw_result",
+      "sha256": "0669b4a24e2eca7fb0a41a5655e9dfe8c4b4b31fbf0cc776514ffcd6dc3dfa0b",
+      "size": 18703
+    },
+    {
+      "path": "docs/evidence/route-a-platform-kernel-audit-20261124/source-manifest.json",
+      "role": "frozen_source",
+      "sha256": "7d5578977c042115f4d2724a04ec933b215a9361c21ab811b30eec41f7f8648e",
+      "size": 3588
+    },
+    {
+      "path": "docs/evidence/route-a-platform-kernel-audit-20261124/state.json",
+      "role": "raw_result",
+      "sha256": "fab57ccc5df34755f25b2fe42d34f5956a3bebde889d3a9704ad495e9b46d45c",
+      "size": 488
+    },
+    {
+      "path": "docs/evidence/route-a-platform-kernel-audit-20261124/undefined-symbols.stderr",
+      "role": "raw_result",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size": 0
+    },
+    {
+      "path": "docs/evidence/route-a-platform-kernel-audit-20261124/undefined-symbols.stdout",
+      "role": "raw_result",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size": 0
+    }
+  ],
+  "historical_dic_correction": {
+    "changed_scope": "adapter accounting only; no expansion of the instruction rules",
+    "correct_exact_exclusion_formula": "sum(length)",
+    "current_dic_entry_count": 0,
+    "historical_dic_entry_count": 0,
+    "historical_recorded_zero_unchanged": true,
+    "historical_report": {
+      "path": "docs/evidence/route-a-kernel-audit-20261124/audit.json",
+      "sha256": "4546d4cdeed742b48ad4dce2dca2b80aad20b05dc82f0b795db450d3b737a552",
+      "size": 17723
+    },
+    "historical_source": "docs/evidence/route-a-kernel-audit-20261124/audit.py",
+    "note": "Both recorded candidates have zero LC_DATA_IN_CODE entries. The correction changes the adapter for nonzero ranges; it does not revise the old zero count or constitute a retrospective binary audit.",
+    "old_evidence_modified": false,
+    "old_incorrect_formula": "sum(length - offset)",
+    "parser_representation": "offset,length",
+    "whole_word_rounding_reported_separately": true
+  },
+  "limitations": [
+    "Only the retained original Armv8.3 PAuth families and exact POE2 TCHANGEF/TCHANGEB forms are classified.",
+    "Instruction-section candidate ranges are not proof that their bytes are executed instructions.",
+    "LC_DATA_IN_CODE byte ranges and every partially overlapping AArch64 word are excluded.",
+    "Unmarked literal pools may remain in candidate ranges; matched words require interpretation, not automatic rewriting.",
+    "A Capstone decode or nearby section symbol is not a reachability or function-boundary proof.",
+    "Unmatched words are outside these rules, not evidence of Cortex-A77 compatibility.",
+    "No system-register, full instruction-feature, loader, device, sleep/resume or OS-boot qualification is supplied.",
+    "Before/after reads refer to the same single candidate, not two independently built artifacts."
+  ],
+  "limited_checks_passed": true,
+  "local_readback_verification": {
+    "all_18_files_hashed": true,
+    "candidate_binary_rescanned_locally": false,
+    "four_command_output_identities_checked": true,
+    "geometry_arithmetic_and_each_finding_range_mapping_checked": true,
+    "raw_result_files": 13,
+    "recorded_or_frozen_digest_bindings_checked": 17,
+    "remote_tool_files_rehashed_by_this_local_review": false,
+    "reported_finding_words_reclassified_with_frozen_rules": 181,
+    "scope": "Local archived-file identity and report/geometry/findings consistency review. The raw audit records the remote scan and its before/after input checks.",
+    "source_files": 5,
+    "state_file_contents_crosschecked_against_bound_audit_report": true,
+    "successful_link_report_identity_and_candidate_binding_checked": true
+  },
+  "platform_link_provenance": {
+    "baseline_reproduced": true,
+    "baseline_sha256": "a58cdeedb9b7a4c152867c3487f28658a3799b0158f5046bbad6d2d58e741469",
+    "driver": {
+      "path": "/work/route-a-platform-20261124/link-driver-v5/scripts/link_route_a_platform.py",
+      "sha256": "13a22e44c1e4e2e7a9ce6118e62fe0ddd0dd82ceeb5384fc04b2461d65fa5f9b",
+      "size": 68253
+    },
+    "kernel_callback_linked": true,
+    "platform_link_compatible": true,
+    "protected_inputs_recheck": {
+      "changes": [],
+      "checked_file_count": 1137,
+      "unchanged": true
+    },
+    "report": {
+      "path": "docs/evidence/route-a-platform-20261124/link-attempt-004/report.json",
+      "remote_path": "/work/route-a-platform-20261124/link-attempt-004/report.json",
+      "sha256": "738a7af11b32c08d0a4261611ba69f325d5a29bf424791b18e98879864feff7c",
+      "size": 31408
+    },
+    "status": "platform_link_compatible"
+  },
+  "protected_inputs_recheck": {
+    "changes": [],
+    "checked_file_count": 12,
+    "unchanged": true
+  },
+  "python_execution": {
+    "isolated": 1,
+    "optimize": 0,
+    "version": "3.13.5 (main, Aug 10 2026, 12:06:59) [GCC 14.2.0]"
+  },
+  "qualifications": {
+    "candidate_ranges_are_code_proof": false,
+    "complete_board_archive_closure": false,
+    "complete_board_qualification": false,
+    "crypto_provider_selected": false,
+    "full_instruction_set_audited": false,
+    "os_boot_verified": false,
+    "pthread_provider_selected": false,
+    "reachability_proven": false,
+    "rewritten": false,
+    "runtime_driver_matching_verified": false,
+    "sleep_resume_verified": false,
+    "system_registers_audited": false,
+    "tb371fc_kernel_qualified": false,
+    "whole_instruction_set_verified": false
+  },
+  "raw_report": {
+    "path": "docs/evidence/route-a-platform-kernel-audit-20261124/audit.json",
+    "remote_path": "/work/route-a-platform-20261124/platform-kernel-audit-001/audit.json",
+    "sha256": "61bdea1cf7cb5f66e4afc407c58626ad6b96cf960b8d4f09e620de3c5dab17bd",
+    "size": 21686
+  },
+  "raw_state": {
+    "path": "docs/evidence/route-a-platform-kernel-audit-20261124/state.json",
+    "sha256": "fab57ccc5df34755f25b2fe42d34f5956a3bebde889d3a9704ad495e9b46d45c",
+    "size": 488
+  },
+  "recorded_date": "2026-11-24",
+  "scan": {
+    "all_findings_have_reachability_proven_false": true,
+    "candidate_bytes": 8900600,
+    "counts": {
+      "compatible_pauth_hint": {
+        "XPACLRI": 181
+      },
+      "nonhint_pauth": {},
+      "poe2_tchange": {}
+    },
+    "encoding_findings": {
+      "path": "docs/evidence/route-a-platform-kernel-audit-20261124/encoding-findings.jsonl",
+      "sha256": "728be4e0e2fb79477b73dbc2b0c2614b38a74b2c6956304acfb482c404c925c0",
+      "size": 89320
+    },
+    "geometry": {
+      "path": "docs/evidence/route-a-platform-kernel-audit-20261124/geometry.json",
+      "sha256": "601cd9d2225774b3753da225b25f5a635d37ad43213155bce566bf2efb1b2230",
+      "size": 19160
+    },
+    "not_matched_by_scoped_rules": 2224969,
+    "parser_blockers": [],
+    "parser_warnings": [],
+    "range_count": 3,
+    "ranges": [
+      {
+        "offset": 2785280,
+        "pure_instructions": true,
+        "recorded_xpaclri_hint_matches": 181,
+        "section": "__text",
+        "segment": "__TEXT_EXEC",
+        "size": 8892996,
+        "vmaddr": 18446744005110317056,
+        "words": 2223249
+      },
+      {
+        "offset": 11678304,
+        "pure_instructions": true,
+        "recorded_xpaclri_hint_matches": 0,
+        "section": "__hib_text",
+        "segment": "__TEXT_EXEC",
+        "size": 3140,
+        "vmaddr": 18446744005119210080,
+        "words": 785
+      },
+      {
+        "offset": 11681792,
+        "pure_instructions": true,
+        "recorded_xpaclri_hint_matches": 0,
+        "section": "__text",
+        "segment": "__KLD",
+        "size": 4464,
+        "vmaddr": 18446744005119213568,
+        "words": 1116
+      }
+    ],
+    "scanned_candidate_words": 2225150,
+    "totals": {
+      "compatible_pauth_hint": 181,
+      "nonhint_pauth": 0,
+      "poe2_tchange": 0
+    }
+  },
+  "schema_version": 1,
+  "scope": "retained-pauth-and-exact-poe2-encoding-census-of-one-platform-link-candidate",
+  "source_repository": "https://github.com/cyjin-yl/UniXNU-tb371fc",
+  "status": "completed",
+  "timezone": "Asia/Shanghai",
+  "tool_versions": {
+    "capstone": {
+      "core": [
+        5,
+        0,
+        1280
+      ],
+      "python": "5.0.6"
+    },
+    "llvm": "19.1.7",
+    "python": "3.13.5 (main, Aug 10 2026, 12:06:59) [GCC 14.2.0]"
+  },
+  "tools": {
+    "capstone_module": {
+      "path": "/work/route-a-venv/lib/python3.13/site-packages/capstone/__init__.py",
+      "realpath": "/work/route-a-venv/lib/python3.13/site-packages/capstone/__init__.py",
+      "sha256": "de6aa463d9008ce52827d5b6074780bc141f5422ccc07e4163851d0fee7c1719",
+      "size": 42474,
+      "symlink_target": null
+    },
+    "capstone_native_library": {
+      "path": "/work/route-a-venv/lib/python3.13/site-packages/capstone/lib/libcapstone.so",
+      "realpath": "/work/route-a-venv/lib/python3.13/site-packages/capstone/lib/libcapstone.so",
+      "sha256": "fb3e851989440c51fa026fa5be0441a5d5f09d3c4018f6521138762bfbf473b8",
+      "size": 9596200,
+      "symlink_target": null
+    },
+    "llvm-nm": {
+      "path": "/usr/bin/llvm-nm-19",
+      "realpath": "/usr/lib/llvm-19/bin/llvm-nm",
+      "sha256": "ed2427f2e14ac235a12fc3ca878f3621dd347e1e0dba7a316824f4d2a5e78403",
+      "size": 151440,
+      "symlink_target": "../lib/llvm-19/bin/llvm-nm"
+    },
+    "llvm-objdump": {
+      "path": "/usr/bin/llvm-objdump-19",
+      "realpath": "/usr/lib/llvm-19/bin/llvm-objdump",
+      "sha256": "c904a20cf0caeb812b542b69488e5c79738951a92ca99098fbb8941505eb789d",
+      "size": 960928,
+      "symlink_target": "../lib/llvm-19/bin/llvm-objdump"
+    },
+    "python": {
+      "path": "/work/route-a-venv/bin/python",
+      "realpath": "/usr/bin/python3.13",
+      "sha256": "889c603f0d17cb54060951bcf4c4f9b8c9ebd9e52b392c70209bbb9755d797d9",
+      "size": 6832784,
+      "symlink_target": "python3"
+    }
+  },
+  "undefined_symbols": {
+    "command_exit_code": 0,
+    "count": 0,
+    "stderr": {
+      "path": "docs/evidence/route-a-platform-kernel-audit-20261124/undefined-symbols.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size": 0
+    },
+    "stdout": {
+      "path": "docs/evidence/route-a-platform-kernel-audit-20261124/undefined-symbols.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size": 0
+    }
+  }
+}

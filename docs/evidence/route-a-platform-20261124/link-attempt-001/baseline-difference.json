@@ -1,0 +1,207 @@
+{
+  "old": {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/DEVELOPMENT_ARM64_BCM2837/mach.development.bcm2837.unstripped.noctf",
+    "size": 21905888,
+    "sha256": "a58cdeedb9b7a4c152867c3487f28658a3799b0158f5046bbad6d2d58e741469"
+  },
+  "replay": {
+    "path": "/work/route-a-platform-20261124/link-attempt-001/baseline.unstripped.noctf",
+    "size": 21905888,
+    "sha256": "791d4cfce73dccc67e7c66a3c7a432488a27f77a65b003d70cf80a15f6aa497a"
+  },
+  "differences": [
+    {
+      "start": 5520,
+      "end": 5536,
+      "old_hex": "551c3e2608a73188a54061cf627eca4e",
+      "replay_hex": "610a2b4066c937ffafac38f8de72a08d"
+    },
+    {
+      "start": 5578,
+      "end": 5583,
+      "old_hex": "60401e5930",
+      "replay_hex": "0000000000"
+    }
+  ],
+  "load_commands": [
+    {
+      "index": 0,
+      "command": "0x19",
+      "offset": 32,
+      "size": 552,
+      "identical": true
+    },
+    {
+      "index": 1,
+      "command": "0x19",
+      "offset": 584,
+      "size": 792,
+      "identical": true
+    },
+    {
+      "index": 2,
+      "command": "0x19",
+      "offset": 1376,
+      "size": 232,
+      "identical": true
+    },
+    {
+      "index": 3,
+      "command": "0x19",
+      "offset": 1608,
+      "size": 152,
+      "identical": true
+    },
+    {
+      "index": 4,
+      "command": "0x19",
+      "offset": 1760,
+      "size": 152,
+      "identical": true
+    },
+    {
+      "index": 5,
+      "command": "0x19",
+      "offset": 1912,
+      "size": 152,
+      "identical": true
+    },
+    {
+      "index": 6,
+      "command": "0x19",
+      "offset": 2064,
+      "size": 472,
+      "identical": true
+    },
+    {
+      "index": 7,
+      "command": "0x19",
+      "offset": 2536,
+      "size": 1112,
+      "identical": true
+    },
+    {
+      "index": 8,
+      "command": "0x19",
+      "offset": 3648,
+      "size": 472,
+      "identical": true
+    },
+    {
+      "index": 9,
+      "command": "0x19",
+      "offset": 4120,
+      "size": 152,
+      "identical": true
+    },
+    {
+      "index": 10,
+      "command": "0x19",
+      "offset": 4272,
+      "size": 152,
+      "identical": true
+    },
+    {
+      "index": 11,
+      "command": "0x19",
+      "offset": 4424,
+      "size": 152,
+      "identical": true
+    },
+    {
+      "index": 12,
+      "command": "0x19",
+      "offset": 4576,
+      "size": 152,
+      "identical": true
+    },
+    {
+      "index": 13,
+      "command": "0x19",
+      "offset": 4728,
+      "size": 152,
+      "identical": true
+    },
+    {
+      "index": 14,
+      "command": "0x19",
+      "offset": 4880,
+      "size": 152,
+      "identical": true
+    },
+    {
+      "index": 15,
+      "command": "0x19",
+      "offset": 5032,
+      "size": 152,
+      "identical": true
+    },
+    {
+      "index": 16,
+      "command": "0x19",
+      "offset": 5184,
+      "size": 152,
+      "identical": true
+    },
+    {
+      "index": 17,
+      "command": "0x19",
+      "offset": 5336,
+      "size": 72,
+      "identical": true
+    },
+    {
+      "index": 18,
+      "command": "0x2",
+      "offset": 5408,
+      "size": 24,
+      "identical": true
+    },
+    {
+      "index": 19,
+      "command": "0xb",
+      "offset": 5432,
+      "size": 80,
+      "identical": true
+    },
+    {
+      "index": 20,
+      "command": "0x1b",
+      "offset": 5512,
+      "size": 24,
+      "identical": false,
+      "old_uuid": "551c3e2608a73188a54061cf627eca4e",
+      "replay_uuid": "610a2b4066c937ffafac38f8de72a08d"
+    },
+    {
+      "index": 21,
+      "command": "0x32",
+      "offset": 5536,
+      "size": 32,
+      "identical": true
+    },
+    {
+      "index": 22,
+      "command": "0x2a",
+      "offset": 5568,
+      "size": 16,
+      "identical": false
+    },
+    {
+      "index": 23,
+      "command": "0x5",
+      "offset": 5584,
+      "size": 288,
+      "identical": true
+    },
+    {
+      "index": 24,
+      "command": "0x26",
+      "offset": 5872,
+      "size": 16,
+      "identical": true
+    }
+  ],
+  "changed_byte_count": 21,
+  "only_uuid_differs": false
+}

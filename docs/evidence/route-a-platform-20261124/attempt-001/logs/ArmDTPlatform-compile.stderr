@@ -1,0 +1,158 @@
+In file included from /work/route-a-platform-20261124/attempt-001/sources/ArmDTPlatform/ArmDTPlatform.cpp:15:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/iokit/IOKit/IOPlatformExpert.h:40:
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/iokit/IOKit/IOLib.h:1033:2: error: missing field 'kt_zearly' initializer [-Werror,-Wmissing-designated-field-initializers]
+ 1033 |         IOOverrideTypedOperators(T);
+      |         ^
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/iokit/IOKit/IOLib.h:999:2: note: expanded from macro 'IOOverrideTypedOperators'
+  999 |         __IOOverrideTypedOperators(type)
+      |         ^
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/iokit/IOKit/IOLib.h:918:17: note: expanded from macro '__IOOverrideTypedOperators'
+  918 |                 return IOMallocType(type);                        \
+      |                        ^
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/iokit/IOKit/IOLib.h:396:9: note: expanded from macro 'IOMallocType'
+  396 |         static _KALLOC_TYPE_DEFINE(kt_view_var, type,       \
+      |                ^
+/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/kern/kalloc.h:1676:2: note: expanded from macro '_KALLOC_TYPE_DEFINE'
+ 1676 |         } };                                                            \
+      |         ^
+In file included from /work/route-a-platform-20261124/attempt-001/sources/ArmDTPlatform/ArmDTPlatform.cpp:15:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/iokit/IOKit/IOPlatformExpert.h:40:
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/iokit/IOKit/IOLib.h:1033:2: error: missing field 'kt_zearly' initializer [-Werror,-Wmissing-designated-field-initializers]
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/iokit/IOKit/IOLib.h:999:2: note: expanded from macro 'IOOverrideTypedOperators'
+  999 |         __IOOverrideTypedOperators(type)
+      |         ^
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/iokit/IOKit/IOLib.h:922:10: note: expanded from macro '__IOOverrideTypedOperators'
+  922 |                 IOFreeType(mem, type);                            \
+      |                 ^
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/iokit/IOKit/IOLib.h:402:9: note: expanded from macro 'IOFreeType'
+  402 |         static _KALLOC_TYPE_DEFINE(kt_view_var, type,       \
+      |                ^
+/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/kern/kalloc.h:1676:2: note: expanded from macro '_KALLOC_TYPE_DEFINE'
+ 1676 |         } };                                                            \
+      |         ^
+In file included from /work/route-a-platform-20261124/attempt-001/sources/ArmDTPlatform/ArmDTPlatform.cpp:15:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/iokit/IOKit/IOPlatformExpert.h:40:
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/iokit/IOKit/IOLib.h:1038:2: error: missing field 'kt_stats' initializer [-Werror,-Wmissing-designated-field-initializers]
+ 1038 |         IOOverrideTypedOperatorsSupportingArrayOperators(T);
+      |         ^
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/iokit/IOKit/IOLib.h:1002:2: note: expanded from macro 'IOOverrideTypedOperatorsSupportingArrayOperators'
+ 1002 |         __IOOverrideTypedArrayOperators(type);                     \
+      |         ^
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/iokit/IOKit/IOLib.h:928:2: note: expanded from macro '__IOOverrideTypedArrayOperators'
+  928 |         __IOTypedOperatorNewArrayImpl(type, count)   \
+      |         ^
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/iokit/IOKit/IOLib.h:881:17: note: expanded from macro '__IOTypedOperatorNewArrayImpl'
+  881 |                 static KALLOC_TYPE_VAR_DEFINE(kt_view_var,                 \
+      |                        ^
+note: (skipping 3 expansions in backtrace; use -fmacro-backtrace-limit=0 to see all)
+/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/bsd/sys/cdefs.h:116:26: note: expanded from macro '__CONCAT'
+  116 | #define __CONCAT(x, y)   x ## y
+      |                          ^
+<scratch space>:209:1: note: expanded from here
+  209 | KALLOC_TYPE_VAR_DEFINE_4
+      | ^
+/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/kern/kalloc.h:1704:2: note: expanded from macro 'KALLOC_TYPE_VAR_DEFINE_4'
+ 1704 |         } };                                                            \
+      |         ^
+In file included from /work/route-a-platform-20261124/attempt-001/sources/ArmDTPlatform/ArmDTPlatform.cpp:15:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/iokit/IOKit/IOPlatformExpert.h:40:
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/iokit/IOKit/IOLib.h:1038:2: error: missing field 'kt_stats' initializer [-Werror,-Wmissing-designated-field-initializers]
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/iokit/IOKit/IOLib.h:1002:2: note: expanded from macro 'IOOverrideTypedOperatorsSupportingArrayOperators'
+ 1002 |         __IOOverrideTypedArrayOperators(type);                     \
+      |         ^
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/iokit/IOKit/IOLib.h:930:2: note: expanded from macro '__IOOverrideTypedArrayOperators'
+  930 |         __IOTypedOperatorDeleteArrayImpl(type, ptr)  \
+      |         ^
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/iokit/IOKit/IOLib.h:900:17: note: expanded from macro '__IOTypedOperatorDeleteArrayImpl'
+  900 |                 static KALLOC_TYPE_VAR_DEFINE(kt_view_var,            \
+      |                        ^
+note: (skipping 3 expansions in backtrace; use -fmacro-backtrace-limit=0 to see all)
+/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/bsd/sys/cdefs.h:116:26: note: expanded from macro '__CONCAT'
+  116 | #define __CONCAT(x, y)   x ## y
+      |                          ^
+<scratch space>:233:1: note: expanded from here
+  233 | KALLOC_TYPE_VAR_DEFINE_4
+      | ^
+/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/kern/kalloc.h:1704:2: note: expanded from macro 'KALLOC_TYPE_VAR_DEFINE_4'
+ 1704 |         } };                                                            \
+      |         ^
+In file included from /work/route-a-platform-20261124/attempt-001/sources/ArmDTPlatform/ArmDTPlatform.cpp:15:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/iokit/IOKit/IOPlatformExpert.h:40:
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/iokit/IOKit/IOLib.h:1038:2: error: missing field 'kt_zearly' initializer [-Werror,-Wmissing-designated-field-initializers]
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/iokit/IOKit/IOLib.h:1003:2: note: expanded from macro 'IOOverrideTypedOperatorsSupportingArrayOperators'
+ 1003 |         __IOOverrideTypedOperators(type)
+      |         ^
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/iokit/IOKit/IOLib.h:918:17: note: expanded from macro '__IOOverrideTypedOperators'
+  918 |                 return IOMallocType(type);                        \
+      |                        ^
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/iokit/IOKit/IOLib.h:396:9: note: expanded from macro 'IOMallocType'
+  396 |         static _KALLOC_TYPE_DEFINE(kt_view_var, type,       \
+      |                ^
+/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/kern/kalloc.h:1676:2: note: expanded from macro '_KALLOC_TYPE_DEFINE'
+ 1676 |         } };                                                            \
+      |         ^
+In file included from /work/route-a-platform-20261124/attempt-001/sources/ArmDTPlatform/ArmDTPlatform.cpp:15:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/iokit/IOKit/IOPlatformExpert.h:40:
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/iokit/IOKit/IOLib.h:1038:2: error: missing field 'kt_zearly' initializer [-Werror,-Wmissing-designated-field-initializers]
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/iokit/IOKit/IOLib.h:1003:2: note: expanded from macro 'IOOverrideTypedOperatorsSupportingArrayOperators'
+ 1003 |         __IOOverrideTypedOperators(type)
+      |         ^
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/iokit/IOKit/IOLib.h:922:10: note: expanded from macro '__IOOverrideTypedOperators'
+  922 |                 IOFreeType(mem, type);                            \
+      |                 ^
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/iokit/IOKit/IOLib.h:402:9: note: expanded from macro 'IOFreeType'
+  402 |         static _KALLOC_TYPE_DEFINE(kt_view_var, type,       \
+      |                ^
+/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/kern/kalloc.h:1676:2: note: expanded from macro '_KALLOC_TYPE_DEFINE'
+ 1676 |         } };                                                            \
+      |         ^
+In file included from /work/route-a-platform-20261124/attempt-001/sources/ArmDTPlatform/ArmDTPlatform.cpp:15:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/iokit/IOKit/IOPlatformExpert.h:41:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/iokit/IOKit/IOService.h:44:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/iokit/IOKit/IORegistryEntry.h:40:
+In file included from /work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/libkern/libkern/c++/OSContainers.h:46:
+/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/libkern/libkern/c++/OSValueObject.h:479:10: error: missing field 'kt_zearly' initializer [-Werror,-Wmissing-designated-field-initializers]
+  479 |                 data = IOMallocType(T);
+      |                        ^
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/iokit/IOKit/IOLib.h:396:9: note: expanded from macro 'IOMallocType'
+  396 |         static _KALLOC_TYPE_DEFINE(kt_view_var, type,       \
+      |                ^
+/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/kern/kalloc.h:1676:2: note: expanded from macro '_KALLOC_TYPE_DEFINE'
+ 1676 |         } };                                                            \
+      |         ^
+In file included from /work/route-a-platform-20261124/attempt-001/sources/ArmDTPlatform/ArmDTPlatform.cpp:15:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/iokit/IOKit/IOPlatformExpert.h:41:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/iokit/IOKit/IOService.h:44:
+In file included from /work/route-a-continue-20261123/kernel-build/.cache/xnu-work/iokit/IOKit/IORegistryEntry.h:40:
+In file included from /work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/libkern/libkern/c++/OSContainers.h:46:
+/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/libkern/libkern/c++/OSValueObject.h:494:2: error: missing field 'kt_zearly' initializer [-Werror,-Wmissing-designated-field-initializers]
+  494 |         IOFreeType(data, T);
+      |         ^
+/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/iokit/IOKit/IOLib.h:402:9: note: expanded from macro 'IOFreeType'
+  402 |         static _KALLOC_TYPE_DEFINE(kt_view_var, type,       \
+      |                ^
+/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/kern/kalloc.h:1676:2: note: expanded from macro '_KALLOC_TYPE_DEFINE'
+ 1676 |         } };                                                            \
+      |         ^
+/work/route-a-platform-20261124/attempt-001/sources/ArmDTPlatform/ArmDTPlatform.cpp:44:1: error: missing field 'kt_zearly' initializer [-Werror,-Wmissing-designated-field-initializers]
+   44 | OSDefineMetaClassAndStructors (ArmDTPlatform, IODTPlatformExpert)
+      | ^
+/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/libkern/libkern/c++/OSMetaClass.h:2330:2: note: expanded from macro 'OSDefineMetaClassAndStructors'
+ 2330 |         OSDefineMetaClassAndStructorsWithInit(className,            \
+      |         ^
+/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/libkern/libkern/c++/OSMetaClass.h:2164:2: note: expanded from macro 'OSDefineMetaClassAndStructorsWithInit'
+ 2164 |         OSDefineDefaultStructors(className, superclassName)
+      |         ^
+/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/libkern/libkern/c++/OSMetaClass.h:2120:2: note: expanded from macro 'OSDefineDefaultStructors'
+ 2120 |         OSDefineOperatorMethods(className)
+      |         ^
+/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/libkern/libkern/c++/OSMetaClass.h:2079:9: note: expanded from macro 'OSDefineOperatorMethods'
+ 2079 |         static KALLOC_TYPE_DEFINE(className ## _ktv, className,     \
+      |                ^
+/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/kern/kalloc.h:481:2: note: expanded from macro 'KALLOC_TYPE_DEFINE'
+  481 |         _KALLOC_TYPE_DEFINE(var, type, flags); \
+      |         ^
+/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/EXPORT_HDRS/osfmk/kern/kalloc.h:1676:2: note: expanded from macro '_KALLOC_TYPE_DEFINE'
+ 1676 |         } };                                                            \
+      |         ^
+9 errors generated.

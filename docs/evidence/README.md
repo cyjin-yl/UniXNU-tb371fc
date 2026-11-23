@@ -2,6 +2,22 @@
 
 本目录保存可公开、可追溯的结果摘要。系统二进制和原始私有日志不在仓库分发。文件名日期是该次记录日期，不代表之后所有改动都已重新执行相同测试。
 
+## 平台组件编译、归档与独立链接：2026-11-24
+
+`ArmDTPlatform` 与 `ArmCpu` 已用成功通用内核的真实 C++ 配方、自建 Clang 和 XNU 头文件完成编译、归档与成员字节核验。来源绑定的 `cpu.c` callback 对象也已真实编译通过，并在第四轮与两个 provider 一同通过独立内核链接，产物为 21,942,456 B 的普通 ARM64 / subtype 0 候选，目标为 iOS 27.0。完整来源、命令和验收边界见 [平台组件结果](../ROUTE_A_PLATFORM_RESULT.md)。
+
+| 记录 | 实际结果 | 范围 |
+| --- | --- | --- |
+| [平台归档汇总](route-a-platform-archives-20261124.json) | 两次真实 compile 退出码 0、stderr 空；两份 Darwin archive 成员与对象 SHA 相同；9 项保护输入前后一致 | 编译、归档和符号名字比较；实际内核链接另行记录 |
+| [第一次编译失败](route-a-platform-20261124/attempt-001/report.json) | ArmDTPlatform / ArmCpu 分别出现 9 / 10 条警告升级的 error；旧输入保持一致 | 构建器重置 warning policy 时丢失了成功 kernel recipe 已有的两个 Clang 兼容选项 |
+| [第二次编译成功](route-a-platform-20261124/attempt-002/report.json) | 恢复原 recipe 中已存在的两项，保留 `-Werror` 和 ABI 检查；两份 archive 完成 | 原始 report、两组件符号与依赖清单、编译 stderr 均保留；生成对象和 archive 留在仓库外 |
+| [Kernel callback 记录](route-a-kernel-callback-20261124.json) | 第二轮真实 C 编译、有界 TRUE / FALSE 调用与 resume 检查通过；415 条输入回执一致 | 首轮检查器失败、新检查器对旧对象的只读复测、第二轮真实编译分别记录；未验证 sleep 运行 |
+| [独立链接记录](route-a-platform-link-20261124.json) | 第四轮 baseline 完整 SHA 一致；新 `cpu.o`、两个 archive 成员、constructor、metaclass 和最终符号验收成功；1,137 项输入一致 | 四次尝试及原始失败均保留；整板依赖、运行时驱动匹配和 OS boot 另行验收 |
+| [新平台候选限定审计](route-a-platform-kernel-audit-20261124.json) | 单一候选的 3 段、2,225,150 个四字节字；非 HINT PAuth / 精确 POE2 形式均 0，XPACLRI 181，未定义符号 0 | 保留规则覆盖的编码统计；完整 ISA、可达性、系统寄存器和启动资格仍未验证 |
+| [实现 CI 记录](route-a-platform-validation-20261124.json) | `09e02e6` 实际 267 项、0 跳过；229 份原始源码／许可证保持一致，源码准备成功 | 仓库回归与真实 compiler / linker 执行分开记录 |
+
+归档阶段的名字比较曾单独记录 ArmCpu 的可选弱引用 `_arm64_platform_sleep_hook`；真实 linker 指出了 kernel callback 缺口，后续通过固定来源的 `cpu.c` 三处接线解决。[独立链接入口](../../scripts/link_route_a_platform.py) 先重现原候选的完整 SHA，再检查唯一对象替换及平台成员的实际装载。装载通过后，驱动初始化、完整睡眠恢复与 TB371FC 启动仍须单独验收。
+
 ## 通用内核编译／链接成功：2026-11-24
 
 第二轮真实 builder 已返回 0，生成普通 ARM64 `MH_EXECUTE`、subtype 0 的通用候选。完整说明见 [ROUTE_A_GENERIC_KERNEL_RESULT.md](../ROUTE_A_GENERIC_KERNEL_RESULT.md)。

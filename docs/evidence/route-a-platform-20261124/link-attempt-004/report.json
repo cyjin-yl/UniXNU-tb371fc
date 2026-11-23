@@ -1,0 +1,746 @@
+{
+  "actual_member_evidence": {
+    "components": [
+      {
+        "allocated_symbol_count": 43,
+        "component": "ArmDTPlatform",
+        "constructor_symbols": [
+          {
+            "address": 18446744005119108912,
+            "name": "__GLOBAL__sub_I_ArmDTPlatform.cpp",
+            "object_index": 1080,
+            "size": 60
+          }
+        ],
+        "map_member": "/work/route-a-platform-20261124/attempt-002/ArmDTPlatform/libArmDTPlatform.a(ArmDTPlatform.o)",
+        "metaclass_symbols": [
+          {
+            "address": 18446744005120326736,
+            "name": "__ZN13ArmDTPlatform10gMetaClassE",
+            "object_index": 1080,
+            "size": 40
+          }
+        ],
+        "object_index": 1080,
+        "observation_symbol": "_armdt_platform_configured"
+      },
+      {
+        "allocated_symbol_count": 164,
+        "component": "ArmCpu",
+        "constructor_symbols": [
+          {
+            "address": 18446744005119126496,
+            "name": "__GLOBAL__sub_I_ArmCpu.cpp",
+            "object_index": 1081,
+            "size": 60
+          }
+        ],
+        "map_member": "/work/route-a-platform-20261124/attempt-002/ArmCpu/libArmCpu.a(ArmCpu.o)",
+        "metaclass_symbols": [
+          {
+            "address": 18446744005120327376,
+            "name": "__ZN6ArmCpu10gMetaClassE",
+            "object_index": 1081,
+            "size": 40
+          }
+        ],
+        "object_index": 1081,
+        "observation_symbol": "_armcpu_registered"
+      }
+    ],
+    "constructor_pointer_count": 101,
+    "runtime_driver_matching_verified": false
+  },
+  "baseline": {
+    "path": "/work/route-a-platform-20261124/link-attempt-004/mach.development.bcm2837.unstripped.noctf",
+    "sha256": "a58cdeedb9b7a4c152867c3487f28658a3799b0158f5046bbad6d2d58e741469",
+    "size": 21905888
+  },
+  "baseline_reproduced": true,
+  "candidate": {
+    "build_version": {
+      "minos": 1769472,
+      "platform": 2,
+      "sdk": 1769472
+    },
+    "cpu_subtype": 0,
+    "entry": 18446744005112829064,
+    "file_type": 2,
+    "load_contract": {
+      "entry_offset": 5297288,
+      "memory_span": 23035904,
+      "required_physical_base_low_21_bits": 16384,
+      "virtual_base": 18446744005107531776
+    },
+    "path": "/work/route-a-platform-20261124/link-attempt-004/mach.platform-link-probe.unstripped.noctf",
+    "sha256": "46eff436250d905e9f3aec59dbcc8c04d594e614e790860236917c7cbfe39f1b",
+    "size": 21942456,
+    "strong_undefined": [],
+    "weak_undefined": []
+  },
+  "commands": [
+    {
+      "argv": [
+        "/work/route-a-continue-20261123/toolchain/CommandLineTools/usr/bin/clang++",
+        "-nostdlib",
+        "-nostdlib",
+        "-fapple-kext",
+        "-Wl,-e,__start",
+        "-Wl,-sectalign,__TEXT,__text,0x1000",
+        "-Wl,-sectalign,__DATA,__common,0x1000",
+        "-Wl,-sectalign,__DATA,__bss,0x1000",
+        "-Wl,-sectcreate,__PRELINK_TEXT,__text,/dev/null",
+        "-Wl,-segprot,__PRELINK_TEXT,r-x,r-x",
+        "-Wl,-sectcreate,__PRELINK_INFO,__info,/dev/null",
+        "-Wl,-pagezero_size,0x0",
+        "-Wl,-version_load_command",
+        "-Wl,-function_starts",
+        "-Wl,-headerpad,152",
+        "-L/work/route-a-continue-20261123/kernel-build/.cache/fakeroot/usr/local/lib/kernel",
+        "-L/work/route-a-continue-20261123/kernel-build/.cache/fakeroot/usr/local/lib/kernel/platform",
+        "-arch",
+        "arm64",
+        "-Wl,-pie",
+        "-Wl,-static",
+        "-Wl,-segaddr,__PRELINK_TEXT,0xfffffff004004000",
+        "-Wl,-image_base,0xfffffff007004000",
+        "-Wl,-rename_section,__HIB,__text,__TEXT_EXEC,__hib_text",
+        "-Wl,-rename_section,__HIB,__const,__DATA_CONST,__hib_const",
+        "-Wl,-rename_section,__HIB,__cstring,__DATA_CONST,__hib_const",
+        "-Wl,-rename_section,__HIB,__literal8,__DATA_CONST,__hib_const",
+        "-Wl,-rename_section,__HIB,__literal16,__DATA_CONST,__hib_const",
+        "-Wl,-rename_segment,__HIB,__HIBDATA",
+        "-Wl,-sectalign,__DATA,__const,0x4000",
+        "-Wl,-sectalign,__DATA,__percpu,0x4000",
+        "-Wl,-sectalign,__DATA,__data,0x4000",
+        "-Wl,-rename_section,__DATA,__mod_init_func,__DATA_CONST,__mod_init_func",
+        "-Wl,-rename_section,__DATA,__mod_term_func,__DATA_CONST,__mod_term_func",
+        "-Wl,-rename_section,__DATA,__auth_ptr,__DATA_CONST,__auth_ptr",
+        "-Wl,-rename_section,__DATA,__auth_got,__DATA_CONST,__auth_got",
+        "-Wl,-rename_section,__DATA,__const,__DATA_CONST,__const",
+        "-Wl,-segprot,__DATA_CONST,r--,r--",
+        "-Wl,-rename_section,__KLD,__const,__KLDDATA,__const",
+        "-Wl,-rename_section,__KLD,__cstring,__KLDDATA,__cstring",
+        "-Wl,-segprot,__KLDDATA,rw-,rw-",
+        "-Wl,-segprot,__KLD,r-x,r-x",
+        "-Wl,-rename_section,__TEXT,__text,__TEXT_EXEC,__text",
+        "-Wl,-rename_section,__TEXT,__stubs,__TEXT_EXEC,__stubs",
+        "-Wl,-sectcreate,__PLK_TEXT_EXEC,__text,/dev/null",
+        "-Wl,-sectcreate,__PRELINK_DATA,__data,/dev/null",
+        "-Wl,-sectcreate,__PLK_DATA_CONST,__data,/dev/null",
+        "-Wl,-sectcreate,__PLK_LLVM_COV,__llvm_covmap,/dev/null",
+        "-Wl,-sectcreate,__PLK_LINKEDIT,__data,/dev/null",
+        "-Wl,-rename_section,__PPLDATA,__const,__PPLDATA_CONST,__const",
+        "-Wl,-segment_order,__TEXT:__DATA_CONST:__DATA_SPTM:__LINKEDIT:__TEXT_EXEC:__TEXT_BOOT_EXEC:__KLD:__PPLTEXT:__PPLTRAMP:__PPLDATA_CONST:__LASTDATA_CONST:__LAST:__PPLDATA:__KLDDATA:__DATA:__HIBDATA:__BOOTDATA",
+        "-Wl,-segprot,__TEXT,r--,r--",
+        "-Wl,-segprot,__TEXT_EXEC,r-x,r-x",
+        "-Wl,-segprot,__TEXT_BOOT_EXEC,r-x,r-x",
+        "-Wl,-segprot,__PPLTEXT,r-x,r-x",
+        "-Wl,-segprot,__PPLTRAMP,r-x,r-x",
+        "-Wl,-segprot,__PPLDATA_CONST,r--,r--",
+        "-Wl,-segprot,__LASTDATA_CONST,r--,r--",
+        "-Wl,-segprot,__LAST,r-x,r-x",
+        "-miphoneos-version-min=27.0",
+        "-DXNU_TARGET_OS_IOS",
+        "-Wl,-alias_list,/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/DEVELOPMENT_ARM64_BCM2837//all-alias.exp",
+        "-Wl,-sectcreate,__LINKINFO,__symbolsets,/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/DEVELOPMENT_ARM64_BCM2837//symbolsets.plist",
+        "-Wl,-segprot,__LINKINFO,r--,r--",
+        "-filelist",
+        "/work/route-a-platform-20261124/link-attempt-004/inputs/link.filelist",
+        "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/DEVELOPMENT_ARM64_BCM2837/lastkerneldataconst.o",
+        "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/DEVELOPMENT_ARM64_BCM2837/lastkernelconstructor.o",
+        "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/DEVELOPMENT_ARM64_BCM2837/nonlto.o",
+        "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/DEVELOPMENT_ARM64_BCM2837/version.o",
+        "-o",
+        "/work/route-a-platform-20261124/link-attempt-004/mach.development.bcm2837.unstripped.noctf",
+        "/work/route-a-continue-20261123/kernel-build/.cache/fakeroot/usr/local/lib/kernel/libcc_kext.a",
+        "-L/work/route-a-continue-20261123/kernel-build/.cache/fakeroot/usr/local/lib/kernel",
+        "-L/work/route-a-continue-20261123/kernel-build/.cache/fakeroot/usr/local/lib/kernel/platform",
+        "-lfirehose_kernel",
+        "-Wl,-map,/work/route-a-platform-20261124/link-attempt-004/baseline.map"
+      ],
+      "cwd": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/DEVELOPMENT_ARM64_BCM2837",
+      "exit_code": 0,
+      "label": "baseline-link",
+      "status": "completed",
+      "stderr": {
+        "path": "/work/route-a-platform-20261124/link-attempt-004/baseline-link.stderr",
+        "sha256": "529b6342569c58158cc9ae2509b7012ad77fd03294843230b887208a64da0112",
+        "size": 491
+      },
+      "stdout": {
+        "path": "/work/route-a-platform-20261124/link-attempt-004/baseline-link.stdout",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "size": 0
+      }
+    },
+    {
+      "argv": [
+        "/work/route-a-continue-20261123/toolchain/CommandLineTools/usr/bin/clang++",
+        "-nostdlib",
+        "-nostdlib",
+        "-fapple-kext",
+        "-Wl,-e,__start",
+        "-Wl,-sectalign,__TEXT,__text,0x1000",
+        "-Wl,-sectalign,__DATA,__common,0x1000",
+        "-Wl,-sectalign,__DATA,__bss,0x1000",
+        "-Wl,-sectcreate,__PRELINK_TEXT,__text,/dev/null",
+        "-Wl,-segprot,__PRELINK_TEXT,r-x,r-x",
+        "-Wl,-sectcreate,__PRELINK_INFO,__info,/dev/null",
+        "-Wl,-pagezero_size,0x0",
+        "-Wl,-version_load_command",
+        "-Wl,-function_starts",
+        "-Wl,-headerpad,152",
+        "-L/work/route-a-continue-20261123/kernel-build/.cache/fakeroot/usr/local/lib/kernel",
+        "-L/work/route-a-continue-20261123/kernel-build/.cache/fakeroot/usr/local/lib/kernel/platform",
+        "-arch",
+        "arm64",
+        "-Wl,-pie",
+        "-Wl,-static",
+        "-Wl,-segaddr,__PRELINK_TEXT,0xfffffff004004000",
+        "-Wl,-image_base,0xfffffff007004000",
+        "-Wl,-rename_section,__HIB,__text,__TEXT_EXEC,__hib_text",
+        "-Wl,-rename_section,__HIB,__const,__DATA_CONST,__hib_const",
+        "-Wl,-rename_section,__HIB,__cstring,__DATA_CONST,__hib_const",
+        "-Wl,-rename_section,__HIB,__literal8,__DATA_CONST,__hib_const",
+        "-Wl,-rename_section,__HIB,__literal16,__DATA_CONST,__hib_const",
+        "-Wl,-rename_segment,__HIB,__HIBDATA",
+        "-Wl,-sectalign,__DATA,__const,0x4000",
+        "-Wl,-sectalign,__DATA,__percpu,0x4000",
+        "-Wl,-sectalign,__DATA,__data,0x4000",
+        "-Wl,-rename_section,__DATA,__mod_init_func,__DATA_CONST,__mod_init_func",
+        "-Wl,-rename_section,__DATA,__mod_term_func,__DATA_CONST,__mod_term_func",
+        "-Wl,-rename_section,__DATA,__auth_ptr,__DATA_CONST,__auth_ptr",
+        "-Wl,-rename_section,__DATA,__auth_got,__DATA_CONST,__auth_got",
+        "-Wl,-rename_section,__DATA,__const,__DATA_CONST,__const",
+        "-Wl,-segprot,__DATA_CONST,r--,r--",
+        "-Wl,-rename_section,__KLD,__const,__KLDDATA,__const",
+        "-Wl,-rename_section,__KLD,__cstring,__KLDDATA,__cstring",
+        "-Wl,-segprot,__KLDDATA,rw-,rw-",
+        "-Wl,-segprot,__KLD,r-x,r-x",
+        "-Wl,-rename_section,__TEXT,__text,__TEXT_EXEC,__text",
+        "-Wl,-rename_section,__TEXT,__stubs,__TEXT_EXEC,__stubs",
+        "-Wl,-sectcreate,__PLK_TEXT_EXEC,__text,/dev/null",
+        "-Wl,-sectcreate,__PRELINK_DATA,__data,/dev/null",
+        "-Wl,-sectcreate,__PLK_DATA_CONST,__data,/dev/null",
+        "-Wl,-sectcreate,__PLK_LLVM_COV,__llvm_covmap,/dev/null",
+        "-Wl,-sectcreate,__PLK_LINKEDIT,__data,/dev/null",
+        "-Wl,-rename_section,__PPLDATA,__const,__PPLDATA_CONST,__const",
+        "-Wl,-segment_order,__TEXT:__DATA_CONST:__DATA_SPTM:__LINKEDIT:__TEXT_EXEC:__TEXT_BOOT_EXEC:__KLD:__PPLTEXT:__PPLTRAMP:__PPLDATA_CONST:__LASTDATA_CONST:__LAST:__PPLDATA:__KLDDATA:__DATA:__HIBDATA:__BOOTDATA",
+        "-Wl,-segprot,__TEXT,r--,r--",
+        "-Wl,-segprot,__TEXT_EXEC,r-x,r-x",
+        "-Wl,-segprot,__TEXT_BOOT_EXEC,r-x,r-x",
+        "-Wl,-segprot,__PPLTEXT,r-x,r-x",
+        "-Wl,-segprot,__PPLTRAMP,r-x,r-x",
+        "-Wl,-segprot,__PPLDATA_CONST,r--,r--",
+        "-Wl,-segprot,__LASTDATA_CONST,r--,r--",
+        "-Wl,-segprot,__LAST,r-x,r-x",
+        "-miphoneos-version-min=27.0",
+        "-DXNU_TARGET_OS_IOS",
+        "-Wl,-alias_list,/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/DEVELOPMENT_ARM64_BCM2837//all-alias.exp",
+        "-Wl,-sectcreate,__LINKINFO,__symbolsets,/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/DEVELOPMENT_ARM64_BCM2837//symbolsets.plist",
+        "-Wl,-segprot,__LINKINFO,r--,r--",
+        "-filelist",
+        "/work/route-a-platform-20261124/link-attempt-004/inputs/platform-link.filelist",
+        "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/DEVELOPMENT_ARM64_BCM2837/lastkerneldataconst.o",
+        "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/DEVELOPMENT_ARM64_BCM2837/lastkernelconstructor.o",
+        "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/DEVELOPMENT_ARM64_BCM2837/nonlto.o",
+        "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/DEVELOPMENT_ARM64_BCM2837/version.o",
+        "-o",
+        "/work/route-a-platform-20261124/link-attempt-004/mach.platform-link-probe.unstripped.noctf",
+        "/work/route-a-continue-20261123/kernel-build/.cache/fakeroot/usr/local/lib/kernel/libcc_kext.a",
+        "-L/work/route-a-continue-20261123/kernel-build/.cache/fakeroot/usr/local/lib/kernel",
+        "-L/work/route-a-continue-20261123/kernel-build/.cache/fakeroot/usr/local/lib/kernel/platform",
+        "-lfirehose_kernel",
+        "-Wl,-map,/work/route-a-platform-20261124/link-attempt-004/platform.map",
+        "-Wl,-force_load,/work/route-a-platform-20261124/attempt-002/ArmDTPlatform/libArmDTPlatform.a",
+        "-Wl,-force_load,/work/route-a-platform-20261124/attempt-002/ArmCpu/libArmCpu.a"
+      ],
+      "cwd": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/DEVELOPMENT_ARM64_BCM2837",
+      "exit_code": 0,
+      "label": "platform-link",
+      "status": "completed",
+      "stderr": {
+        "path": "/work/route-a-platform-20261124/link-attempt-004/platform-link.stderr",
+        "sha256": "529b6342569c58158cc9ae2509b7012ad77fd03294843230b887208a64da0112",
+        "size": 491
+      },
+      "stdout": {
+        "path": "/work/route-a-platform-20261124/link-attempt-004/platform-link.stdout",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "size": 0
+      }
+    }
+  ],
+  "complete_board_archive_closure": false,
+  "crypto_provider_selected": false,
+  "driver": {
+    "path": "/work/route-a-platform-20261124/link-driver-v5/scripts/link_route_a_platform.py",
+    "sha256": "13a22e44c1e4e2e7a9ce6118e62fe0ddd0dd82ceeb5384fc04b2461d65fa5f9b",
+    "size": 68253
+  },
+  "environment": {
+    "CLT_PREFIX": "/work/route-a-continue-20261123/toolchain/CommandLineTools/usr",
+    "CROSS_CLANG": "/work/route-a-continue-20261123/toolchain/llvm/bin/clang",
+    "CROSS_EXTRA_FLAGS": "-mcpu=generic -mllvm -disable-atexit-based-global-dtor-lowering",
+    "DARWIN_TRIPLE": "arm64-apple-ios27.0",
+    "LC_ALL": "C",
+    "PATH": "/work/route-a-continue-20261123/toolchain/CommandLineTools/usr/bin:/work/route-a-continue-20261123/toolchain/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
+    "RC_ProjectSourceVersion": "12377.121.6",
+    "TMPDIR": "/work/route-a-platform-20261124/link-attempt-004/tmp",
+    "UNIXNU_TOOLCHAIN": "/work/route-a-continue-20261123/toolchain",
+    "XCTOOLCHAIN_PREFIX": "/work/route-a-continue-20261123/toolchain/XcodeDefault.xctoolchain/usr",
+    "ZERO_AR_DATE": "1"
+  },
+  "finished_at_utc": "2026-11-23T21:00:30Z",
+  "full_instruction_set_audited": false,
+  "kernel_callback": {
+    "actual_member_evidence": {
+      "definition": {
+        "section": {
+          "addr": 18446744005119545344,
+          "flags": 1,
+          "index": 37,
+          "name": "__common",
+          "offset": 0,
+          "segment": "__DATA",
+          "size": 782104
+        },
+        "symbol": {
+          "n_desc": 0,
+          "n_sect": 37,
+          "n_type": 15,
+          "name": "_arm64_platform_sleep_hook",
+          "value": 18446744005120012936
+        }
+      },
+      "hook_symbol": {
+        "address": 18446744005120012936,
+        "name": "_arm64_platform_sleep_hook",
+        "object_index": 318,
+        "size": 8
+      },
+      "map_object": "/work/route-a-platform-20261124/callback-attempt-002/replacement/cpu.o",
+      "ml_arm_sleep_symbol": {
+        "address": 18446744005112770776,
+        "name": "_ml_arm_sleep",
+        "object_index": 318,
+        "size": 328
+      },
+      "object_index": 318,
+      "runtime_path_execution_verified": false
+    },
+    "callback_evidence": {
+      "path": "/work/route-a-platform-20261124/callback-attempt-002/callback-evidence.json",
+      "sha256": "abb30328dc42f67b62bac2192ffd2d6109c2beb1e6e2aa96821bd248d6ce3f1a",
+      "size": 14060
+    },
+    "compile_record": {
+      "original": {
+        "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/DEVELOPMENT_ARM64_BCM2837/osfmk/DEVELOPMENT/cpu.o.json",
+        "sha256": "bfd7ad809f8b5704f8815a4f9214cba8de8a58c949825a1d8a0bf48fb22a0002",
+        "size": 9704
+      },
+      "replay": {
+        "path": "/work/route-a-platform-20261124/callback-attempt-002/replacement/replay-compile-record.json",
+        "sha256": "239554932e935f9e622e915fa34fdf88a299010dddda636e9514570ee485278a",
+        "size": 12152
+      }
+    },
+    "compiler": {
+      "kind": "tool",
+      "path": "/work/route-a-continue-20261123/toolchain/llvm/bin/clang-24",
+      "realpath": "/work/route-a-continue-20261123/toolchain/llvm/bin/clang-24",
+      "sha256": "85d220e32bd83d75de788c8beab0bea646a4684e1112f7c06266ca71e651bb04",
+      "size": 155202456,
+      "symlink_target": null
+    },
+    "config": {
+      "path": "/work/route-a-platform-20261124/callback-driver-v2/configs/route-a-kernel-callback.json",
+      "sha256": "af71d539d6bee63dfa2be8351b8dc2d37ce3596d86feefaabe08029b3ea0fa33",
+      "size": 4136
+    },
+    "driver": {
+      "path": "/work/route-a-platform-20261124/callback-driver-v2/scripts/build_route_a_kernel_callback.py",
+      "sha256": "4ba0df5c65159714fec9f30b39221c8f3c2dc2a17a70d85e68f0b8260e76a651",
+      "size": 38817
+    },
+    "filelist_replacement": {
+      "line_index": 316,
+      "original_entry": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/DEVELOPMENT_ARM64_BCM2837/osfmk/DEVELOPMENT/cpu.o",
+      "original_filelist": {
+        "path": "/work/route-a-platform-20261124/link-attempt-004/inputs/link.filelist",
+        "sha256": "ef6d270d22291a6e43c8d91b8811a505d25ed1465e4c0dba9174f3d19eaa556d",
+        "size": 129089
+      },
+      "platform_filelist": {
+        "path": "/work/route-a-platform-20261124/link-attempt-004/inputs/platform-link.filelist",
+        "sha256": "6e565b3eba9c98f875a6da2dbd7762e175e75a97f8d79ec7041e854a9eda1d24",
+        "size": 129047
+      },
+      "replacement_count": 1,
+      "replacement_entry": "/work/route-a-platform-20261124/callback-attempt-002/replacement/cpu.o",
+      "unchanged_original_linked_object_count": 1070
+    },
+    "generated_code_verification": {
+      "dispatch_calls": [
+        {
+          "address": "0xcf0",
+          "argument_value": 1,
+          "control_flow_shape": "cbz-fallthrough",
+          "file_offset": 5240,
+          "instruction": "blr",
+          "instruction_index": 34,
+          "null_guard_address": "0xce8",
+          "pointer_load": {
+            "address": "0xce4",
+            "relocation": {
+              "address": 3300,
+              "external": true,
+              "length": 2,
+              "pcrel": false,
+              "section": 1,
+              "section_offset": 3300,
+              "symbol": "_arm64_platform_sleep_hook",
+              "symbol_index": 44,
+              "type": 4
+            }
+          },
+          "pointer_page": {
+            "address": "0xce0",
+            "relocation": {
+              "address": 3296,
+              "external": true,
+              "length": 2,
+              "pcrel": true,
+              "section": 1,
+              "section_offset": 3296,
+              "symbol": "_arm64_platform_sleep_hook",
+              "symbol_index": 44,
+              "type": 3
+            }
+          },
+          "target_register": "x8"
+        },
+        {
+          "address": "0xda4",
+          "argument_value": 0,
+          "control_flow_shape": "cbnz-taken-tail-block",
+          "file_offset": 5420,
+          "guard_taken_target": "0xda0",
+          "instruction": "blr",
+          "instruction_index": 79,
+          "local_direct_incoming": [
+            "0xd40"
+          ],
+          "null_guard_address": "0xd40",
+          "pointer_load": {
+            "address": "0xd3c",
+            "relocation": {
+              "address": 3388,
+              "external": true,
+              "length": 2,
+              "pcrel": false,
+              "section": 1,
+              "section_offset": 3388,
+              "symbol": "_arm64_platform_sleep_hook",
+              "symbol_index": 44,
+              "type": 4
+            }
+          },
+          "pointer_page": {
+            "address": "0xd38",
+            "relocation": {
+              "address": 3384,
+              "external": true,
+              "length": 2,
+              "pcrel": true,
+              "section": 1,
+              "section_offset": 3384,
+              "symbol": "_arm64_platform_sleep_hook",
+              "symbol_index": 44,
+              "type": 3
+            }
+          },
+          "tail_entry_predecessor": {
+            "address": "0xd9c",
+            "instruction": "b"
+          },
+          "target_register": "x8"
+        }
+      ],
+      "function": {
+        "address": "0xc68",
+        "boundary_basis": "defined-section symbol to next underscore symbol/section end",
+        "end": "0xdb0",
+        "file_offset": 5104,
+        "name": "_ml_arm_sleep",
+        "sha256": "916964422fab9ca833148bc3f022266c2fd3287015f9583d47cba5a365072fe9",
+        "size": 328
+      },
+      "passed": true,
+      "recomputed_from_replacement_object": true,
+      "resume_call": {
+        "address": "0xcfc",
+        "after_boot_dispatch": true,
+        "file_offset": 5252,
+        "instruction": "bl",
+        "relocation": {
+          "address": 3324,
+          "external": true,
+          "length": 2,
+          "pcrel": true,
+          "section": 1,
+          "section_offset": 3324,
+          "symbol": "_arm_init_cpu",
+          "symbol_index": 90,
+          "type": 2
+        },
+        "second_argument": 0,
+        "symbol": "_arm_init_cpu"
+      },
+      "runtime_path_execution_verified": false,
+      "scope": "bounded emitted callback sequences and relocations in ml_arm_sleep"
+    },
+    "hook_definition": {
+      "section": {
+        "addr": 112568,
+        "flags": 1,
+        "index": 3,
+        "name": "__common",
+        "offset": 0,
+        "segment": "__DATA",
+        "size": 164
+      },
+      "symbol": {
+        "n_desc": 0,
+        "n_sect": 3,
+        "n_type": 15,
+        "name": "_arm64_platform_sleep_hook",
+        "value": 112568
+      }
+    },
+    "original_object": {
+      "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/DEVELOPMENT_ARM64_BCM2837/osfmk/DEVELOPMENT/cpu.o",
+      "sha256": "25b913d235ed38f7d4e1910d54d79eaebdbc83003c501939822e288246ed12e4",
+      "size": 118200
+    },
+    "patch": {
+      "path": "/work/route-a-platform-20261124/callback-driver-v2/patches/route-a-kernel-sleep-callback-12377.patch",
+      "sha256": "e241b720a828d307daba0cd57fc956515641a19867e723a58d54295a98fdb760",
+      "size": 2159
+    },
+    "producer_protected_inputs_recheck": {
+      "changes": [],
+      "checked_file_count": 415,
+      "unchanged": true
+    },
+    "provenance": {
+      "commit": "c8f92b208068eeaa4cd2b0f592671f04ee70076e",
+      "deferred_files": [
+        "osfmk/arm/cpu_common.c",
+        "iokit/Kernel/IOPMrootDomain.cpp"
+      ],
+      "git_blob": "8517a5278e7fa5446a569aa111344b0c40140ce5",
+      "license": {
+        "copyright": "Copyright (c) 2026, UniXNU contributors. All rights reserved.",
+        "git_blob": "f63d2a6e4c80c3bf8d44b047458468289927593d",
+        "local_copy": "LICENSES/BSD-2-Clause-Patent.txt",
+        "path": "LICENSE",
+        "sha256": "5b1d3d911103cb0f41641ec0964c5ac1f7e229f57aa072b6ac38bae913a1307b",
+        "spdx": "BSD-2-Clause-Patent",
+        "url": "https://github.com/UniXNU/UniXNU-sheng/blob/c8f92b208068eeaa4cd2b0f592671f04ee70076e/LICENSE"
+      },
+      "modified_xnu_file_license": "Original cpu.c Apple APSL / OSReference notices remain unchanged; this selection does not relicense XNU.",
+      "path": "patches/xnu-12377/sheng-platform-sleep.patch",
+      "repository": "https://github.com/UniXNU/UniXNU-sheng",
+      "selected_hunks": [
+        "cpu.c:hook-definition",
+        "cpu.c:boot-cpu-dispatch-and-resume",
+        "cpu.c:secondary-cpu-dispatch"
+      ],
+      "sha256": "fa70fe3346ab66f5c2a28ce1adfcd41ee770cb165a7080dc6fdf4541550cd033",
+      "url": "https://github.com/UniXNU/UniXNU-sheng/blob/c8f92b208068eeaa4cd2b0f592671f04ee70076e/patches/xnu-12377/sheng-platform-sleep.patch",
+      "whole_upstream_patch_applied": false
+    },
+    "recipe_changes": {
+      "abi_options_changed": false,
+      "added_dependency_inventory": "/work/route-a-platform-20261124/callback-attempt-002/replacement/dependencies.d",
+      "added_no_default_config": true,
+      "execution_cwd": "/work/route-a-platform-20261124/callback-attempt-002/replacement",
+      "isolated_outputs_and_paths": [
+        {
+          "flag": "-o",
+          "original": "cpu.o",
+          "replacement": "/work/route-a-platform-20261124/callback-attempt-002/replacement/cpu.o"
+        },
+        {
+          "flag": "-I",
+          "original": ".",
+          "replacement": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/DEVELOPMENT_ARM64_BCM2837/osfmk/DEVELOPMENT"
+        }
+      ],
+      "original_cwd": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/DEVELOPMENT_ARM64_BCM2837/osfmk/DEVELOPMENT",
+      "warning_arguments": [
+        "-Wframe-larger-than=0",
+        "-Wno-frame-larger-than",
+        "-Wno-reserved-identifier",
+        "-Wno-pre-c11-compat",
+        "-Wno-missing-designated-field-initializers",
+        "-Wno-suggest-override",
+        "-Wno-unnecessary-virtual-specifier",
+        "-Wno-suggest-destructor-override",
+        "-Wno-ms-bitfield-padding",
+        "-Weverything",
+        "-Wundef-prefix=TARGET_OS_",
+        "-Wundef-prefix=LCK_GRP_USE_ARG",
+        "-Wno-pedantic",
+        "-Wno-bad-function-cast",
+        "-Wno-bitwise-instead-of-logical",
+        "-Wno-c++-compat",
+        "-Wno-c++98-compat",
+        "-Wno-conditional-uninitialized",
+        "-Wno-covered-switch-default",
+        "-Wno-disabled-macro-expansion",
+        "-Wno-documentation-unknown-command",
+        "-Wno-extra-semi-stmt",
+        "-Wno-format-non-iso",
+        "-Wno-language-extension-token",
+        "-Wno-missing-variable-declarations",
+        "-Wno-packed",
+        "-Wno-padded",
+        "-Wno-ms-bitfield-padding",
+        "-Wno-partial-availability",
+        "-Wno-reserved-id-macro",
+        "-Wno-shift-sign-overflow",
+        "-Wno-switch-enum",
+        "-Wno-unaligned-access",
+        "-Wno-undef",
+        "-Wno-invalid-offsetof",
+        "-Wno-unused-macros",
+        "-Wno-used-but-marked-unused",
+        "-Wno-variadic-macros",
+        "-Wno-zero-length-array",
+        "-Wno-packed",
+        "-Wno-cast-function-type-strict",
+        "-Wno-incompatible-function-pointer-types-strict",
+        "-Wno-four-char-constants",
+        "-Wno-allocator-wrappers",
+        "-Wno-unknown-warning-option",
+        "-Wno-anon-enum-enum-conversion",
+        "-Wno-enum-enum-conversion",
+        "-Wno-c99-designator",
+        "-Wno-reorder-init-list",
+        "-Wno-switch-default",
+        "-Wno-tautological-value-range-compare",
+        "-Wno-null-pointer-subtraction",
+        "-Wno-deprecated-volatile",
+        "-Wno-incompatible-function-pointer-types-strict",
+        "-Wno-cast-function-type-strict",
+        "-Wno-bounds-safety-legacy-checks-enabled",
+        "-Wno-nrvo",
+        "-Wno-unterminated-string-initialization",
+        "-Wno-unnecessary-virtual-specifier",
+        "-Wno-global-constructors",
+        "-Wno-uninitialized-const-pointer",
+        "-Wno-sometimes-uninitialized",
+        "-Wno-quoted-include-in-framework-header",
+        "-Wno-declaration-after-statement",
+        "-Wno-sign-compare",
+        "-Wno-sign-conversion",
+        "-Wno-pre-c11-compat",
+        "-Wno-missing-designated-field-initializers",
+        "-Wno-format-signedness",
+        "-Wno-switch-default",
+        "-Wpointer-arith",
+        "-Wxnu-typed-allocators",
+        "-Wshorten-64-to-32",
+        "-Wno-implicit-int-conversion",
+        "-Wno-sign-conversion",
+        "-Wno-missing-designated-field-initializers",
+        "-Wno-unused-but-set-global"
+      ],
+      "warnings_preserved_exactly": true
+    },
+    "recipe_reconstruction_verified": true,
+    "replacement_object": {
+      "path": "/work/route-a-platform-20261124/callback-attempt-002/replacement/cpu.o",
+      "sha256": "c555d97897615fb786d375f5510906fb52a7a4102962ea09ad3ecf450a076d5d",
+      "size": 123440
+    },
+    "report": {
+      "path": "/work/route-a-platform-20261124/callback-attempt-002/report.json",
+      "sha256": "b358db0ec1087a80fcfc447d5fd128ed0630bf2eeb79b346e4be73a84d263432",
+      "size": 182661
+    },
+    "runtime_path_execution_verified": false,
+    "source": {
+      "after": {
+        "path": "/work/route-a-platform-20261124/callback-attempt-002/source/osfmk/arm64/cpu.c",
+        "sha256": "7b8eb68b50971168a7bc3d8ec05b8c76dbc9ee0b77e5f280b02d0c34a8c89bfc",
+        "size": 39238
+      },
+      "before": {
+        "path": "/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/arm64/cpu.c",
+        "sha256": "6ea14e16fab1d5a16cf3483e630863b830e07190db35d1180850f29a27d9f968",
+        "size": 38492
+      }
+    }
+  },
+  "kernel_callback_linked": true,
+  "kernel_callback_requested": true,
+  "link_map": {
+    "path": "/work/route-a-platform-20261124/link-attempt-004/platform.map",
+    "sha256": "e9f2ff46924e73690c62f07eb6d70786fb2f54c815580a22484ad56674268165",
+    "size": 7555941
+  },
+  "link_map_decoding": {
+    "encoding": "utf-8",
+    "errors": "surrogateescape",
+    "line_boundary": "LF",
+    "lossless_roundtrip_verified": true,
+    "structural_fields": "ASCII spaces/tabs, decimal digits and hexadecimal addresses",
+    "surrogateescaped_byte_count": 2
+  },
+  "linked_original_object_count": 1071,
+  "original_kernel": {
+    "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/DEVELOPMENT_ARM64_BCM2837/mach.development.bcm2837.unstripped",
+    "sha256": "a58cdeedb9b7a4c152867c3487f28658a3799b0158f5046bbad6d2d58e741469",
+    "size": 21905888
+  },
+  "os_boot_verified": false,
+  "output": "/work/route-a-platform-20261124/link-attempt-004",
+  "platform_link_compatible": true,
+  "platform_report": {
+    "path": "/work/route-a-platform-20261124/attempt-002/report.json",
+    "sha256": "15f04371f0d1b472d14ef4a69d739dcaecfdacd05df4f074b58563ce0f487a04",
+    "size": 83317
+  },
+  "protected_input_inventory": {
+    "path": "/work/route-a-platform-20261124/link-attempt-004/inputs/protected-inputs.json",
+    "sha256": "cf7a98233804b6a62f53be4ca8a906bdd80b6bc896d10c985250b51350a3fe02",
+    "size": 279019
+  },
+  "protected_inputs_recheck": {
+    "changes": [],
+    "checked_file_count": 1137,
+    "unchanged": true
+  },
+  "pthread_provider_selected": false,
+  "runtime_driver_matching_verified": false,
+  "schema_version": 1,
+  "scope": "isolated-platform-link-compatibility",
+  "sleep_runtime_verified": false,
+  "source_provenance": {
+    "path": "/work/route-a-platform-20261124/link-attempt-004/inputs/link-reconstruction.json",
+    "sha256": "c17d8a172dd21bc260eb548fd41d3df92ed6469a42de9cfbcb44d3eb9630ffde",
+    "size": 4879
+  },
+  "status": "platform_link_compatible",
+  "symbol_closure": {
+    "path": "/work/route-a-platform-20261124/link-attempt-004/symbol-closure.json",
+    "sha256": "7fe2e8101740c0370db307bb9ad6593aefb1a03730f36e815953b8f1e724d838",
+    "size": 1759
+  },
+  "tb371fc_kernel_qualified": false
+}

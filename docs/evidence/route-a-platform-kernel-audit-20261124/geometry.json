@@ -1,0 +1,827 @@
+{
+  "blockers": [],
+  "can_scan_candidates": true,
+  "candidate_bytes": 8900600,
+  "candidate_ranges": [
+    {
+      "offset": 2785280,
+      "pure_instructions": true,
+      "section": "__text",
+      "segment": "__TEXT_EXEC",
+      "size": 8892996,
+      "vmaddr": 18446744005110317056
+    },
+    {
+      "offset": 11678304,
+      "pure_instructions": true,
+      "section": "__hib_text",
+      "segment": "__TEXT_EXEC",
+      "size": 3140,
+      "vmaddr": 18446744005119210080
+    },
+    {
+      "offset": 11681792,
+      "pure_instructions": true,
+      "section": "__text",
+      "segment": "__KLD",
+      "size": 4464,
+      "vmaddr": 18446744005119213568
+    }
+  ],
+  "candidate_ranges_are_code_proof": false,
+  "chained_fixups": null,
+  "code_signature": null,
+  "cpu_type": 16777228,
+  "data_in_code": [],
+  "encryption": null,
+  "excluded_data_ranges": [],
+  "file_type": 2,
+  "flags": 2097153,
+  "format": "thin64",
+  "is_arm64e": false,
+  "ncmds": 25,
+  "ptrauth_abi_version": 0,
+  "segments": [
+    {
+      "fileoff": 0,
+      "filesize": 1622016,
+      "flags": 0,
+      "initprot": 1,
+      "maxprot": 1,
+      "name": "__TEXT",
+      "sections": [
+        {
+          "addr": 18446744005107552480,
+          "align": 5,
+          "flags": 0,
+          "name": "__const",
+          "nreloc": 0,
+          "offset": 20704,
+          "reloff": 0,
+          "segment": "__TEXT",
+          "size": 252808
+        },
+        {
+          "addr": 18446744005107805288,
+          "align": 3,
+          "flags": 2,
+          "name": "__cstring",
+          "nreloc": 0,
+          "offset": 273512,
+          "reloff": 0,
+          "segment": "__TEXT",
+          "size": 1065350
+        },
+        {
+          "addr": 18446744005108870638,
+          "align": 0,
+          "flags": 0,
+          "name": "__os_log",
+          "nreloc": 0,
+          "offset": 1338862,
+          "reloff": 0,
+          "segment": "__TEXT",
+          "size": 281077
+        },
+        {
+          "addr": 18446744005109151715,
+          "align": 0,
+          "flags": 0,
+          "name": "__copyio_vectors",
+          "nreloc": 0,
+          "offset": 1619939,
+          "reloff": 0,
+          "segment": "__TEXT",
+          "size": 360
+        },
+        {
+          "addr": 18446744005109152075,
+          "align": 0,
+          "flags": 0,
+          "name": "__thread_starts",
+          "nreloc": 0,
+          "offset": 1620299,
+          "reloff": 0,
+          "segment": "__TEXT",
+          "size": 0
+        },
+        {
+          "addr": 18446744005109152080,
+          "align": 3,
+          "flags": 0,
+          "name": "__eh_frame",
+          "nreloc": 0,
+          "offset": 1620304,
+          "reloff": 0,
+          "segment": "__TEXT",
+          "size": 1712
+        }
+      ],
+      "vmaddr": 18446744005107531776,
+      "vmsize": 1622016
+    },
+    {
+      "fileoff": 1622016,
+      "filesize": 1163264,
+      "flags": 0,
+      "initprot": 1,
+      "maxprot": 1,
+      "name": "__DATA_CONST",
+      "sections": [
+        {
+          "addr": 18446744005109153792,
+          "align": 3,
+          "flags": 9,
+          "name": "__mod_init_func",
+          "nreloc": 0,
+          "offset": 1622016,
+          "reloff": 0,
+          "segment": "__DATA_CONST",
+          "size": 792
+        },
+        {
+          "addr": 18446744005109157888,
+          "align": 12,
+          "flags": 0,
+          "name": "__const",
+          "nreloc": 0,
+          "offset": 1626112,
+          "reloff": 0,
+          "segment": "__DATA_CONST",
+          "size": 749896
+        },
+        {
+          "addr": 18446744005109907784,
+          "align": 2,
+          "flags": 0,
+          "name": "__assert",
+          "nreloc": 0,
+          "offset": 2376008,
+          "reloff": 0,
+          "segment": "__DATA_CONST",
+          "size": 191596
+        },
+        {
+          "addr": 18446744005110099384,
+          "align": 3,
+          "flags": 0,
+          "name": "__kalloc_type",
+          "nreloc": 0,
+          "offset": 2567608,
+          "reloff": 0,
+          "segment": "__DATA_CONST",
+          "size": 84160
+        },
+        {
+          "addr": 18446744005110183544,
+          "align": 3,
+          "flags": 0,
+          "name": "__kalloc_var",
+          "nreloc": 0,
+          "offset": 2651768,
+          "reloff": 0,
+          "segment": "__DATA_CONST",
+          "size": 36720
+        },
+        {
+          "addr": 18446744005110220264,
+          "align": 0,
+          "flags": 2,
+          "name": "__sdt_cstring",
+          "nreloc": 0,
+          "offset": 2688488,
+          "reloff": 0,
+          "segment": "__DATA_CONST",
+          "size": 28033
+        },
+        {
+          "addr": 18446744005110248304,
+          "align": 3,
+          "flags": 0,
+          "name": "__sdt",
+          "nreloc": 0,
+          "offset": 2716528,
+          "reloff": 0,
+          "segment": "__DATA_CONST",
+          "size": 55800
+        },
+        {
+          "addr": 18446744005110304112,
+          "align": 4,
+          "flags": 14,
+          "name": "__hib_const",
+          "nreloc": 0,
+          "offset": 2772336,
+          "reloff": 0,
+          "segment": "__DATA_CONST",
+          "size": 352
+        },
+        {
+          "addr": 18446744005110304464,
+          "align": 3,
+          "flags": 0,
+          "name": "__kern_brk_desc",
+          "nreloc": 0,
+          "offset": 2772688,
+          "reloff": 0,
+          "segment": "__DATA_CONST",
+          "size": 120
+        }
+      ],
+      "vmaddr": 18446744005109153792,
+      "vmsize": 1163264
+    },
+    {
+      "fileoff": 2785280,
+      "filesize": 8896512,
+      "flags": 0,
+      "initprot": 5,
+      "maxprot": 5,
+      "name": "__TEXT_EXEC",
+      "sections": [
+        {
+          "addr": 18446744005110317056,
+          "align": 12,
+          "flags": 2147484672,
+          "name": "__text",
+          "nreloc": 0,
+          "offset": 2785280,
+          "reloff": 0,
+          "segment": "__TEXT_EXEC",
+          "size": 8892996
+        },
+        {
+          "addr": 18446744005119210080,
+          "align": 5,
+          "flags": 2147484672,
+          "name": "__hib_text",
+          "nreloc": 0,
+          "offset": 11678304,
+          "reloff": 0,
+          "segment": "__TEXT_EXEC",
+          "size": 3140
+        }
+      ],
+      "vmaddr": 18446744005110317056,
+      "vmsize": 8896512
+    },
+    {
+      "fileoff": 11681792,
+      "filesize": 16384,
+      "flags": 0,
+      "initprot": 5,
+      "maxprot": 5,
+      "name": "__KLD",
+      "sections": [
+        {
+          "addr": 18446744005119213568,
+          "align": 2,
+          "flags": 2147484672,
+          "name": "__text",
+          "nreloc": 0,
+          "offset": 11681792,
+          "reloff": 0,
+          "segment": "__KLD",
+          "size": 4464
+        }
+      ],
+      "vmaddr": 18446744005119213568,
+      "vmsize": 16384
+    },
+    {
+      "fileoff": 11698176,
+      "filesize": 16384,
+      "flags": 0,
+      "initprot": 1,
+      "maxprot": 1,
+      "name": "__LASTDATA_CONST",
+      "sections": [
+        {
+          "addr": 18446744005119229952,
+          "align": 3,
+          "flags": 9,
+          "name": "__mod_init_func",
+          "nreloc": 0,
+          "offset": 11698176,
+          "reloff": 0,
+          "segment": "__LASTDATA_CONST",
+          "size": 8
+        }
+      ],
+      "vmaddr": 18446744005119229952,
+      "vmsize": 16384
+    },
+    {
+      "fileoff": 0,
+      "filesize": 0,
+      "flags": 0,
+      "initprot": 5,
+      "maxprot": 5,
+      "name": "__LAST",
+      "sections": [
+        {
+          "addr": 18446744005119246336,
+          "align": 0,
+          "flags": 1,
+          "name": "__last",
+          "nreloc": 0,
+          "offset": 0,
+          "reloff": 0,
+          "segment": "__LAST",
+          "size": 0
+        }
+      ],
+      "vmaddr": 18446744005119246336,
+      "vmsize": 0
+    },
+    {
+      "fileoff": 11714560,
+      "filesize": 32768,
+      "flags": 0,
+      "initprot": 3,
+      "maxprot": 3,
+      "name": "__KLDDATA",
+      "sections": [
+        {
+          "addr": 18446744005119246336,
+          "align": 3,
+          "flags": 0,
+          "name": "__const",
+          "nreloc": 0,
+          "offset": 11714560,
+          "reloff": 0,
+          "segment": "__KLDDATA",
+          "size": 16192
+        },
+        {
+          "addr": 18446744005119262528,
+          "align": 0,
+          "flags": 2,
+          "name": "__cstring",
+          "nreloc": 0,
+          "offset": 11730752,
+          "reloff": 0,
+          "segment": "__KLDDATA",
+          "size": 1819
+        },
+        {
+          "addr": 18446744005119264352,
+          "align": 3,
+          "flags": 9,
+          "name": "__mod_init_func",
+          "nreloc": 0,
+          "offset": 11732576,
+          "reloff": 0,
+          "segment": "__KLDDATA",
+          "size": 8
+        },
+        {
+          "addr": 18446744005119264360,
+          "align": 3,
+          "flags": 10,
+          "name": "__mod_term_func",
+          "nreloc": 0,
+          "offset": 11732584,
+          "reloff": 0,
+          "segment": "__KLDDATA",
+          "size": 8
+        },
+        {
+          "addr": 18446744005119264368,
+          "align": 0,
+          "flags": 1,
+          "name": "__bss",
+          "nreloc": 0,
+          "offset": 0,
+          "reloff": 0,
+          "segment": "__KLDDATA",
+          "size": 1
+        }
+      ],
+      "vmaddr": 18446744005119246336,
+      "vmsize": 32768
+    },
+    {
+      "fileoff": 11747328,
+      "filesize": 278528,
+      "flags": 0,
+      "initprot": 3,
+      "maxprot": 3,
+      "name": "__DATA",
+      "sections": [
+        {
+          "addr": 18446744005119279104,
+          "align": 0,
+          "flags": 0,
+          "name": "__llvm_prf_cnts",
+          "nreloc": 0,
+          "offset": 11747328,
+          "reloff": 0,
+          "segment": "__DATA",
+          "size": 0
+        },
+        {
+          "addr": 18446744005119279104,
+          "align": 0,
+          "flags": 0,
+          "name": "__llvm_prf_data",
+          "nreloc": 0,
+          "offset": 11747328,
+          "reloff": 0,
+          "segment": "__DATA",
+          "size": 0
+        },
+        {
+          "addr": 18446744005119279104,
+          "align": 14,
+          "flags": 0,
+          "name": "__data",
+          "nreloc": 0,
+          "offset": 11747328,
+          "reloff": 0,
+          "segment": "__DATA",
+          "size": 151156
+        },
+        {
+          "addr": 18446744005119430264,
+          "align": 3,
+          "flags": 0,
+          "name": "__lock_grp",
+          "nreloc": 0,
+          "offset": 11898488,
+          "reloff": 0,
+          "segment": "__DATA",
+          "size": 86920
+        },
+        {
+          "addr": 18446744005119524864,
+          "align": 14,
+          "flags": 0,
+          "name": "__percpu",
+          "nreloc": 0,
+          "offset": 11993088,
+          "reloff": 0,
+          "segment": "__DATA",
+          "size": 15344
+        },
+        {
+          "addr": 18446744005119540208,
+          "align": 3,
+          "flags": 0,
+          "name": "__refgrps",
+          "nreloc": 0,
+          "offset": 12008432,
+          "reloff": 0,
+          "segment": "__DATA",
+          "size": 3192
+        },
+        {
+          "addr": 18446744005119543400,
+          "align": 0,
+          "flags": 0,
+          "name": "__llvm_prf_bits",
+          "nreloc": 0,
+          "offset": 12011624,
+          "reloff": 0,
+          "segment": "__DATA",
+          "size": 0
+        },
+        {
+          "addr": 18446744005119543400,
+          "align": 0,
+          "flags": 0,
+          "name": "__llvm_prf_names",
+          "nreloc": 0,
+          "offset": 12011624,
+          "reloff": 0,
+          "segment": "__DATA",
+          "size": 0
+        },
+        {
+          "addr": 18446744005119543400,
+          "align": 0,
+          "flags": 0,
+          "name": "__llvm_prf_vnds",
+          "nreloc": 0,
+          "offset": 12011624,
+          "reloff": 0,
+          "segment": "__DATA",
+          "size": 0
+        },
+        {
+          "addr": 18446744005119543400,
+          "align": 0,
+          "flags": 0,
+          "name": "__llvm_prf_vns",
+          "nreloc": 0,
+          "offset": 12011624,
+          "reloff": 0,
+          "segment": "__DATA",
+          "size": 0
+        },
+        {
+          "addr": 18446744005119543400,
+          "align": 0,
+          "flags": 0,
+          "name": "__llvm_prf_vtab",
+          "nreloc": 0,
+          "offset": 12011624,
+          "reloff": 0,
+          "segment": "__DATA",
+          "size": 0
+        },
+        {
+          "addr": 18446744005119545344,
+          "align": 12,
+          "flags": 1,
+          "name": "__common",
+          "nreloc": 0,
+          "offset": 0,
+          "reloff": 0,
+          "segment": "__DATA",
+          "size": 782104
+        },
+        {
+          "addr": 18446744005120327680,
+          "align": 12,
+          "flags": 1,
+          "name": "__bss",
+          "nreloc": 0,
+          "offset": 0,
+          "reloff": 0,
+          "segment": "__DATA",
+          "size": 302760
+        }
+      ],
+      "vmaddr": 18446744005119279104,
+      "vmsize": 1359872
+    },
+    {
+      "fileoff": 12025856,
+      "filesize": 868352,
+      "flags": 0,
+      "initprot": 3,
+      "maxprot": 3,
+      "name": "__BOOTDATA",
+      "sections": [
+        {
+          "addr": 18446744005120638976,
+          "align": 3,
+          "flags": 0,
+          "name": "__static_if",
+          "nreloc": 0,
+          "offset": 12025856,
+          "reloff": 0,
+          "segment": "__BOOTDATA",
+          "size": 275184
+        },
+        {
+          "addr": 18446744005120914160,
+          "align": 3,
+          "flags": 0,
+          "name": "__init_entry_set",
+          "nreloc": 0,
+          "offset": 12301040,
+          "reloff": 0,
+          "segment": "__BOOTDATA",
+          "size": 112344
+        },
+        {
+          "addr": 18446744005121032192,
+          "align": 14,
+          "flags": 0,
+          "name": "__init",
+          "nreloc": 0,
+          "offset": 12419072,
+          "reloff": 0,
+          "segment": "__BOOTDATA",
+          "size": 375336
+        },
+        {
+          "addr": 18446744005121407528,
+          "align": 3,
+          "flags": 0,
+          "name": "__static_ifinit",
+          "nreloc": 0,
+          "offset": 12794408,
+          "reloff": 0,
+          "segment": "__BOOTDATA",
+          "size": 16
+        },
+        {
+          "addr": 18446744005121409024,
+          "align": 14,
+          "flags": 0,
+          "name": "__data",
+          "nreloc": 0,
+          "offset": 12795904,
+          "reloff": 0,
+          "segment": "__BOOTDATA",
+          "size": 98304
+        }
+      ],
+      "vmaddr": 18446744005120638976,
+      "vmsize": 868352
+    },
+    {
+      "fileoff": 12894208,
+      "filesize": 0,
+      "flags": 4,
+      "initprot": 5,
+      "maxprot": 5,
+      "name": "__PRELINK_TEXT",
+      "sections": [
+        {
+          "addr": 18446744005057200128,
+          "align": 0,
+          "flags": 0,
+          "name": "__text",
+          "nreloc": 0,
+          "offset": 12894208,
+          "reloff": 0,
+          "segment": "__PRELINK_TEXT",
+          "size": 0
+        }
+      ],
+      "vmaddr": 18446744005057200128,
+      "vmsize": 0
+    },
+    {
+      "fileoff": 12894208,
+      "filesize": 0,
+      "flags": 4,
+      "initprot": 3,
+      "maxprot": 3,
+      "name": "__PRELINK_INFO",
+      "sections": [
+        {
+          "addr": 18446744005121507328,
+          "align": 0,
+          "flags": 0,
+          "name": "__info",
+          "nreloc": 0,
+          "offset": 12894208,
+          "reloff": 0,
+          "segment": "__PRELINK_INFO",
+          "size": 0
+        }
+      ],
+      "vmaddr": 18446744005121507328,
+      "vmsize": 0
+    },
+    {
+      "fileoff": 12894208,
+      "filesize": 0,
+      "flags": 4,
+      "initprot": 3,
+      "maxprot": 3,
+      "name": "__PLK_TEXT_EXEC",
+      "sections": [
+        {
+          "addr": 18446744005121507328,
+          "align": 0,
+          "flags": 0,
+          "name": "__text",
+          "nreloc": 0,
+          "offset": 12894208,
+          "reloff": 0,
+          "segment": "__PLK_TEXT_EXEC",
+          "size": 0
+        }
+      ],
+      "vmaddr": 18446744005121507328,
+      "vmsize": 0
+    },
+    {
+      "fileoff": 12894208,
+      "filesize": 0,
+      "flags": 4,
+      "initprot": 3,
+      "maxprot": 3,
+      "name": "__PRELINK_DATA",
+      "sections": [
+        {
+          "addr": 18446744005121507328,
+          "align": 0,
+          "flags": 0,
+          "name": "__data",
+          "nreloc": 0,
+          "offset": 12894208,
+          "reloff": 0,
+          "segment": "__PRELINK_DATA",
+          "size": 0
+        }
+      ],
+      "vmaddr": 18446744005121507328,
+      "vmsize": 0
+    },
+    {
+      "fileoff": 12894208,
+      "filesize": 0,
+      "flags": 4,
+      "initprot": 3,
+      "maxprot": 3,
+      "name": "__PLK_DATA_CONST",
+      "sections": [
+        {
+          "addr": 18446744005121507328,
+          "align": 0,
+          "flags": 0,
+          "name": "__data",
+          "nreloc": 0,
+          "offset": 12894208,
+          "reloff": 0,
+          "segment": "__PLK_DATA_CONST",
+          "size": 0
+        }
+      ],
+      "vmaddr": 18446744005121507328,
+      "vmsize": 0
+    },
+    {
+      "fileoff": 12894208,
+      "filesize": 0,
+      "flags": 4,
+      "initprot": 3,
+      "maxprot": 3,
+      "name": "__PLK_LLVM_COV",
+      "sections": [
+        {
+          "addr": 18446744005121507328,
+          "align": 0,
+          "flags": 0,
+          "name": "__llvm_covmap",
+          "nreloc": 0,
+          "offset": 12894208,
+          "reloff": 0,
+          "segment": "__PLK_LLVM_COV",
+          "size": 0
+        }
+      ],
+      "vmaddr": 18446744005121507328,
+      "vmsize": 0
+    },
+    {
+      "fileoff": 12894208,
+      "filesize": 0,
+      "flags": 4,
+      "initprot": 3,
+      "maxprot": 3,
+      "name": "__PLK_LINKEDIT",
+      "sections": [
+        {
+          "addr": 18446744005121507328,
+          "align": 0,
+          "flags": 0,
+          "name": "__data",
+          "nreloc": 0,
+          "offset": 12894208,
+          "reloff": 0,
+          "segment": "__PLK_LINKEDIT",
+          "size": 0
+        }
+      ],
+      "vmaddr": 18446744005121507328,
+      "vmsize": 0
+    },
+    {
+      "fileoff": 12894208,
+      "filesize": 294912,
+      "flags": 4,
+      "initprot": 1,
+      "maxprot": 1,
+      "name": "__LINKINFO",
+      "sections": [
+        {
+          "addr": 18446744005121507328,
+          "align": 0,
+          "flags": 0,
+          "name": "__symbolsets",
+          "nreloc": 0,
+          "offset": 12894208,
+          "reloff": 0,
+          "segment": "__LINKINFO",
+          "size": 287113
+        }
+      ],
+      "vmaddr": 18446744005121507328,
+      "vmsize": 294912
+    },
+    {
+      "fileoff": 13189120,
+      "filesize": 8753336,
+      "flags": 0,
+      "initprot": 1,
+      "maxprot": 1,
+      "name": "__LINKEDIT",
+      "sections": [],
+      "vmaddr": 18446744005121802240,
+      "vmsize": 8765440
+    }
+  ],
+  "sizeofcmds": 5856,
+  "subtype_base": 0,
+  "subtype_features": 0,
+  "subtype_raw": 0,
+  "warnings": []
+}

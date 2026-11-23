@@ -1,0 +1,25 @@
+{
+  "components": [
+    {
+      "common_external": [],
+      "name": "ArmDTPlatform",
+      "strong_unresolved": [],
+      "unsupported_external": [],
+      "weak_unresolved": []
+    },
+    {
+      "common_external": [],
+      "name": "ArmCpu",
+      "strong_unresolved": [],
+      "unsupported_external": [],
+      "weak_unresolved": [
+        "_arm64_platform_sleep_hook"
+      ]
+    }
+  ],
+  "duplicate_definition_strength_classified": false,
+  "kernel_unsupported_external": [],
+  "link_verified": false,
+  "potential_duplicate_names": [],
+  "scope": "external-symbol-name-set-comparison-only"
+}
