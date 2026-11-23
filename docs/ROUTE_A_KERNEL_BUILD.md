@@ -6,7 +6,7 @@
 
 ## 为什么新增这个入口
 
-上游 27 profile 固定 Apple XNU 12377.121.6，并用 Darwin 26 兼容补丁衔接新用户态；其架构入口是 arm64e。上游旧 arm64 profile 的补丁来自另一代 XNU，直接切换会把不同基线混合。本候选保留固定 12377 patch series，明确剔除两个在非 Apple CPU 上配置硬件 PAC key 的补丁，再加入本仓库的无 PAC pager 修复。
+上游 27 profile 固定 Apple XNU 12377.121.6，并用 Darwin 26 兼容补丁衔接新用户态；其架构入口是 arm64e。上游旧 arm64 profile 的补丁来自另一代 XNU，直接切换会把不同基线混合。本候选从固定 12377 patch series 建立 architecture + Darwin 26 + plain-pager 源码子集，明确剔除两个硬件 PAC 补丁，暂缓一个依赖未解析板级 PMGR/watchdog 层的 boot-progress 补丁，再加入本仓库的无 PAC pager 修复。它不表示完整上游 OS/SoC/board profile 已经应用。
 
 | 项目 | 固定选择 | 证据范围 |
 | --- | --- | --- |
@@ -25,6 +25,25 @@
 配置显式绑定原始 patch SHA-256 `9d171dd00a8ac07c0ca6374258f4ee6ce6d02667abd0117415585d616b0e08e8` 和本地补丁 SHA-256 `902608946c2ba69692ceb08d234b041d2711fe65c6e36d6e1d4af596b4e90ca6`。准备器同时验证两份 bytes 的摘要、目标文件/hunk identity 与全部新增/删除行一致；重新计算 digest 不能绕过功能差异检查。报告为替换项保存原始路径/摘要、本地路径/摘要与原因，实际应用仍使用严格 `git apply --check`，不启用模糊匹配或跳过失败 hunk。
 
 排除项是 `native-pac-keys.patch` 与 `native-pac-arm64-user-jop.patch`。准备器要求这两个名字在原始固定 series 中确实存在，拒绝旧版 `patches/xnu/`、重复项、缺失必要 patch、路径逃逸，以及新加入 `HAS_NATIVE_PAC` / `HAS_APPLE_PAC` 定义的 patch。PAN 也列入 required patch，不能通过丢弃它来消除上下文冲突。**排除两个 patch 只证明选择策略；其余内核源码、汇编、外部 archives 和原厂 kext 仍需完整 ISA 审计。**
+
+## 明确暂缓板级 boot-progress 层
+
+完整顺序应用暴露了第二项真实依赖：`zzz-boot-progress.patch` 引用 `bsd_init` 中的 `sheng_pmgr_run()` block，而该 block 来自先行的 SoC/board `sheng-platform-power.patch`，不在所选 12377 架构列表中。该诊断层还加入 `sheng_boot_watchdog_policy` 调用；它不只是独立打印函数。
+
+固定上游 resolver 按 `board.kernel.patch_series` 的声明顺序应用，迁移示例是 arch → soc → os → device。上游 Sirius 文档记录过相同缺失 PMGR context 的失败，并在 SoC series 中补入前置 patch。当前通用候选尚未选择 TB371FC 的完整 SoC/board closure，因此配置 **显式暂缓** 这一个补丁，保留 67 项架构补丁（含 PAN 上下文重基）、3 项 Darwin 26 ABI 补丁与本仓库 plain-auth，共 71 项所选补丁。
+
+暂缓项绑定固定 source SHA-256 `2e765b4416bab549027a7024c4777b003ca833b80addcc29daafbbcf65241e28`。准备器仍从固定 commit 读取它并验证摘要，报告保存其原始顺序位置、未应用状态、理由与板级集成待办。只能暂缓这个确切名字；required Darwin 26 / PAN / pager patches 不能通过此机制移除。输出明确记录 `preparation_scope=architecture-darwin26-plain-pager` 与 `full_upstream_profile_applied=false`。
+
+`build-environment.json` 使用上游实际支持的 `XNU_BOOT_PROGRESS=0`。固定 `build-xnu-4k-baseline.sh` 将此环境变量读入 `BOOT_PROGRESS`，再传为 `-DXNU_BOOT_PROGRESS=$BOOT_PROGRESS`。本准备器没有执行完整 builder；后续实际构建必须传递该环境，并在明确的 TB371FC board/PMGR/watchdog/archive 配方中恢复和审计暂缓层。不能为了使 patch 应用成功而添加未接线的其他设备 PMGR 实现。
+
+来源：
+
+- [有序 resolver](https://github.com/UniXNU/UniXNU/blob/8542980d02b4d2cc5c32ee3542de1760b2562aac/scripts/unixnu/patches.py)
+- [arch / soc / os / device 顺序示例](https://github.com/UniXNU/UniXNU/blob/8542980d02b4d2cc5c32ee3542de1760b2562aac/docs/porting/migration.md)
+- [PMGR hook patch](https://github.com/UniXNU/UniXNU/blob/8542980d02b4d2cc5c32ee3542de1760b2562aac/patches/xnu/sheng-platform-power.patch)
+- [相同失败的 Sirius 记录](https://github.com/UniXNU/UniXNU/blob/8542980d02b4d2cc5c32ee3542de1760b2562aac/docs/devices/sirius.md)
+- [boot-progress patch](https://github.com/UniXNU/UniXNU/blob/8542980d02b4d2cc5c32ee3542de1760b2562aac/patches/xnu-12377/zzz-boot-progress.patch)
+- [读取并传递 XNU_BOOT_PROGRESS 的 builder](https://github.com/UniXNU/UniXNU/blob/8542980d02b4d2cc5c32ee3542de1760b2562aac/scripts/build-xnu-4k-baseline.sh)
 
 ## 复现
 
@@ -57,7 +76,7 @@ Ubuntu runner 可以使用发行版 Clang 完成此处的通用配置探针。�
 
 1. 验证配置的 XNU 版本、commit、普通 arm64 target、4 KiB 选择和 build environment 一致，拒绝在配置里声称“已编译/已启动”。
 2. 通过 `git show <fixed-commit>:<path>` 获取上游 profile 和完整 patch bytes。工作树的本地改动不能悄悄替代输入。
-3. 解析 12377 架构和 OS series，排除两项硬件 PAC 补丁，验证 required patch、版本和顺序。最后加入 SHA-256 已固定的 `route-a-plain-auth-12377.patch`，要求其 4 KiB shared-region prerequisite 已在前面。
+3. 解析 12377 架构和 OS series，排除两项硬件 PAC 补丁并单独绑定/记录暂缓的 board boot-progress patch，验证 required patch、版本和顺序。最后加入 SHA-256 已固定的 `route-a-plain-auth-12377.patch`，要求其 4 KiB shared-region prerequisite 已在前面。
 4. 从固定 XNU commit 建立新的干净 tree；每项先 `git apply --check`，再实际应用。失败时立刻停止，报告只记录已经成功应用的 patch，不把部分 tree 当作完整候选。
 5. 对全部源文件和 symlink 生成路径、模式、长度及 SHA-256 清单；清单不包含 `.git`。生成树的新增文件也参与摘要。
 6. 用选定 Clang 编译通用机器头文件探针。代码要求 `__arm64e__` / `ptrauth_calls` 不启用、该机器头文件不定义硬件 PAC；输出必须是 Mach-O `MH_OBJECT`、ARM64、subtype 0。失败会使 CLI 返回非零。
@@ -78,7 +97,7 @@ Ubuntu runner 可以使用发行版 Clang 完成此处的通用配置探针。�
 | `build-environment.json` | 后续完整构建需要显式传递的架构/版本变量；不是可直接启动的 build recipe |
 | `compiler-probes/` | 两个探针、普通 arm64 对象、宏输出和编译器诊断 |
 
-退出码 0 只表示完整 patch sequence 和通用 arm64 配置探针成功；任何缺失源码、digest 不匹配、patch 失败或配置探针失败都返回 2。失败目录及报告保留，便于诊断；重试使用另一个新目录。
+退出码 0 只表示上面明确界定的 71 项所选 patch sequence 和通用 arm64 配置探针成功，完整 board/OS profile 仍未应用；任何缺失源码、digest 不匹配、patch 失败或配置探针失败都返回 2。失败目录及报告保留，便于诊断；重试使用另一个新目录。
 
 源码准备结果由运行生成的报告决定。本文不把工具实现或测试 fixture 当成真实固定源树已经应用成功的证据。CI / 开发机应保存实际 `preparation-report.json`，并在变更说明中标出其状态和运行 commit。
 

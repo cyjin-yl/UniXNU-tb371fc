@@ -26,10 +26,12 @@ REQUIRED_PATCHES = {
     "darwin26-kpi.patch", "darwin26-shared-region.patch", "native-arm-pan.patch",
 }
 FORBIDDEN_PATCHES = {"native-pac-keys.patch", "native-pac-arm64-user-jop.patch"}
+DEFERRED_BOOT_PROGRESS = "patches/xnu-12377/zzz-boot-progress.patch"
 EXPECTED_BUILD = {
     "UNIXNU_XNU_ARCH": "arm64", "UNIXNU_XNU_TARGET": "ios",
     "UNIXNU_XNU_TAG": "xnu-12377.121.6", "UNIXNU_XNU_VERSION": "12377.121.6",
     "UNIXNU_XNU_DARWIN": "25.5.0", "UNIXNU_IOS_VERSION": "27.0",
+    "XNU_BOOT_PROGRESS": "0",
 }
 CONTRACT_PROBE = """#if !defined(__arm64__) && !defined(__aarch64__)
 #error ordinary arm64 target required
@@ -155,10 +157,18 @@ def validate_config(config: dict):
     for key in ("sha256", "upstream_sha256"):
         if not re.fullmatch(r"[0-9a-f]{64}", replacements[0].get(key, "")):
             raise PreparationError("patch replacement digests must be full SHA-256 values")
+    deferred = config.get("deferred_patches", [])
+    if (len(deferred) != 1 or deferred[0].get("path") != DEFERRED_BOOT_PROGRESS or
+            not re.fullmatch(r"[0-9a-f]{64}", deferred[0].get("sha256", "")) or
+            not deferred[0].get("reason")):
+        raise PreparationError("only the explicit source-bound board boot-progress deferral is supported")
+    if config.get("preparation_scope") != "architecture-darwin26-plain-pager":
+        raise PreparationError("preparation scope must exclude the unresolved board profile")
     status = config["status"]
     if status["kind"] != "source-preparation-candidate" or any(
         status.get(k) is not False for k in (
-            "kernel_compiled", "kernel_linked", "boot_verified", "board_integration_complete")
+            "kernel_compiled", "kernel_linked", "boot_verified", "board_integration_complete",
+            "full_upstream_profile_applied")
     ):
         raise PreparationError("a preparation configuration cannot assert runtime success")
 
@@ -191,6 +201,26 @@ def context_replacement(original: bytes, spec: dict, repo_root: Path) -> dict:
     }
 
 
+def defer_board_progress(paths: list[str], specs: list[dict], read_patch):
+    if len(specs) != 1 or specs[0]["path"] != DEFERRED_BOOT_PROGRESS:
+        raise PreparationError("only the reviewed board boot-progress patch may be deferred")
+    spec = specs[0]
+    if spec["path"] not in paths:
+        raise PreparationError("deferred patch is absent from the pinned upstream sequence")
+    data = read_patch(spec["path"])
+    if digest(data) != spec["sha256"]:
+        raise PreparationError("deferred patch source digest differs")
+    kept = [path for path in paths if path != spec["path"]]
+    if not REQUIRED_PATCHES.issubset({PurePosixPath(path).name for path in kept}):
+        raise PreparationError("deferral cannot remove required kernel patches")
+    return kept, [{
+        "source": "unixnu", "path": spec["path"], "sha256": digest(data),
+        "original_selected_index": paths.index(spec["path"]),
+        "applied": False, "reason": spec["reason"],
+        "requires_board_profile_integration": True,
+    }]
+
+
 def make_plan(config: dict, unixnu: Path, repo_root=ROOT):
     validate_config(config)
     commit = config["sources"]["unixnu"]["commit"]
@@ -208,6 +238,8 @@ def make_plan(config: dict, unixnu: Path, repo_root=ROOT):
     arch = git_blob(unixnu, commit, upstream["arch_series"])
     os_series = git_blob(unixnu, commit, upstream["os_series"])
     paths = selected_paths(arch.decode(), os_series.decode(), config["exclude_patches"])
+    paths, deferred = defer_board_progress(
+        paths, config["deferred_patches"], lambda path: git_blob(unixnu, commit, path))
     replacements = {spec["upstream_path"]: spec for spec in config["patch_replacements"]}
     if not set(replacements).issubset(paths):
         raise PreparationError("a replacement has no selected upstream patch")
@@ -236,6 +268,7 @@ def make_plan(config: dict, unixnu: Path, repo_root=ROOT):
         "os_profile_sha256": digest(profile_bytes), "arch_series_sha256": digest(arch),
         "os_series_sha256": digest(os_series), "excluded_patches": config["exclude_patches"],
         "patch_replacements": config["patch_replacements"],
+        "deferred_patches": deferred,
     }
 
 
@@ -325,6 +358,8 @@ def prepare(config: dict, unixnu: Path, xnu: Path, output: Path, clang="clang", 
     output.mkdir(parents=False, exist_ok=False)
     report = {
         "schema_version": 1, "target": config["target"], "sources": config["sources"],
+        "preparation_scope": config["preparation_scope"],
+        "full_upstream_profile_applied": False,
         "profile_sha256": digest(json.dumps(config, sort_keys=True).encode()),
         "provenance": provenance, "status": "preparing", "applied_patches": [],
         "kernel_compiled": False, "kernel_linked": False, "os_boot_verified": False,
@@ -399,6 +434,8 @@ def main(argv=None):
         "compiler_probes": report["compiler_probes"],
         "report": str(args.output.resolve() / "preparation-report.json"),
         "kernel_compiled": False, "os_boot_verified": False,
+        "full_upstream_profile_applied": False,
+        "deferred_patch_count": len(report["provenance"]["deferred_patches"]),
     }, indent=2))
     return 0
 

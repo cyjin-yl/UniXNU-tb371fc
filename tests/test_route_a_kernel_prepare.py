@@ -78,6 +78,52 @@ class RecipeTests(unittest.TestCase):
             MODULE.validate_config(config)
 
 
+class DeferredBoardPatchTests(unittest.TestCase):
+    def setUp(self):
+        self.data = b"source-bound board diagnostic patch fixture\n"
+        self.spec = {"path": MODULE.DEFERRED_BOOT_PROGRESS,
+                     "sha256": MODULE.digest(self.data), "reason": "unresolved board hook"}
+        self.required = ["patches/xnu-12377/" + name
+                         for name in sorted(MODULE.REQUIRED_PATCHES)]
+        self.paths = [MODULE.DEFERRED_BOOT_PROGRESS] + self.required
+
+    def test_deferral_keeps_every_required_patch_and_records_source_identity(self):
+        kept, evidence = MODULE.defer_board_progress(
+            self.paths, [self.spec], lambda path: self.data)
+        self.assertEqual(kept, self.required)
+        self.assertEqual(evidence[0]["sha256"], MODULE.digest(self.data))
+        self.assertFalse(evidence[0]["applied"])
+        self.assertTrue(evidence[0]["requires_board_profile_integration"])
+
+    def test_required_patch_cannot_be_deferred(self):
+        spec = dict(self.spec, path="patches/xnu-12377/darwin26-kpi.patch")
+        with self.assertRaises(MODULE.PreparationError):
+            MODULE.defer_board_progress(self.paths, [spec], lambda path: self.data)
+
+    def test_changed_deferred_input_is_rejected(self):
+        with self.assertRaises(MODULE.PreparationError):
+            MODULE.defer_board_progress(self.paths, [self.spec], lambda path: self.data + b"\n")
+
+    def test_missing_deferred_input_is_not_silently_ignored(self):
+        with self.assertRaises(MODULE.PreparationError):
+            MODULE.defer_board_progress(self.required, [self.spec], lambda path: self.data)
+
+    def test_disabled_progress_and_incomplete_profile_are_required(self):
+        baseline = json.loads(MODULE.DEFAULT_CONFIG.read_text())
+        config = deepcopy(baseline)
+        config["build_environment"]["XNU_BOOT_PROGRESS"] = "1"
+        with self.assertRaises(MODULE.PreparationError):
+            MODULE.validate_config(config)
+        config = deepcopy(baseline)
+        config["status"]["full_upstream_profile_applied"] = True
+        with self.assertRaises(MODULE.PreparationError):
+            MODULE.validate_config(config)
+        config = deepcopy(baseline)
+        config["deferred_patches"] = []
+        with self.assertRaises(MODULE.PreparationError):
+            MODULE.validate_config(config)
+
+
 class ContextReplacementTests(unittest.TestCase):
     def setUp(self):
         self.temp = tempfile.TemporaryDirectory()

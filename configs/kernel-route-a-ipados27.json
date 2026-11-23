@@ -50,21 +50,24 @@
     "UNIXNU_XNU_VERSION": "12377.121.6",
     "UNIXNU_XNU_DARWIN": "25.5.0",
     "UNIXNU_XNU_TARGET": "ios",
-    "UNIXNU_IOS_VERSION": "27.0"
+    "UNIXNU_IOS_VERSION": "27.0",
+    "XNU_BOOT_PROGRESS": "0"
   },
   "status": {
     "kind": "source-preparation-candidate",
     "kernel_compiled": false,
     "kernel_linked": false,
     "boot_verified": false,
-    "board_integration_complete": false
+    "board_integration_complete": false,
+    "full_upstream_profile_applied": false
   },
   "remaining_gates": [
     "Compile and audit every kernel/archive/kext instruction for the actual CPUs.",
     "Complete the Linux XNU toolchain, SDK headers and source-provider closure.",
     "Wire TB371FC ArmDTPlatform, ArmCpu, storage and serial components against XNU 12377.",
     "Audit the full 27 userland/shared-cache and dyld TPRO startup contract.",
-    "Link, prelink and validate the ordinary-arm64 ABI closure before device boot."
+    "Link, prelink and validate the ordinary-arm64 ABI closure before device boot.",
+    "Resolve the TB371FC SoC/board layer before restoring the deferred boot-progress patch and its PMGR/watchdog/archive contract."
   ],
   "component_closure": {
     "scope": "upstream common source-build components; not a resolved TB371FC link closure",
@@ -116,6 +119,14 @@
       "path": "patches/route-a-native-arm-pan-12377.patch",
       "sha256": "902608946c2ba69692ceb08d234b041d2711fe65c6e36d6e1d4af596b4e90ca6",
       "reason": "Retain every PAN addition; replace only trailing context from the excluded native PAC header block with the ordinary-arm64 ASSEMBLER guard."
+    }
+  ],
+  "preparation_scope": "architecture-darwin26-plain-pager",
+  "deferred_patches": [
+    {
+      "path": "patches/xnu-12377/zzz-boot-progress.patch",
+      "sha256": "2e765b4416bab549027a7024c4777b003ca833b80addcc29daafbbcf65241e28",
+      "reason": "The generic source candidate has no resolved SoC/board PMGR hook or boot-progress/watchdog archive closure; the upstream diagnostic patch assumes that earlier board layer. Integrate it with the actual TB371FC board profile before enabling boot progress."
     }
   ]
 }
