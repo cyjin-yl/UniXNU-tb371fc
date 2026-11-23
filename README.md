@@ -31,6 +31,8 @@
 | [证据索引](docs/evidence/README.md) | 来源、测试报告、未证明范围与 CI |
 | [普通指针内核补丁](docs/ROUTE_A_PLAIN_AUTH_PATCH.md) | 固定 XNU 基线、补丁与提取 C 测试 |
 | [内核与加载器缺口](docs/ROUTE_A_KERNEL_GAPS.md) | XNU、27 ABI、页大小、信任目录与驱动集成 |
+| [TPRO 审计入口](docs/ROUTE_A_TPRO.md) | 固定真实 dyld 来源的指令清单、静态引用与两类启动能力键检查 |
+| [普通 arm64 内核准备](docs/ROUTE_A_KERNEL_BUILD.md) | XNU 12377 补丁顺序、干净源码树与编译器配置探针 |
 | [输入提取方法](docs/ROUTE_A_EXTRACTION.md) | 官方镜像定位、分段读取与 APFS type 4 支持 |
 
 ```sh

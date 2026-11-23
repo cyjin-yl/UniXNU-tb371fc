@@ -26,6 +26,8 @@
 | A03 | 真实完整 27 shared cache | 严格 proof 与改写器已有实现，完整输入未验证 | 提取完整主／子缓存集合，锁定来源与 UUID，完整覆盖、改写及签名页检查通过 |
 | A04 | 加载与普通指针 ABI 闭合 | 用户文件新信任条目信息准备；尚未安装 | dyld fixups、共享区、pager、信任目录和所有指针生产者采用一致约定 |
 
+A01 的可重复收集入口见 [TPRO 审计](docs/ROUTE_A_TPRO.md)；A02 的候选与运行说明见 [内核准备](docs/ROUTE_A_KERNEL_BUILD.md)。两者是否实际通过，以本次 CI／输入报告为准。
+
 A01 不能通过“把 `dyld_hw_tpro` 设为 0”关闭硬件路径，已有二进制检查只看键是否存在。还需分别核对 DATA_CONST pager 的 TPRO 策略和早期能力发布。不得用批量 NOP 掩盖未证明的指令路径。
 
 A02 不能直接选择针对旧 XNU 的 arm64 profile，也不能把 V135 的保留内核替换几条指令当作 27 内核。当前目标基于固定 XNU 12377.121.6 加 Darwin 26 兼容工作；目标用户空间版本不等于内核源码已经升级成完整 Darwin 26。细项见 [内核缺口](docs/ROUTE_A_KERNEL_GAPS.md)。

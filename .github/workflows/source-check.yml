@@ -25,3 +25,65 @@ jobs:
         run: |
           ROUTE_A_XNU_PREPARED_DIR="$RUNNER_TEMP/route-a-xnu/tree" \
             "$RUNNER_TEMP/route-a-venv/bin/python" scripts/check_route_a.py
+  kernel-preparation:
+    name: Prepare ordinary arm64 kernel sources
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+      - name: Check source preparation tools
+        run: |
+          python3 --version
+          git --version
+          clang --version
+      - name: Fetch pinned public source objects
+        shell: bash
+        env:
+          GIT_TERMINAL_PROMPT: "0"
+        run: |
+          mkdir -p "$RUNNER_TEMP/route-a-sources"
+          git init --bare "$RUNNER_TEMP/route-a-sources/unixnu.git"
+          git -C "$RUNNER_TEMP/route-a-sources/unixnu.git" fetch --depth 1 \
+            https://github.com/UniXNU/UniXNU.git \
+            8542980d02b4d2cc5c32ee3542de1760b2562aac
+          git init --bare "$RUNNER_TEMP/route-a-sources/xnu.git"
+          git -C "$RUNNER_TEMP/route-a-sources/xnu.git" fetch --depth 1 \
+            https://github.com/apple-oss-distributions/xnu.git \
+            ac9718fb1af618d5ce8678d0dc6e8a58f252216f
+      - name: Apply the full candidate patch series and compile the arm64 configuration probe
+        run: |
+          python3 scripts/prepare_route_a_kernel.py \
+            --unixnu-repository "$RUNNER_TEMP/route-a-sources/unixnu.git" \
+            --xnu-repository "$RUNNER_TEMP/route-a-sources/xnu.git" \
+            --output "$RUNNER_TEMP/route-a-kernel-prepared" \
+            --clang clang
+      - name: Record source preparation scope and remaining build blockers
+        if: always()
+        run: |
+          python3 - <<'PY'
+          import json, os
+          from pathlib import Path
+          report = Path(os.environ["RUNNER_TEMP"]) / "route-a-kernel-prepared/preparation-report.json"
+          data = json.loads(report.read_text()) if report.exists() else {
+              "status": "no_preparation_report",
+              "kernel_compiled": False,
+              "os_boot_verified": False,
+          }
+          print("ROUTE_A_KERNEL_REPORT_JSON=" + json.dumps(data, sort_keys=True))
+          PY
+      - name: Preserve preparation reports and compiler diagnostics
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: route-a-kernel-preparation
+          if-no-files-found: warn
+          retention-days: 30
+          path: |
+            ${{ runner.temp }}/route-a-kernel-prepared/preparation-report.json
+            ${{ runner.temp }}/route-a-kernel-prepared/selected-patches.json
+            ${{ runner.temp }}/route-a-kernel-prepared/source-inventory.json
+            ${{ runner.temp }}/route-a-kernel-prepared/build-environment.json
+            ${{ runner.temp }}/route-a-kernel-prepared/compiler-probes/*.stderr
+            ${{ runner.temp }}/route-a-kernel-prepared/compiler-probes/macros.txt

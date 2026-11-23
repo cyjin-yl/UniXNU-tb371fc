@@ -1,0 +1,112 @@
+{
+  "schema_version": 1,
+  "target": {
+    "id": "tb371fc-ipados27-plain-arm64",
+    "device": "TB371FC",
+    "soc": "SM8250",
+    "userland_version": "27.0.1",
+    "userland_build": "24A446",
+    "kernel_arch": "arm64",
+    "compiler_target": "arm64-apple-ios27.0",
+    "compiler_march": "armv8-a",
+    "machine_config": "BCM2837",
+    "machine_config_is_generic": true,
+    "translation_granule": 4096,
+    "vm_page_size": 4096,
+    "plain_pointer_abi": true
+  },
+  "sources": {
+    "unixnu": {
+      "repository": "https://github.com/UniXNU/UniXNU.git",
+      "commit": "8542980d02b4d2cc5c32ee3542de1760b2562aac"
+    },
+    "xnu": {
+      "repository": "https://github.com/apple-oss-distributions/xnu.git",
+      "commit": "ac9718fb1af618d5ce8678d0dc6e8a58f252216f",
+      "version": "12377.121.6",
+      "darwin": "25.5.0"
+    }
+  },
+  "upstream": {
+    "os_profile": "profiles/os/ipados-27.0.1-24A446/profile.toml",
+    "arch_series": "profiles/arch/arm64e/patches/xnu/series",
+    "os_series": "profiles/os/ipados-27.0.1-24A446/patches/xnu/series"
+  },
+  "exclude_patches": {
+    "patches/xnu-12377/native-pac-keys.patch": "Requires hardware PAC key registers absent on the target.",
+    "patches/xnu-12377/native-pac-arm64-user-jop.patch": "Changes PAC keys on user/kernel transitions; unavailable on this target."
+  },
+  "local_patches": [
+    {
+      "path": "patches/route-a-plain-auth-12377.patch",
+      "sha256": "96c06848c5fd38c73f8518ad811c91fc3c768ecb1a1bcd398dee6f07c7123f7b",
+      "after": "patches/xnu-12377/native-4k-shared-region-slide.patch"
+    }
+  ],
+  "build_environment": {
+    "UNIXNU_XNU_ARCH": "arm64",
+    "UNIXNU_XNU_TAG": "xnu-12377.121.6",
+    "UNIXNU_XNU_COMMIT": "ac9718fb1af618d5ce8678d0dc6e8a58f252216f",
+    "UNIXNU_XNU_VERSION": "12377.121.6",
+    "UNIXNU_XNU_DARWIN": "25.5.0",
+    "UNIXNU_XNU_TARGET": "ios",
+    "UNIXNU_IOS_VERSION": "27.0"
+  },
+  "status": {
+    "kind": "source-preparation-candidate",
+    "kernel_compiled": false,
+    "kernel_linked": false,
+    "boot_verified": false,
+    "board_integration_complete": false
+  },
+  "remaining_gates": [
+    "Compile and audit every kernel/archive/kext instruction for the actual CPUs.",
+    "Complete the Linux XNU toolchain, SDK headers and source-provider closure.",
+    "Wire TB371FC ArmDTPlatform, ArmCpu, storage and serial components against XNU 12377.",
+    "Audit the full 27 userland/shared-cache and dyld TPRO startup contract.",
+    "Link, prelink and validate the ordinary-arm64 ABI closure before device boot."
+  ],
+  "component_closure": {
+    "scope": "upstream common source-build components; not a resolved TB371FC link closure",
+    "resolved": false,
+    "common_inputs": [
+      {
+        "name": "libfirehose_kernel.a",
+        "role": "kernel logging",
+        "qualified": false
+      },
+      {
+        "name": "libcc_kext.a",
+        "role": "Linux compiler runtime profile support",
+        "qualified": false
+      },
+      {
+        "name": "libcorecrypto_kernel_noasm-namespaced.a",
+        "role": "source crypto provider in upstream common.config; separate license/selection required",
+        "qualified": false,
+        "downloaded_by_preparer": false
+      },
+      {
+        "name": "libpthread_kernel.a",
+        "role": "kernel pthread support",
+        "qualified": false
+      },
+      {
+        "name": "source_pthread_bootstrap.o",
+        "role": "pthread provider bootstrap",
+        "qualified": false
+      },
+      {
+        "name": "libArmDTPlatform.a",
+        "role": "device-tree platform",
+        "qualified": false
+      },
+      {
+        "name": "libArmCpu.a",
+        "role": "generic ARM CPU/timer provider",
+        "qualified": false
+      }
+    ],
+    "tb371fc_storage_display_gpu_and_peripheral_inputs": "unresolved"
+  }
+}

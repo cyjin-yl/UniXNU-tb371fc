@@ -84,7 +84,16 @@ ROUTE_A_XNU_PREPARED_DIR="$ROUTE_A_WORK/xnu-pager/tree" \
 
 完整共享缓存需同时提供主缓存和全部子缓存，并通过源码、工具版本、覆盖与 edit 绑定检查。诊断性的部分 image 分析不能获得完整改写资格。
 
-## 5. 文件导航
+## 5. 继续进行集成验证
+
+新增两项入口用于收集具体集成证据：
+
+- [TPRO 审计](docs/ROUTE_A_TPRO.md)：对固定的原始 24A446 `dyld` 重新统计 TCHANGE、重点寄存器和静态引用；apple 向量检查同时包含硬件与 pager 两类能力键。该工具不证明完整运行路径。
+- [普通 arm64 内核准备](docs/ROUTE_A_KERNEL_BUILD.md)：从固定的两个公开 Git 源仓库建立 XNU 12377 候选，逐项应用完整所选补丁，再编译普通 arm64 配置探针。它不链接完整内核。
+
+CI 另设 `Prepare ordinary arm64 kernel sources` 作业实际执行源码准备；完整 XNU 需要的定制编译器能力和板级依赖单独列为未完成事项。准备报告和编译器诊断附在该次 Actions 产物中。
+
+## 6. 文件导航
 
 | 路径 | 工作范围 |
 | --- | --- |
@@ -99,7 +108,7 @@ ROUTE_A_XNU_PREPARED_DIR="$ROUTE_A_WORK/xnu-pager/tree" \
 | `docs/evidence/` | 可公开的结果摘要；不含系统二进制 |
 | `package/`、`drivers/` | 继承的设备移植源码与驱动参考 |
 
-## 6. 提交和继续开发
+## 7. 提交和继续开发
 
 每次提交说明具体问题、修改后的行为、实际验证和仍未覆盖的范围。源码或工具复用保留固定 commit、原始摘要与许可证；`upstream/source-manifest.json` 描述原始 229 份源码／许可证，不能为了让检查通过而重写成修改后的值。
 
