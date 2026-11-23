@@ -1,0 +1,126 @@
+{
+  "artifact_kind": "staged_userland_binary",
+  "authentication_preserved": false,
+  "cdhash": "66046a8149547198b0e269952c20bad26cb3484b",
+  "chained_fixups_unchanged": true,
+  "code_directory_flags": "0x2",
+  "code_proof": {
+    "anomalies": {},
+    "edits_by_evidence": {
+      "landing": 1,
+      "unwind": 2408
+    },
+    "jump_table_entries": 212,
+    "jump_tables": 10,
+    "kept": {},
+    "proven_instructions": 95991,
+    "roots": {
+      "gap_accepted": 0,
+      "landing_accepted": 10,
+      "pointer_accepted": 0,
+      "rejected": [],
+      "start_accepted": 0,
+      "unwind": 1479
+    }
+  },
+  "code_slots": 150,
+  "data_in_code_ranges": 0,
+  "filetype": "execute",
+  "hardware_tested": false,
+  "identifier": "com.apple.xpc.launchd",
+  "independent_signature": {
+    "cdhash": "66046a8149547198b0e269952c20bad26cb3484b",
+    "cms_or_apple_trust_verified": false,
+    "code_directory_version": "0x20400",
+    "code_page_shift": 12,
+    "code_pages_verified": 150,
+    "effective_code_limit": 612096
+  },
+  "input_bytes": 639376,
+  "input_name": "launchd",
+  "input_sha256": "c640246d38aaeb2d2372aff1e5aa0de59dec267f53c0dfc155f7837e717af68b",
+  "instruction_counts": {
+    "autda": 24,
+    "blraa": 61,
+    "blraaz": 81,
+    "braa": 629,
+    "braaz": 6,
+    "pacda": 161,
+    "pacia": 161,
+    "paciza": 231,
+    "retab": 1040,
+    "xpacd": 4,
+    "xpaci": 11
+  },
+  "instruction_edits": 2409,
+  "original_cdhash": "3d2ccf3da81ca5ac44d8f073b9bcb81147ecf8e2",
+  "original_signature": {
+    "cdhash": "3d2ccf3da81ca5ac44d8f073b9bcb81147ecf8e2",
+    "cms_or_apple_trust_verified": false,
+    "code_directory_version": "0x20400",
+    "code_page_shift": 12,
+    "code_pages_verified": 150,
+    "effective_code_limit": 612096
+  },
+  "original_subtype": "0x80000002",
+  "os_boot_verified": false,
+  "output_bytes": 639376,
+  "output_name": "launchd.arm64",
+  "output_sha256": "72d6252046efdb2a775d108eb518b7d9f089c92d656674f9a63b2a808831864d",
+  "owner_trust_bundle_installed": false,
+  "owner_trust_entry_ready": true,
+  "plain_pointer_abi": true,
+  "platform_identifier": 0,
+  "retained_isa_requirements": [],
+  "runtime_requirements": [
+    "all interacting loaders and code use ordinary pointers",
+    "dyld authenticated fixups resolve to ordinary pointers",
+    "kernel dyld/shared-region pagers implement ordinary authenticated rebases",
+    "4K/16K slide-page handling matches the target XNU build",
+    "new cdhash is included in the matching owner trust bundle",
+    "non-PAuth instructions and runtime feature dispatch are verified for A77"
+  ],
+  "schema": "route-a-userland-rewrite-v1",
+  "signing_policy_overrides": {
+    "hardened_runtime": null,
+    "platform_identifier": null
+  },
+  "subtype": "0x0",
+  "target": {
+    "binary_membership_verified": false,
+    "boot_verified": false,
+    "build": "24A446",
+    "device_class": "j820ap",
+    "ipsw_url": "https://updates.cdn-apple.com/2026FallFCS/6074e110-d48d-40c2-b0e8-b611520941a3/iPad17,1,iPad17,2,iPad17,3,iPad17,4_27.0.1_24A446_Restore.ipsw",
+    "manifest_sha256": "7655fd412eb2249724227503ee016122cf0292df7b6fc49c8caf9ba44e6ab2ac",
+    "manifest_verified": true,
+    "product": "iPad17,3",
+    "profile": "ipados-27.0.1-24A446",
+    "source_revision": "8542980d02b4d2cc5c32ee3542de1760b2562aac",
+    "target_kernel_abi": "not-yet-qualified",
+    "version": "27.0.1",
+    "xnu_source_revision": "ac9718fb1af618d5ce8678d0dc6e8a58f252216f"
+  },
+  "target_isa_audited": false,
+  "trust_cache_entry": {
+    "cdhash": "66046a8149547198b0e269952c20bad26cb3484b",
+    "constraint_category": 2,
+    "copied_from_original": true,
+    "flags": 0,
+    "hash_type": 2
+  },
+  "trust_cache_inputs": [
+    {
+      "bytes": 85177,
+      "im4p_type": "trst",
+      "name": "043-68950-668.dmg.aea.trustcache",
+      "sha256": "dc3642e0b44bcb3912126b19770cffcf07b9fb40f7196df32d54bb54acc0550a"
+    },
+    {
+      "bytes": 3167,
+      "im4p_type": "trcs",
+      "name": "043-69086-713.dmg.aea.trustcache",
+      "sha256": "34d6186ffd6278b66ac06c9b86961ba3dd195bd120ce2b8278c0f89d48eda7db"
+    }
+  ]
+}

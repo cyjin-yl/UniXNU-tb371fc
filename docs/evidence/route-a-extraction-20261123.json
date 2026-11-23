@@ -1,0 +1,139 @@
+{
+  "command": [
+    "/work/tools/ipsw-route-a-extract",
+    "--url",
+    "https://updates.cdn-apple.com/2026FallFCS/6074e110-d48d-40c2-b0e8-b611520941a3/iPad17,1,iPad17,2,iPad17,3,iPad17,4_27.0.1_24A446_Restore.ipsw",
+    "--device",
+    "j820ap",
+    "--dmg",
+    "fs",
+    "--pattern",
+    "^/?(sbin/launchd|usr/lib/dyld|System/Library/CoreServices/SystemVersion[.]plist)$",
+    "--output",
+    "/work/ipados27/original"
+  ],
+  "component": "OS",
+  "component_path": "043-68950-668.dmg.aea",
+  "device": "j820ap",
+  "expected_build": "24A446",
+  "expected_version": "27.0.1",
+  "extract_result": {
+    "artifacts": [
+      "/work/ipados27/original/24A446__iPad17,3/System/Library/CoreServices/SystemVersion.plist",
+      "/work/ipados27/original/24A446__iPad17,3/sbin/launchd",
+      "/work/ipados27/original/24A446__iPad17,3/usr/lib/dyld"
+    ],
+    "complete": true,
+    "schema_version": 1
+  },
+  "files": [
+    {
+      "mach_header_64": {
+        "cpusubtype": 2147483650,
+        "cputype": 16777228,
+        "filetype": 2,
+        "flags": 2097285,
+        "magic": 4277009103,
+        "ncmds": 27,
+        "reserved": 0,
+        "sizeofcmds": 4408
+      },
+      "path": "/work/ipados27/original/24A446__iPad17,3/sbin/launchd",
+      "sha256": "c640246d38aaeb2d2372aff1e5aa0de59dec267f53c0dfc155f7837e717af68b",
+      "size": 639376
+    },
+    {
+      "path": "/work/ipados27/original/24A446__iPad17,3/System/Library/CoreServices/SystemVersion.plist",
+      "sha256": "0a3e462ea4f5c01d4d80776648f1230bf6123ba201e1f07e11e43049fba1f237",
+      "size": 573,
+      "system_version": {
+        "BuildID": "54A591F0-B9B8-11F1-BBFC-4C0EAB4B7BC9",
+        "ProductBuildVersion": "24A446",
+        "ProductCopyright": "1983-2026 Apple Inc.",
+        "ProductName": "iPhone OS",
+        "ProductVersion": "27.0.1",
+        "SystemImageID": "E6093EBB-5B5D-45D7-9860-16FE7A5853ED"
+      }
+    },
+    {
+      "mach_header_64": {
+        "cpusubtype": 2147483650,
+        "cputype": 16777228,
+        "filetype": 7,
+        "flags": 133,
+        "magic": 4277009103,
+        "ncmds": 20,
+        "reserved": 0,
+        "sizeofcmds": 2536
+      },
+      "path": "/work/ipados27/original/24A446__iPad17,3/usr/lib/dyld",
+      "sha256": "ab9887ed96c9c08ad68d4c6a5c27e8289fb0c9e55ec3e134547292a1ec579608",
+      "size": 1447088
+    }
+  ],
+  "finished_utc": "2026-11-23T08:50:25.997987+00:00",
+  "ipsw_size": 11654176243,
+  "os_boot_verified": false,
+  "patch_sha256": "737657c209bd92fd761107e6bf85d2fbda7e0e56d163c227a90f977a77b1c5ba",
+  "range_count_scope": "OS image RangeReader only; excludes ZIP metadata, BuildManifest and public FCS key requests.",
+  "range_log": "2026/11/23 08:50:25  info Ranged 043-68950-668.dmg.aea: 72 requests, 10952263 bytes downloaded (IPSW: 11654176243 bytes)\n",
+  "returncode": 0,
+  "scope": "Official restore extraction provenance; does not establish full-image digest verification or OS boot.",
+  "source_pins": {
+    "go_asset": {
+      "arch": "amd64",
+      "filename": "go1.27.4.linux-amd64.tar.gz",
+      "kind": "archive",
+      "os": "linux",
+      "sha256": "7226736c2339719cda28fbf3a54d71aa63bcefe376e98cef00034268dab24840",
+      "size": 70680823,
+      "version": "go1.27.4"
+    },
+    "go_url": "https://go.dev/dl/go1.27.4.linux-amd64.tar.gz",
+    "source_archives": [
+      {
+        "archive_sha256": "975a669034b67e5be3864c74fd6bb6c9e10998bbb21cea98b7001adba16eac6b",
+        "commit": "26b65938cf4c9479cb5627d2d479492a1dcdd13e",
+        "repo": "ipsw",
+        "root": "/work/tool-build/ipsw-26b65938cf4c9479cb5627d2d479492a1dcdd13e",
+        "tag": "v3.1.750",
+        "url": "https://codeload.github.com/blacktop/ipsw/tar.gz/26b65938cf4c9479cb5627d2d479492a1dcdd13e"
+      },
+      {
+        "archive_sha256": "ebcbad51972f406596f9bc60812433bf13e35981f0090fda34730365bb025432",
+        "commit": "19d39e62ed62f3fefd6c00811c9358eadab30dfc",
+        "repo": "go-apfs",
+        "root": "/work/tool-build/go-apfs-19d39e62ed62f3fefd6c00811c9358eadab30dfc",
+        "tag": "v1.0.32",
+        "url": "https://codeload.github.com/blacktop/go-apfs/tar.gz/19d39e62ed62f3fefd6c00811c9358eadab30dfc"
+      }
+    ],
+    "started_utc": "2026-11-23T08:37:38.241592+00:00"
+  },
+  "source_url": "https://updates.cdn-apple.com/2026FallFCS/6074e110-d48d-40c2-b0e8-b611520941a3/iPad17,1,iPad17,2,iPad17,3,iPad17,4_27.0.1_24A446_Restore.ipsw",
+  "started_utc": "2026-11-23T08:49:17.176325+00:00",
+  "tls_ca_bundle_sha256": "e9c7b63ee2623386e9b0a3ee32f499d01a8ea23dc83b8383ddff9f8e749543b7",
+  "tls_verified": true,
+  "tool_build": {
+    "binary_sha256": "0d75d5a58bbe4e5a2f650d8836ea7137171b48443564676504f59beab1c7e18a",
+    "command": [
+      "/work/tools/go/bin/go",
+      "build",
+      "-p",
+      "4",
+      "-trimpath",
+      "-ldflags",
+      "-s -w",
+      "-o",
+      "/work/tools/ipsw-route-a-extract",
+      "./route_a_extract"
+    ],
+    "cwd": "/work/tool-build/ipsw-26b65938cf4c9479cb5627d2d479492a1dcdd13e",
+    "finished_utc": "2026-11-23T08:49:16.291132+00:00",
+    "returncode": 0,
+    "source_sha256": "9d75016aeda31e04f7aa0784ed6c23390c8644c49252ddce79bbed6667942cff",
+    "started_utc": "2026-11-23T08:45:35.199709+00:00"
+  },
+  "whole_component_digest_verified": false,
+  "whole_ipsw_downloaded": false
+}

@@ -1,0 +1,41 @@
+{
+  "go_asset": {
+    "arch": "amd64",
+    "filename": "go1.27.4.linux-amd64.tar.gz",
+    "kind": "archive",
+    "os": "linux",
+    "sha256": "7226736c2339719cda28fbf3a54d71aa63bcefe376e98cef00034268dab24840",
+    "size": 70680823,
+    "version": "go1.27.4"
+  },
+  "go_url": "https://go.dev/dl/go1.27.4.linux-amd64.tar.gz",
+  "os_boot_verified": false,
+  "patch": {
+    "license": "Apache-2.0",
+    "path": "patches/route-a-go-apfs-type4.patch",
+    "scope": "Bounded APFS type-4 resource-fork decompression for extracting public restore files",
+    "sha256": "737657c209bd92fd761107e6bf85d2fbda7e0e56d163c227a90f977a77b1c5ba"
+  },
+  "source_archives": [
+    {
+      "archive_sha256": "975a669034b67e5be3864c74fd6bb6c9e10998bbb21cea98b7001adba16eac6b",
+      "commit": "26b65938cf4c9479cb5627d2d479492a1dcdd13e",
+      "repo": "ipsw",
+      "tag": "v3.1.750",
+      "url": "https://codeload.github.com/blacktop/ipsw/tar.gz/26b65938cf4c9479cb5627d2d479492a1dcdd13e"
+    },
+    {
+      "archive_sha256": "ebcbad51972f406596f9bc60812433bf13e35981f0090fda34730365bb025432",
+      "commit": "19d39e62ed62f3fefd6c00811c9358eadab30dfc",
+      "repo": "go-apfs",
+      "tag": "v1.0.32",
+      "url": "https://codeload.github.com/blacktop/go-apfs/tar.gz/19d39e62ed62f3fefd6c00811c9358eadab30dfc"
+    }
+  ],
+  "started_utc": "2026-11-23T08:37:38.241592+00:00",
+  "synthetic_tests": {
+    "fixture_cases": 9,
+    "record_source": "type4-tests.log in extraction work area",
+    "result": "passed"
+  }
+}

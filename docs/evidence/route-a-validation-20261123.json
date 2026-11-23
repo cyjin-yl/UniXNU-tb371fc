@@ -1,0 +1,72 @@
+{
+  "actual_ipados_inputs": [
+    {
+      "independent_code_pages_verified": 150,
+      "input_sha256": "c640246d38aaeb2d2372aff1e5aa0de59dec267f53c0dfc155f7837e717af68b",
+      "instruction_edits": 2409,
+      "name": "launchd",
+      "output_sha256": "72d6252046efdb2a775d108eb518b7d9f089c92d656674f9a63b2a808831864d",
+      "owner_trust_bundle_installed": false,
+      "owner_trust_entry_ready": true,
+      "retained_isa_requirements": []
+    },
+    {
+      "independent_code_pages_verified": 347,
+      "input_sha256": "ab9887ed96c9c08ad68d4c6a5c27e8289fb0c9e55ec3e134547292a1ec579608",
+      "instruction_edits": 5385,
+      "name": "dyld",
+      "output_sha256": "bbd9143c6cf8dd0c55efd1df6e17d7da31aa0001412c5b378ff0035cbdb56d4c",
+      "owner_trust_bundle_installed": false,
+      "owner_trust_entry_ready": true,
+      "retained_isa_requirements": [
+        {
+          "count": 236,
+          "feature": "FEAT_S1POE2",
+          "runtime_dispatch_verified": false
+        }
+      ]
+    }
+  ],
+  "all_hardware_verified": false,
+  "catalog": {
+    "command": "python3 scripts/check_catalog.py",
+    "passed": true,
+    "structured_subsystems": 13
+  },
+  "device_native": {
+    "case_groups_passed": 23,
+    "case_groups_total": 23,
+    "isolated_baseline_and_lowered_executions": 46,
+    "model": "Lenovo TB371FC",
+    "record": "route-a-native-20261123.json",
+    "soc": "Snapdragon 870"
+  },
+  "host_suite": {
+    "command": "ROUTE_A_XNU_PREPARED_DIR=<verified prepared tree> PYTHONPATH=<dependencies>:scripts python3 -m unittest discover -s tests -p test_route_a_*.py -q",
+    "full_xnu_compiled": false,
+    "host_compiled_kernel_function_tests_included": 9,
+    "machine": "x86_64",
+    "passed": 120,
+    "python": "3.12.14",
+    "skipped": 0,
+    "total": 120
+  },
+  "independent_assembler": {
+    "input_vectors_passed": 54,
+    "input_vectors_total": 54,
+    "record": "route-a-assembler-20261123.json",
+    "replacement_vectors_passed": 45,
+    "replacement_vectors_total": 45
+  },
+  "macos_userland_tested": false,
+  "observed_date": "2026-11-23",
+  "os_boot_verified": false,
+  "schema": "route-a-validation-summary-v1",
+  "scope": "Development tooling, actual restore-file static transformation, host pager functions, and synthetic device functions; not an OS boot",
+  "source_integrity": {
+    "command": "python3 scripts/check_repository.py",
+    "original_source_and_license_files_verified": 229,
+    "passed": true
+  },
+  "target_isa_audited": false
+}

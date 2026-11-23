@@ -1,0 +1,202 @@
+Route A plain-pointer ABI for non-PAC arm64, XNU 12377.121.6.
+
+Apply after UniXNU 8542980d02b4d2cc5c32ee3542de1760b2562aac:
+  patches/xnu-12377/native-4k-shared-region-slide.patch
+Base XNU: ac9718fb1af618d5ce8678d0dc6e8a58f252216f.
+
+The v3/v5 whole-page and dyld-pager changes are adapted from:
+  none24smu/UniXNU a8b90c0c645fd62ae850cd43e80c87bab4cc157d
+  native-shared-region-plain-auth.patch
+  native-dyld-pager-plain-auth.patch
+Upstream adaptation copyright (c) 2026, UniXNU contributors:
+BSD-2-Clause-Patent, retained at scripts/route_a_zeta/LICENSE.
+Affected XNU files retain their APSL-2.0 / OSREFERENCE notices; the
+project license does not replace those original file licenses.
+The part-v5 no-PAC writeback and fixup_page error propagation are added
+locally for the newer 4 KiB pager and the newly exposed auth fixup paths.
+
+This selects a process-wide plain-pointer compatibility ABI. It provides
+no authentication. Target code and every participating loader must agree
+on that ABI. It is not a general way to run unmodified arm64e binaries.
+
+Patch application and extracted-function host tests do not qualify a
+complete kernel build, pager concurrency, or hardware boot. See
+upstream/route-a-kernel-sources.json and docs/ROUTE_A_PLAIN_AUTH_PATCH.md.
+
+diff --git a/osfmk/vm/vm_dyld_pager.c b/osfmk/vm/vm_dyld_pager.c
+index d3cd6e8..66eb94d 100644
+--- a/osfmk/vm/vm_dyld_pager.c
++++ b/osfmk/vm/vm_dyld_pager.c
+@@ -26,6 +26,13 @@
+  * @APPLE_OSREFERENCE_LICENSE_HEADER_END@
+  */
+ 
++/*
++ * UniXNU Route A modifications, 2026-11-23: plain-pointer fixup writeback
++ * for non-PAC arm64. Original XNU licensing and notices remain applicable.
++ * Adapted from none24smu/UniXNU a8b90c0c645fd62ae850cd43e80c87bab4cc157d;
++ * shared-region part-v5 support is added for the newer UniXNU 4 KiB pager.
++ */
++
+ #include <sys/errno.h>
+ 
+ #include <mach/mach_types.h>
+@@ -60,8 +67,9 @@
+ 
+ #include <sys/kdebug_triage.h>
+ #include <mach-o/fixup-chains.h>
+-#if defined(HAS_APPLE_PAC)
++/* The pointer format and key names are needed without pointer authentication too (see signPointer). */
+ #include <ptrauth.h>
++#if defined(HAS_APPLE_PAC)
+ #include <arm/misc_protos.h>
+ #endif /* defined(HAS_APPLE_PAC) */
+ 
+@@ -557,7 +565,6 @@ fixupPage32(
+ 	return KERN_SUCCESS;
+ }
+ 
+-#if defined(HAS_APPLE_PAC)
+ /*
+  * Sign a pointer needed for fixups.
+  */
+@@ -577,19 +584,31 @@ signPointer(
+ 		return KERN_SUCCESS;
+ 	}
+ 
++#if defined(HAS_APPLE_PAC)
+ 	uint64_t extendedDiscriminator = diversity;
+ 	if (addrDiv) {
+ 		extendedDiscriminator = __builtin_ptrauth_blend_discriminator(loc, extendedDiscriminator);
+ 	}
++#else /* defined(HAS_APPLE_PAC) */
++	(void)loc;
++	(void)addrDiv;
++	(void)diversity;
++	(void)pager;
++#endif /* defined(HAS_APPLE_PAC) */
+ 
+ 	switch (key) {
+ 	case ptrauth_key_asia:
+ 	case ptrauth_key_asda:
++#if defined(HAS_APPLE_PAC)
+ 		if (pager->dyld_a_key == 0 || arm_user_jop_disabled()) {
+ 			*signedAddr = unsignedAddr;
+ 		} else {
+ 			*signedAddr = (uintptr_t)pmap_sign_user_ptr((void *)unsignedAddr, key, extendedDiscriminator, pager->dyld_a_key);
+ 		}
++#else /* defined(HAS_APPLE_PAC) */
++		/* Without pointer authentication the user ABI has plain pointers (zeta lowers arm64e code offline): store the unsigned target. */
++		*signedAddr = unsignedAddr;
++#endif /* defined(HAS_APPLE_PAC) */
+ 		break;
+ 
+ 	default:
+@@ -813,7 +832,6 @@ fixupCachePageAuth64(
+ 	} while (valid_chain);
+ 	return KERN_SUCCESS;
+ }
+-#endif /* defined(HAS_APPLE_PAC) */
+ 
+ 
+ /*
+@@ -919,30 +937,23 @@ fixup_page(
+ 	}
+ 
+ 	/*
++	 * Propagate fixup failures so dyld_pager_data_request aborts the UPL.
+ 	 * Route to the appropriate fixup routine
+ 	 */
+ 	switch (hdr->mwli_pointer_format) {
+-#if defined(HAS_APPLE_PAC)
+ 	case DYLD_CHAINED_PTR_ARM64E:
+-		fixupPageAuth64(userVA, contents, pager, segInfo, pageIndex, false);
+-		break;
++		return fixupPageAuth64(userVA, contents, pager, segInfo, pageIndex, false);
+ 	case DYLD_CHAINED_PTR_ARM64E_USERLAND:
+ 	case DYLD_CHAINED_PTR_ARM64E_USERLAND24:
+-		fixupPageAuth64(userVA, contents, pager, segInfo, pageIndex, true);
+-		break;
++		return fixupPageAuth64(userVA, contents, pager, segInfo, pageIndex, true);
+ 	case DYLD_CHAINED_PTR_ARM64E_SHARED_CACHE:
+-		fixupCachePageAuth64(userVA, contents, pager, segInfo, pageIndex);
+-		break;
+-#endif /* defined(HAS_APPLE_PAC) */
++		return fixupCachePageAuth64(userVA, contents, pager, segInfo, pageIndex);
+ 	case DYLD_CHAINED_PTR_64:
+-		fixupPage64(userVA, contents, link_info, segInfo, pageIndex, false);
+-		break;
++		return fixupPage64(userVA, contents, link_info, segInfo, pageIndex, false);
+ 	case DYLD_CHAINED_PTR_64_OFFSET:
+-		fixupPage64(userVA, contents, link_info, segInfo, pageIndex, true);
+-		break;
++		return fixupPage64(userVA, contents, link_info, segInfo, pageIndex, true);
+ 	case DYLD_CHAINED_PTR_32:
+-		fixupPage32(userVA, contents, link_info, link_info_size, segInfo, pageIndex);
+-		break;
++		return fixupPage32(userVA, contents, link_info, link_info_size, segInfo, pageIndex);
+ 	default:
+ 		ktriage_record(thread_tid(current_thread()), KDBG_TRIAGE_EVENTID(KDBG_TRIAGE_SUBSYS_DYLD_PAGER, KDBG_TRIAGE_RESERVED, KDBG_TRIAGE_DYLD_PAGER_BAD_POINTER_FMT), (uintptr_t)userVA);
+ 		printf("%s(): unknown pointer_format %d\n", __func__, hdr->mwli_pointer_format);
+@@ -951,7 +962,6 @@ fixup_page(
+ 		}
+ 		return KERN_FAILURE;
+ 	}
+-	return KERN_SUCCESS;
+ }
+ 
+ /*
+diff --git a/osfmk/vm/vm_shared_region.c b/osfmk/vm/vm_shared_region.c
+index b1ffba1..3918c90 100644
+--- a/osfmk/vm/vm_shared_region.c
++++ b/osfmk/vm/vm_shared_region.c
+@@ -21,6 +21,13 @@
+  * @APPLE_LICENSE_HEADER_END@
+  */
+ 
++/*
++ * UniXNU Route A modifications, 2026-11-23: plain-pointer fixup writeback
++ * for non-PAC arm64. Original XNU licensing and notices remain applicable.
++ * Adapted from none24smu/UniXNU a8b90c0c645fd62ae850cd43e80c87bab4cc157d;
++ * shared-region part-v5 support is added for the newer UniXNU 4 KiB pager.
++ */
++
+ /*
+  * Shared region (... and comm page)
+  *
+@@ -3345,6 +3352,12 @@ vm_shared_region_slide_page_v3(
+ 			} else {
+ 				memcpy(rebaseLocation, &value, sizeof(value));
+ 			}
++#else /* __has_feature(ptrauth_calls) */
++			/*
++			 * Without pointer authentication the user ABI has plain pointers
++			 * (zeta lowers arm64e code offline): store the unsigned target.
++			 */
++			memcpy(rebaseLocation, &value, sizeof(value));
+ #endif /* __has_feature(ptrauth_calls) */
+ 		} else {
+ 			// The new value for a rebase is the low 51-bits of the threaded value plus the slide.
+@@ -3564,6 +3577,12 @@ vm_shared_region_slide_page_v5(
+ 			} else {
+ 				memcpy(rebaseLocation, &value, sizeof(value));
+ 			}
++#else /* __has_feature(ptrauth_calls) */
++			/*
++			 * Without pointer authentication the user ABI has plain pointers
++			 * (zeta lowers arm64e code offline): store the unsigned target.
++			 */
++			memcpy(rebaseLocation, &value, sizeof(value));
+ #endif /* __has_feature(ptrauth_calls) */
+ 		} else {
+ 			// the value already has the correct low bits, so just add in the high8 if it exists
+@@ -3650,6 +3669,9 @@ vm_shared_region_slide_part_v5(
+ 				} else {
+ 					memcpy(rebaseLocation, &value, sizeof(value));
+ 				}
++#else /* __has_feature(ptrauth_calls) */
++				/* Route A's plain-pointer ABI also applies to each 4 KiB part. */
++				memcpy(rebaseLocation, &value, sizeof(value));
+ #endif /* __has_feature(ptrauth_calls) */
+ 			} else {
+ 				value += high8;

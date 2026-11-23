@@ -1,0 +1,245 @@
+{
+  "schema_version": 1,
+  "scope": "plain-arm64 kernel patch draft; not a complete 27 kernel",
+  "xnu": {
+    "repository": "https://github.com/apple-oss-distributions/xnu",
+    "commit": "ac9718fb1af618d5ce8678d0dc6e8a58f252216f",
+    "tag": "xnu-12377.121.6",
+    "files": [
+      {
+        "path": "osfmk/vm/vm_shared_region.c",
+        "bytes": 129721,
+        "sha256": "fcbff03b7a1f786305094a5e12132a75e5253da1f49863b1fe6c1b04cf17ec18",
+        "url": "https://raw.githubusercontent.com/apple-oss-distributions/xnu/ac9718fb1af618d5ce8678d0dc6e8a58f252216f/osfmk/vm/vm_shared_region.c",
+        "after_prerequisite_sha256": "3fc7b8ae5e941e9c826edbfeda5944979c8499ce09f55f11ba321ddea625696a",
+        "after_plain_auth_sha256": "4e7ca3b414047065c20ac00d3906ce89880cbf579068076c26348883a14a80f0"
+      },
+      {
+        "path": "osfmk/vm/vm_shared_region_internal.h",
+        "bytes": 4066,
+        "sha256": "0f7e153b83dfd41e4be5815664a9dee89cc74e7f43f9474760d43fd234f9ab90",
+        "url": "https://raw.githubusercontent.com/apple-oss-distributions/xnu/ac9718fb1af618d5ce8678d0dc6e8a58f252216f/osfmk/vm/vm_shared_region_internal.h",
+        "after_prerequisite_sha256": "954de9105038ee66f62b4dcbb4ae266a1061e327364963c139c1f37402494c86",
+        "after_plain_auth_sha256": "954de9105038ee66f62b4dcbb4ae266a1061e327364963c139c1f37402494c86"
+      },
+      {
+        "path": "osfmk/vm/vm_shared_region_pager.c",
+        "bytes": 45020,
+        "sha256": "9ccacb85ed27f49b669f68e225431f2bfaaac160af044650c8fe213479157299",
+        "url": "https://raw.githubusercontent.com/apple-oss-distributions/xnu/ac9718fb1af618d5ce8678d0dc6e8a58f252216f/osfmk/vm/vm_shared_region_pager.c",
+        "after_prerequisite_sha256": "3d658d57695f7e59b73b822c4b513cc8b2129f296c84eb2fde056e6ab9d42d6b",
+        "after_plain_auth_sha256": "3d658d57695f7e59b73b822c4b513cc8b2129f296c84eb2fde056e6ab9d42d6b"
+      },
+      {
+        "path": "osfmk/vm/vm_dyld_pager.c",
+        "bytes": 63842,
+        "sha256": "46d3ba49d44e91b936e7a332ba677790edc70fc720a57a12764cc9deecb5738b",
+        "url": "https://raw.githubusercontent.com/apple-oss-distributions/xnu/ac9718fb1af618d5ce8678d0dc6e8a58f252216f/osfmk/vm/vm_dyld_pager.c",
+        "after_prerequisite_sha256": "46d3ba49d44e91b936e7a332ba677790edc70fc720a57a12764cc9deecb5738b",
+        "after_plain_auth_sha256": "e737b5b27b543e57bbdaefad1e3cabe3af072fe8bd07482611d7499c1b192b53"
+      }
+    ]
+  },
+  "upstream_patches": [
+    {
+      "repository": "https://github.com/UniXNU/UniXNU",
+      "commit": "8542980d02b4d2cc5c32ee3542de1760b2562aac",
+      "path": "patches/xnu-12377/native-4k-shared-region-slide.patch",
+      "sha256": "076be2859a0a7cf31574995c4a985da13f7b914ec55724eb82ae11a19b800b13",
+      "bytes": 15911,
+      "role": "required prerequisite",
+      "project_license": "BSD-2-Clause-Patent",
+      "affected_xnu_license": "APSL-2.0 with original per-file notices"
+    },
+    {
+      "repository": "https://github.com/none24smu/UniXNU",
+      "commit": "a8b90c0c645fd62ae850cd43e80c87bab4cc157d",
+      "path": "patches/xnu-12377/native-shared-region-plain-auth.patch",
+      "sha256": "90a484d39f3345decc78a501486b8c81288a1c8aa0abbda357e6a28ed940c866",
+      "bytes": 1205,
+      "role": "adapted whole-page v3/v5 changes",
+      "project_license": "BSD-2-Clause-Patent",
+      "affected_xnu_license": "APSL-2.0 with original per-file notices"
+    },
+    {
+      "repository": "https://github.com/none24smu/UniXNU",
+      "commit": "a8b90c0c645fd62ae850cd43e80c87bab4cc157d",
+      "path": "patches/xnu-12377/native-dyld-pager-plain-auth.patch",
+      "sha256": "0e002b7a87a6d0de69279ac589f039b1c49d567a273049b836a9debe33c99ae8",
+      "bytes": 2216,
+      "role": "adapted map-with-linking changes",
+      "project_license": "BSD-2-Clause-Patent",
+      "affected_xnu_license": "APSL-2.0 with original per-file notices"
+    }
+  ],
+  "local_patch": {
+    "path": "patches/route-a-plain-auth-12377.patch",
+    "sha256": "96c06848c5fd38c73f8518ad811c91fc3c768ecb1a1bcd398dee6f07c7123f7b",
+    "bytes": 7318,
+    "local_additions": [
+      "vm_shared_region_slide_part_v5 non-PAC writeback",
+      "fixup_page propagates helper errors to existing UPL abort path"
+    ]
+  },
+  "verification": {
+    "timestamp_utc": "2026-11-23T08:54:15.308086+00:00",
+    "git_version": "git version 2.56.1",
+    "apply_and_reverse_round_trip": true,
+    "original_and_prepared_and_patched_file_digests_checked": true,
+    "commands": [
+      {
+        "argv": [
+          "git",
+          "-C",
+          "WORK/tree",
+          "apply",
+          "--reverse",
+          "--check",
+          "REPO/patches/route-a-plain-auth-12377.patch"
+        ],
+        "exit_code": 0
+      },
+      {
+        "argv": [
+          "git",
+          "-C",
+          "WORK/tree",
+          "apply",
+          "--reverse",
+          "REPO/patches/route-a-plain-auth-12377.patch"
+        ],
+        "exit_code": 0
+      },
+      {
+        "argv": [
+          "git",
+          "-C",
+          "WORK/tree",
+          "apply",
+          "--reverse",
+          "--check",
+          "WORK/main-4k-slide.patch"
+        ],
+        "exit_code": 0
+      },
+      {
+        "argv": [
+          "git",
+          "-C",
+          "WORK/tree",
+          "apply",
+          "--reverse",
+          "WORK/main-4k-slide.patch"
+        ],
+        "exit_code": 0
+      },
+      {
+        "argv": [
+          "git",
+          "-C",
+          "WORK/tree",
+          "apply",
+          "--check",
+          "WORK/main-4k-slide.patch"
+        ],
+        "exit_code": 0
+      },
+      {
+        "argv": [
+          "git",
+          "-C",
+          "WORK/tree",
+          "apply",
+          "WORK/main-4k-slide.patch"
+        ],
+        "exit_code": 0
+      },
+      {
+        "argv": [
+          "git",
+          "-C",
+          "WORK/tree",
+          "apply",
+          "--check",
+          "REPO/patches/route-a-plain-auth-12377.patch"
+        ],
+        "exit_code": 0
+      },
+      {
+        "argv": [
+          "git",
+          "-C",
+          "WORK/tree",
+          "apply",
+          "REPO/patches/route-a-plain-auth-12377.patch"
+        ],
+        "exit_code": 0
+      }
+    ],
+    "full_kernel_compiled": false,
+    "kernel_pager_concurrency_tested": false,
+    "hardware_boot_tested": false,
+    "host_function_tests": {
+      "timestamp_utc": "2026-11-23T08:55:13.749252+00:00",
+      "argv": [
+        "python",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "tests",
+        "-p",
+        "test_route_a_slide_v5.py",
+        "-v"
+      ],
+      "environment": {
+        "ROUTE_A_XNU_PREPARED_DIR": "WORK/tree",
+        "PYTHONDONTWRITEBYTECODE": "1"
+      },
+      "python": "3.12.14",
+      "architecture": "x86_64",
+      "compiler": "cc (Debian 14.2.0-19) 14.2.0",
+      "compiler_options": [
+        "-std=c11",
+        "-O2",
+        "-Wall",
+        "-Wextra",
+        "-Werror",
+        "-shared",
+        "-fPIC"
+      ],
+      "exit_code": 0,
+      "tests_run": 23,
+      "python_tests": 14,
+      "extracted_c_tests": 9,
+      "skipped": 0,
+      "extracted_functions": [
+        "vm_shared_region_slide_page_v3",
+        "vm_shared_region_slide_page_v5",
+        "vm_shared_region_slide_part_v5",
+        "signPointer",
+        "fixupPageAuth64",
+        "fixupCachePageAuth64",
+        "fixup_page"
+      ],
+      "negative_controls": [
+        "missing part-v5 no-PAC writeback leaves raw authenticated chain word",
+        "old fixup_page ignores failed key/bind/page-bounds helpers and reports success"
+      ],
+      "stubbed": [
+        "kernel types and diagnostics",
+        "nospec step uses ordinary C; no speculation barrier check",
+        "non-auth 32-bit and 64-bit fixup helpers"
+      ],
+      "test_sha256": "56179ae5bb3ebe585041c8f2b5835f3b2d064a4cf189110676dac4ed531ea623",
+      "reference_sha256": "3ee325e250eeb6b02717eb2a467c73a47ae2d16e70a247f700f2292a5c31f6f4"
+    }
+  },
+  "upstream_license_copy": {
+    "path": "scripts/route_a_zeta/LICENSE",
+    "sha256": "5b1d3d911103cb0f41641ec0964c5ac1f7e229f57aa072b6ac38bae913a1307b",
+    "identifier": "BSD-2-Clause-Patent",
+    "copyright": "Copyright (c) 2026, UniXNU contributors. All rights reserved.",
+    "xnu_file_notices_preserved": true
+  }
+}

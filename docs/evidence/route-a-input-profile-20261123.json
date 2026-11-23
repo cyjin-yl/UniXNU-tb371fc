@@ -1,0 +1,41 @@
+{
+  "components": {
+    "KernelCache": {
+      "digest_hex": "d654c8c1013b174506be1cac40f3cb16fb07d8cc74958821e822d99163b91379177ad73a968634989d0de167029d82cd",
+      "path": "kernelcache.release.ipad17",
+      "whole_component_digest_verified": false
+    },
+    "OS": {
+      "digest_hex": "c7fe55f97d327c22f0912a044d76eae97f70feb56c9b9d6643f311b6a22e0efd95c24ecbc5905fd3fca0fe91e41fc460",
+      "path": "043-68950-668.dmg.aea",
+      "whole_component_digest_verified": false
+    },
+    "RestoreRamDisk": {
+      "digest_hex": "61c77abba5c3f107bdc8b356f7161e8162cfd1ca244505540db2dc9f90ad5f3a45020a6c2a616a912282d0389edba0f1",
+      "path": "043-69915-784.dmg",
+      "whole_component_digest_verified": false
+    },
+    "StaticTrustCache": {
+      "digest_hex": "5b833188b0b3df1095af18c795d616542489369f53ba4f731986140b893dd9a54d03b0b95aad5762b0020aeb9376f8a5",
+      "path": "Firmware/043-68950-668.dmg.aea.trustcache",
+      "whole_component_digest_verified": false
+    }
+  },
+  "ipsw_http_content_length": 11654176243,
+  "ipsw_url": "https://updates.cdn-apple.com/2026FallFCS/6074e110-d48d-40c2-b0e8-b611520941a3/iPad17,1,iPad17,2,iPad17,3,iPad17,4_27.0.1_24A446_Restore.ipsw",
+  "manifest_bytes": 3017377,
+  "manifest_sha256": "7655fd412eb2249724227503ee016122cf0292df7b6fc49c8caf9ba44e6ab2ac",
+  "observed_date": "2026-11-23",
+  "os_boot_verified": false,
+  "product_build_version": "24A446",
+  "product_version": "27.0.1",
+  "products": [
+    "iPad17,1",
+    "iPad17,2",
+    "iPad17,3",
+    "iPad17,4"
+  ],
+  "schema": "route-a-official-input-profile-v1",
+  "selected_device_class": "j820ap",
+  "source": "official HTTPS Apple IPSW BuildManifest, read through ZIP byte ranges"
+}

@@ -15,3 +15,13 @@ jobs:
         run: python3 scripts/check_repository.py
       - name: Check official device catalog records
         run: python3 scripts/check_catalog.py
+      - name: Install Route A analysis dependencies
+        run: |
+          python3 -m venv "$RUNNER_TEMP/route-a-venv"
+          "$RUNNER_TEMP/route-a-venv/bin/python" -m pip install --requirement requirements-route-a.txt
+      - name: Verify pinned pager patch application and reversal
+        run: python3 scripts/prepare_route_a_xnu.py --output "$RUNNER_TEMP/route-a-xnu"
+      - name: Check Route A parsing, lowering, proof gates and extracted pager C
+        run: |
+          ROUTE_A_XNU_PREPARED_DIR="$RUNNER_TEMP/route-a-xnu/tree" \
+            "$RUNNER_TEMP/route-a-venv/bin/python" scripts/check_route_a.py

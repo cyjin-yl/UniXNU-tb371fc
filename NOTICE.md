@@ -20,3 +20,24 @@ upstream licensing. The source lock and UPSTREAM.md identify the corresponding p
 Apple operating-system files, original Apple binary components, device firmware blobs,
 private device dumps and credentials are not included. External inputs must be obtained
 separately and are not relicensed by this repository.
+
+## Route A additions
+
+The native-lowering and original validation code added by the Route A branch is
+covered by the repository's default BSD-2-Clause-Patent license unless a file or
+component states otherwise. The adapted zeta tooling retains its upstream license
+in `scripts/route_a_zeta/LICENSE`; source revisions and original hashes are in
+`upstream/route-a-sources.json`.
+
+`patches/route-a-go-apfs-type4.patch` adapts the Apache-2.0-licensed go-apfs project.
+The patch, including its new decompressor and synthetic tests, is distributed
+under Apache-2.0; the full license is in
+`upstream/route-a-extraction/go-apfs-LICENSE`. The external ipsw extraction tool is
+MIT-licensed; its license and pinned build provenance are retained in that same
+directory. No Apple restore-image contents are included.
+
+The XNU patch `patches/route-a-plain-auth-12377.patch` preserves the modified
+files' original APSL-2.0 / OSREFERENCE notices and adds dated modification notes.
+It is not a relicensing of those XNU files. The exact upstream files, adaptations
+and validation scope are listed in `upstream/route-a-kernel-sources.json` and
+`docs/ROUTE_A_PLAIN_AUTH_PATCH.md`.

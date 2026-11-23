@@ -1,0 +1,62 @@
+{
+  "schema_version": 1,
+  "sources": [
+    {
+      "name": "zeta-lowering",
+      "repository": "https://github.com/none24smu/UniXNU-zeta",
+      "commit": "eb489285a1d9153872f00c93ebb519a269b249b5",
+      "license": "BSD-2-Clause-Patent",
+      "license_path": "scripts/route_a_zeta/LICENSE",
+      "files": [
+        {
+          "upstream_path": "scripts/zeta_userland_code.py",
+          "path": "scripts/route_a_zeta/zeta_userland_code.py",
+          "upstream_sha256": "ad6267b39db76c1295f2aa4a481153ab187152617bba4fb95d45744f3c966875",
+          "upstream_bytes": 24825
+        },
+        {
+          "upstream_path": "scripts/zeta_userland_pauth.py",
+          "path": "scripts/route_a_zeta/zeta_userland_pauth.py",
+          "upstream_sha256": "d30ff6a688f08be2342895a9c1feaff26d857610d57444c4e6d061047fed55be",
+          "upstream_bytes": 3556
+        },
+        {
+          "upstream_path": "scripts/zeta_dyld_cache.py",
+          "path": "scripts/route_a_zeta/zeta_dyld_cache.py",
+          "upstream_sha256": "ca21e5f4b1e5181b3fa57927ba1d0405fec7ad8fecd5ab94b69bb7423ad813f7",
+          "upstream_bytes": 11373
+        },
+        {
+          "upstream_path": "scripts/prove-zeta-dyld-cache.py",
+          "path": "scripts/route_a_zeta/prove-zeta-dyld-cache.py",
+          "upstream_sha256": "1d720fac8bdf5b7d52386145b475d3550dd22129d81190a6a5355b2d1cacdf76",
+          "upstream_bytes": 11282
+        },
+        {
+          "upstream_path": "scripts/rewrite-zeta-dyld-cache.py",
+          "path": "scripts/route_a_zeta/rewrite-zeta-dyld-cache.py",
+          "upstream_sha256": "4c161caefedb119a962e8da5a2ac3036337316a54876c5025447e77f96c02371",
+          "upstream_bytes": 16988
+        },
+        {
+          "upstream_path": "scripts/rewrite-zeta-userland.py",
+          "path": "scripts/route_a_zeta/rewrite-zeta-userland.py",
+          "upstream_sha256": "21b4f9d01ac052b1af1df9872cc7d89ee2bd1c4b3ec9df717aa8f5df9f8b68b0",
+          "upstream_bytes": 16542
+        },
+        {
+          "upstream_path": "scripts/rewrite-zeta-userland-tree.py",
+          "path": "scripts/route_a_zeta/rewrite-zeta-userland-tree.py",
+          "upstream_sha256": "80973e61d00f74e1fe08f339899c46b1dea19acd6db92e0ecd97566d8f9330b1",
+          "upstream_bytes": 7123
+        },
+        {
+          "upstream_path": "LICENSE",
+          "path": "scripts/route_a_zeta/LICENSE",
+          "upstream_sha256": "5b1d3d911103cb0f41641ec0964c5ac1f7e229f57aa072b6ac38bae913a1307b",
+          "upstream_bytes": 2673
+        }
+      ]
+    }
+  ]
+}

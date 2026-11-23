@@ -2,7 +2,19 @@
 
 联想小新 Pad Pro 12.7（2023，**TB371FC / Snapdragon 870 / Adreno 650**）的 UniXNU 设备适配源码。
 
-当前实机基线为 **V135，iPadOS 17.7.11（21H461）**。用户确认 V135 应用、设置、触摸和 GPU 正常；壁纸仍为黑屏，已停止该项实机调试。本项目仍在开发，不能作为日常使用系统。
+## 本分支：27 代系统的原生执行路线 A
+
+本分支以 **离线 arm64e → arm64 转换、CPU 原生执行**为方向，先验证 iPadOS 27，再评估 macOS 27。转换规则、Mach-O 检查、共享缓存 proof 检查及原生测试已落地。2026-11-23 在 TB371FC 的 Android 环境中完成 **23/23 组原生正确性测试**，共 46 次基准／转换函数执行；这只验证合成指令序列，**尚未启动 iPadOS 27 或 macOS 27**。
+
+真实 iPadOS 27.0.1 的 `launchd` / `dyld` 已分别完成 **2,409 / 5,385 处**离线指令改写，**150 / 347 个**签名代码页独立复核通过，并从原始 trust cache 取得匹配条目属性。pager 补丁也已验证应用和关键 C 函数。`dyld` 仍保留 236 条需要新 Arm 扩展的指令，正在核验非 TPRO 路径；上述结果尚未验证 Darwin 进程或整机启动。
+
+入口：[路线 A 实现与验证](docs/ROUTE_A.md)、[内核补丁](docs/ROUTE_A_PLAIN_AUTH_PATCH.md)、[内核与加载器缺口](docs/ROUTE_A_KERNEL_GAPS.md)、[测试代码](scripts/check_route_a.py)。转换采用普通指针 ABI，不保留 PAC 认证；完整运行还需要匹配的 dyld、内核 pager、信任目录及驱动。
+
+以下 V135 状态来自上游 [xiuyityer/UniXNU-tb371fc](https://github.com/xiuyityer/UniXNU-tb371fc) 的既有记录，不表示本分支已经在当前测试平板上复现。
+
+## 上游 iPadOS 17.7.11 基线
+
+上游实机基线为 **V135，iPadOS 17.7.11（21H461）**。上游用户确认 V135 应用、设置、触摸和 GPU 正常；壁纸仍为黑屏，已停止该项实机调试。本项目仍在开发，不能作为日常使用系统。
 
 仓库现已包含 V135 内核定点派生、原生 macOS 固件构建和 Android boot 镜像打包入口。完整 XNU 源码重编译仍未接通；V135 保留已验证的 21H461 内核父镜像，并只对一个显示时序状态查询作等长 ARM64 指令替换。干净固件重编译已完成；用留存的 V135 固件快速打包可逐字节复现实机镜像。详见[构建说明](docs/BUILDING.md)及[V135 恢复记录](docs/V135-RESUME.md)。
 

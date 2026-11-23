@@ -1,0 +1,173 @@
+--- a/reader.go
++++ b/reader.go
+@@ -955,6 +955,9 @@
+ }
+ 
+ func newCompressedFile(source *File, size uint64, method uint32) (*File, error) {
++	if isZlibResourceMethod(method) {
++		return newZlibResourceFile(source, size)
++	}
+ 	if method != cmpRsrcLZVN && method != cmpRsrcLZFSE && method != cmpRsrcLZBitmap {
+ 		return nil, fmt.Errorf("unsupported resource compression %d", method)
+ 	}
+--- /dev/null
++++ b/route_a_zlib.go
+@@ -0,0 +1,72 @@
++// Route A extraction support for public restore images.
++// Layout follows types/decmpfs.go CMP_RSRC_ZLIB in go-apfs v1.0.32.
++// This bounded implementation is for files up to readerMaxDecoded (64 MiB).
++package apfs
++
++import (
++	"bytes"
++	"encoding/binary"
++	"fmt"
++	"github.com/blacktop/go-apfs/types"
++)
++
++func newZlibResourceFile(source *File, size uint64) (*File, error) {
++	if source.Size < 16 || size == 0 || size > readerMaxDecoded {
++		return nil, fmt.Errorf("zlib resource size outside bounded extractor: source=%d decoded=%d", source.Size, size)
++	}
++	header := make([]byte, 16)
++	if err := readFull(source, header, 0); err != nil {
++		return nil, err
++	}
++	dataOffset := uint64(binary.BigEndian.Uint32(header))
++	dataSize := uint64(binary.BigEndian.Uint32(header[8:]))
++	if dataOffset < 16 || dataOffset > uint64(source.Size) || dataSize < 8 || dataSize > uint64(source.Size)-dataOffset {
++		return nil, fmt.Errorf("zlib resource data geometry: offset=%d size=%d source=%d", dataOffset, dataSize, source.Size)
++	}
++	blockHeader := make([]byte, 8)
++	if err := readFull(source, blockHeader, int64(dataOffset)); err != nil {
++		return nil, err
++	}
++	payloadSize := uint64(binary.BigEndian.Uint32(blockHeader))
++	count := uint64(le.Uint32(blockHeader[4:]))
++	expected := (size + readerChunkSize - 1) / readerChunkSize
++	if count != expected || payloadSize < 4 || payloadSize > dataSize-4 || count*8 > payloadSize-4 {
++		return nil, fmt.Errorf("zlib resource block table geometry: blocks=%d expected=%d payload=%d data=%d", count, expected, payloadSize, dataSize)
++	}
++	// Offsets are relative to the little-endian block count, four bytes after
++	// the classic resource data offset. The leading payload length is BE.
++	base := dataOffset + 4
++	limit := base + payloadSize
++	table := make([]byte, count*8)
++	if err := readFull(source, table, int64(base+4)); err != nil {
++		return nil, err
++	}
++	previousEnd := base + 4 + uint64(len(table))
++	result := make([]byte, 0, int(size))
++	for i := uint64(0); i < count; i++ {
++		start := base + uint64(le.Uint32(table[i*8:]))
++		length := uint64(le.Uint32(table[i*8+4:]))
++		if start < previousEnd || start > limit || length == 0 || length > readerChunkSize+1 || length > limit-start {
++			return nil, fmt.Errorf("zlib resource block %d outside data or overlapping: start=%d length=%d previous=%d limit=%d", i, start, length, previousEnd, limit)
++		}
++		encoded := make([]byte, length)
++		if err := readFull(source, encoded, int64(start)); err != nil {
++			return nil, err
++		}
++		decodedSize := min(uint64(readerChunkSize), size-i*readerChunkSize)
++		decoded, err := decodeInline(encoded, decodedSize, cmpAttrZlib)
++		if err != nil {
++			return nil, fmt.Errorf("zlib resource block %d: %w", i, err)
++		}
++		result = append(result, decoded...)
++		previousEnd = start + length
++	}
++	if uint64(len(result)) != size {
++		return nil, fmt.Errorf("zlib resource decoded size mismatch")
++	}
++	return &File{ReaderAt: bytes.NewReader(result), Size: int64(size)}, nil
++}
++
++func isZlibResourceMethod(method uint32) bool {
++	return method == uint32(types.CMP_RSRC_ZLIB)
++}
+--- /dev/null
++++ b/route_a_zlib_test.go
+@@ -0,0 +1,83 @@
++package apfs
++
++import (
++	"bytes"
++	"compress/zlib"
++	"encoding/binary"
++	"io"
++	"testing"
++)
++
++// An independently assembled classic resource fork: two logical chunks,
++// one zlib stream and one stored chunk, with a resource-map trailer.
++func routeAZlibFixture() ([]byte, []byte) {
++	first := bytes.Repeat([]byte("Route A chunk data.\n"), 4000)[:65536]
++	last := []byte("end of launchd-like resource")
++	var compressed bytes.Buffer
++	w := zlib.NewWriter(&compressed)
++	w.Write(first)
++	w.Close()
++	blocks := [][]byte{compressed.Bytes(), append([]byte{0xff}, last...)}
++	payloadLength := 4 + 8*len(blocks)
++	for _, b := range blocks {
++		payloadLength += len(b)
++	}
++	dataOffset := 256
++	image := make([]byte, dataOffset+4+payloadLength+50)
++	binary.BigEndian.PutUint32(image, uint32(dataOffset))
++	binary.BigEndian.PutUint32(image[4:], uint32(dataOffset+4+payloadLength))
++	binary.BigEndian.PutUint32(image[8:], uint32(4+payloadLength))
++	binary.BigEndian.PutUint32(image[12:], 50)
++	binary.BigEndian.PutUint32(image[dataOffset:], uint32(payloadLength))
++	base := dataOffset + 4
++	le.PutUint32(image[base:], uint32(len(blocks)))
++	pos := 4 + 8*len(blocks)
++	for i, b := range blocks {
++		le.PutUint32(image[base+4+i*8:], uint32(pos))
++		le.PutUint32(image[base+8+i*8:], uint32(len(b)))
++		copy(image[base+pos:], b)
++		pos += len(b)
++	}
++	return image, append(first, last...)
++}
++
++func TestRouteAZlibResourceRead(t *testing.T) {
++	image, want := routeAZlibFixture()
++	src := &File{ReaderAt: bytes.NewReader(image), Size: int64(len(image))}
++	f, err := newCompressedFile(src, uint64(len(want)), 4)
++	if err != nil {
++		t.Fatal(err)
++	}
++	got, err := io.ReadAll(io.NewSectionReader(f, 0, f.Size))
++	if err != nil || !bytes.Equal(got, want) {
++		t.Fatalf("decoded mismatch: %v", err)
++	}
++	cross := make([]byte, 23)
++	n, err := f.ReadAt(cross, 65530)
++	if n != len(cross) || err != nil || !bytes.Equal(cross, want[65530:65553]) {
++		t.Fatal("cross-chunk read mismatch")
++	}
++}
++
++func TestRouteAZlibResourceRejectsMalformed(t *testing.T) {
++	cases := map[string]func([]byte){
++		"declared-data-outside-file": func(p []byte) { binary.BigEndian.PutUint32(p[8:], 0xffffffff) },
++		"wrong-count":                func(p []byte) { le.PutUint32(p[260:], 3) },
++		"block-inside-table":         func(p []byte) { le.PutUint32(p[264:], 4) },
++		"overlapping-blocks":         func(p []byte) { le.PutUint32(p[272:], le.Uint32(p[264:])) },
++		"block-outside-fork":         func(p []byte) { le.PutUint32(p[264:], 0xfffffff0) },
++		"oversized-compressed-block": func(p []byte) { le.PutUint32(p[268:], 65538) },
++		"bad-zlib-checksum":          func(p []byte) { off := 260 + le.Uint32(p[264:]); n := le.Uint32(p[268:]); p[off+n-1] ^= 0x40 },
++		"short-stored-chunk":         func(p []byte) { le.PutUint32(p[276:], le.Uint32(p[276:])-1) },
++	}
++	for name, modify := range cases {
++		t.Run(name, func(t *testing.T) {
++			image, want := routeAZlibFixture()
++			modify(image)
++			_, err := newCompressedFile(&File{ReaderAt: bytes.NewReader(image), Size: int64(len(image))}, uint64(len(want)), 4)
++			if err == nil {
++				t.Fatal("malformed resource accepted")
++			}
++		})
++	}
++}

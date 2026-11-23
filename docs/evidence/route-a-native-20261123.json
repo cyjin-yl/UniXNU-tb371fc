@@ -1,0 +1,1321 @@
+{
+  "abi_contract": "plain-pointers-with-authentication-removed",
+  "authentication_preserved": false,
+  "cache_flush_library_sha256": "3dcd0c4bf1857c9fb998a56187cba18dd7f6b2ff689ce95f73a37ccd89ed480f",
+  "cases": [
+    {
+      "baseline": {
+        "actual": {
+          "return": 305419896
+        },
+        "cache_flush": "freestanding-aarch64-helper",
+        "executed_sha256": "eabf813d5c2804d7850677fd2e01bce50f82f77733a131b6014ae0101048c3c2",
+        "expected": {
+          "return": 305419896
+        },
+        "mapping_permissions": "RW -> RX",
+        "status": "passed"
+      },
+      "baseline_words": [
+        "d503201f",
+        "d503201f",
+        "d503201f",
+        "d503201f",
+        "d503201f",
+        "d503201f",
+        "d503201f",
+        "d503201f",
+        "d503201f",
+        "d503201f",
+        "d65f03c0"
+      ],
+      "expected": {
+        "return": 305419896,
+        "writeback_index": null
+      },
+      "input_words": [
+        "dac10020",
+        "dac10420",
+        "dac10820",
+        "dac10c20",
+        "dac11020",
+        "dac11420",
+        "dac11820",
+        "dac11c20",
+        "dac143e0",
+        "dac147e0",
+        "d65f0fff"
+      ],
+      "lowered": {
+        "actual": {
+          "return": 305419896
+        },
+        "cache_flush": "freestanding-aarch64-helper",
+        "executed_sha256": "eabf813d5c2804d7850677fd2e01bce50f82f77733a131b6014ae0101048c3c2",
+        "expected": {
+          "return": 305419896
+        },
+        "mapping_permissions": "RW -> RX",
+        "status": "passed"
+      },
+      "name": "register_sign_auth_strip",
+      "output_sha256": "eabf813d5c2804d7850677fd2e01bce50f82f77733a131b6014ae0101048c3c2",
+      "output_words": [
+        "d503201f",
+        "d503201f",
+        "d503201f",
+        "d503201f",
+        "d503201f",
+        "d503201f",
+        "d503201f",
+        "d503201f",
+        "d503201f",
+        "d503201f",
+        "d65f03c0"
+      ],
+      "status": "passed"
+    },
+    {
+      "baseline": {
+        "actual": {
+          "return": 305419896
+        },
+        "cache_flush": "freestanding-aarch64-helper",
+        "executed_sha256": "f922161efcb1e22fabfd91c08813be660bfdb9ea1bf2935c16c0ef1f849970c8",
+        "expected": {
+          "return": 305419896
+        },
+        "mapping_permissions": "RW -> RX",
+        "status": "passed"
+      },
+      "baseline_words": [
+        "d503201f",
+        "d503201f",
+        "d503201f",
+        "d503201f",
+        "d503201f",
+        "d503201f",
+        "d503201f",
+        "d503201f",
+        "d65f03c0"
+      ],
+      "expected": {
+        "return": 305419896,
+        "writeback_index": null
+      },
+      "input_words": [
+        "dac123e0",
+        "dac127e0",
+        "dac12be0",
+        "dac12fe0",
+        "dac133e0",
+        "dac137e0",
+        "dac13be0",
+        "dac13fe0",
+        "d65f0fff"
+      ],
+      "lowered": {
+        "actual": {
+          "return": 305419896
+        },
+        "cache_flush": "freestanding-aarch64-helper",
+        "executed_sha256": "f922161efcb1e22fabfd91c08813be660bfdb9ea1bf2935c16c0ef1f849970c8",
+        "expected": {
+          "return": 305419896
+        },
+        "mapping_permissions": "RW -> RX",
+        "status": "passed"
+      },
+      "name": "zero_modifier_sign_auth",
+      "output_sha256": "f922161efcb1e22fabfd91c08813be660bfdb9ea1bf2935c16c0ef1f849970c8",
+      "output_words": [
+        "d503201f",
+        "d503201f",
+        "d503201f",
+        "d503201f",
+        "d503201f",
+        "d503201f",
+        "d503201f",
+        "d503201f",
+        "d65f03c0"
+      ],
+      "status": "passed"
+    },
+    {
+      "baseline": {
+        "actual": {
+          "return": 73
+        },
+        "cache_flush": "freestanding-aarch64-helper",
+        "executed_sha256": "0a1f09b3de84a38a025bc9dea0f9bf4d453184a0a34424fcc1c61a671ddc235a",
+        "expected": {
+          "return": 73
+        },
+        "mapping_permissions": "RW -> RX",
+        "status": "passed"
+      },
+      "baseline_words": [
+        "d2800920",
+        "d65f03c0"
+      ],
+      "expected": {
+        "return": 73,
+        "writeback_index": null
+      },
+      "input_words": [
+        "d2800920",
+        "d65f0bff"
+      ],
+      "lowered": {
+        "actual": {
+          "return": 73
+        },
+        "cache_flush": "freestanding-aarch64-helper",
+        "executed_sha256": "0a1f09b3de84a38a025bc9dea0f9bf4d453184a0a34424fcc1c61a671ddc235a",
+        "expected": {
+          "return": 73
+        },
+        "mapping_permissions": "RW -> RX",
+        "status": "passed"
+      },
+      "name": "retaa",
+      "output_sha256": "0a1f09b3de84a38a025bc9dea0f9bf4d453184a0a34424fcc1c61a671ddc235a",
+      "output_words": [
+        "d2800920",
+        "d65f03c0"
+      ],
+      "status": "passed"
+    },
+    {
+      "baseline": {
+        "actual": {
+          "return": 73
+        },
+        "cache_flush": "freestanding-aarch64-helper",
+        "executed_sha256": "0a1f09b3de84a38a025bc9dea0f9bf4d453184a0a34424fcc1c61a671ddc235a",
+        "expected": {
+          "return": 73
+        },
+        "mapping_permissions": "RW -> RX",
+        "status": "passed"
+      },
+      "baseline_words": [
+        "d2800920",
+        "d65f03c0"
+      ],
+      "expected": {
+        "return": 73,
+        "writeback_index": null
+      },
+      "input_words": [
+        "d2800920",
+        "d65f0fff"
+      ],
+      "lowered": {
+        "actual": {
+          "return": 73
+        },
+        "cache_flush": "freestanding-aarch64-helper",
+        "executed_sha256": "0a1f09b3de84a38a025bc9dea0f9bf4d453184a0a34424fcc1c61a671ddc235a",
+        "expected": {
+          "return": 73
+        },
+        "mapping_permissions": "RW -> RX",
+        "status": "passed"
+      },
+      "name": "retab",
+      "output_sha256": "0a1f09b3de84a38a025bc9dea0f9bf4d453184a0a34424fcc1c61a671ddc235a",
+      "output_words": [
+        "d2800920",
+        "d65f03c0"
+      ],
+      "status": "passed"
+    },
+    {
+      "baseline": {
+        "actual": {
+          "return": 42
+        },
+        "cache_flush": "freestanding-aarch64-helper",
+        "executed_sha256": "82623773da335665d1d1fe8640445ebe943766a861fd2d541c11c7f1bf74c12a",
+        "expected": {
+          "return": 42
+        },
+        "mapping_permissions": "RW -> RX",
+        "status": "passed"
+      },
+      "baseline_words": [
+        "10000069",
+        "d61f0120",
+        "d4200000",
+        "91001c00",
+        "d65f03c0"
+      ],
+      "expected": {
+        "return": 42,
+        "writeback_index": null
+      },
+      "input_words": [
+        "10000069",
+        "d71f0921",
+        "d4200000",
+        "91001c00",
+        "d65f0fff"
+      ],
+      "lowered": {
+        "actual": {
+          "return": 42
+        },
+        "cache_flush": "freestanding-aarch64-helper",
+        "executed_sha256": "82623773da335665d1d1fe8640445ebe943766a861fd2d541c11c7f1bf74c12a",
+        "expected": {
+          "return": 42
+        },
+        "mapping_permissions": "RW -> RX",
+        "status": "passed"
+      },
+      "name": "braa",
+      "output_sha256": "82623773da335665d1d1fe8640445ebe943766a861fd2d541c11c7f1bf74c12a",
+      "output_words": [
+        "10000069",
+        "d61f0120",
+        "d4200000",
+        "91001c00",
+        "d65f03c0"
+      ],
+      "status": "passed"
+    },
+    {
+      "baseline": {
+        "actual": {
+          "return": 42
+        },
+        "cache_flush": "freestanding-aarch64-helper",
+        "executed_sha256": "82623773da335665d1d1fe8640445ebe943766a861fd2d541c11c7f1bf74c12a",
+        "expected": {
+          "return": 42
+        },
+        "mapping_permissions": "RW -> RX",
+        "status": "passed"
+      },
+      "baseline_words": [
+        "10000069",
+        "d61f0120",
+        "d4200000",
+        "91001c00",
+        "d65f03c0"
+      ],
+      "expected": {
+        "return": 42,
+        "writeback_index": null
+      },
+      "input_words": [
+        "10000069",
+        "d71f0d21",
+        "d4200000",
+        "91001c00",
+        "d65f0fff"
+      ],
+      "lowered": {
+        "actual": {
+          "return": 42
+        },
+        "cache_flush": "freestanding-aarch64-helper",
+        "executed_sha256": "82623773da335665d1d1fe8640445ebe943766a861fd2d541c11c7f1bf74c12a",
+        "expected": {
+          "return": 42
+        },
+        "mapping_permissions": "RW -> RX",
+        "status": "passed"
+      },
+      "name": "brab",
+      "output_sha256": "82623773da335665d1d1fe8640445ebe943766a861fd2d541c11c7f1bf74c12a",
+      "output_words": [
+        "10000069",
+        "d61f0120",
+        "d4200000",
+        "91001c00",
+        "d65f03c0"
+      ],
+      "status": "passed"
+    },
+    {
+      "baseline": {
+        "actual": {
+          "return": 42
+        },
+        "cache_flush": "freestanding-aarch64-helper",
+        "executed_sha256": "82623773da335665d1d1fe8640445ebe943766a861fd2d541c11c7f1bf74c12a",
+        "expected": {
+          "return": 42
+        },
+        "mapping_permissions": "RW -> RX",
+        "status": "passed"
+      },
+      "baseline_words": [
+        "10000069",
+        "d61f0120",
+        "d4200000",
+        "91001c00",
+        "d65f03c0"
+      ],
+      "expected": {
+        "return": 42,
+        "writeback_index": null
+      },
+      "input_words": [
+        "10000069",
+        "d61f093f",
+        "d4200000",
+        "91001c00",
+        "d65f0fff"
+      ],
+      "lowered": {
+        "actual": {
+          "return": 42
+        },
+        "cache_flush": "freestanding-aarch64-helper",
+        "executed_sha256": "82623773da335665d1d1fe8640445ebe943766a861fd2d541c11c7f1bf74c12a",
+        "expected": {
+          "return": 42
+        },
+        "mapping_permissions": "RW -> RX",
+        "status": "passed"
+      },
+      "name": "braaz",
+      "output_sha256": "82623773da335665d1d1fe8640445ebe943766a861fd2d541c11c7f1bf74c12a",
+      "output_words": [
+        "10000069",
+        "d61f0120",
+        "d4200000",
+        "91001c00",
+        "d65f03c0"
+      ],
+      "status": "passed"
+    },
+    {
+      "baseline": {
+        "actual": {
+          "return": 42
+        },
+        "cache_flush": "freestanding-aarch64-helper",
+        "executed_sha256": "82623773da335665d1d1fe8640445ebe943766a861fd2d541c11c7f1bf74c12a",
+        "expected": {
+          "return": 42
+        },
+        "mapping_permissions": "RW -> RX",
+        "status": "passed"
+      },
+      "baseline_words": [
+        "10000069",
+        "d61f0120",
+        "d4200000",
+        "91001c00",
+        "d65f03c0"
+      ],
+      "expected": {
+        "return": 42,
+        "writeback_index": null
+      },
+      "input_words": [
+        "10000069",
+        "d61f0d3f",
+        "d4200000",
+        "91001c00",
+        "d65f0fff"
+      ],
+      "lowered": {
+        "actual": {
+          "return": 42
+        },
+        "cache_flush": "freestanding-aarch64-helper",
+        "executed_sha256": "82623773da335665d1d1fe8640445ebe943766a861fd2d541c11c7f1bf74c12a",
+        "expected": {
+          "return": 42
+        },
+        "mapping_permissions": "RW -> RX",
+        "status": "passed"
+      },
+      "name": "brabz",
+      "output_sha256": "82623773da335665d1d1fe8640445ebe943766a861fd2d541c11c7f1bf74c12a",
+      "output_words": [
+        "10000069",
+        "d61f0120",
+        "d4200000",
+        "91001c00",
+        "d65f03c0"
+      ],
+      "status": "passed"
+    },
+    {
+      "baseline": {
+        "actual": {
+          "return": 42
+        },
+        "cache_flush": "freestanding-aarch64-helper",
+        "executed_sha256": "bd85bc57da757cb1ff7172fe4f3d068799da6534d06fce58342d3f23047a1226",
+        "expected": {
+          "return": 42
+        },
+        "mapping_permissions": "RW -> RX",
+        "status": "passed"
+      },
+      "baseline_words": [
+        "a9bf7bfd",
+        "910003fd",
+        "10000089",
+        "d63f0120",
+        "a8c17bfd",
+        "d65f03c0",
+        "91002400",
+        "d65f03c0"
+      ],
+      "expected": {
+        "return": 42,
+        "writeback_index": null
+      },
+      "input_words": [
+        "a9bf7bfd",
+        "910003fd",
+        "10000089",
+        "d73f0921",
+        "a8c17bfd",
+        "d65f0fff",
+        "91002400",
+        "d65f0fff"
+      ],
+      "lowered": {
+        "actual": {
+          "return": 42
+        },
+        "cache_flush": "freestanding-aarch64-helper",
+        "executed_sha256": "bd85bc57da757cb1ff7172fe4f3d068799da6534d06fce58342d3f23047a1226",
+        "expected": {
+          "return": 42
+        },
+        "mapping_permissions": "RW -> RX",
+        "status": "passed"
+      },
+      "name": "blraa",
+      "output_sha256": "bd85bc57da757cb1ff7172fe4f3d068799da6534d06fce58342d3f23047a1226",
+      "output_words": [
+        "a9bf7bfd",
+        "910003fd",
+        "10000089",
+        "d63f0120",
+        "a8c17bfd",
+        "d65f03c0",
+        "91002400",
+        "d65f03c0"
+      ],
+      "status": "passed"
+    },
+    {
+      "baseline": {
+        "actual": {
+          "return": 42
+        },
+        "cache_flush": "freestanding-aarch64-helper",
+        "executed_sha256": "bd85bc57da757cb1ff7172fe4f3d068799da6534d06fce58342d3f23047a1226",
+        "expected": {
+          "return": 42
+        },
+        "mapping_permissions": "RW -> RX",
+        "status": "passed"
+      },
+      "baseline_words": [
+        "a9bf7bfd",
+        "910003fd",
+        "10000089",
+        "d63f0120",
+        "a8c17bfd",
+        "d65f03c0",
+        "91002400",
+        "d65f03c0"
+      ],
+      "expected": {
+        "return": 42,
+        "writeback_index": null
+      },
+      "input_words": [
+        "a9bf7bfd",
+        "910003fd",
+        "10000089",
+        "d73f0d21",
+        "a8c17bfd",
+        "d65f0fff",
+        "91002400",
+        "d65f0fff"
+      ],
+      "lowered": {
+        "actual": {
+          "return": 42
+        },
+        "cache_flush": "freestanding-aarch64-helper",
+        "executed_sha256": "bd85bc57da757cb1ff7172fe4f3d068799da6534d06fce58342d3f23047a1226",
+        "expected": {
+          "return": 42
+        },
+        "mapping_permissions": "RW -> RX",
+        "status": "passed"
+      },
+      "name": "blrab",
+      "output_sha256": "bd85bc57da757cb1ff7172fe4f3d068799da6534d06fce58342d3f23047a1226",
+      "output_words": [
+        "a9bf7bfd",
+        "910003fd",
+        "10000089",
+        "d63f0120",
+        "a8c17bfd",
+        "d65f03c0",
+        "91002400",
+        "d65f03c0"
+      ],
+      "status": "passed"
+    },
+    {
+      "baseline": {
+        "actual": {
+          "return": 42
+        },
+        "cache_flush": "freestanding-aarch64-helper",
+        "executed_sha256": "bd85bc57da757cb1ff7172fe4f3d068799da6534d06fce58342d3f23047a1226",
+        "expected": {
+          "return": 42
+        },
+        "mapping_permissions": "RW -> RX",
+        "status": "passed"
+      },
+      "baseline_words": [
+        "a9bf7bfd",
+        "910003fd",
+        "10000089",
+        "d63f0120",
+        "a8c17bfd",
+        "d65f03c0",
+        "91002400",
+        "d65f03c0"
+      ],
+      "expected": {
+        "return": 42,
+        "writeback_index": null
+      },
+      "input_words": [
+        "a9bf7bfd",
+        "910003fd",
+        "10000089",
+        "d63f093f",
+        "a8c17bfd",
+        "d65f0fff",
+        "91002400",
+        "d65f0fff"
+      ],
+      "lowered": {
+        "actual": {
+          "return": 42
+        },
+        "cache_flush": "freestanding-aarch64-helper",
+        "executed_sha256": "bd85bc57da757cb1ff7172fe4f3d068799da6534d06fce58342d3f23047a1226",
+        "expected": {
+          "return": 42
+        },
+        "mapping_permissions": "RW -> RX",
+        "status": "passed"
+      },
+      "name": "blraaz",
+      "output_sha256": "bd85bc57da757cb1ff7172fe4f3d068799da6534d06fce58342d3f23047a1226",
+      "output_words": [
+        "a9bf7bfd",
+        "910003fd",
+        "10000089",
+        "d63f0120",
+        "a8c17bfd",
+        "d65f03c0",
+        "91002400",
+        "d65f03c0"
+      ],
+      "status": "passed"
+    },
+    {
+      "baseline": {
+        "actual": {
+          "return": 42
+        },
+        "cache_flush": "freestanding-aarch64-helper",
+        "executed_sha256": "bd85bc57da757cb1ff7172fe4f3d068799da6534d06fce58342d3f23047a1226",
+        "expected": {
+          "return": 42
+        },
+        "mapping_permissions": "RW -> RX",
+        "status": "passed"
+      },
+      "baseline_words": [
+        "a9bf7bfd",
+        "910003fd",
+        "10000089",
+        "d63f0120",
+        "a8c17bfd",
+        "d65f03c0",
+        "91002400",
+        "d65f03c0"
+      ],
+      "expected": {
+        "return": 42,
+        "writeback_index": null
+      },
+      "input_words": [
+        "a9bf7bfd",
+        "910003fd",
+        "10000089",
+        "d63f0d3f",
+        "a8c17bfd",
+        "d65f0fff",
+        "91002400",
+        "d65f0fff"
+      ],
+      "lowered": {
+        "actual": {
+          "return": 42
+        },
+        "cache_flush": "freestanding-aarch64-helper",
+        "executed_sha256": "bd85bc57da757cb1ff7172fe4f3d068799da6534d06fce58342d3f23047a1226",
+        "expected": {
+          "return": 42
+        },
+        "mapping_permissions": "RW -> RX",
+        "status": "passed"
+      },
+      "name": "blrabz",
+      "output_sha256": "bd85bc57da757cb1ff7172fe4f3d068799da6534d06fce58342d3f23047a1226",
+      "output_words": [
+        "a9bf7bfd",
+        "910003fd",
+        "10000089",
+        "d63f0120",
+        "a8c17bfd",
+        "d65f03c0",
+        "91002400",
+        "d65f03c0"
+      ],
+      "status": "passed"
+    },
+    {
+      "baseline": {
+        "actual": {
+          "return": 42
+        },
+        "cache_flush": "freestanding-aarch64-helper",
+        "executed_sha256": "823fc08f3aa48a1d901fd6cf0f418ac47d7a9baca155528315e2388af87b348f",
+        "expected": {
+          "return": 42
+        },
+        "mapping_permissions": "RW -> RX",
+        "status": "passed"
+      },
+      "baseline_words": [
+        "a9bf7bfd",
+        "1000009e",
+        "d63f03c0",
+        "a8c17bfd",
+        "d65f03c0",
+        "91002c00",
+        "d65f03c0"
+      ],
+      "expected": {
+        "return": 42,
+        "writeback_index": null
+      },
+      "input_words": [
+        "a9bf7bfd",
+        "1000009e",
+        "d63f0bdf",
+        "a8c17bfd",
+        "d65f0fff",
+        "91002c00",
+        "d65f0fff"
+      ],
+      "lowered": {
+        "actual": {
+          "return": 42
+        },
+        "cache_flush": "freestanding-aarch64-helper",
+        "executed_sha256": "823fc08f3aa48a1d901fd6cf0f418ac47d7a9baca155528315e2388af87b348f",
+        "expected": {
+          "return": 42
+        },
+        "mapping_permissions": "RW -> RX",
+        "status": "passed"
+      },
+      "name": "blraaz_x30_target",
+      "output_sha256": "823fc08f3aa48a1d901fd6cf0f418ac47d7a9baca155528315e2388af87b348f",
+      "output_words": [
+        "a9bf7bfd",
+        "1000009e",
+        "d63f03c0",
+        "a8c17bfd",
+        "d65f03c0",
+        "91002c00",
+        "d65f03c0"
+      ],
+      "status": "passed"
+    },
+    {
+      "baseline": {
+        "actual": {
+          "return": 2391764694893429000
+        },
+        "cache_flush": "freestanding-aarch64-helper",
+        "executed_sha256": "19647f57f48e23c8730ecfc85bdce80bf67ce4eae56e82f97661432fa2018025",
+        "expected": {
+          "return": 2391764694893429000
+        },
+        "mapping_permissions": "RW -> RX",
+        "status": "passed"
+      },
+      "baseline_words": [
+        "f9400400",
+        "d65f03c0"
+      ],
+      "expected": {
+        "return": 2391764694893429000,
+        "writeback_index": null
+      },
+      "input_words": [
+        "f8201400",
+        "d65f0fff"
+      ],
+      "lowered": {
+        "actual": {
+          "return": 2391764694893429000
+        },
+        "cache_flush": "freestanding-aarch64-helper",
+        "executed_sha256": "19647f57f48e23c8730ecfc85bdce80bf67ce4eae56e82f97661432fa2018025",
+        "expected": {
+          "return": 2391764694893429000
+        },
+        "mapping_permissions": "RW -> RX",
+        "status": "passed"
+      },
+      "name": "ldraa_positive",
+      "output_sha256": "19647f57f48e23c8730ecfc85bdce80bf67ce4eae56e82f97661432fa2018025",
+      "output_words": [
+        "f9400400",
+        "d65f03c0"
+      ],
+      "status": "passed"
+    },
+    {
+      "baseline": {
+        "actual": {
+          "return": 1161981756646125600
+        },
+        "cache_flush": "freestanding-aarch64-helper",
+        "executed_sha256": "271363894b9c13f0d85cb898101b8b4be5f96989edb1e6b9290181c6d35f8143",
+        "expected": {
+          "return": 1161981756646125600
+        },
+        "mapping_permissions": "RW -> RX",
+        "status": "passed"
+      },
+      "baseline_words": [
+        "f85f8000",
+        "d65f03c0"
+      ],
+      "expected": {
+        "return": 1161981756646125600,
+        "writeback_index": null
+      },
+      "input_words": [
+        "f87ff400",
+        "d65f0fff"
+      ],
+      "lowered": {
+        "actual": {
+          "return": 1161981756646125600
+        },
+        "cache_flush": "freestanding-aarch64-helper",
+        "executed_sha256": "271363894b9c13f0d85cb898101b8b4be5f96989edb1e6b9290181c6d35f8143",
+        "expected": {
+          "return": 1161981756646125600
+        },
+        "mapping_permissions": "RW -> RX",
+        "status": "passed"
+      },
+      "name": "ldraa_negative",
+      "output_sha256": "271363894b9c13f0d85cb898101b8b4be5f96989edb1e6b9290181c6d35f8143",
+      "output_words": [
+        "f85f8000",
+        "d65f03c0"
+      ],
+      "status": "passed"
+    },
+    {
+      "baseline": {
+        "actual": {
+          "return": 2391764694893429000,
+          "written_base_offset": 8,
+          "written_value": 2391764694893429000
+        },
+        "cache_flush": "freestanding-aarch64-helper",
+        "executed_sha256": "76163c6a48dcbbe75ed09876cd0acc6fc8ee381ff28ff89f80c0319cd8dedf97",
+        "expected": {
+          "return": 2391764694893429000,
+          "written_base_offset": 8,
+          "written_value": 2391764694893429000
+        },
+        "mapping_permissions": "RW -> RX",
+        "status": "passed"
+      },
+      "baseline_words": [
+        "f8408c02",
+        "f9000022",
+        "f9000420",
+        "aa0203e0",
+        "d65f03c0"
+      ],
+      "expected": {
+        "return": 2391764694893429000,
+        "writeback_index": 1
+      },
+      "input_words": [
+        "f8201c02",
+        "f9000022",
+        "f9000420",
+        "aa0203e0",
+        "d65f0fff"
+      ],
+      "lowered": {
+        "actual": {
+          "return": 2391764694893429000,
+          "written_base_offset": 8,
+          "written_value": 2391764694893429000
+        },
+        "cache_flush": "freestanding-aarch64-helper",
+        "executed_sha256": "76163c6a48dcbbe75ed09876cd0acc6fc8ee381ff28ff89f80c0319cd8dedf97",
+        "expected": {
+          "return": 2391764694893429000,
+          "written_base_offset": 8,
+          "written_value": 2391764694893429000
+        },
+        "mapping_permissions": "RW -> RX",
+        "status": "passed"
+      },
+      "name": "ldraa_pre_positive",
+      "output_sha256": "76163c6a48dcbbe75ed09876cd0acc6fc8ee381ff28ff89f80c0319cd8dedf97",
+      "output_words": [
+        "f8408c02",
+        "f9000022",
+        "f9000420",
+        "aa0203e0",
+        "d65f03c0"
+      ],
+      "status": "passed"
+    },
+    {
+      "baseline": {
+        "actual": {
+          "return": 1161981756646125600,
+          "written_base_offset": 0,
+          "written_value": 1161981756646125600
+        },
+        "cache_flush": "freestanding-aarch64-helper",
+        "executed_sha256": "aef132f1b32b7c7eb99ff9c42844eab0002428abded3345b41f01751a0afd58d",
+        "expected": {
+          "return": 1161981756646125600,
+          "written_base_offset": 0,
+          "written_value": 1161981756646125600
+        },
+        "mapping_permissions": "RW -> RX",
+        "status": "passed"
+      },
+      "baseline_words": [
+        "f85f8c02",
+        "f9000022",
+        "f9000420",
+        "aa0203e0",
+        "d65f03c0"
+      ],
+      "expected": {
+        "return": 1161981756646125600,
+        "writeback_index": 0
+      },
+      "input_words": [
+        "f87ffc02",
+        "f9000022",
+        "f9000420",
+        "aa0203e0",
+        "d65f0fff"
+      ],
+      "lowered": {
+        "actual": {
+          "return": 1161981756646125600,
+          "written_base_offset": 0,
+          "written_value": 1161981756646125600
+        },
+        "cache_flush": "freestanding-aarch64-helper",
+        "executed_sha256": "aef132f1b32b7c7eb99ff9c42844eab0002428abded3345b41f01751a0afd58d",
+        "expected": {
+          "return": 1161981756646125600,
+          "written_base_offset": 0,
+          "written_value": 1161981756646125600
+        },
+        "mapping_permissions": "RW -> RX",
+        "status": "passed"
+      },
+      "name": "ldraa_pre_negative",
+      "output_sha256": "aef132f1b32b7c7eb99ff9c42844eab0002428abded3345b41f01751a0afd58d",
+      "output_words": [
+        "f85f8c02",
+        "f9000022",
+        "f9000420",
+        "aa0203e0",
+        "d65f03c0"
+      ],
+      "status": "passed"
+    },
+    {
+      "baseline": {
+        "actual": {
+          "return": 55
+        },
+        "cache_flush": "freestanding-aarch64-helper",
+        "executed_sha256": "6e550ac20ba4ea284e2fcc42c84b72b492e1e72a8ecfbb6aaab6b2871191d247",
+        "expected": {
+          "return": 55
+        },
+        "mapping_permissions": "RW -> RX",
+        "status": "passed"
+      },
+      "baseline_words": [
+        "a9bf07e0",
+        "f94003e0",
+        "910043ff",
+        "d65f03c0"
+      ],
+      "expected": {
+        "return": 55,
+        "writeback_index": null
+      },
+      "input_words": [
+        "a9bf07e0",
+        "f82007e0",
+        "910043ff",
+        "d65f0fff"
+      ],
+      "lowered": {
+        "actual": {
+          "return": 55
+        },
+        "cache_flush": "freestanding-aarch64-helper",
+        "executed_sha256": "6e550ac20ba4ea284e2fcc42c84b72b492e1e72a8ecfbb6aaab6b2871191d247",
+        "expected": {
+          "return": 55
+        },
+        "mapping_permissions": "RW -> RX",
+        "status": "passed"
+      },
+      "name": "ldraa_sp_base",
+      "output_sha256": "6e550ac20ba4ea284e2fcc42c84b72b492e1e72a8ecfbb6aaab6b2871191d247",
+      "output_words": [
+        "a9bf07e0",
+        "f94003e0",
+        "910043ff",
+        "d65f03c0"
+      ],
+      "status": "passed"
+    },
+    {
+      "baseline": {
+        "actual": {
+          "return": 2391764694893429000
+        },
+        "cache_flush": "freestanding-aarch64-helper",
+        "executed_sha256": "19647f57f48e23c8730ecfc85bdce80bf67ce4eae56e82f97661432fa2018025",
+        "expected": {
+          "return": 2391764694893429000
+        },
+        "mapping_permissions": "RW -> RX",
+        "status": "passed"
+      },
+      "baseline_words": [
+        "f9400400",
+        "d65f03c0"
+      ],
+      "expected": {
+        "return": 2391764694893429000,
+        "writeback_index": null
+      },
+      "input_words": [
+        "f8a01400",
+        "d65f0fff"
+      ],
+      "lowered": {
+        "actual": {
+          "return": 2391764694893429000
+        },
+        "cache_flush": "freestanding-aarch64-helper",
+        "executed_sha256": "19647f57f48e23c8730ecfc85bdce80bf67ce4eae56e82f97661432fa2018025",
+        "expected": {
+          "return": 2391764694893429000
+        },
+        "mapping_permissions": "RW -> RX",
+        "status": "passed"
+      },
+      "name": "ldrab_positive",
+      "output_sha256": "19647f57f48e23c8730ecfc85bdce80bf67ce4eae56e82f97661432fa2018025",
+      "output_words": [
+        "f9400400",
+        "d65f03c0"
+      ],
+      "status": "passed"
+    },
+    {
+      "baseline": {
+        "actual": {
+          "return": 1161981756646125600
+        },
+        "cache_flush": "freestanding-aarch64-helper",
+        "executed_sha256": "271363894b9c13f0d85cb898101b8b4be5f96989edb1e6b9290181c6d35f8143",
+        "expected": {
+          "return": 1161981756646125600
+        },
+        "mapping_permissions": "RW -> RX",
+        "status": "passed"
+      },
+      "baseline_words": [
+        "f85f8000",
+        "d65f03c0"
+      ],
+      "expected": {
+        "return": 1161981756646125600,
+        "writeback_index": null
+      },
+      "input_words": [
+        "f8fff400",
+        "d65f0fff"
+      ],
+      "lowered": {
+        "actual": {
+          "return": 1161981756646125600
+        },
+        "cache_flush": "freestanding-aarch64-helper",
+        "executed_sha256": "271363894b9c13f0d85cb898101b8b4be5f96989edb1e6b9290181c6d35f8143",
+        "expected": {
+          "return": 1161981756646125600
+        },
+        "mapping_permissions": "RW -> RX",
+        "status": "passed"
+      },
+      "name": "ldrab_negative",
+      "output_sha256": "271363894b9c13f0d85cb898101b8b4be5f96989edb1e6b9290181c6d35f8143",
+      "output_words": [
+        "f85f8000",
+        "d65f03c0"
+      ],
+      "status": "passed"
+    },
+    {
+      "baseline": {
+        "actual": {
+          "return": 2391764694893429000,
+          "written_base_offset": 8,
+          "written_value": 2391764694893429000
+        },
+        "cache_flush": "freestanding-aarch64-helper",
+        "executed_sha256": "76163c6a48dcbbe75ed09876cd0acc6fc8ee381ff28ff89f80c0319cd8dedf97",
+        "expected": {
+          "return": 2391764694893429000,
+          "written_base_offset": 8,
+          "written_value": 2391764694893429000
+        },
+        "mapping_permissions": "RW -> RX",
+        "status": "passed"
+      },
+      "baseline_words": [
+        "f8408c02",
+        "f9000022",
+        "f9000420",
+        "aa0203e0",
+        "d65f03c0"
+      ],
+      "expected": {
+        "return": 2391764694893429000,
+        "writeback_index": 1
+      },
+      "input_words": [
+        "f8a01c02",
+        "f9000022",
+        "f9000420",
+        "aa0203e0",
+        "d65f0fff"
+      ],
+      "lowered": {
+        "actual": {
+          "return": 2391764694893429000,
+          "written_base_offset": 8,
+          "written_value": 2391764694893429000
+        },
+        "cache_flush": "freestanding-aarch64-helper",
+        "executed_sha256": "76163c6a48dcbbe75ed09876cd0acc6fc8ee381ff28ff89f80c0319cd8dedf97",
+        "expected": {
+          "return": 2391764694893429000,
+          "written_base_offset": 8,
+          "written_value": 2391764694893429000
+        },
+        "mapping_permissions": "RW -> RX",
+        "status": "passed"
+      },
+      "name": "ldrab_pre_positive",
+      "output_sha256": "76163c6a48dcbbe75ed09876cd0acc6fc8ee381ff28ff89f80c0319cd8dedf97",
+      "output_words": [
+        "f8408c02",
+        "f9000022",
+        "f9000420",
+        "aa0203e0",
+        "d65f03c0"
+      ],
+      "status": "passed"
+    },
+    {
+      "baseline": {
+        "actual": {
+          "return": 1161981756646125600,
+          "written_base_offset": 0,
+          "written_value": 1161981756646125600
+        },
+        "cache_flush": "freestanding-aarch64-helper",
+        "executed_sha256": "aef132f1b32b7c7eb99ff9c42844eab0002428abded3345b41f01751a0afd58d",
+        "expected": {
+          "return": 1161981756646125600,
+          "written_base_offset": 0,
+          "written_value": 1161981756646125600
+        },
+        "mapping_permissions": "RW -> RX",
+        "status": "passed"
+      },
+      "baseline_words": [
+        "f85f8c02",
+        "f9000022",
+        "f9000420",
+        "aa0203e0",
+        "d65f03c0"
+      ],
+      "expected": {
+        "return": 1161981756646125600,
+        "writeback_index": 0
+      },
+      "input_words": [
+        "f8fffc02",
+        "f9000022",
+        "f9000420",
+        "aa0203e0",
+        "d65f0fff"
+      ],
+      "lowered": {
+        "actual": {
+          "return": 1161981756646125600,
+          "written_base_offset": 0,
+          "written_value": 1161981756646125600
+        },
+        "cache_flush": "freestanding-aarch64-helper",
+        "executed_sha256": "aef132f1b32b7c7eb99ff9c42844eab0002428abded3345b41f01751a0afd58d",
+        "expected": {
+          "return": 1161981756646125600,
+          "written_base_offset": 0,
+          "written_value": 1161981756646125600
+        },
+        "mapping_permissions": "RW -> RX",
+        "status": "passed"
+      },
+      "name": "ldrab_pre_negative",
+      "output_sha256": "aef132f1b32b7c7eb99ff9c42844eab0002428abded3345b41f01751a0afd58d",
+      "output_words": [
+        "f85f8c02",
+        "f9000022",
+        "f9000420",
+        "aa0203e0",
+        "d65f03c0"
+      ],
+      "status": "passed"
+    },
+    {
+      "baseline": {
+        "actual": {
+          "return": 55
+        },
+        "cache_flush": "freestanding-aarch64-helper",
+        "executed_sha256": "6e550ac20ba4ea284e2fcc42c84b72b492e1e72a8ecfbb6aaab6b2871191d247",
+        "expected": {
+          "return": 55
+        },
+        "mapping_permissions": "RW -> RX",
+        "status": "passed"
+      },
+      "baseline_words": [
+        "a9bf07e0",
+        "f94003e0",
+        "910043ff",
+        "d65f03c0"
+      ],
+      "expected": {
+        "return": 55,
+        "writeback_index": null
+      },
+      "input_words": [
+        "a9bf07e0",
+        "f8a007e0",
+        "910043ff",
+        "d65f0fff"
+      ],
+      "lowered": {
+        "actual": {
+          "return": 55
+        },
+        "cache_flush": "freestanding-aarch64-helper",
+        "executed_sha256": "6e550ac20ba4ea284e2fcc42c84b72b492e1e72a8ecfbb6aaab6b2871191d247",
+        "expected": {
+          "return": 55
+        },
+        "mapping_permissions": "RW -> RX",
+        "status": "passed"
+      },
+      "name": "ldrab_sp_base",
+      "output_sha256": "6e550ac20ba4ea284e2fcc42c84b72b492e1e72a8ecfbb6aaab6b2871191d247",
+      "output_words": [
+        "a9bf07e0",
+        "f94003e0",
+        "910043ff",
+        "d65f03c0"
+      ],
+      "status": "passed"
+    }
+  ],
+  "host": {
+    "byteorder": "little",
+    "hwcap": "0x119fff",
+    "machine": "aarch64",
+    "paca": false,
+    "pacg": false,
+    "pointer_bits": 64,
+    "python": "3.12.11",
+    "release": "4.19.157-perf+",
+    "system": "Linux"
+  },
+  "kind": "route-a-synthetic-native-correctness",
+  "original_pauth_words_executed": false,
+  "passed": 23,
+  "payload_sha256": "7228dc5a24f5e6fe0583ffdf6ba5b30b4a9234cc30a4d72fb4b3f985f3133a5e",
+  "performance_measurement": false,
+  "schema_version": 1,
+  "status": "passed",
+  "total": 23,
+  "device": {
+    "model": "Lenovo TB371FC",
+    "soc": "Snapdragon 870 / SM8250",
+    "environment": "Android 14 / Termux; userspace test only"
+  },
+  "observed_date": "2026-11-23",
+  "os_boot_verified": false,
+  "scope": "Synthetic original functions; neither Apple software execution nor Darwin ABI validation.",
+  "sanitization": "Removed application UID and absolute device paths; no device serials or account information collected in this record."
+}

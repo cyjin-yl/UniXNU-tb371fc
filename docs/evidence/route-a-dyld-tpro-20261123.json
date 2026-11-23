@@ -1,0 +1,359 @@
+{
+  "schema_version": 1,
+  "audit_date_utc": "2026-11-23",
+  "purpose": "Read-only feature-dispatch evidence, separate from arm64e instruction lowering and native compatibility certification.",
+  "input": {
+    "product": "iPad17,3",
+    "version": "27.0.1",
+    "build": "24A446",
+    "path": "usr/lib/dyld",
+    "sha256": "ab9887ed96c9c08ad68d4c6a5c27e8289fb0c9e55ec3e134547292a1ec579608",
+    "size": 1447088
+  },
+  "result": {
+    "non_tpro_dispatch_observed_in_actual_binary": true,
+    "all_236_tchange_sites_dispatch_verified": false,
+    "native_on_cortex_a77": false,
+    "runtime_dispatch_verified": false,
+    "binary_was_modified_by_this_audit": false,
+    "recommendation": "Continue checking the actual non-TPRO startup and protected-stack paths. Do not NOP TCHANGE or advertise unavailable hardware. Current observations do not establish a need for another IPSW.",
+    "scope_note": "False verification flags mean not established, not a demonstration that legitimate non-TPRO execution cannot work."
+  },
+  "observed_binary_gates": [
+    {
+      "function": "__ZN3lsl13MemoryManagerC2EPPKcS3_Pv",
+      "range": [
+        "0x713c",
+        "0x7208"
+      ],
+      "observations": [
+        {
+          "at": "0x7160",
+          "meaning": "32-bit zero store at object+0x1f clears the byte at object+0x20."
+        },
+        {
+          "at": [
+            "0x7178",
+            "0x717c"
+          ],
+          "meaning": "Forms pointer 0xa62f7 to the dyld_hw_tpro C string."
+        },
+        {
+          "at": "0x7184",
+          "target": "0x6e78",
+          "target_symbol": "__simple_getenv",
+          "meaning": "Queries the apple-vector argument for dyld_hw_tpro."
+        },
+        {
+          "at": "0x7188",
+          "target_if_null": "0x7194",
+          "meaning": "Skips flag assignment when key is absent."
+        },
+        {
+          "at": "0x7190",
+          "meaning": "Stores byte 1 at object+0x20 only when the query result is non-null."
+        }
+      ],
+      "inference": "The hardware-enable flag follows apple-vector key presence. A value string of 0 does not constitute disabling the flag; absence of the key is required for this branch."
+    },
+    {
+      "function": "dyld4::ReadOnlyCallback::operator() specialization",
+      "range": [
+        "0x2ffc",
+        "0x3284"
+      ],
+      "observations": [
+        {
+          "at": "0x3028",
+          "target": "0x3284",
+          "target_symbol": "lsl::MemoryManager::memoryManager()"
+        },
+        {
+          "at": "0x3030",
+          "meaning": "Reads protected-stack pointer at manager+0x30; a prior protected-stack branch must be considered separately."
+        },
+        {
+          "at": "0x3040",
+          "meaning": "Reads hardware-enable byte manager+0x20."
+        },
+        {
+          "at": [
+            "0x3044",
+            "0x3048"
+          ],
+          "ordinary_path": "0x31e4",
+          "meaning": "If the byte is not 1, branches to an ordinary callback path which skips this function's TPRO register and TCHANGE operations."
+        },
+        {
+          "cached_mode_address": "0xc8000",
+          "mode_source_address": "0xfffffc10c",
+          "meaning": "Hardware path obtains a cached mode, populating it from the commpage when initially -1. It accepts modes 2 through 4; other modes reach a BRK."
+        },
+        {
+          "apple_register": "s3_6_c15_c1_5",
+          "commpage_constant_addresses": [
+            "0xfffffc0d0",
+            "0xfffffc0d8"
+          ],
+          "mode_condition": "(mode & 6) == 2",
+          "meaning": "One supported hardware path uses Apple-specific register accesses."
+        },
+        {
+          "at": "0x3240",
+          "word": "0xd5940000",
+          "instruction": "TCHANGEB x0, #0",
+          "meaning": "S1POE2 path executes conditionally after checking the current index."
+        },
+        {
+          "at": "0x327c",
+          "word": "0xd5900040",
+          "instruction": "TCHANGEF x0, #2",
+          "meaning": "S1POE2 path executes conditionally after checking the current index."
+        }
+      ],
+      "limitation": "This selected function establishes a feature branch, not a whole-program dominance proof. The nested protected-stack path is checked before the hardware-enable byte."
+    },
+    {
+      "function": "__ZNK5dyld413ProcessConfig7Process16defaultTproStackEv",
+      "range": [
+        "0x21264",
+        "0x212f0"
+      ],
+      "observations": [
+        {
+          "at": "0x2127c",
+          "meaning": "Loads the apple-vector pointer from process+0xd0."
+        },
+        {
+          "at": [
+            "0x21280",
+            "0x21284"
+          ],
+          "string_address": "0xa62f7",
+          "string": "dyld_hw_tpro"
+        },
+        {
+          "at": "0x21288",
+          "target": "0x6e78",
+          "target_symbol": "__simple_getenv"
+        },
+        {
+          "at": "0x2128c",
+          "null_result_branch": "0x212e0",
+          "meaning": "Absent key branches directly to epilogue, returning the zero result without policy calls."
+        }
+      ],
+      "inference": "The actual binary, independently of public source, disables the protected-stack policy when the hardware key is absent."
+    },
+    {
+      "function": "__ZN3lsl14ProtectedStackC1Eb",
+      "range": [
+        "0x3cb2c",
+        "0x3cb68"
+      ],
+      "observations": [
+        {
+          "at": [
+            "0x3cb40",
+            "0x3cb44",
+            "0x3cb48"
+          ],
+          "meaning": "Zeros 64 bytes of the protected-stack object."
+        },
+        {
+          "at": "0x3cb4c",
+          "false_branch": "0x3cb58",
+          "meaning": "When the bool argument is zero, returns without allocating the stack."
+        },
+        {
+          "at": "0x3cb54",
+          "target": "0x3c7e8",
+          "meaning": "Stack allocation occurs only for a nonzero bool argument."
+        }
+      ],
+      "inference": "A disabled object retains null top, bottom and nesting fields."
+    },
+    {
+      "function": "__ZNK3lsl14ProtectedStack21onStackInCurrentFrameEv",
+      "range": [
+        "0x32ac",
+        "0x331c"
+      ],
+      "observations": [
+        {
+          "at": "0x32b8",
+          "null_bottom_branch": "0x32e0"
+        },
+        {
+          "at": "0x32e4",
+          "null_top_branch": "0x3308"
+        },
+        {
+          "at": [
+            "0x3308",
+            "0x330c"
+          ],
+          "meaning": "With null bounds, the valid nonzero stack pointer is compared against zero and the unsigned-less-than result is false."
+        }
+      ],
+      "inference": "A zero-initialized disabled protected stack does not enter the selected callback's nested protected-stack branch."
+    },
+    {
+      "function": "__ZNK3lsl14ProtectedStack29onStackInAnyFrameInThisThreadEv",
+      "range": [
+        "0x32020",
+        "0x320c8"
+      ],
+      "observations": [
+        {
+          "at": "0x32024",
+          "null_top_branch": "0x320b8"
+        },
+        {
+          "at": "0x320b8",
+          "meaning": "Sets comparison value to zero and branches back to load the nesting field."
+        },
+        {
+          "at": [
+            "0x32074",
+            "0x32078"
+          ],
+          "equal_branch": "0x320c0"
+        },
+        {
+          "at": "0x320c0",
+          "meaning": "Returns false when both fields are null, before the thread-local-register access."
+        }
+      ],
+      "inference": "A disabled zero-initialized stack also fails the nested writable-stack check."
+    },
+    {
+      "function": "__ZN3lsl13MemoryManager17setProtectedStackERNS_14ProtectedStackE",
+      "range": [
+        "0x3ccf0",
+        "0x3ccf8"
+      ],
+      "observation": "Stores the supplied object pointer into manager+0x30; a non-null pointer by itself does not establish that the protected stack is enabled."
+    }
+  ],
+  "tchange_inventory": {
+    "total": 236,
+    "tchangef_x0_2": 116,
+    "tchangeb_x0_0": 120,
+    "containing_declared_functions": 95,
+    "candidate_direct_branch_references_to_containing_roots": 121,
+    "callgraph_limit": "The 121 B/BL edges are bit-decoded static candidates, not independently certified reachable-call edges.",
+    "raw_metadata_remote": "/work/dyld-root-audit/tpro-initial.json"
+  },
+  "public_source_corroboration": {
+    "project": "apple-oss-distributions/dyld",
+    "commit": "fd8d0c4d52320ebf64db34f3cb280310d905c5ae",
+    "not_claimed_as_exact_input_build_source": true,
+    "locations": [
+      {
+        "path": "lsl/Allocator.cpp",
+        "lines": "128-142",
+        "finding": "MemoryManager sets _tproEnable only when the apple-vector dyld_hw_tpro key is present; comment distinguishes hardware support from per-process DATA_CONST use.",
+        "url": "https://github.com/apple-oss-distributions/dyld/blob/fd8d0c4d52320ebf64db34f3cb280310d905c5ae/lsl/Allocator.cpp"
+      },
+      {
+        "path": "lsl/Allocator.cpp",
+        "lines": "220-236",
+        "finding": "When dyld_hw_tpro is absent, cache TPRO_CONST uses mprotect transitions.",
+        "url": "https://github.com/apple-oss-distributions/dyld/blob/fd8d0c4d52320ebf64db34f3cb280310d905c5ae/lsl/Allocator.cpp"
+      },
+      {
+        "path": "lsl/Allocator.h",
+        "lines": "494-549",
+        "finding": "withReadOnlyTPROMemory has protected-stack and enabled-TPRO branches, followed by an ordinary work() path.",
+        "url": "https://github.com/apple-oss-distributions/dyld/blob/fd8d0c4d52320ebf64db34f3cb280310d905c5ae/lsl/Allocator.h"
+      },
+      {
+        "path": "lsl/Allocator.h",
+        "lines": "576-585",
+        "finding": "_tproEnable defaults false and _protectedStack defaults nullptr.",
+        "url": "https://github.com/apple-oss-distributions/dyld/blob/fd8d0c4d52320ebf64db34f3cb280310d905c5ae/lsl/Allocator.h"
+      },
+      {
+        "path": "lsl/Allocator.cpp",
+        "lines": "1180-1187",
+        "finding": "ProtectedStack constructor returns before allocating a stack if isEnabledInProcess is false.",
+        "url": "https://github.com/apple-oss-distributions/dyld/blob/fd8d0c4d52320ebf64db34f3cb280310d905c5ae/lsl/Allocator.cpp"
+      },
+      {
+        "path": "dyld/DyldProcessConfig.cpp",
+        "lines": "395-414",
+        "finding": "defaultTproStack returns false when defaultTproHW is false. defaultTproHW checks presence of dyld_hw_tpro in the apple vector.",
+        "url": "https://github.com/apple-oss-distributions/dyld/blob/fd8d0c4d52320ebf64db34f3cb280310d905c5ae/dyld/DyldProcessConfig.cpp"
+      }
+    ]
+  },
+  "llvm_control_flow_evidence": {
+    "project": "llvm/llvm-project",
+    "commit": "8ac298779c251819b6bab7739464547ee014aabd",
+    "retrieved_utc": "2026-11-23",
+    "files": [
+      {
+        "path": "llvm/lib/Target/AArch64/AArch64InstrFormats.td",
+        "sha256": "78245fff9e98387145b679cc48fe4ea04ebe602e5d6f91ed2916314bb7c28ed8",
+        "url": "https://github.com/llvm/llvm-project/blob/8ac298779c251819b6bab7739464547ee014aabd/llvm/lib/Target/AArch64/AArch64InstrFormats.td"
+      },
+      {
+        "path": "llvm/lib/Target/AArch64/AArch64InstrInfo.td",
+        "sha256": "865d28d1cbbf0787078beca33ab109c5e29dc811a635230cfce29ee322fd4173",
+        "url": "https://github.com/llvm/llvm-project/blob/8ac298779c251819b6bab7739464547ee014aabd/llvm/lib/Target/AArch64/AArch64InstrInfo.td"
+      },
+      {
+        "path": "llvm/include/llvm/Target/Target.td",
+        "sha256": "0455f3fb04aa22ed1949a693c6e4577a77591768569e46fb3f2f364dde26f2b9",
+        "url": "https://github.com/llvm/llvm-project/blob/8ac298779c251819b6bab7739464547ee014aabd/llvm/include/llvm/Target/Target.td"
+      }
+    ],
+    "inheritance": "TCHANGE{Reg,Imm}Inst -> I -> EncodedI -> AArch64Inst -> Instruction",
+    "declarations": "AArch64InstrInfo.td 12929-12934 declares all four forms with HasS1POE2 predicate.",
+    "formats": "AArch64InstrFormats.td 13684-13713 gives destination GPR plus input GPR/immediate and NB bit. I/EncodedI/AArch64Inst (84-143) do not override branch, terminator or barrier semantics.",
+    "defaults": "Target.td 655-674 defaults isBranch, isReturn, isIndirectBranch, isCall, isBarrier, isTrap and isTerminator to false.",
+    "conclusion": "LLVM represents the normal execution path as fallthrough. This is compiler implementation evidence and does not remove architectural exceptions or establish CPU feature availability."
+  },
+  "arm_exception_reference": {
+    "url": "https://support.arm.com/documentation/111107/2026-09/AArch64-Registers/ESR-EL1--Exception-Syndrome-Register--EL1-",
+    "section": "ISS encoding for an Illegal TIndex Change exception",
+    "finding": "The architecture describes Illegal TIndex Change exceptions, identifies immediate and register TCHANGEF/TCHANGEB forms separately, and records out-of-range target indices. TCHANGE must not be modeled as a harmless NOP.",
+    "full_instruction_asl_review": "not completed; the separately retrieved PDF did not yield TCHANGE text matches, so no instruction-operation claim is based on that PDF"
+  },
+  "remaining_checks": [
+    "Complete actual early start() incoming branches, including TCHANGE sites near 0x4944 and 0x4aac and references to dyld_hw_tpro=1.",
+    "Trace protected-stack constructor callers to connect the observed defaultTproStack gate to every actual constructed object; both endpoints are verified, but all call-site propagation is not.",
+    "All TCHANGE and Apple-specific-register sites, including callbacks, must be shown unreachable or supported under the chosen runtime contract.",
+    "The port must consistently provide non-TPRO apple-vector and commpage values plus working VM protection semantics; changing a single flag is not an execution test.",
+    "Shared-cache code and later loaded libraries have not been covered by this selected dyld audit.",
+    "This report neither certifies native execution nor boots iPadOS."
+  ],
+  "early_start_observation": {
+    "status": "partial; incoming feature gates not completely traced",
+    "function": "start",
+    "range": [
+      "0x3be0",
+      "0x5a90"
+    ],
+    "selected_tchange_sites": [
+      "0x4944",
+      "0x4aac"
+    ],
+    "finding": "These sites are preceded by a current-index read and comparison, and nearby hardware paths select Apple register or S1POE2 operation using the cached commpage mode. The inspected slice does not establish which higher-level enable conditions dominate all incoming branches.",
+    "important_unresolved_string": {
+      "at": "0xa5e9c",
+      "text": "dyld_hw_tpro=1",
+      "note": "The purpose and conditions of all references to this literal were not traced. Key omission must be validated through the complete startup path, not assumed sufficient from the constructor alone."
+    }
+  },
+  "arm_pdf_attempt": {
+    "url": "https://documentation-service.arm.com/static/69402f1f6efc1635355c6f24",
+    "size": 23477435,
+    "sha256": "1eb98e816742742cb9497dd3aa0263588eb49d0e2c62e42f2019baf9b81d1c3d",
+    "pages": 5250,
+    "matching_tchange_pages": 0,
+    "used_as_instruction_semantics_evidence": false,
+    "installation_scope": "PyMuPDF installed under isolated /work/isa-python only; parent audit venv was not modified."
+  }
+}

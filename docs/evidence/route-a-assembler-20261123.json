@@ -1,0 +1,907 @@
+{
+  "assembler_version": "GNU assembler (GNU Binutils for Debian) 2.44\nCopyright (C) 2025 Free Software Foundation, Inc.\nThis program is free software; you may redistribute it under the terms of\nthe GNU General Public License version 3 or later.\nThis program has absolutely no warranty.\nThis assembler was configured for a target of `aarch64-linux-gnu'.",
+  "fixture_provenance": "AArch64 machine encodings from the accepted LLVM PAuth assembler/disassembler tests in https://reviews.llvm.org/D36517 . Hand-authored replacement expectations use ordinary A64 BR/BLR/RET/LDR/LDUR encodings. No Apple binary input.",
+  "fixture_sha256": "18fe63e83b1f65817a4edcf75e49975ef0a0143bea3af4549868f1c476445949",
+  "host": "Linux-7.0.14-26-pve-x86_64-with-glibc2.41",
+  "input_encoding_passed": 54,
+  "input_encoding_total": 54,
+  "kind": "route-a-independent-assembler-oracle",
+  "objcopy_version": "GNU objcopy (GNU Binutils for Debian) 2.44",
+  "original_artifacts": {
+    "architecture": "armv8.3-a",
+    "assembly_sha256": "e3cc7b930d83e1e726651982fda0f41bed033e372e80e127063e5a30ce191d74",
+    "binary_sha256": "f1f52be9fa90ddfae1bbf75a658d39571944e5f849a3f120ea962f75488f82e0",
+    "commands": [
+      [
+        "aarch64-linux-gnu-as",
+        "-march=armv8.3-a",
+        "-o",
+        "/work/route_a_oracle/original.o",
+        "/work/route_a_oracle/original.s"
+      ],
+      [
+        "aarch64-linux-gnu-objcopy",
+        "-O",
+        "binary",
+        "--only-section=.text",
+        "/work/route_a_oracle/original.o",
+        "/work/route_a_oracle/original.bin"
+      ]
+    ],
+    "instruction_count": 54
+  },
+  "os_boot_verified": false,
+  "passed": 54,
+  "rejected_vectors_input_only": 9,
+  "replacement_artifacts": {
+    "architecture": "armv8-a",
+    "assembly_sha256": "98b972a2a6f9ed55752919292b3921f26a6bb445785f2ec78f8e15365cd036dc",
+    "binary_sha256": "b92c451806a407e323083d2f04b13cc59a0a913048f1d3d1a0cf55bfaba39f63",
+    "commands": [
+      [
+        "aarch64-linux-gnu-as",
+        "-march=armv8-a",
+        "-o",
+        "/work/route_a_oracle/replacement.o",
+        "/work/route_a_oracle/replacement.s"
+      ],
+      [
+        "aarch64-linux-gnu-objcopy",
+        "-O",
+        "binary",
+        "--only-section=.text",
+        "/work/route_a_oracle/replacement.o",
+        "/work/route_a_oracle/replacement.bin"
+      ]
+    ],
+    "instruction_count": 45
+  },
+  "replacement_encoding_passed": 45,
+  "replacement_encoding_total": 45,
+  "reproducible_runner": "scripts/route_a_checks/verify_fixture.py",
+  "runner_sha256": "e6ceb1df7547ba3d581a880a3b45f4bf351d20f7439152d7cca875cc1c2263f9",
+  "schema_version": 1,
+  "scope": "Encoding agreement only; no lowering implementation is imported or executed.",
+  "status": "passed",
+  "timestamp_utc": "2026-11-23T08:37:33.186991+00:00",
+  "total": 54,
+  "vectors": [
+    {
+      "assembled_word": "d503233f",
+      "assembly": "paciasp",
+      "checks": [
+        "input_encoding",
+        "replacement_encoding_armv8_a"
+      ],
+      "expected_word": "d503233f",
+      "index": 0,
+      "input_matches": true,
+      "replacement_assembled_word": "d503233f",
+      "replacement_assembly": "hint #25",
+      "replacement_expected_word": "d503233f",
+      "replacement_matches": true,
+      "status": "passed"
+    },
+    {
+      "assembled_word": "d50323bf",
+      "assembly": "autiasp",
+      "checks": [
+        "input_encoding",
+        "replacement_encoding_armv8_a"
+      ],
+      "expected_word": "d50323bf",
+      "index": 1,
+      "input_matches": true,
+      "replacement_assembled_word": "d50323bf",
+      "replacement_assembly": "hint #29",
+      "replacement_expected_word": "d50323bf",
+      "replacement_matches": true,
+      "status": "passed"
+    },
+    {
+      "assembled_word": "d503231f",
+      "assembly": "paciaz",
+      "checks": [
+        "input_encoding",
+        "replacement_encoding_armv8_a"
+      ],
+      "expected_word": "d503231f",
+      "index": 2,
+      "input_matches": true,
+      "replacement_assembled_word": "d503231f",
+      "replacement_assembly": "hint #24",
+      "replacement_expected_word": "d503231f",
+      "replacement_matches": true,
+      "status": "passed"
+    },
+    {
+      "assembled_word": "d503239f",
+      "assembly": "autiaz",
+      "checks": [
+        "input_encoding",
+        "replacement_encoding_armv8_a"
+      ],
+      "expected_word": "d503239f",
+      "index": 3,
+      "input_matches": true,
+      "replacement_assembled_word": "d503239f",
+      "replacement_assembly": "hint #28",
+      "replacement_expected_word": "d503239f",
+      "replacement_matches": true,
+      "status": "passed"
+    },
+    {
+      "assembled_word": "d503211f",
+      "assembly": "pacia1716",
+      "checks": [
+        "input_encoding",
+        "replacement_encoding_armv8_a"
+      ],
+      "expected_word": "d503211f",
+      "index": 4,
+      "input_matches": true,
+      "replacement_assembled_word": "d503211f",
+      "replacement_assembly": "hint #8",
+      "replacement_expected_word": "d503211f",
+      "replacement_matches": true,
+      "status": "passed"
+    },
+    {
+      "assembled_word": "d503219f",
+      "assembly": "autia1716",
+      "checks": [
+        "input_encoding",
+        "replacement_encoding_armv8_a"
+      ],
+      "expected_word": "d503219f",
+      "index": 5,
+      "input_matches": true,
+      "replacement_assembled_word": "d503219f",
+      "replacement_assembly": "hint #12",
+      "replacement_expected_word": "d503219f",
+      "replacement_matches": true,
+      "status": "passed"
+    },
+    {
+      "assembled_word": "d503237f",
+      "assembly": "pacibsp",
+      "checks": [
+        "input_encoding",
+        "replacement_encoding_armv8_a"
+      ],
+      "expected_word": "d503237f",
+      "index": 6,
+      "input_matches": true,
+      "replacement_assembled_word": "d503237f",
+      "replacement_assembly": "hint #27",
+      "replacement_expected_word": "d503237f",
+      "replacement_matches": true,
+      "status": "passed"
+    },
+    {
+      "assembled_word": "d50323ff",
+      "assembly": "autibsp",
+      "checks": [
+        "input_encoding",
+        "replacement_encoding_armv8_a"
+      ],
+      "expected_word": "d50323ff",
+      "index": 7,
+      "input_matches": true,
+      "replacement_assembled_word": "d50323ff",
+      "replacement_assembly": "hint #31",
+      "replacement_expected_word": "d50323ff",
+      "replacement_matches": true,
+      "status": "passed"
+    },
+    {
+      "assembled_word": "d503235f",
+      "assembly": "pacibz",
+      "checks": [
+        "input_encoding",
+        "replacement_encoding_armv8_a"
+      ],
+      "expected_word": "d503235f",
+      "index": 8,
+      "input_matches": true,
+      "replacement_assembled_word": "d503235f",
+      "replacement_assembly": "hint #26",
+      "replacement_expected_word": "d503235f",
+      "replacement_matches": true,
+      "status": "passed"
+    },
+    {
+      "assembled_word": "d50323df",
+      "assembly": "autibz",
+      "checks": [
+        "input_encoding",
+        "replacement_encoding_armv8_a"
+      ],
+      "expected_word": "d50323df",
+      "index": 9,
+      "input_matches": true,
+      "replacement_assembled_word": "d50323df",
+      "replacement_assembly": "hint #30",
+      "replacement_expected_word": "d50323df",
+      "replacement_matches": true,
+      "status": "passed"
+    },
+    {
+      "assembled_word": "d503215f",
+      "assembly": "pacib1716",
+      "checks": [
+        "input_encoding",
+        "replacement_encoding_armv8_a"
+      ],
+      "expected_word": "d503215f",
+      "index": 10,
+      "input_matches": true,
+      "replacement_assembled_word": "d503215f",
+      "replacement_assembly": "hint #10",
+      "replacement_expected_word": "d503215f",
+      "replacement_matches": true,
+      "status": "passed"
+    },
+    {
+      "assembled_word": "d50321df",
+      "assembly": "autib1716",
+      "checks": [
+        "input_encoding",
+        "replacement_encoding_armv8_a"
+      ],
+      "expected_word": "d50321df",
+      "index": 11,
+      "input_matches": true,
+      "replacement_assembled_word": "d50321df",
+      "replacement_assembly": "hint #14",
+      "replacement_expected_word": "d50321df",
+      "replacement_matches": true,
+      "status": "passed"
+    },
+    {
+      "assembled_word": "d50320ff",
+      "assembly": "xpaclri",
+      "checks": [
+        "input_encoding",
+        "replacement_encoding_armv8_a"
+      ],
+      "expected_word": "d50320ff",
+      "index": 12,
+      "input_matches": true,
+      "replacement_assembled_word": "d50320ff",
+      "replacement_assembly": "hint #7",
+      "replacement_expected_word": "d50320ff",
+      "replacement_matches": true,
+      "status": "passed"
+    },
+    {
+      "assembled_word": "dac10020",
+      "assembly": "pacia x0, x1",
+      "checks": [
+        "input_encoding",
+        "replacement_encoding_armv8_a"
+      ],
+      "expected_word": "dac10020",
+      "index": 13,
+      "input_matches": true,
+      "replacement_assembled_word": "d503201f",
+      "replacement_assembly": "nop",
+      "replacement_expected_word": "d503201f",
+      "replacement_matches": true,
+      "status": "passed"
+    },
+    {
+      "assembled_word": "dac11020",
+      "assembly": "autia x0, x1",
+      "checks": [
+        "input_encoding",
+        "replacement_encoding_armv8_a"
+      ],
+      "expected_word": "dac11020",
+      "index": 14,
+      "input_matches": true,
+      "replacement_assembled_word": "d503201f",
+      "replacement_assembly": "nop",
+      "replacement_expected_word": "d503201f",
+      "replacement_matches": true,
+      "status": "passed"
+    },
+    {
+      "assembled_word": "dac10820",
+      "assembly": "pacda x0, x1",
+      "checks": [
+        "input_encoding",
+        "replacement_encoding_armv8_a"
+      ],
+      "expected_word": "dac10820",
+      "index": 15,
+      "input_matches": true,
+      "replacement_assembled_word": "d503201f",
+      "replacement_assembly": "nop",
+      "replacement_expected_word": "d503201f",
+      "replacement_matches": true,
+      "status": "passed"
+    },
+    {
+      "assembled_word": "dac11820",
+      "assembly": "autda x0, x1",
+      "checks": [
+        "input_encoding",
+        "replacement_encoding_armv8_a"
+      ],
+      "expected_word": "dac11820",
+      "index": 16,
+      "input_matches": true,
+      "replacement_assembled_word": "d503201f",
+      "replacement_assembly": "nop",
+      "replacement_expected_word": "d503201f",
+      "replacement_matches": true,
+      "status": "passed"
+    },
+    {
+      "assembled_word": "dac10420",
+      "assembly": "pacib x0, x1",
+      "checks": [
+        "input_encoding",
+        "replacement_encoding_armv8_a"
+      ],
+      "expected_word": "dac10420",
+      "index": 17,
+      "input_matches": true,
+      "replacement_assembled_word": "d503201f",
+      "replacement_assembly": "nop",
+      "replacement_expected_word": "d503201f",
+      "replacement_matches": true,
+      "status": "passed"
+    },
+    {
+      "assembled_word": "dac11420",
+      "assembly": "autib x0, x1",
+      "checks": [
+        "input_encoding",
+        "replacement_encoding_armv8_a"
+      ],
+      "expected_word": "dac11420",
+      "index": 18,
+      "input_matches": true,
+      "replacement_assembled_word": "d503201f",
+      "replacement_assembly": "nop",
+      "replacement_expected_word": "d503201f",
+      "replacement_matches": true,
+      "status": "passed"
+    },
+    {
+      "assembled_word": "dac10c20",
+      "assembly": "pacdb x0, x1",
+      "checks": [
+        "input_encoding",
+        "replacement_encoding_armv8_a"
+      ],
+      "expected_word": "dac10c20",
+      "index": 19,
+      "input_matches": true,
+      "replacement_assembled_word": "d503201f",
+      "replacement_assembly": "nop",
+      "replacement_expected_word": "d503201f",
+      "replacement_matches": true,
+      "status": "passed"
+    },
+    {
+      "assembled_word": "dac11c20",
+      "assembly": "autdb x0, x1",
+      "checks": [
+        "input_encoding",
+        "replacement_encoding_armv8_a"
+      ],
+      "expected_word": "dac11c20",
+      "index": 20,
+      "input_matches": true,
+      "replacement_assembled_word": "d503201f",
+      "replacement_assembly": "nop",
+      "replacement_expected_word": "d503201f",
+      "replacement_matches": true,
+      "status": "passed"
+    },
+    {
+      "assembled_word": "9ac23020",
+      "assembly": "pacga x0, x1, x2",
+      "checks": [
+        "input_encoding"
+      ],
+      "expected_word": "9ac23020",
+      "index": 21,
+      "input_matches": true,
+      "rejection_expected": "generic_signature_requires_a_separate_abi",
+      "rejection_policy_checked_by_assembler": false,
+      "status": "passed"
+    },
+    {
+      "assembled_word": "dac123e0",
+      "assembly": "paciza x0",
+      "checks": [
+        "input_encoding",
+        "replacement_encoding_armv8_a"
+      ],
+      "expected_word": "dac123e0",
+      "index": 22,
+      "input_matches": true,
+      "replacement_assembled_word": "d503201f",
+      "replacement_assembly": "nop",
+      "replacement_expected_word": "d503201f",
+      "replacement_matches": true,
+      "status": "passed"
+    },
+    {
+      "assembled_word": "dac133e0",
+      "assembly": "autiza x0",
+      "checks": [
+        "input_encoding",
+        "replacement_encoding_armv8_a"
+      ],
+      "expected_word": "dac133e0",
+      "index": 23,
+      "input_matches": true,
+      "replacement_assembled_word": "d503201f",
+      "replacement_assembly": "nop",
+      "replacement_expected_word": "d503201f",
+      "replacement_matches": true,
+      "status": "passed"
+    },
+    {
+      "assembled_word": "dac12be0",
+      "assembly": "pacdza x0",
+      "checks": [
+        "input_encoding",
+        "replacement_encoding_armv8_a"
+      ],
+      "expected_word": "dac12be0",
+      "index": 24,
+      "input_matches": true,
+      "replacement_assembled_word": "d503201f",
+      "replacement_assembly": "nop",
+      "replacement_expected_word": "d503201f",
+      "replacement_matches": true,
+      "status": "passed"
+    },
+    {
+      "assembled_word": "dac13be0",
+      "assembly": "autdza x0",
+      "checks": [
+        "input_encoding",
+        "replacement_encoding_armv8_a"
+      ],
+      "expected_word": "dac13be0",
+      "index": 25,
+      "input_matches": true,
+      "replacement_assembled_word": "d503201f",
+      "replacement_assembly": "nop",
+      "replacement_expected_word": "d503201f",
+      "replacement_matches": true,
+      "status": "passed"
+    },
+    {
+      "assembled_word": "dac127e0",
+      "assembly": "pacizb x0",
+      "checks": [
+        "input_encoding",
+        "replacement_encoding_armv8_a"
+      ],
+      "expected_word": "dac127e0",
+      "index": 26,
+      "input_matches": true,
+      "replacement_assembled_word": "d503201f",
+      "replacement_assembly": "nop",
+      "replacement_expected_word": "d503201f",
+      "replacement_matches": true,
+      "status": "passed"
+    },
+    {
+      "assembled_word": "dac137e0",
+      "assembly": "autizb x0",
+      "checks": [
+        "input_encoding",
+        "replacement_encoding_armv8_a"
+      ],
+      "expected_word": "dac137e0",
+      "index": 27,
+      "input_matches": true,
+      "replacement_assembled_word": "d503201f",
+      "replacement_assembly": "nop",
+      "replacement_expected_word": "d503201f",
+      "replacement_matches": true,
+      "status": "passed"
+    },
+    {
+      "assembled_word": "dac12fe0",
+      "assembly": "pacdzb x0",
+      "checks": [
+        "input_encoding",
+        "replacement_encoding_armv8_a"
+      ],
+      "expected_word": "dac12fe0",
+      "index": 28,
+      "input_matches": true,
+      "replacement_assembled_word": "d503201f",
+      "replacement_assembly": "nop",
+      "replacement_expected_word": "d503201f",
+      "replacement_matches": true,
+      "status": "passed"
+    },
+    {
+      "assembled_word": "dac13fe0",
+      "assembly": "autdzb x0",
+      "checks": [
+        "input_encoding",
+        "replacement_encoding_armv8_a"
+      ],
+      "expected_word": "dac13fe0",
+      "index": 29,
+      "input_matches": true,
+      "replacement_assembled_word": "d503201f",
+      "replacement_assembly": "nop",
+      "replacement_expected_word": "d503201f",
+      "replacement_matches": true,
+      "status": "passed"
+    },
+    {
+      "assembled_word": "dac143e0",
+      "assembly": "xpaci x0",
+      "checks": [
+        "input_encoding",
+        "replacement_encoding_armv8_a"
+      ],
+      "expected_word": "dac143e0",
+      "index": 30,
+      "input_matches": true,
+      "replacement_assembled_word": "d503201f",
+      "replacement_assembly": "nop",
+      "replacement_expected_word": "d503201f",
+      "replacement_matches": true,
+      "status": "passed"
+    },
+    {
+      "assembled_word": "dac147e0",
+      "assembly": "xpacd x0",
+      "checks": [
+        "input_encoding",
+        "replacement_encoding_armv8_a"
+      ],
+      "expected_word": "dac147e0",
+      "index": 31,
+      "input_matches": true,
+      "replacement_assembled_word": "d503201f",
+      "replacement_assembly": "nop",
+      "replacement_expected_word": "d503201f",
+      "replacement_matches": true,
+      "status": "passed"
+    },
+    {
+      "assembled_word": "d71f0801",
+      "assembly": "braa x0, x1",
+      "checks": [
+        "input_encoding",
+        "replacement_encoding_armv8_a"
+      ],
+      "expected_word": "d71f0801",
+      "index": 32,
+      "input_matches": true,
+      "replacement_assembled_word": "d61f0000",
+      "replacement_assembly": "br x0",
+      "replacement_expected_word": "d61f0000",
+      "replacement_matches": true,
+      "status": "passed"
+    },
+    {
+      "assembled_word": "d71f0c01",
+      "assembly": "brab x0, x1",
+      "checks": [
+        "input_encoding",
+        "replacement_encoding_armv8_a"
+      ],
+      "expected_word": "d71f0c01",
+      "index": 33,
+      "input_matches": true,
+      "replacement_assembled_word": "d61f0000",
+      "replacement_assembly": "br x0",
+      "replacement_expected_word": "d61f0000",
+      "replacement_matches": true,
+      "status": "passed"
+    },
+    {
+      "assembled_word": "d73f0801",
+      "assembly": "blraa x0, x1",
+      "checks": [
+        "input_encoding",
+        "replacement_encoding_armv8_a"
+      ],
+      "expected_word": "d73f0801",
+      "index": 34,
+      "input_matches": true,
+      "replacement_assembled_word": "d63f0000",
+      "replacement_assembly": "blr x0",
+      "replacement_expected_word": "d63f0000",
+      "replacement_matches": true,
+      "status": "passed"
+    },
+    {
+      "assembled_word": "d73f0c01",
+      "assembly": "blrab x0, x1",
+      "checks": [
+        "input_encoding",
+        "replacement_encoding_armv8_a"
+      ],
+      "expected_word": "d73f0c01",
+      "index": 35,
+      "input_matches": true,
+      "replacement_assembled_word": "d63f0000",
+      "replacement_assembly": "blr x0",
+      "replacement_expected_word": "d63f0000",
+      "replacement_matches": true,
+      "status": "passed"
+    },
+    {
+      "assembled_word": "d61f081f",
+      "assembly": "braaz x0",
+      "checks": [
+        "input_encoding",
+        "replacement_encoding_armv8_a"
+      ],
+      "expected_word": "d61f081f",
+      "index": 36,
+      "input_matches": true,
+      "replacement_assembled_word": "d61f0000",
+      "replacement_assembly": "br x0",
+      "replacement_expected_word": "d61f0000",
+      "replacement_matches": true,
+      "status": "passed"
+    },
+    {
+      "assembled_word": "d61f0c1f",
+      "assembly": "brabz x0",
+      "checks": [
+        "input_encoding",
+        "replacement_encoding_armv8_a"
+      ],
+      "expected_word": "d61f0c1f",
+      "index": 37,
+      "input_matches": true,
+      "replacement_assembled_word": "d61f0000",
+      "replacement_assembly": "br x0",
+      "replacement_expected_word": "d61f0000",
+      "replacement_matches": true,
+      "status": "passed"
+    },
+    {
+      "assembled_word": "d63f081f",
+      "assembly": "blraaz x0",
+      "checks": [
+        "input_encoding",
+        "replacement_encoding_armv8_a"
+      ],
+      "expected_word": "d63f081f",
+      "index": 38,
+      "input_matches": true,
+      "replacement_assembled_word": "d63f0000",
+      "replacement_assembly": "blr x0",
+      "replacement_expected_word": "d63f0000",
+      "replacement_matches": true,
+      "status": "passed"
+    },
+    {
+      "assembled_word": "d63f0c1f",
+      "assembly": "blrabz x0",
+      "checks": [
+        "input_encoding",
+        "replacement_encoding_armv8_a"
+      ],
+      "expected_word": "d63f0c1f",
+      "index": 39,
+      "input_matches": true,
+      "replacement_assembled_word": "d63f0000",
+      "replacement_assembly": "blr x0",
+      "replacement_expected_word": "d63f0000",
+      "replacement_matches": true,
+      "status": "passed"
+    },
+    {
+      "assembled_word": "d65f0bff",
+      "assembly": "retaa",
+      "checks": [
+        "input_encoding",
+        "replacement_encoding_armv8_a"
+      ],
+      "expected_word": "d65f0bff",
+      "index": 40,
+      "input_matches": true,
+      "replacement_assembled_word": "d65f03c0",
+      "replacement_assembly": "ret",
+      "replacement_expected_word": "d65f03c0",
+      "replacement_matches": true,
+      "status": "passed"
+    },
+    {
+      "assembled_word": "d65f0fff",
+      "assembly": "retab",
+      "checks": [
+        "input_encoding",
+        "replacement_encoding_armv8_a"
+      ],
+      "expected_word": "d65f0fff",
+      "index": 41,
+      "input_matches": true,
+      "replacement_assembled_word": "d65f03c0",
+      "replacement_assembly": "ret",
+      "replacement_expected_word": "d65f03c0",
+      "replacement_matches": true,
+      "status": "passed"
+    },
+    {
+      "assembled_word": "d69f0bff",
+      "assembly": "eretaa",
+      "checks": [
+        "input_encoding"
+      ],
+      "expected_word": "d69f0bff",
+      "index": 42,
+      "input_matches": true,
+      "rejection_expected": "privileged_exception_return_not_supported",
+      "rejection_policy_checked_by_assembler": false,
+      "status": "passed"
+    },
+    {
+      "assembled_word": "d69f0fff",
+      "assembly": "eretab",
+      "checks": [
+        "input_encoding"
+      ],
+      "expected_word": "d69f0fff",
+      "index": 43,
+      "input_matches": true,
+      "rejection_expected": "privileged_exception_return_not_supported",
+      "rejection_policy_checked_by_assembler": false,
+      "status": "passed"
+    },
+    {
+      "assembled_word": "f83ff420",
+      "assembly": "ldraa x0, [x1, #4088]",
+      "checks": [
+        "input_encoding",
+        "replacement_encoding_armv8_a"
+      ],
+      "expected_word": "f83ff420",
+      "index": 44,
+      "input_matches": true,
+      "replacement_assembled_word": "f947fc20",
+      "replacement_assembly": "ldr x0, [x1, #4088]",
+      "replacement_expected_word": "f947fc20",
+      "replacement_matches": true,
+      "status": "passed"
+    },
+    {
+      "assembled_word": "f8600420",
+      "assembly": "ldraa x0, [x1, #-4096]",
+      "checks": [
+        "input_encoding"
+      ],
+      "expected_word": "f8600420",
+      "index": 45,
+      "input_matches": true,
+      "rejection_expected": "negative_offset_needs_expansion",
+      "rejection_policy_checked_by_assembler": false,
+      "status": "passed"
+    },
+    {
+      "assembled_word": "f8bff420",
+      "assembly": "ldrab x0, [x1, #4088]",
+      "checks": [
+        "input_encoding",
+        "replacement_encoding_armv8_a"
+      ],
+      "expected_word": "f8bff420",
+      "index": 46,
+      "input_matches": true,
+      "replacement_assembled_word": "f947fc20",
+      "replacement_assembly": "ldr x0, [x1, #4088]",
+      "replacement_expected_word": "f947fc20",
+      "replacement_matches": true,
+      "status": "passed"
+    },
+    {
+      "assembled_word": "f8e00420",
+      "assembly": "ldrab x0, [x1, #-4096]",
+      "checks": [
+        "input_encoding"
+      ],
+      "expected_word": "f8e00420",
+      "index": 47,
+      "input_matches": true,
+      "rejection_expected": "negative_offset_needs_expansion",
+      "rejection_policy_checked_by_assembler": false,
+      "status": "passed"
+    },
+    {
+      "assembled_word": "f83ffc20",
+      "assembly": "ldraa x0, [x1, #4088]!",
+      "checks": [
+        "input_encoding"
+      ],
+      "expected_word": "f83ffc20",
+      "index": 48,
+      "input_matches": true,
+      "rejection_expected": "writeback_offset_needs_expansion",
+      "rejection_policy_checked_by_assembler": false,
+      "status": "passed"
+    },
+    {
+      "assembled_word": "f8600c20",
+      "assembly": "ldraa x0, [x1, #-4096]!",
+      "checks": [
+        "input_encoding"
+      ],
+      "expected_word": "f8600c20",
+      "index": 49,
+      "input_matches": true,
+      "rejection_expected": "writeback_offset_needs_expansion",
+      "rejection_policy_checked_by_assembler": false,
+      "status": "passed"
+    },
+    {
+      "assembled_word": "f8bffc20",
+      "assembly": "ldrab x0, [x1, #4088]!",
+      "checks": [
+        "input_encoding"
+      ],
+      "expected_word": "f8bffc20",
+      "index": 50,
+      "input_matches": true,
+      "rejection_expected": "writeback_offset_needs_expansion",
+      "rejection_policy_checked_by_assembler": false,
+      "status": "passed"
+    },
+    {
+      "assembled_word": "f8e00c20",
+      "assembly": "ldrab x0, [x1, #-4096]!",
+      "checks": [
+        "input_encoding"
+      ],
+      "expected_word": "f8e00c20",
+      "index": 51,
+      "input_matches": true,
+      "rejection_expected": "writeback_offset_needs_expansion",
+      "rejection_policy_checked_by_assembler": false,
+      "status": "passed"
+    },
+    {
+      "assembled_word": "f8200420",
+      "assembly": "ldraa x0, [x1]",
+      "checks": [
+        "input_encoding",
+        "replacement_encoding_armv8_a"
+      ],
+      "expected_word": "f8200420",
+      "index": 52,
+      "input_matches": true,
+      "replacement_assembled_word": "f9400020",
+      "replacement_assembly": "ldr x0, [x1]",
+      "replacement_expected_word": "f9400020",
+      "replacement_matches": true,
+      "status": "passed"
+    },
+    {
+      "assembled_word": "f8a00420",
+      "assembly": "ldrab x0, [x1]",
+      "checks": [
+        "input_encoding",
+        "replacement_encoding_armv8_a"
+      ],
+      "expected_word": "f8a00420",
+      "index": 53,
+      "input_matches": true,
+      "replacement_assembled_word": "f9400020",
+      "replacement_assembly": "ldr x0, [x1]",
+      "replacement_expected_word": "f9400020",
+      "replacement_matches": true,
+      "status": "passed"
+    }
+  ]
+}
