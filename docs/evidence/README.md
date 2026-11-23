@@ -2,6 +2,19 @@
 
 本目录保存可公开、可追溯的结果摘要。系统二进制和原始私有日志不在仓库分发。文件名日期是该次记录日期，不代表之后所有改动都已重新执行相同测试。
 
+## 通用内核编译／链接成功：2026-11-24
+
+第二轮真实 builder 已返回 0，生成普通 ARM64 `MH_EXECUTE`、subtype 0 的通用候选。完整说明见 [ROUTE_A_GENERIC_KERNEL_RESULT.md](../ROUTE_A_GENERIC_KERNEL_RESULT.md)。
+
+| 记录 | 实际结果 | 范围 |
+| --- | --- | --- |
+| [第二轮通用候选构建](route-a-generic-kernel-build-20261124.json) | 1,086 个 `.o` / `.cpo`；link filelist 有 1,067 个非空行；候选为 21,905,888 bytes（20.89 MiB）；0 编译 error | `generic_kernel_compiled_and_linked=true`；完整 TB371FC profile、provider/archive、ISA 与 27 启动仍未验收 |
+| [真实 debug.o 中的 fileset helper](route-a-compiled-fileset-helper-20261124.json) | 整份 `debug.c` 编译完成；helper 使用 `0xd50320ff` HINT 字；分支重定位仍指向 `_panic` | 关闭首次源码编译阻塞；不覆盖其他函数、外部 archives 或硬件执行 |
+| [候选有限编码与符号检查](route-a-kernel-candidate-audit-20261124.json) | 3 个区域、2,220,163 个候选 4 字节字；分类器识别的非 HINT PAuth 为 0，精确 POE2 TCHANGE 为 0，180 个 `XPACLRI` HINT；未定义符号为 0 | 指令区间和规则范围固定；不证明可达性、全部 ISA 或完整板级依赖 |
+| [原始审计证据目录](route-a-kernel-audit-20261124/) | 原始报告、180 条位置记录、Mach-O 几何、工具输出、执行脚本、固定分类器和逐文件摘要 | 保留实际执行快照；复跑须使用新目录，不覆盖这些记录 |
+
+第二轮记录保留真实 driver、源码、工具和产物摘要。原 builder 中 `kernel_compiled` / `kernel_linked` 表示完整候选资格，仍为 false；通用候选实际编译／链接成功单独记录，避免把板级与启动资格一并提升。第一次失败的 716 个对象、日志和报告继续留存。
+
 ## 定制编译器完成与首次内核失败：2026-11-24
 
 提交 [ce834a0](https://github.com/cyjin-yl/UniXNU-tb371fc/commit/ce834a0e2e9d63803d920f39f30012e4759102cf) 的 [CI](https://github.com/cyjin-yl/UniXNU-tb371fc/actions/runs/45221437252) 已通过 **210 项回归，0 跳过**，以及固定源码 staging。原 71 项基线与补齐 headers 后的清单保持历史摘要，独立 fileset 修复层已实际应用；[本轮回归与 staging 记录](route-a-build-fix-validation-20261124.json) 绑定提交、作业、artifact 及最终源码摘要。完整 XNU retry 的实际执行结果另行记录。
@@ -15,7 +28,7 @@
 
 此前“Clang 正在构建”的快照保持原样。新增记录绑定实际完成的旧 driver、真实 compiler SHA-256、原始报告与完整失败日志的摘要，不将后来修订的脚本当成旧构建执行过的版本。
 
-## 最新工具链、局部路径与构建输入：2026-11-23
+## 先前工具链、局部路径与构建输入：2026-11-23
 
 提交 [3a52649](https://github.com/cyjin-yl/UniXNU-tb371fc/commit/3a52649f837f49f8df638d165f3dbbb7aa20e953) 的两个 [CI 作业](https://github.com/cyjin-yl/UniXNU-tb371fc/actions/runs/45181619136) 均通过：**191 项回归、0 跳过**，229 份原始源码／许可证摘要保持一致。33 项 TPRO 回归、9 项工具链回归与 6 项首次构建入口回归包含在总数中；9 项提取真实 pager C 的检查仍实际执行。
 
@@ -39,7 +52,7 @@
 - [本轮验证汇总](route-a-continuation-validation-20261123.json)：**162/162 项，0 跳过**；包含 9 项提取真实 pager C、19 项 TPRO 审计和 23 项内核准备测试。
 - [通用内核源码准备报告](route-a-kernel-preparation-20261123.json)：71 项补丁实际应用，6,119 个源码条目有摘要，普通 arm64 配置探针生成 subtype 0 的 Mach-O 对象。
 
-这是架构、Darwin 26 兼容和 plain-pager 源码子集。1 项依赖板级 PMGR/watchdog 的 boot-progress 补丁明确延后，完整 profile 未应用；完整 XNU 未编译／链接／启动。Clang 18.1.3 的 XNU type builtin 探针实际失败，记录为后续工具链依赖。
+这是架构、Darwin 26 兼容和 plain-pager 源码子集。1 项依赖板级 PMGR/watchdog 的 boot-progress 补丁明确延后，完整 profile 未应用。该次记录中完整 XNU 尚未编译／链接／启动，Clang 18.1.3 的 XNU type builtin 探针实际失败；后续定制工具链与通用候选成功结果见上节，历史 JSON 保持原样。
 
 该次 162 项检查没有重新执行首轮设备函数或 Apple 用户空间改写，也尚未重新采集 TPRO 真实输入。后续 TPRO 重跑见上节；下列首轮 JSON 保持原样。
 
@@ -89,4 +102,4 @@ CPU 翻译粒度、XNU VM 页、CodeDirectory 签名页和 dyld slide 页分别�
 - 完整内核是否编译／链接，是否在设备启动。
 - Darwin 进程、图形桌面与每项硬件是否实测。
 
-任何一层成功都不自动证明后一层。当前项目仍处于离线工具与原生执行基础验证阶段；下一步见 [路线图](../../ROADMAP.md)。
+任何一层成功都不自动证明后一层。当前通用内核候选已完成源码编译／链接，完整 TB371FC 板级依赖、ISA、27 用户空间和实机启动仍待集成；下一步见 [路线图](../../ROADMAP.md)。

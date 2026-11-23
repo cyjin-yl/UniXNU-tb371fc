@@ -1,6 +1,8 @@
 # Route A：XNU 12377 的 plain-auth pager 补丁草案
 
-日期：2026-11-23。状态：**已在固定源文件上验证补丁应用与反向恢复，已运行独立 C 函数测试；尚未编译完整内核，尚未在设备上启动。** 本文对应 [补丁](../patches/route-a-plain-auth-12377.patch)、[来源与验证记录](../upstream/route-a-kernel-sources.json)、[Python 参考实现](../scripts/arm64_lowering/slide_v5.py) 和 [测试](../tests/test_route_a_slide_v5.py)。更广的构建、27 ABI 与设备缺口见 [内核集成审计](ROUTE_A_KERNEL_GAPS.md)。
+日期：2026-11-23。该次验证状态：**已在固定源文件上验证补丁应用与反向恢复，已运行独立 C 函数测试；当时尚未编译完整内核，尚未在设备上启动。** 本文对应 [补丁](../patches/route-a-plain-auth-12377.patch)、[来源与验证记录](../upstream/route-a-kernel-sources.json)、[Python 参考实现](../scripts/arm64_lowering/slide_v5.py) 和 [测试](../tests/test_route_a_slide_v5.py)。更广的构建、27 ABI 与设备缺口见 [内核集成审计](ROUTE_A_KERNEL_GAPS.md)。
+
+2026-11-24 的后续[通用内核候选已编译／链接成功](ROUTE_A_GENERIC_KERNEL_RESULT.md)。这没有补足本页 pager 运行时、完整共享缓存或 TB371FC 实机启动的验证。
 
 ## 解决的具体问题
 

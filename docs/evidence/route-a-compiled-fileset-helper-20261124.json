@@ -1,0 +1,78 @@
+{
+  "schema_version": 1,
+  "record_date": "2026-11-24",
+  "record_timezone": "Asia/Shanghai",
+  "source_commit": "ce834a0e2e9d63803d920f39f30012e4759102cf",
+  "scope": "The complete patched debug.c compiled during the second real XNU build; only unixnu_fileset_unmapped is disassembled and relocation-checked here",
+  "xnu_commit": "ac9718fb1af618d5ce8678d0dc6e8a58f252216f",
+  "staged_source_inventory_sha256": "9a2f18aa42773260f52adeeeff20a5f0257fc4360858aa90a3871714f7b84008",
+  "source_sha256": "061de685fab552a0031ab547d75600a16b9d993a54740b461760ebf038b8b5be",
+  "object_bytes": 185456,
+  "object_header_words": [
+    4277009103,
+    16777228,
+    0,
+    1
+  ],
+  "original_reports": {
+    "disassembly_sha256": "257a92acb24d3993eaeb3e1d8b2aac83b1d95a9355e5959370a14a5a18cd3681",
+    "relocations_sha256": "5876ff47527e2334c882e2b177597d69d15acac7beb5f55e34e2f578924bc238"
+  },
+  "disassembly": {
+    "object_sha256": "941c7f93b8267391afff0afbfbfbd7e6e3c9e186ff45b537dcb9ecd6fad3f3dc",
+    "object_unchanged": true,
+    "tool": "/usr/bin/llvm-objdump-19",
+    "tool_sha256": "c904a20cf0caeb812b542b69488e5c79738951a92ca99098fbb8941505eb789d",
+    "tool_version": "Debian LLVM version 19.1.7",
+    "command": [
+      "/usr/bin/llvm-objdump-19",
+      "-d",
+      "--disassemble-symbols=_unixnu_fileset_unmapped",
+      "WORK/kernel-build/build/xnu/ios-obj/DEVELOPMENT_ARM64_BCM2837/osfmk/DEVELOPMENT/debug.o"
+    ],
+    "exit_code": 0,
+    "stdout": "\nWORK/kernel-build/build/xnu/ios-obj/DEVELOPMENT_ARM64_BCM2837/osfmk/DEVELOPMENT/debug.o:\tfile format mach-o arm64\n\nDisassembly of section __TEXT,__text:\n\n0000000000002674 <_unixnu_fileset_unmapped>:\n    2674: d100c3ff     \tsub\tsp, sp, #0x30\n    2678: a9027bfd     \tstp\tx29, x30, [sp, #0x20]\n    267c: 910083fd     \tadd\tx29, sp, #0x20\n    2680: d50320ff     \txpaclri\n    2684: a90087e0     \tstp\tx0, x1, [sp, #0x8]\n    2688: 90000000     \tadrp\tx0, 0x2000 <_panic_display_kernel_aslr+0x84>\n    268c: 91000000     \tadd\tx0, x0, #0x0\n    2690: f90003fe     \tstr\tx30, [sp]\n    2694: 94000000     \tbl\t0x2694 <_unixnu_fileset_unmapped+0x20>\n",
+    "stderr": ""
+  },
+  "relocations": {
+    "object_sha256": "941c7f93b8267391afff0afbfbfbd7e6e3c9e186ff45b537dcb9ecd6fad3f3dc",
+    "source_sha256": "061de685fab552a0031ab547d75600a16b9d993a54740b461760ebf038b8b5be",
+    "command": [
+      "/usr/bin/llvm-objdump-19",
+      "-r",
+      "WORK/kernel-build/build/xnu/ios-obj/DEVELOPMENT_ARM64_BCM2837/osfmk/DEVELOPMENT/debug.o"
+    ],
+    "exit_code": 0,
+    "function_text_relocations": [
+      {
+        "offset": 9876,
+        "type": "ARM64_RELOC_BRANCH26",
+        "value": "_panic"
+      },
+      {
+        "offset": 9868,
+        "type": "ARM64_RELOC_PAGEOFF12",
+        "value": "l_.str.55"
+      },
+      {
+        "offset": 9864,
+        "type": "ARM64_RELOC_PAGE21",
+        "value": "l_.str.55"
+      }
+    ],
+    "panic_call_relocation_verified": true,
+    "raw_stdout_sha256": "276305daf96e19634f299fc499e2eef7f4285fc8d891565531240494d1e0c925"
+  },
+  "checks": {
+    "full_debug_object_generated": true,
+    "source_matches_build_fix_manifest": true,
+    "object_digest_unchanged_during_disassembly": true,
+    "return_address_uses_hint_space_word": "0xd50320ff",
+    "panic_call_relocation_verified": true
+  },
+  "complete_kernel_isa_audited": false,
+  "kernel_compiled": false,
+  "kernel_linked": false,
+  "os_boot_verified": false,
+  "scope_limit": "This closes the original debug.c compilation blocker. Kernel linkage, other objects, external components and hardware execution remain separate qualifications."
+}
