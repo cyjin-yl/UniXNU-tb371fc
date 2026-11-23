@@ -120,6 +120,10 @@ python3 SOURCE/scripts/check_route_a_host_tools.py \
 
 ## 日志、身份和许可
 
+[2026-11-23 21:29（北京时间）的实际执行快照](evidence/route-a-build-execution-20261123.json) 记录：host components 已完成，源码 staging 已完成；定制 Clang 仍在构建，完整 kernel builder 尚未开始。独立接续进程已经启动，等待旧 driver 的真实 `clang_verified` 状态和 19 项语义检查，随后依次执行固定新版 host-tools finalization 与首次 kernel builder。任一步失败都停止并保留现场。此快照保持原样，后续结果另记；运行中的 driver 不被新版文件覆盖。
+
+开发工作根中的 `build-followthrough-v1/status.json`、`runner.log` 记录接续阶段；`clang-job-status.json` 与 `toolchain-work/state.json` 记录实际编译进度；首次 kernel builder 真正进入后，结果在 `kernel-build/.route-a/build-report.json`。接续任务为一次执行，不重跑已存在的 kernel build，也不取消之前启动的 Clang 任务。
+
 | 文件 | 含义 |
 | --- | --- |
 | `identity.json` / `patched-source.json` | 固定源码、patch、CMake 参数、主机工具身份与源码更改摘要 |

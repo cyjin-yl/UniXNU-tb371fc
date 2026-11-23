@@ -1,0 +1,348 @@
+{
+  "schema_version": 1,
+  "recorded_at_utc": "2026-11-23T13:29:13.821946+00:00",
+  "kind": "actual_build_execution_snapshot",
+  "environment": {
+    "location": "CT102 unixnu-route-a-dev Docker container",
+    "clang_compile_jobs": 2,
+    "clang_link_jobs": 1,
+    "host_component_jobs": 1,
+    "kernel_builder_jobs": 2
+  },
+  "clang_job": {
+    "status": "running",
+    "pid": 13047,
+    "script_sha256": "e8779b5ce6f026d7957044fa27b39f8bf11b6b1254b7bd8648c3fbb9f3ab4e62",
+    "command": [
+      "python3",
+      "WORK/source/scripts/prepare_route_a_toolchain.py",
+      "build-clang",
+      "--unixnu-repository",
+      "WORK/source-mirrors/unixnu.git",
+      "--work-dir",
+      "WORK/toolchain-work",
+      "--prefix",
+      "WORK/toolchain",
+      "--host-cc",
+      "clang",
+      "--host-cxx",
+      "clang++",
+      "--jobs",
+      "2"
+    ]
+  },
+  "clang_state": {
+    "status": "running",
+    "stage": "build-clang",
+    "jobs": 2,
+    "link_jobs": 1,
+    "kernel_compiled": false,
+    "kernel_linked": false,
+    "os_boot_verified": false
+  },
+  "clang_identity": {
+    "cmake_arguments": [
+      "cmake",
+      "-G",
+      "Ninja",
+      "-S",
+      "WORK/toolchain-work/llvm-project/llvm",
+      "-B",
+      "WORK/toolchain-work/llvm-build",
+      "-DLLVM_ENABLE_PROJECTS=clang",
+      "-DLLVM_TARGETS_TO_BUILD=AArch64",
+      "-DCMAKE_BUILD_TYPE=Release",
+      "-DLLVM_ENABLE_ASSERTIONS=ON",
+      "-DLLVM_INCLUDE_TESTS=OFF",
+      "-DLLVM_INCLUDE_EXAMPLES=OFF",
+      "-DLLVM_INCLUDE_BENCHMARKS=OFF",
+      "-DCLANG_ENABLE_STATIC_ANALYZER=OFF",
+      "-DCLANG_ENABLE_ARCMT=OFF",
+      "-DLLVM_PARALLEL_LINK_JOBS=1",
+      "-DLLVM_USE_LINKER=lld",
+      "-DCMAKE_C_COMPILER=/usr/bin/clang",
+      "-DCMAKE_CXX_COMPILER=/usr/bin/clang++",
+      "-DCMAKE_INSTALL_PREFIX=WORK/toolchain/llvm"
+    ],
+    "host_tools": {
+      "cc": {
+        "path": "/usr/bin/clang",
+        "realpath": "/usr/lib/llvm-19/bin/clang",
+        "sha256": "0a3c55936ac43954fbe4914e6e73b577ca9e35e75d89ef13d3e28c187f41ca1a",
+        "version": "Debian clang version 19.1.7 (3+b1)\nTarget: x86_64-pc-linux-gnu\nThread model: posix\nInstalledDir: /usr/lib/llvm-19/bin"
+      },
+      "cmake": {
+        "path": "/usr/bin/cmake",
+        "realpath": "/usr/bin/cmake",
+        "sha256": "9a2692f4d712265eb29c90c3366bfc40df400ea586b0477edabbcf3bae745dc1",
+        "version": "cmake version 3.31.6\n\nCMake suite maintained and supported by Kitware (kitware.com/cmake)."
+      },
+      "cxx": {
+        "path": "/usr/bin/clang++",
+        "realpath": "/usr/lib/llvm-19/bin/clang",
+        "sha256": "0a3c55936ac43954fbe4914e6e73b577ca9e35e75d89ef13d3e28c187f41ca1a",
+        "version": "Debian clang version 19.1.7 (3+b1)\nTarget: x86_64-pc-linux-gnu\nThread model: posix\nInstalledDir: /usr/lib/llvm-19/bin"
+      },
+      "linker": {
+        "path": "/usr/bin/ld.lld",
+        "realpath": "/usr/lib/llvm-19/bin/lld",
+        "sha256": "7a2fd87d82662beac4371a1a21067b37cd4b7d43777aa61c089d85c45f772f6e",
+        "version": "Debian LLD 19.1.7 (compatible with GNU linkers)"
+      },
+      "ninja": {
+        "path": "/usr/bin/ninja",
+        "realpath": "/usr/bin/ninja",
+        "sha256": "e8e646527e23aa7a66d0f04b86b89f1bb2f25edcc1c5e402a0989e5364c8779b",
+        "version": "1.12.1"
+      }
+    },
+    "llvm_commit": "58c46bae21181fb4240cf964461bea738d96d50e",
+    "llvm_url": "https://github.com/llvm/llvm-project.git",
+    "patch_path": "scripts/linux/llvm-xnu-builtin-type.patch",
+    "patch_sha256": "7c9f2cb16ff1cc045d246fa6d1b6fbe6c90dc1540839a4219a0045219792dba9",
+    "prefix": "WORK/toolchain",
+    "schema_version": 1,
+    "unixnu_commit": "8542980d02b4d2cc5c32ee3542de1760b2562aac"
+  },
+  "patched_llvm_sources": {
+    "changed_files": [
+      {
+        "path": "clang/include/clang/AST/XnuTypeSignature.h",
+        "sha256": "032556c52ddf9576b3ef1c4a595d55c6806b385cbf42394856a63d18ecc1b2d2"
+      },
+      {
+        "path": "clang/include/clang/Basic/Attr.td",
+        "sha256": "57866ab8fec54ebc5048f3b931c277b6789802988c4f962378f0736c52375662"
+      },
+      {
+        "path": "clang/include/clang/Basic/BuiltinTraits.td",
+        "sha256": "dbf17adf1edea7b4a8444ab0f64704e3406e033cd6bdee7ef87dc1e9b332f5de"
+      },
+      {
+        "path": "clang/include/clang/Basic/DiagnosticSemaKinds.td",
+        "sha256": "d7ae9e0bafdb476258978413718e302c46013bd238f7713342899439bf2a1efa"
+      },
+      {
+        "path": "clang/lib/AST/CMakeLists.txt",
+        "sha256": "8c44fb2987f4824c975d99c4edf27e3d86bc44bdfb81cec4b573575edfa8f471"
+      },
+      {
+        "path": "clang/lib/AST/XnuTypeSignature.cpp",
+        "sha256": "b993af712dc839f614182c367d659076be9df404b4bcb4f2c1bd8ad91c687235"
+      },
+      {
+        "path": "clang/lib/Parse/ParseExprCXX.cpp",
+        "sha256": "044145899902feb005bb7d582280cbeb70516de50c492e171bc29865e2c16490"
+      },
+      {
+        "path": "clang/lib/Sema/SemaDeclAttr.cpp",
+        "sha256": "c4b49e7aeca0454a2c9b9aa62679f74f95ce9a2ea8683a234bb2a204e525aace"
+      },
+      {
+        "path": "clang/lib/Sema/SemaTypeTraits.cpp",
+        "sha256": "0a87f4df7e6a5c2c1e5216d877aedf476b7346d9dc0d91b6637ecca4a15347f7"
+      }
+    ],
+    "git_status": " M clang/include/clang/Basic/Attr.td\n M clang/include/clang/Basic/BuiltinTraits.td\n M clang/include/clang/Basic/DiagnosticSemaKinds.td\n M clang/lib/AST/CMakeLists.txt\n M clang/lib/Parse/ParseExprCXX.cpp\n M clang/lib/Sema/SemaDeclAttr.cpp\n M clang/lib/Sema/SemaTypeTraits.cpp\n?? clang/include/clang/AST/XnuTypeSignature.h\n?? clang/lib/AST/XnuTypeSignature.cpp\n"
+  },
+  "host_component_job": {
+    "status": "success",
+    "exit_code": 0,
+    "script_sha256": "f076e276dfecefe3ec344ea73efbede7a36a2bf11098b0cc63833468ec8f61a0",
+    "command": [
+      "python3",
+      "WORK/drivers/hosttools-v1/scripts/prepare_route_a_toolchain.py",
+      "host-tools",
+      "--unixnu-repository",
+      "WORK/source-mirrors/unixnu.git",
+      "--work-dir",
+      "WORK/toolchain-work",
+      "--sdk-root",
+      "WORK/kernel-build/.cache/fakeroot",
+      "--llvm-config",
+      "llvm-config",
+      "--jobs",
+      "1",
+      "--components-only"
+    ],
+    "finished": 1795439263.8040123
+  },
+  "host_components": {
+    "status": "host_components_built_clang_pending",
+    "stage": "complete",
+    "combined_toolchain_verified": false,
+    "component_cache_reused": false,
+    "sdk_headers_prepared": false,
+    "kernel_interfaces_generated": false,
+    "kernel_compiled": false,
+    "kernel_linked": false,
+    "os_boot_verified": false,
+    "outputs": [
+      {
+        "path": "WORK/toolchain/CommandLineTools/usr/bin/ld",
+        "sha256": "4f87332cbbbba8fe26e67eef48ff14018b6074a77e51b0e215c1f9c5de0ad8d4"
+      },
+      {
+        "path": "WORK/toolchain/CommandLineTools/usr/bin/libtool",
+        "sha256": "593323ed7c66ef5b1c1651ba116eda32ae89b87db8680a83e3ee5692958c6f33"
+      },
+      {
+        "path": "WORK/toolchain/CommandLineTools/usr/bin/nm",
+        "sha256": "b875626078578d911ee6618095c554e833ba54cebde614284ff87fd8e10c0708"
+      },
+      {
+        "path": "WORK/toolchain/CommandLineTools/usr/bin/lipo",
+        "sha256": "112adcff6ed878b8f84bcacfe20a730589bcb94e05ce7df5886206ac3dc2749e"
+      },
+      {
+        "path": "WORK/toolchain/CommandLineTools/usr/bin/mig",
+        "sha256": "72210518ef314ef0517869283f6fe1cf990844eefaa15e76c007f9b97d4abcdd"
+      },
+      {
+        "path": "WORK/toolchain/CommandLineTools/usr/bin/xnu-host-cc",
+        "sha256": "c7d0a389b33353d4b5366a313881a87dc61ce1aa1d2a62bd86549c4b5d81d7dd"
+      },
+      {
+        "path": "WORK/toolchain/CommandLineTools/usr/libexec/migcom",
+        "sha256": "1275416a191428125c51d2621fd4a6478f553bfb426fc4d9c1e34cda78e3f284"
+      },
+      {
+        "path": "WORK/toolchain/XcodeDefault.xctoolchain/usr/bin/iig",
+        "sha256": "ff78539d6e15e77c4c33814fc8f294deb64ab4bb4c94f950fe0ad3a57a28092d"
+      },
+      {
+        "path": "WORK/toolchain/bin/lzfse",
+        "sha256": "df5d7921f8a6d9c7c33cccdf9ce9f4587c4759767131cd47b4c28c7da20bec35"
+      },
+      {
+        "path": "WORK/toolchain/CommandLineTools/usr/lib/libmacho.a",
+        "sha256": "6737121673249ed680ea5c61179c30b9a4617c09247e0bb5a30bea872b2e92a3"
+      },
+      {
+        "path": "WORK/toolchain/CommandLineTools/usr/lib/libstuff.a",
+        "sha256": "78221e033b5b7441e1692518834a8b0e06ffa6dde6632834b4facb660def3fcb"
+      }
+    ],
+    "source_checkouts": [
+      {
+        "commit": "3e694ee7393af2a4ce8bd6e7dae28fe37450aa87",
+        "directory": "WORK/toolchain-work/host-attempts/run-001/cctools-port",
+        "ref": "1030.6.3-ld64-956.6",
+        "url": "https://github.com/tpoechtrager/cctools-port.git"
+      },
+      {
+        "commit": "024805abec6daa9cdda569fd736b9c7686dfd735",
+        "directory": "WORK/toolchain-work/host-attempts/run-001/swift-corelibs-libdispatch",
+        "ref": "swift-6.4.0-RELEASE",
+        "url": "https://github.com/swiftlang/swift-corelibs-libdispatch.git"
+      },
+      {
+        "commit": "c71d2d72f48995baaea76148f61002e5299841de",
+        "directory": "WORK/toolchain-work/host-attempts/run-001/bootstrap_cmds",
+        "ref": "bootstrap_cmds-138",
+        "url": "https://github.com/apple-oss-distributions/bootstrap_cmds.git"
+      },
+      {
+        "commit": "ea6d147d668ca15d490da638012243fcd705f30d",
+        "directory": "WORK/toolchain-work/host-attempts/run-001/iig-port",
+        "ref": "ea6d147d668ca15d490da638012243fcd705f30d",
+        "url": "https://github.com/Nyktis/iig-port.git"
+      },
+      {
+        "commit": "e634ca58b4821d9f3d560cdc6df5dec02ffc93fd",
+        "directory": "WORK/toolchain-work/host-attempts/run-001/lzfse",
+        "ref": "e634ca58b4821d9f3d560cdc6df5dec02ffc93fd",
+        "url": "https://github.com/lzfse/lzfse.git"
+      }
+    ],
+    "installer_adapter_sha256": "dd973d21f1fe45b8361889afb723dae654de8050b8efa202ee3e9acfd3a36389"
+  },
+  "host_components_manifest_sha256": "90b3b471c715abb82c628ceaf5343f576db2ad8863076ae287d07561c7693685",
+  "kernel_staging": {
+    "status": "inputs_staged",
+    "driver_sha256": "e52b53d0dad472d97a7833e21cb183fdae6ccb9f33d20ed26aa1978e4eaa3164",
+    "prepared_source_inventory_sha256": "16aed427ee21f60f7e8697dbd21f1fce75db653749e677a787c4844c44a438b8",
+    "staged_source_inventory_sha256": "93f9ac5f67205a884ff11dd6c1d949bd3deac6b0b2fdc6776bd592ef006a240a",
+    "kernel_compiled": false,
+    "kernel_linked": false,
+    "os_boot_verified": false
+  },
+  "followthrough": {
+    "clang_job_status": "running",
+    "drivers": {
+      "prepare_route_a_toolchain.py": "2448b5f6a60c7ebc6b66ac1d19c92515faa66acdd5a959795d05389b5f25b208",
+      "run_route_a_kernel_build.py": "e52b53d0dad472d97a7833e21cb183fdae6ccb9f33d20ed26aa1978e4eaa3164"
+    },
+    "os_boot_verified": false,
+    "phase": "wait_clang",
+    "pid": 32131,
+    "runner_sha256": "e6af12b57c6270ec591a9d75f3404c1297e3e45cb24808ca964fd435873febc0",
+    "started": 1795440408.2626233,
+    "status": "waiting",
+    "updated": 1795440548.3455071,
+    "wait_deadline_seconds_remaining": 28659.986030508007
+  },
+  "distribution_clang_negative": {
+    "status": "failed",
+    "compiler": {
+      "path": "/usr/bin/clang",
+      "realpath": "/usr/lib/llvm-19/bin/clang",
+      "sha256": "0a3c55936ac43954fbe4914e6e73b577ca9e35e75d89ef13d3e28c187f41ca1a",
+      "version": "Debian clang version 19.1.7 (3+b1)\nTarget: x86_64-pc-linux-gnu\nThread model: posix\nInstalledDir: /usr/lib/llvm-19/bin"
+    },
+    "probe_sha256": "cb50b1bb34c733d22d9711c1e17d4c86745d174a28ea8b740ace229a1d82cf85",
+    "static_assertions": 19,
+    "compiler_exit_code": 1,
+    "object_header_words": null,
+    "object_sha256": null,
+    "kernel_compiled": false,
+    "kernel_linked": false,
+    "os_boot_verified": false
+  },
+  "last_build_log_tail": "ical.cpp.o\n[1696/3136] Building CXX object tools/clang/lib/Analysis/CMakeFiles/obj.clangAnalysis.dir/ThreadSafetyTIL.cpp.o\n[1697/3136] Building CXX object tools/clang/lib/Analysis/CMakeFiles/obj.clangAnalysis.dir/UninitializedValues.cpp.o\n[1698/3136] Building ACC.h.inc...\n[1699/3136] Building ACC.inc...\n[1700/3136] Building CXX object lib/CodeGen/CMakeFiles/LLVMCodeGen.dir/AggressiveAntiDepBreaker.cpp.o\n[1701/3136] Building CXX object tools/clang/lib/Analysis/CMakeFiles/obj.clangAnalysis.dir/UnsafeBufferUsage.cpp.o\n[1702/3136] Building CXX object lib/CodeGen/CMakeFiles/LLVMCodeGen.dir/AllocationOrder.cpp.o\n[1703/3136] Building CXX object lib/CodeGen/CMakeFiles/LLVMCodeGen.dir/Analysis.cpp.o\n[1704/3136] Building CXX object lib/CodeGen/CMakeFiles/LLVMCodeGen.dir/AtomicExpandPass.cpp.o\n[1705/3136] Building CXX object lib/CodeGen/CMakeFiles/LLVMCodeGen.dir/AssignmentTrackingAnalysis.cpp.o\n[1706/3136] Building CXX object lib/CodeGen/CMakeFiles/LLVMCodeGen.dir/BasicTargetTransformInfo.cpp.o\n",
+  "kernel_build_report_present": false,
+  "driver_sources": {
+    "running_clang": {
+      "commit": "e17c49f2d9bf7355577046c9991baed7963e6f5b",
+      "path": "scripts/prepare_route_a_toolchain.py",
+      "sha256": "e8779b5ce6f026d7957044fa27b39f8bf11b6b1254b7bd8648c3fbb9f3ab4e62"
+    },
+    "completed_host_components": {
+      "commit": "92bf388872d4d249c87989815832bd2c2386715f",
+      "path": "scripts/prepare_route_a_toolchain.py",
+      "sha256": "f076e276dfecefe3ec344ea73efbede7a36a2bf11098b0cc63833468ec8f61a0"
+    },
+    "queued_final_host_tools": {
+      "commit": "3a52649f837f49f8df638d165f3dbbb7aa20e953",
+      "path": "scripts/prepare_route_a_toolchain.py",
+      "sha256": "2448b5f6a60c7ebc6b66ac1d19c92515faa66acdd5a959795d05389b5f25b208"
+    },
+    "staged_and_queued_kernel_builder": {
+      "commit": "3a52649f837f49f8df638d165f3dbbb7aa20e953",
+      "path": "scripts/run_route_a_kernel_build.py",
+      "sha256": "e52b53d0dad472d97a7833e21cb183fdae6ccb9f33d20ed26aa1978e4eaa3164"
+    }
+  },
+  "followthrough_contract": {
+    "existing_clang_job_is_not_restarted_or_stopped": true,
+    "max_wait_seconds": 28800,
+    "then": [
+      "Require the recorded custom Clang semantic probe to pass all 19 static assertions and match the actual compiler digest.",
+      "Finalize the host tools with the pinned driver and components-only disabled.",
+      "Run the first full upstream XNU builder using the already-staged source tree."
+    ],
+    "failure_behavior": "Stop on the first failed dependency, nonzero command or output check; retain logs, reports and build outputs; no automatic retry.",
+    "kernel_build_not_started_at_snapshot": true,
+    "runner_source_is_retained_with_remote_build": true
+  },
+  "public_record_normalization": "The development work-root and source-mirror path prefixes were replaced with WORK placeholders. All recorded hashes, source versions, status fields and log facts are retained.",
+  "limitations": [
+    "This is a time-stamped observation, not a claim that an asynchronous build has finished.",
+    "At this snapshot the custom Clang is still building and no kernel build report exists.",
+    "The stock-Clang negative probe declared 19 assertions but failed compilation; static_assertions is not a passing-test count.",
+    "Host components and small semantic samples passed; the final combined toolchain and complete XNU build are pending.",
+    "The pinned running Clang driver differs from the later finalization driver. Do not overwrite the running driver or resume its build with a different identity.",
+    "Full target ISA/ABI, board/archive closure, Darwin processes, iPadOS/macOS boot and hardware validation remain unverified."
+  ]
+}
+

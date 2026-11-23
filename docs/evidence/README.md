@@ -12,8 +12,12 @@
 | [首轮构建输入 staging](route-a-kernel-staging-20261123.json) | 7 份固定源码；21 个已有 header 保留，5 个 TrustCache header 新增 | 包含 artifact、原始报告、原始／新增后 inventory 摘要；未执行完整 XNU builder |
 | [主机工具语义验收](route-a-host-tools-smoke-20261123.json) | 3 组自写样本，15 次真实命令成功；工具前后摘要一致 | 普通 ARM64 archive/kernel-mode 链接、MIGCOM 生成、LZFSE 往返；完整 XNU 和 SDK 未验证 |
 | [候选内核能力发布源码核对](../ROUTE_A_TPRO_KERNEL_PUBLICATION.md) | 已检查的 exec 函数没有构造两个 TPRO 键，有 security_config 发布与继承 | 最终 generated config、pmap 选择、commpage 实际值及其他写入者仍需核验 |
+| [MemoryManager 调用边界](../ROUTE_A_MEMORY_MANAGER_CALL.md) | `0x719c` 定位到 syscall 38 / crossarch 查询，核对候选内核错误返回 | 后续字符串扫描、commpage 与最终 syscall 约定未验证；原 blocker 保持 |
+| [实际构建任务快照](route-a-build-execution-20261123.json) | 定制 Clang 正在编译；host components 与 staging 已完成；接续任务已启动 | 记录时完整 kernel builder 尚未开始，后台完成状态必须另取新记录 |
 
 公开 staging 报告只替换 CI 临时目录前缀，主机工具报告只替换开发工作目录前缀；原始报告 SHA-256 保留，其他摘要和结果没有改变。实际开发容器 staging 得到与 CI 一致的 XNU source inventory。主机工具样本使用 stock Clang 19.1.7；定制 Clang、最终组合工具链与完整 builder 的结果单独记录。
+
+主机验收脚本与这些文档随后发布于 [0e0edaf](https://github.com/cyjin-yl/UniXNU-tb371fc/commit/0e0edaf6d65ea4b28eb795a466005ef9b34ca73f)，其 [CI](https://github.com/cyjin-yl/UniXNU-tb371fc/actions/runs/45183600246) 同样实际通过 191 项回归、0 跳过及 source/header staging。CI 不执行远端主机样本，样本的实际报告另有工具与输入绑定。
 
 ## 前次源码准备集成：2026-11-23
 

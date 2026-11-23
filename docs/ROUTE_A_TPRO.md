@@ -150,6 +150,8 @@ python3 scripts/audit_route_a_tpro.py \
 
 已完成的候选 XNU 源码核对见 [内核 TPRO 能力发布](ROUTE_A_TPRO_KERNEL_PUBLICATION.md)。检查到的 `exec_add_apple_strings` 没有构造两个 `dyld_hw_tpro*` 项，但明确发布 `security_config`；task 状态可继承，最终 pmap／commpage 配置也尚未由完整内核确认。这些事实限定后续检查位置，尚不构成整个启动链的非 TPRO 证明。
 
+另一次只读追踪把 MemoryManager 的 `0x719c` 调用定位到了 **syscall 38 / crossarch 查询**。候选 XNU 在已检查实现中返回 `ENOTSUP`，随后仍有 `has_sec_transition` 字符串扫描和 commpage `+0x162` 读取需要证明。详见 [调用边界记录](ROUTE_A_MEMORY_MANAGER_CALL.md)；原审计器的 blocker 与两个局部区域闭合的数量保持不变。
+
 1. 补全实际 `dyld_hw_tpro=1` 比较循环的前驱和输入指针来源，并覆盖不能由
    相邻 ADR(P) 扫描找到的引用。分清能力检测、普通内存访问与能力发布。
 2. 从 `start` 的全部入口与分支出发验证 `0x4944`、`0x4aac` 附近路径，
