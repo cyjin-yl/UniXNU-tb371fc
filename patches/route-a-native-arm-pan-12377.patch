@@ -1,0 +1,19 @@
+# Route A context-only adaptation, 2026-11-23.
+# Source: UniXNU/UniXNU 8542980d02b4d2cc5c32ee3542de1760b2562aac,
+# patches/xnu-12377/native-arm-pan.patch (BSD-2-Clause-Patent).
+# Preserve all five added lines; replace only the trailing PAC-only context.
+diff --git a/pexpert/pexpert/arm64/BCM2837.h b/pexpert/pexpert/arm64/BCM2837.h
+--- a/pexpert/pexpert/arm64/BCM2837.h
++++ b/pexpert/pexpert/arm64/BCM2837.h
+@@ -18,6 +18,11 @@
+ #define __ARM_DEBUG__             7
+ #define __ARM64_PMAP_SUBPAGE_L1__ 1
+ 
++/* Native ARMv8.1+ targets select PAN explicitly; the original A53 target has none. */
++#if defined(XNU_NATIVE_PAN) && XNU_NATIVE_PAN
++#define __ARM_PAN_AVAILABLE__      1
++#endif
++
+ #ifndef ASSEMBLER
+ #define PLATFORM_PANIC_LOG_DISABLED
+ #endif /* ! ASSEMBLER */

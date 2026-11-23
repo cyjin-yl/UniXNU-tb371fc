@@ -78,6 +78,62 @@ class RecipeTests(unittest.TestCase):
             MODULE.validate_config(config)
 
 
+class ContextReplacementTests(unittest.TestCase):
+    def setUp(self):
+        self.temp = tempfile.TemporaryDirectory()
+        self.root = Path(self.temp.name)
+        self.path = self.root / "pan.patch"
+        self.original = (
+            b"diff --git a/header.h b/header.h\n--- a/header.h\n+++ b/header.h\n"
+            b"@@ -1,3 +1,4 @@\n start\n+#define __ARM_PAN_AVAILABLE__ 1\n"
+            b" old_context\n end\n")
+        self.replacement = self.original.replace(b" old_context\n", b" new_context\n")
+        self.path.write_bytes(self.replacement)
+        self.spec = {
+            "upstream_path": "patches/xnu-12377/native-arm-pan.patch",
+            "upstream_sha256": MODULE.digest(self.original),
+            "path": "pan.patch", "sha256": MODULE.digest(self.replacement),
+            "reason": "fixture context adaptation",
+        }
+
+    def tearDown(self):
+        self.temp.cleanup()
+
+    def test_context_only_preserves_all_edits_and_both_identities(self):
+        item = MODULE.context_replacement(self.original, self.spec, self.root)
+        self.assertEqual(item["data"], self.replacement)
+        self.assertEqual(item["upstream_sha256"], MODULE.digest(self.original))
+        self.assertEqual(item["sha256"], MODULE.digest(self.replacement))
+        self.assertEqual(item["source"], "device-repository-replacement")
+
+    def test_changed_upstream_or_local_bytes_rejected(self):
+        with self.assertRaises(MODULE.PreparationError):
+            MODULE.context_replacement(self.original + b"\n", self.spec, self.root)
+        self.path.write_bytes(self.replacement + b"\n")
+        with self.assertRaises(MODULE.PreparationError):
+            MODULE.context_replacement(self.original, self.spec, self.root)
+
+    def test_recomputed_digest_cannot_hide_pan_semantics_change(self):
+        changed = self.replacement.replace(b"__ARM_PAN_AVAILABLE__ 1", b"__ARM_PAN_AVAILABLE__ 0")
+        self.path.write_bytes(changed)
+        self.spec["sha256"] = MODULE.digest(changed)
+        with self.assertRaises(MODULE.PreparationError):
+            MODULE.context_replacement(self.original, self.spec, self.root)
+
+    def test_recomputed_digest_cannot_change_patch_target(self):
+        changed = self.replacement.replace(b"header.h", b"another.h")
+        self.path.write_bytes(changed)
+        self.spec["sha256"] = MODULE.digest(changed)
+        with self.assertRaises(MODULE.PreparationError):
+            MODULE.context_replacement(self.original, self.spec, self.root)
+
+    def test_replacement_is_explicit_and_cannot_be_dropped(self):
+        config = json.loads(MODULE.DEFAULT_CONFIG.read_text())
+        config["patch_replacements"] = []
+        with self.assertRaises(MODULE.PreparationError):
+            MODULE.validate_config(config)
+
+
 class GitIdentityTests(unittest.TestCase):
     def setUp(self):
         self.temp = tempfile.TemporaryDirectory()
@@ -149,10 +205,14 @@ class GitIdentityTests(unittest.TestCase):
         report = {"applied_patches": []}
         MODULE.apply_series(target, [{
             "source": "fixture", "path": "patches/fixture.patch",
-            "data": patch, "sha256": MODULE.digest(patch)
+            "data": patch, "sha256": MODULE.digest(patch),
+            "upstream_path": "patches/original.patch",
+            "upstream_sha256": "1" * 64, "replacement_reason": "context fixture",
         }], self.base / "patches", report)
         self.assertEqual((target / "source.txt").read_text(), "updated source\n")
         self.assertEqual(report["applied_patches"][0]["sha256"], MODULE.digest(patch))
+        self.assertEqual(report["applied_patches"][0]["upstream_path"], "patches/original.patch")
+        self.assertEqual(report["applied_patches"][0]["upstream_sha256"], "1" * 64)
 
     def test_missing_commit_fails_before_snapshot(self):
         with self.assertRaises(MODULE.PreparationError):

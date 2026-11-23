@@ -108,5 +108,14 @@
       }
     ],
     "tb371fc_storage_display_gpu_and_peripheral_inputs": "unresolved"
-  }
+  },
+  "patch_replacements": [
+    {
+      "upstream_path": "patches/xnu-12377/native-arm-pan.patch",
+      "upstream_sha256": "9d171dd00a8ac07c0ca6374258f4ee6ce6d02667abd0117415585d616b0e08e8",
+      "path": "patches/route-a-native-arm-pan-12377.patch",
+      "sha256": "644e906823b269868c8dcbe05fbc02f3d7009183ec894c73362e508dd5ae141f",
+      "reason": "Retain every PAN addition; replace only trailing context from the excluded native PAC header block with the ordinary-arm64 ASSEMBLER guard."
+    }
+  ]
 }

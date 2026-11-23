@@ -23,7 +23,7 @@ DEFAULT_CONFIG = ROOT / "configs/kernel-route-a-ipados27.json"
 REQUIRED_PATCHES = {
     "bcm2837-machine-config.patch", "native-4k-user-abi.patch",
     "native-4k-shared-region-slide.patch", "darwin26-syscalls.patch",
-    "darwin26-kpi.patch", "darwin26-shared-region.patch",
+    "darwin26-kpi.patch", "darwin26-shared-region.patch", "native-arm-pan.patch",
 }
 FORBIDDEN_PATCHES = {"native-pac-keys.patch", "native-pac-arm64-user-jop.patch"}
 EXPECTED_BUILD = {
@@ -147,12 +147,48 @@ def validate_config(config: dict):
     for source in sources.values():
         if not re.fullmatch(r"[0-9a-f]{40}", source["commit"]):
             raise PreparationError("all sources must use immutable full Git revisions")
+    replacements = config.get("patch_replacements", [])
+    if (len(replacements) != 1 or replacements[0].get("upstream_path") !=
+            "patches/xnu-12377/native-arm-pan.patch" or replacements[0].get("path") !=
+            "patches/route-a-native-arm-pan-12377.patch"):
+        raise PreparationError("the reviewed context-only native PAN replacement is required")
+    for key in ("sha256", "upstream_sha256"):
+        if not re.fullmatch(r"[0-9a-f]{64}", replacements[0].get(key, "")):
+            raise PreparationError("patch replacement digests must be full SHA-256 values")
     status = config["status"]
     if status["kind"] != "source-preparation-candidate" or any(
         status.get(k) is not False for k in (
             "kernel_compiled", "kernel_linked", "boot_verified", "board_integration_complete")
     ):
         raise PreparationError("a preparation configuration cannot assert runtime success")
+
+
+def patch_change_signature(data: bytes):
+    """Retain file/hunk identities and every edit; context may differ."""
+    lines = data.decode("utf-8").splitlines()
+    headers = [line for line in lines if line.startswith(
+        ("diff --git ", "--- ", "+++ ", "@@ "))]
+    edits = [line for line in lines if line.startswith(("+", "-"))
+             and not line.startswith(("--- ", "+++ "))]
+    if sum(line.startswith("@@ ") for line in headers) != 1:
+        raise PreparationError("context replacement must preserve exactly one reviewed hunk")
+    return headers, edits
+
+
+def context_replacement(original: bytes, spec: dict, repo_root: Path) -> dict:
+    if digest(original) != spec["upstream_sha256"]:
+        raise PreparationError("upstream context-replacement patch digest differs")
+    data = (repo_root / safe_path(spec["path"])).read_bytes()
+    if digest(data) != spec["sha256"]:
+        raise PreparationError("local context-replacement patch digest differs")
+    if patch_change_signature(original) != patch_change_signature(data):
+        raise PreparationError("context replacement changed the target, hunk identity or edits")
+    return {
+        "source": "device-repository-replacement", "path": spec["path"],
+        "sha256": digest(data), "data": data,
+        "upstream_path": spec["upstream_path"],
+        "upstream_sha256": digest(original), "replacement_reason": spec["reason"],
+    }
 
 
 def make_plan(config: dict, unixnu: Path, repo_root=ROOT):
@@ -172,6 +208,9 @@ def make_plan(config: dict, unixnu: Path, repo_root=ROOT):
     arch = git_blob(unixnu, commit, upstream["arch_series"])
     os_series = git_blob(unixnu, commit, upstream["os_series"])
     paths = selected_paths(arch.decode(), os_series.decode(), config["exclude_patches"])
+    replacements = {spec["upstream_path"]: spec for spec in config["patch_replacements"]}
+    if not set(replacements).issubset(paths):
+        raise PreparationError("a replacement has no selected upstream patch")
     patches = []
     for path in paths:
         data = git_blob(unixnu, commit, path)
@@ -179,7 +218,10 @@ def make_plan(config: dict, unixnu: Path, repo_root=ROOT):
                           if s.startswith("+") and not s.startswith("+++"))
         if re.search(r"(?m)^\s*#\s*define\s+(HAS_NATIVE_PAC|HAS_APPLE_PAC)\b", added):
             raise PreparationError(f"selected patch adds a PAC capability definition: {path}")
-        patches.append({"source": "unixnu", "path": path, "sha256": digest(data), "data": data})
+        if path in replacements:
+            patches.append(context_replacement(data, replacements[path], repo_root))
+        else:
+            patches.append({"source": "unixnu", "path": path, "sha256": digest(data), "data": data})
     if len(config["local_patches"]) != 1:
         raise PreparationError("exactly the reviewed plain-auth patch is required")
     local = config["local_patches"][0]
@@ -193,6 +235,7 @@ def make_plan(config: dict, unixnu: Path, repo_root=ROOT):
     return patches, {
         "os_profile_sha256": digest(profile_bytes), "arch_series_sha256": digest(arch),
         "os_series_sha256": digest(os_series), "excluded_patches": config["exclude_patches"],
+        "patch_replacements": config["patch_replacements"],
     }
 
 
@@ -218,10 +261,14 @@ def apply_series(tree: Path, patches: list[dict], patch_dir: Path, report: dict)
         path.write_bytes(item["data"])
         run(["git", "-C", tree, "apply", "--check", path])
         run(["git", "-C", tree, "apply", path])
-        report["applied_patches"].append({
+        record = {
             "index": index, "source": item["source"], "path": item["path"],
             "sha256": item["sha256"], "stored_file": f"patches/{filename}",
-        })
+        }
+        for key in ("upstream_path", "upstream_sha256", "replacement_reason"):
+            if key in item:
+                record[key] = item[key]
+        report["applied_patches"].append(record)
 
 
 def compiler_probes(tree: Path, output: Path, clang: str) -> dict:
@@ -239,8 +286,11 @@ def compiler_probes(tree: Path, output: Path, clang: str) -> dict:
     native = run([compiler, *flags, "-I", tree, "-c", contract, "-o", obj], check=False)
     (probe_dir / "contract.stderr").write_bytes(native.stderr)
     valid_object = False
+    object_header_words = None
     if native.returncode == 0:
         raw = obj.read_bytes()
+        if len(raw) >= 16:
+            object_header_words = list(struct.unpack("<IIII", raw[:16]))
         valid_object = len(raw) >= 32 and struct.unpack("<IIII", raw[:16]) == (
             0xFEEDFACF, 0x0100000C, 0, 1)
     builtins = run([compiler, *flags, "-fsyntax-only", builtin], check=False)
@@ -253,10 +303,14 @@ def compiler_probes(tree: Path, output: Path, clang: str) -> dict:
         "compiler_version": run([compiler, "--version"]).stdout.decode().strip(),
         "target": "arm64-apple-ios27.0", "march": "armv8-a",
         "macro_contract_verified": native.returncode == 0 and valid_object,
+        "contract_probe_exit_code": native.returncode,
+        "contract_probe_stderr": native.stderr.decode("utf-8", "replace")[-12000:],
         "object_sha256": digest(obj.read_bytes()) if valid_object else None,
         "object_cpu_subtype": 0 if valid_object else None,
+        "object_header_words": object_header_words,
         "xnu_type_builtins_available": builtins.returncode == 0,
         "xnu_builtin_probe_exit_code": builtins.returncode,
+        "xnu_builtin_probe_stderr": builtins.stderr.decode("utf-8", "replace")[-12000:],
         "kernel_compiled": False,
         "scope": "generic machine header and compiler target; not full kernel ISA or ABI",
     }

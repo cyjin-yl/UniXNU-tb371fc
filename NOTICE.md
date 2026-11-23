@@ -41,3 +41,10 @@ files' original APSL-2.0 / OSREFERENCE notices and adds dated modification notes
 It is not a relicensing of those XNU files. The exact upstream files, adaptations
 and validation scope are listed in `upstream/route-a-kernel-sources.json` and
 `docs/ROUTE_A_PLAIN_AUTH_PATCH.md`.
+
+The context-only PAN adaptation in `patches/route-a-native-arm-pan-12377.patch`
+preserves the five additions from UniXNU's `native-arm-pan.patch` at commit
+`8542980d02b4d2cc5c32ee3542de1760b2562aac` (BSD-2-Clause-Patent).
+Only the surrounding patch context is rebased after excluding native-PAC
+support. Existing XNU file notices remain unchanged. Original and adapted
+patch digests are recorded in `configs/kernel-route-a-ipados27.json`.
