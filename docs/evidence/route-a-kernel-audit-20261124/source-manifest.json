@@ -1,0 +1,27 @@
+{
+  "files": {
+    "audit.py": {
+      "repository_path": null,
+      "sha256": "93ed7e73be6cbda06d1888e7d3422fa234507cae64297a55714fe0042fc0164e",
+      "source_commit": null
+    },
+    "classifiers/macho.py": {
+      "repository_path": "scripts/arm64_lowering/macho.py",
+      "sha256": "50539d0e8c9aac8c324adcd1cbb55ceae7049ac1dcaa41864120607bf78124cb",
+      "source_commit": "ce834a0e2e9d63803d920f39f30012e4759102cf"
+    },
+    "classifiers/poe2.py": {
+      "extracted_definition": "poe2_instruction",
+      "repository_path": "scripts/route_a_zeta/zeta_userland_code.py",
+      "sha256": "0aa872f2a8c95456723c5e49b22847dd9132a11a68c2ba0a18bbc250cc613915",
+      "source_commit": "ce834a0e2e9d63803d920f39f30012e4759102cf",
+      "source_file_sha256": "aecead05310cf6be2648154b9eb9399c58f74ccb0d447a500be32fc379b69ed0"
+    },
+    "classifiers/ptrauth.py": {
+      "repository_path": "scripts/arm64_lowering/instructions.py",
+      "sha256": "593d7981bb3bc85033748aaae8bae014ad65d1efe23f9dd39e1d225635953a2d",
+      "source_commit": "ce834a0e2e9d63803d920f39f30012e4759102cf"
+    }
+  },
+  "source_commit": "ce834a0e2e9d63803d920f39f30012e4759102cf"
+}

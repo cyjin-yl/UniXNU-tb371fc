@@ -4,6 +4,8 @@
 
 配置在 [kernel-route-a-ipados27.json](../configs/kernel-route-a-ipados27.json)，准备器在 [prepare_route_a_kernel.py](../scripts/prepare_route_a_kernel.py)。准备器只读取本地 Git object store，不在运行时自动下载源码、工具链、crypto provider 或 Apple 系统文件。
 
+后续[第二轮真实构建](ROUTE_A_GENERIC_KERNEL_RESULT.md)已经将本基线加公开 headers 和独立 fileset 修复编译、链接为普通 ARM64 通用候选：1,086 个 `.o` / `.cpo`，1,067 行非空 link filelist，21,905,888 bytes（20.89 MiB）的 `MH_EXECUTE`、subtype 0 产物，0 编译 error、0 未定义符号。完整 TB371FC profile、provider/archive 依赖、全部 ISA 和 27 实机启动仍未验收；本页的准备器本身仍只负责源码准备与配置探针。
+
 ## 为什么新增这个入口
 
 上游 27 profile 固定 Apple XNU 12377.121.6，并用 Darwin 26 兼容补丁衔接新用户态；其架构入口是 arm64e。上游旧 arm64 profile 的补丁来自另一代 XNU，直接切换会把不同基线混合。本候选从固定 12377 patch series 建立 architecture + Darwin 26 + plain-pager 源码子集，明确剔除两个硬件 PAC 补丁，暂缓一个依赖未解析板级 PMGR/watchdog 层的 boot-progress 补丁，再加入本仓库的无 PAC pager 修复。它不表示完整上游 OS/SoC/board profile 已经应用。
@@ -12,7 +14,7 @@
 | --- | --- | --- |
 | UniXNU | `8542980d02b4d2cc5c32ee3542de1760b2562aac` | 从 commit 读取 profile、series 和 patch bytes |
 | Apple XNU | `ac9718fb1af618d5ce8678d0dc6e8a58f252216f`，12377.121.6 / Darwin 25.5.0 | 新建干净源码快照，不读取脏 checkout 文件 |
-| 编译架构 | `arm64-apple-ios27.0`、`-march=armv8-a` | 明确普通 arm64；尚未编译完整内核 |
+| 配置探针架构 | `arm64-apple-ios27.0`、`-march=armv8-a` | 本准备器生成普通 arm64 配置对象；后续真实 builder 另显式选择 `-mcpu=generic` |
 | 机器配置 | 上游 generic `BCM2837` | 通用 ARMv8 源码配置名称，不表示完整 TB371FC 板级适配 |
 | 页尺寸 | translation granule 4 KiB、VM page 4 KiB | 与此候选选用的 4 KiB patches 对应 |
 | 指针 ABI | plain-pointer ABI | 不提供 PAC 认证 |
@@ -45,11 +47,11 @@
 - [boot-progress patch](https://github.com/UniXNU/UniXNU/blob/8542980d02b4d2cc5c32ee3542de1760b2562aac/patches/xnu-12377/zzz-boot-progress.patch)
 - [读取并传递 XNU_BOOT_PROGRESS 的 builder](https://github.com/UniXNU/UniXNU/blob/8542980d02b4d2cc5c32ee3542de1760b2562aac/scripts/build-xnu-4k-baseline.sh)
 
-## 本轮实际验证
+## 最初源码准备验证
 
 提交 `5524e745ea50c71916b8abeb718b167e2d3c3350` 的 [CI](https://github.com/cyjin-yl/UniXNU-tb371fc/actions/runs/45173610144) 实际应用上述 71 项所选补丁，生成覆盖 6,119 个源码条目的清单，并以 Ubuntu Clang 18.1.3 编译通过普通 arm64 配置探针。完整报告见 [源码准备证据](evidence/route-a-kernel-preparation-20261123.json)。
 
-对象为 Mach-O `MH_OBJECT`、ARM64、subtype 0；这仍然只是通用配置小程序。三个 XNU type builtins 的编译探针实际返回失败，连同 headers、链接组件和板级依赖一起保留为完整构建待办。整个内核尚未编译、链接或启动。
+该次对象为 Mach-O `MH_OBJECT`、ARM64、subtype 0，只是通用配置小程序。当时三个 XNU type builtins 的编译探针实际失败，内核尚未编译、链接或启动；历史报告保持原样。之后定制 Clang 与匹配 headers 已完成，首轮 builder 的 716 对象失败被留存，第二轮[通用候选编译／链接成功](evidence/route-a-generic-kernel-build-20261124.json)。
 
 ## 复现
 
@@ -111,7 +113,9 @@ Ubuntu runner 可以使用发行版 Clang 完成此处的通用配置探针。�
 
 配置内的 component inventory 列出了上游 common source-build 路径涉及的 firehose、compiler runtime、crypto、pthread、ArmDTPlatform 与 ArmCpu 输入，但 **TB371FC 的完整 archive closure 尚未解析**。存储、显示、GPU 和其他外设输入须按当前板级实现重新连接到 12377；不能把别的 Qualcomm 平台 archive 当作 TB371FC 已验证产物。
 
-后续的定制 Linux Clang、组合工具链和匹配 headers 已取得[实际完成记录](evidence/route-a-toolchain-success-20261124.json)。[首次完整 builder](ROUTE_A_FIRST_KERNEL_BUILD.md) 已生成 716 个目标文件并暴露 fileset panic 的 PAuth 编译错误，局部修复和显式 CPU 检查已接入下一次尝试。之后仍需明确选择 provider、保存真实 link filelist 和 archives 的源版本及摘要。完整候选必须经过 kernel/archive/kext ISA 审计、27 userland 与 TPRO contract 验证、板级最小启动和最终硬件验收。具体缺口见 [集成审计](ROUTE_A_KERNEL_GAPS.md) 与 [plain-auth 补丁说明](ROUTE_A_PLAIN_AUTH_PATCH.md)。
+定制 Linux Clang、组合工具链和匹配 headers 已取得[实际完成记录](evidence/route-a-toolchain-success-20261124.json)。[真实 builder](ROUTE_A_FIRST_KERNEL_BUILD.md) 在独立 fileset 修复和显式 CPU 检查后，第二轮已成功编译／链接通用候选，并保存真实 link filelist。独立[有限编码核对](evidence/route-a-kernel-candidate-audit-20261124.json)覆盖 3 个区域、2,220,163 个候选 4 字节字：分类器识别的非 HINT PAuth 为 0、精确 POE2 TCHANGE 为 0，记录 180 个 `XPACLRI` HINT；这仍不证明全部 ISA 或可达性。
+
+后续需明确选择并接入完整 TB371FC provider/archives，保存各自源版本和摘要。完整候选还必须经过 kernel/archive/kext ISA 与系统寄存器审计、27 userland 与 TPRO contract 验证、板级最小启动和最终硬件验收。具体缺口见 [集成审计](ROUTE_A_KERNEL_GAPS.md) 与 [plain-auth 补丁说明](ROUTE_A_PLAIN_AUTH_PATCH.md)。
 
 ## 固定来源
 

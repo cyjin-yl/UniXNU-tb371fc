@@ -1,0 +1,496 @@
+{
+  "builder_result": {
+    "artifacts": [
+      {
+        "path": "build/xnu/ios-obj/DEVELOPMENT_ARM64_BCM2837/link.filelist",
+        "sha256": "ef6d270d22291a6e43c8d91b8811a505d25ed1465e4c0dba9174f3d19eaa556d",
+        "size": 129089
+      },
+      {
+        "full_instruction_set_audited": false,
+        "macho_header_words": [
+          4277009103,
+          16777228,
+          0,
+          2
+        ],
+        "ordinary_arm64_mh_execute": true,
+        "path": "build/xnu/ios-obj/DEVELOPMENT_ARM64_BCM2837/mach.development.bcm2837.unstripped",
+        "sha256": "a58cdeedb9b7a4c152867c3487f28658a3799b0158f5046bbad6d2d58e741469",
+        "size": 21905888
+      },
+      {
+        "full_instruction_set_audited": false,
+        "macho_header_words": [
+          4277009103,
+          16777228,
+          0,
+          2
+        ],
+        "ordinary_arm64_mh_execute": true,
+        "path": "build/xnu/ios-obj/DEVELOPMENT_ARM64_BCM2837/mach.development.bcm2837.unstripped.noctf",
+        "sha256": "a58cdeedb9b7a4c152867c3487f28658a3799b0158f5046bbad6d2d58e741469",
+        "size": 21905888
+      }
+    ],
+    "build_fixes": {
+      "applied": [
+        {
+          "files": [
+            {
+              "after_sha256": "061de685fab552a0031ab547d75600a16b9d993a54740b461760ebf038b8b5be",
+              "before_sha256": "fd749f59d773dac9cb95f8183ff9dece13f2ae2888f5da6f2efd9197acc9e5b0",
+              "path": "osfmk/kern/debug.c"
+            }
+          ],
+          "id": "fileset-unmapped-ptrauth",
+          "patch_sha256": "d3bebb609f6f1b6d11018c9be3aec36e941625019845c442aea6cf9506e62abe",
+          "source_patch": "patches/route-a-fileset-unmapped-ptrauth.patch",
+          "stored_patch": "build-fixes/001-fileset-unmapped-ptrauth.patch"
+        }
+      ],
+      "manifest_sha256": "7dd3a8703a929ad325b058f5161131da5aea14ffa5120f03830ced497af7d03d"
+    },
+    "build_log_sha256": "70c7b770cce5a267a52f85e921feac2078ecebccef0f2286f88ed01ed95ef158",
+    "builder_completed": true,
+    "compiled_object_file_count": 1086,
+    "compiler": {
+      "path": "WORK/toolchain/llvm/bin/clang",
+      "realpath": "WORK/toolchain/llvm/bin/clang-24",
+      "sha256": "85d220e32bd83d75de788c8beab0bea646a4684e1112f7c06266ca71e651bb04",
+      "version": "clang version 24.0.0git (WORK/toolchain-work/llvm-project/clang 58c46bae21181fb4240cf964461bea738d96d50e)\nTarget: unknown\nThread model: posix\nInstalledDir: WORK/toolchain/llvm/bin\nBuild config: +assertions"
+    },
+    "complete_board_archive_closure": false,
+    "cpu_verification": {
+      "checks": {
+        "all_compiles_succeeded": true,
+        "ir_cpu_generic": true,
+        "no_pauth_cpu_feature": true,
+        "no_pauth_instructions": true,
+        "no_pauth_intrinsics": true,
+        "ordinary_arm64_macho": true,
+        "return_address_intrinsic": true
+      },
+      "commands": [
+        {
+          "command": [
+            "WORK/toolchain/CommandLineTools/usr/bin/clang",
+            "-arch",
+            "arm64",
+            "-mkernel",
+            "-mno-implicit-sme",
+            "-momit-leaf-frame-pointer",
+            "-fno-strict-aliasing",
+            "-ffreestanding",
+            "-O1",
+            "-Werror",
+            "-fno-stack-protector",
+            "-fno-discard-value-names",
+            "-S",
+            "-emit-llvm",
+            "WORK/kernel-build/.route-a/cpu-verification/return-address.c",
+            "-o",
+            "WORK/kernel-build/.route-a/cpu-verification/return-address.ll"
+          ],
+          "exit_code": 0,
+          "kind": "ir",
+          "output": "WORK/kernel-build/.route-a/cpu-verification/return-address.ll",
+          "output_sha256": "5e7befd1effcb3bed03827cc6aa42f959f1fdaf6227e9483f29eb96cb4e65d6c",
+          "stderr": "WORK/kernel-build/.route-a/cpu-verification/ir.stderr",
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "stdout": "WORK/kernel-build/.route-a/cpu-verification/ir.stdout",
+          "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "command": [
+            "WORK/toolchain/CommandLineTools/usr/bin/clang",
+            "-arch",
+            "arm64",
+            "-mkernel",
+            "-mno-implicit-sme",
+            "-momit-leaf-frame-pointer",
+            "-fno-strict-aliasing",
+            "-ffreestanding",
+            "-O1",
+            "-Werror",
+            "-fno-stack-protector",
+            "-fno-discard-value-names",
+            "-S",
+            "WORK/kernel-build/.route-a/cpu-verification/return-address.c",
+            "-o",
+            "WORK/kernel-build/.route-a/cpu-verification/return-address.s"
+          ],
+          "exit_code": 0,
+          "kind": "assembly",
+          "output": "WORK/kernel-build/.route-a/cpu-verification/return-address.s",
+          "output_sha256": "3a6b666d1687ee104938592158fc3307ba764b473753fc2c12ecbf1717003641",
+          "stderr": "WORK/kernel-build/.route-a/cpu-verification/assembly.stderr",
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "stdout": "WORK/kernel-build/.route-a/cpu-verification/assembly.stdout",
+          "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "command": [
+            "WORK/toolchain/CommandLineTools/usr/bin/clang",
+            "-arch",
+            "arm64",
+            "-mkernel",
+            "-mno-implicit-sme",
+            "-momit-leaf-frame-pointer",
+            "-fno-strict-aliasing",
+            "-ffreestanding",
+            "-O1",
+            "-Werror",
+            "-fno-stack-protector",
+            "-fno-discard-value-names",
+            "-c",
+            "WORK/kernel-build/.route-a/cpu-verification/return-address.c",
+            "-o",
+            "WORK/kernel-build/.route-a/cpu-verification/return-address.o"
+          ],
+          "exit_code": 0,
+          "kind": "object",
+          "output": "WORK/kernel-build/.route-a/cpu-verification/return-address.o",
+          "output_sha256": "d531e36ae5ec0724eedc175625e5f8619e10d81e727f8d795ce8be14a3e40b28",
+          "stderr": "WORK/kernel-build/.route-a/cpu-verification/object.stderr",
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "stdout": "WORK/kernel-build/.route-a/cpu-verification/object.stdout",
+          "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      ],
+      "compiler": "WORK/toolchain/CommandLineTools/usr/bin/clang",
+      "driver_environment": {
+        "CROSS_CLANG": "WORK/toolchain/llvm/bin/clang",
+        "CROSS_EXTRA_FLAGS": "-mcpu=generic -mllvm -disable-atexit-based-global-dtor-lowering",
+        "DARWIN_TRIPLE": "arm64-apple-ios27.0"
+      },
+      "forbidden_instruction_lines": [],
+      "has_compatible_hint_7": true,
+      "ir_target_cpus": [
+        "generic"
+      ],
+      "ir_target_features": [
+        "+ete",
+        "+fp-armv8",
+        "+neon",
+        "+trbe",
+        "+v8a"
+      ],
+      "kernel_compiled": false,
+      "kernel_linked": false,
+      "object_header_words": [
+        4277009103,
+        16777228,
+        0,
+        1
+      ],
+      "os_boot_verified": false,
+      "passed": true,
+      "probe_sha256": "6c12f09ffb59327bfcb9075134270c77530b1e8b93812a4b2d55dcb9c24d5d00",
+      "schema_version": 1,
+      "status": "passed",
+      "target_flags": [
+        "-arch",
+        "arm64",
+        "-mkernel",
+        "-mno-implicit-sme",
+        "-momit-leaf-frame-pointer",
+        "-fno-strict-aliasing"
+      ]
+    },
+    "driver_sha256": "eca9f154be12cb71c82788826a937b45ddb454a71b5fe4ec356c8db340063441",
+    "environment": {
+      "CCC_OVERRIDE_OPTIONS": "# +-Wno-missing-designated-field-initializers +-Wno-unused-but-set-global",
+      "CLT_PREFIX": "WORK/toolchain/CommandLineTools/usr",
+      "CROSS_CLANG": "WORK/toolchain/llvm/bin/clang",
+      "CROSS_EXTRA_FLAGS": "-mcpu=generic -mllvm -disable-atexit-based-global-dtor-lowering",
+      "DARWIN_TRIPLE": "arm64-apple-ios27.0",
+      "JOBS": "2",
+      "LC_ALL": "C",
+      "PATH": "WORK/toolchain/CommandLineTools/usr/bin:WORK/toolchain/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
+      "UNIXNU_AVAILABILITYVERSIONS_COMMIT": "149b1777f3e8c2133042d8e188f72e3adf6a7110",
+      "UNIXNU_AVAILABILITYVERSIONS_TAG": "AvailabilityVersions-157.2",
+      "UNIXNU_DRIVERKIT_TAG": "xnu-12377.121.6",
+      "UNIXNU_IOS_VERSION": "27.0",
+      "UNIXNU_LIBDISPATCH_COMMIT": "701f4d1a24ae9c6863901bbbb22624b7d1b87321",
+      "UNIXNU_LIBDISPATCH_TAG": "libdispatch-1542.100.32",
+      "UNIXNU_LIBPLATFORM_COMMIT": "b7ed7cf5cf7dd12b98672435db2225a860f199d8",
+      "UNIXNU_LIBPLATFORM_TAG": "libplatform-375.120.2",
+      "UNIXNU_PATCH_LIST": "WORK/kernel-build/.route-a/selected-patches.txt",
+      "UNIXNU_PLATFORM_PATH": "WORK/kernel-build/.cache/fakeroot/Platforms/iPhoneOS.platform",
+      "UNIXNU_SDKROOT": "WORK/kernel-build/.cache/fakeroot",
+      "UNIXNU_SDK_BUILD": "24A446",
+      "UNIXNU_SDK_VERSION": "27.0",
+      "UNIXNU_TOOLCHAIN": "WORK/toolchain",
+      "UNIXNU_TRUSTCACHE_TAG": "xnu-8796.101.5",
+      "UNIXNU_XNU_ARCH": "arm64",
+      "UNIXNU_XNU_COMMIT": "ac9718fb1af618d5ce8678d0dc6e8a58f252216f",
+      "UNIXNU_XNU_DARWIN": "25.5.0",
+      "UNIXNU_XNU_TAG": "xnu-12377.121.6",
+      "UNIXNU_XNU_TARGET": "ios",
+      "UNIXNU_XNU_VERSION": "12377.121.6",
+      "XCTOOLCHAIN_PREFIX": "WORK/toolchain/XcodeDefault.xctoolchain/usr",
+      "XNU_BOOTSTRAP": "1",
+      "XNU_BOOT_PROGRESS": "0",
+      "XNU_BUILD_TARGET": "build",
+      "XNU_TOOLCHAIN_BIN": "WORK/toolchain/CommandLineTools/usr/bin WORK/toolchain/XcodeDefault.xctoolchain/usr/bin",
+      "ZERO_AR_DATE": "1"
+    },
+    "error_diagnostic_count": 0,
+    "error_diagnostics_truncated": false,
+    "exit_code": 0,
+    "first_error_diagnostics": [],
+    "kernel_compiled": false,
+    "kernel_linked": false,
+    "link_filelist_count": 1,
+    "ordinary_arm64_candidate_headers_verified": true,
+    "os_boot_verified": false,
+    "schema_version": 1,
+    "scope": "generic-architecture-first-pass",
+    "sdk_headers_marker_present": true,
+    "status": "builder_completed",
+    "toolchain_driver_sha256": "9680894acc78dbbdf2e990860a3f4506742ae5f4e945d9fc84a606618ddde275",
+    "unixnu_commit": "8542980d02b4d2cc5c32ee3542de1760b2562aac",
+    "whole_profile_applied": false,
+    "xnu_commit": "ac9718fb1af618d5ce8678d0dc6e8a58f252216f"
+  },
+  "complete_tb371fc_kernel_qualified": false,
+  "direct_clang_reverification": {
+    "command": [
+      "WORK/toolchain/llvm/bin/clang",
+      "-target",
+      "arm64-apple-ios27.0",
+      "-mcpu=generic",
+      "-march=armv8-a",
+      "-std=c++17",
+      "-ffreestanding",
+      "-Werror",
+      "-c",
+      "WORK/build-retry-v2/clang-verification/xnu-traits.cpp",
+      "-o",
+      "WORK/build-retry-v2/clang-verification/xnu-traits.o"
+    ],
+    "compiler": {
+      "path": "WORK/toolchain/llvm/bin/clang",
+      "realpath": "WORK/toolchain/llvm/bin/clang-24",
+      "sha256": "85d220e32bd83d75de788c8beab0bea646a4684e1112f7c06266ca71e651bb04",
+      "version": "clang version 24.0.0git (WORK/toolchain-work/llvm-project/clang 58c46bae21181fb4240cf964461bea738d96d50e)\nTarget: unknown\nThread model: posix\nInstalledDir: WORK/toolchain/llvm/bin\nBuild config: +assertions"
+    },
+    "object_header_words": [
+      4277009103,
+      16777228,
+      0,
+      1
+    ],
+    "object_sha256": "9d8fef975f6a74470b98dc964c8a3e746f6342923e3f51cb70fdf94a927986f5",
+    "return_address_codegen": {
+      "checks": {
+        "all_compiles_succeeded": true,
+        "ir_cpu_generic": true,
+        "no_pauth_cpu_feature": true,
+        "no_pauth_instructions": true,
+        "no_pauth_intrinsics": true,
+        "ordinary_arm64_macho": true,
+        "return_address_intrinsic": true
+      },
+      "commands": [
+        {
+          "command": [
+            "WORK/toolchain/llvm/bin/clang",
+            "-target",
+            "arm64-apple-ios27.0",
+            "-mcpu=generic",
+            "-march=armv8-a",
+            "-ffreestanding",
+            "-O1",
+            "-Werror",
+            "-fno-stack-protector",
+            "-fno-discard-value-names",
+            "-S",
+            "-emit-llvm",
+            "WORK/build-retry-v2/clang-verification/return-address-codegen/return-address.c",
+            "-o",
+            "WORK/build-retry-v2/clang-verification/return-address-codegen/return-address.ll"
+          ],
+          "exit_code": 0,
+          "kind": "ir",
+          "output": "WORK/build-retry-v2/clang-verification/return-address-codegen/return-address.ll",
+          "output_sha256": "6853545842d9165e61bf41f7ffd1db132e9a2219e340e11499c4111fe5173e5a",
+          "stderr": "WORK/build-retry-v2/clang-verification/return-address-codegen/ir.stderr",
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "stdout": "WORK/build-retry-v2/clang-verification/return-address-codegen/ir.stdout",
+          "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "command": [
+            "WORK/toolchain/llvm/bin/clang",
+            "-target",
+            "arm64-apple-ios27.0",
+            "-mcpu=generic",
+            "-march=armv8-a",
+            "-ffreestanding",
+            "-O1",
+            "-Werror",
+            "-fno-stack-protector",
+            "-fno-discard-value-names",
+            "-S",
+            "WORK/build-retry-v2/clang-verification/return-address-codegen/return-address.c",
+            "-o",
+            "WORK/build-retry-v2/clang-verification/return-address-codegen/return-address.s"
+          ],
+          "exit_code": 0,
+          "kind": "assembly",
+          "output": "WORK/build-retry-v2/clang-verification/return-address-codegen/return-address.s",
+          "output_sha256": "3a6b666d1687ee104938592158fc3307ba764b473753fc2c12ecbf1717003641",
+          "stderr": "WORK/build-retry-v2/clang-verification/return-address-codegen/assembly.stderr",
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "stdout": "WORK/build-retry-v2/clang-verification/return-address-codegen/assembly.stdout",
+          "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "command": [
+            "WORK/toolchain/llvm/bin/clang",
+            "-target",
+            "arm64-apple-ios27.0",
+            "-mcpu=generic",
+            "-march=armv8-a",
+            "-ffreestanding",
+            "-O1",
+            "-Werror",
+            "-fno-stack-protector",
+            "-fno-discard-value-names",
+            "-c",
+            "WORK/build-retry-v2/clang-verification/return-address-codegen/return-address.c",
+            "-o",
+            "WORK/build-retry-v2/clang-verification/return-address-codegen/return-address.o"
+          ],
+          "exit_code": 0,
+          "kind": "object",
+          "output": "WORK/build-retry-v2/clang-verification/return-address-codegen/return-address.o",
+          "output_sha256": "d531e36ae5ec0724eedc175625e5f8619e10d81e727f8d795ce8be14a3e40b28",
+          "stderr": "WORK/build-retry-v2/clang-verification/return-address-codegen/object.stderr",
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "stdout": "WORK/build-retry-v2/clang-verification/return-address-codegen/object.stdout",
+          "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      ],
+      "compiler": "WORK/toolchain/llvm/bin/clang",
+      "forbidden_instruction_lines": [],
+      "has_compatible_hint_7": true,
+      "ir_target_cpus": [
+        "generic"
+      ],
+      "ir_target_features": [
+        "+fp-armv8",
+        "+neon",
+        "+v8a"
+      ],
+      "kernel_compiled": false,
+      "kernel_linked": false,
+      "object_header_words": [
+        4277009103,
+        16777228,
+        0,
+        1
+      ],
+      "os_boot_verified": false,
+      "passed": true,
+      "probe_sha256": "6c12f09ffb59327bfcb9075134270c77530b1e8b93812a4b2d55dcb9c24d5d00",
+      "schema_version": 1,
+      "status": "passed",
+      "target_flags": [
+        "-target",
+        "arm64-apple-ios27.0",
+        "-mcpu=generic",
+        "-march=armv8-a"
+      ]
+    },
+    "static_assertions": 19,
+    "status": "passed"
+  },
+  "finished_at": "2026-11-24T01:15:20.488195+08:00",
+  "first_failed_attempt_preserved": {
+    "report_sha256": "bb26e0bc18f66e76a6d4942ec15f0deef5b71bb2d2c580973ca4934df1dd2ab2",
+    "retained_directory": "WORK/kernel-build-attempt-001"
+  },
+  "full_kernel_isa_audited": false,
+  "generic_kernel_compiled_and_linked": true,
+  "link_filelist": {
+    "all_link_dependencies_qualified": false,
+    "bytes": 129089,
+    "nonempty_lines": 1067,
+    "sample": [
+      "WORK/kernel-build/build/xnu/ios-obj/DEVELOPMENT_ARM64_BCM2837/osfmk/DEVELOPMENT/gssd_mach.o",
+      "WORK/kernel-build/build/xnu/ios-obj/DEVELOPMENT_ARM64_BCM2837/osfmk/DEVELOPMENT/lockd_mach.o",
+      "WORK/kernel-build/build/xnu/ios-obj/DEVELOPMENT_ARM64_BCM2837/osfmk/DEVELOPMENT/kextd_mach.o"
+    ],
+    "sha256": "ef6d270d22291a6e43c8d91b8811a505d25ed1465e4c0dba9174f3d19eaa556d"
+  },
+  "normalization": "Known development prefixes are replaced with WORK or SOURCES. The unrelated warning tail is omitted; the complete raw build log is retained and bound by build_log_sha256.",
+  "observed_at": "2026-11-24T01:20:03.610669+08:00",
+  "original_reports": {
+    "build-report.json": "34c40f71b43000dff0cc39b97264fc93ef1fd3b3027735c4a710817863b71044",
+    "direct-clang-verification.json": "a1c058888069f323eb4d9ac6fba5001600d64517b77c4e14be6b299f4b8eadf1",
+    "link.filelist": "ef6d270d22291a6e43c8d91b8811a505d25ed1465e4c0dba9174f3d19eaa556d",
+    "production-cpu-verification.json": "5f00bf872aa872f27c865fadfea5c75f59d79ff814c53cfbaa9da089373d6e82",
+    "runner-status.json": "b0394078987e58d9899cb89388741bd38fc677cb8631a956029eea2eb18fc1a1",
+    "stage-report.json": "2d4fa5f7f90c58a05a0479fed15e1ec1509c64c017f76d60a553ec8b51994084"
+  },
+  "os_boot_verified": false,
+  "qualification_note": "The original builder keeps kernel_compiled/kernel_linked=false as full-candidate qualification fields. Its actual generic builder exit, 1086 object files, link filelist and verified MH_EXECUTE outputs are recorded separately and succeeded. None of these results establishes the full board/provider or OS boot contract.",
+  "record_date": "2026-11-24",
+  "record_timezone": "Asia/Shanghai",
+  "related_evidence": {
+    "bounded_output_audit": "route-a-kernel-candidate-audit-20261124.json",
+    "compiled_fileset_helper": "route-a-compiled-fileset-helper-20261124.json"
+  },
+  "remaining_gates": [
+    "Audit the complete executable kernel and external archives for the actual CPU instruction set and register use.",
+    "Resolve and build TB371FC ArmDTPlatform, ArmCpu, storage, console and the selected source-provider/archive closure.",
+    "Complete the 27 userland/shared-cache conversion and dyld TPRO startup contract.",
+    "Prelink/package and verify device boot, Darwin process startup, graphics and the hardware matrix."
+  ],
+  "runner": {
+    "input_pins": {
+      "patches/route-a-fileset-unmapped-ptrauth.patch": "d3bebb609f6f1b6d11018c9be3aec36e941625019845c442aea6cf9506e62abe",
+      "scripts/prepare_route_a_toolchain.py": "9680894acc78dbbdf2e990860a3f4506742ae5f4e945d9fc84a606618ddde275",
+      "scripts/run_route_a_kernel_build.py": "eca9f154be12cb71c82788826a937b45ddb454a71b5fe4ec356c8db340063441",
+      "upstream/route-a-build-fixes.json": "7dd3a8703a929ad325b058f5161131da5aea14ffa5120f03830ced497af7d03d"
+    },
+    "phase": "complete",
+    "runner_sha256": "ad5d9630ead4fa768f60c58e52b27a280e2676d4e098a4f2968b442c97e0f706",
+    "source_commit": "ce834a0e2e9d63803d920f39f30012e4759102cf",
+    "status": "success"
+  },
+  "schema_version": 1,
+  "scope": "Ordinary-arm64 architecture + Darwin 26 ABI patches + plain-pager generic candidate; not a complete TB371FC board/archive integration",
+  "source_commit": "ce834a0e2e9d63803d920f39f30012e4759102cf",
+  "source_staging": {
+    "build_fixes": {
+      "applied": [
+        {
+          "files": [
+            {
+              "after_sha256": "061de685fab552a0031ab547d75600a16b9d993a54740b461760ebf038b8b5be",
+              "before_sha256": "fd749f59d773dac9cb95f8183ff9dece13f2ae2888f5da6f2efd9197acc9e5b0",
+              "path": "osfmk/kern/debug.c"
+            }
+          ],
+          "id": "fileset-unmapped-ptrauth",
+          "patch_sha256": "d3bebb609f6f1b6d11018c9be3aec36e941625019845c442aea6cf9506e62abe",
+          "source_patch": "patches/route-a-fileset-unmapped-ptrauth.patch",
+          "stored_patch": "build-fixes/001-fileset-unmapped-ptrauth.patch"
+        }
+      ],
+      "manifest_sha256": "7dd3a8703a929ad325b058f5161131da5aea14ffa5120f03830ced497af7d03d"
+    },
+    "complete_board_archive_closure": false,
+    "crypto_provider_selected": false,
+    "pre_build_fix_source_inventory_sha256": "93f9ac5f67205a884ff11dd6c1d949bd3deac6b0b2fdc6776bd592ef006a240a",
+    "prepared_source_inventory_sha256": "16aed427ee21f60f7e8697dbd21f1fce75db653749e677a787c4844c44a438b8",
+    "staged_source_inventory_sha256": "9a2f18aa42773260f52adeeeff20a5f0257fc4360858aa90a3871714f7b84008",
+    "unixnu_commit": "8542980d02b4d2cc5c32ee3542de1760b2562aac",
+    "xnu_commit": "ac9718fb1af618d5ce8678d0dc6e8a58f252216f"
+  },
+  "status": "generic_kernel_candidate_built"
+}

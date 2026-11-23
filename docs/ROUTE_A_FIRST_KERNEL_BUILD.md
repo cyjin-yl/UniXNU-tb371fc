@@ -1,4 +1,4 @@
-# Route A：71 项源码候选的真实第一轮内核构建
+# Route A：71 项源码候选的真实内核构建
 
 [run_route_a_kernel_build.py](../scripts/run_route_a_kernel_build.py) 将已经通过的普通 arm64 XNU 12377 源码候选接入固定上游 `build-xnu-4k-baseline.sh`。`stage` 准备真实源码与 headers；`run` 执行实际 builder、保留完整日志、非零退出与部分编译产物。它没有复制另一套内核 Makefile，也没有添加不接线的 board/provider stub。
 
@@ -6,9 +6,15 @@
 
 ## 已取得的真实构建结果：2026-11-24 记录
 
+**第二轮通用候选已编译并链接成功。** 新工作树使用固定 driver `ce834a0`、原 71 项基线、独立 fileset 修复和实际生产 shim 的 generic CPU 检查，builder 返回 0。生成 1,086 个 `.o` / `.cpo` 文件，link filelist 有 1,067 个非空行；两个保留的 kernel 文件内容相同，均为 21,905,888 bytes（20.89 MiB），Mach-O `MH_EXECUTE`、ARM64、subtype 0。日志中编译 error 为 0，独立 `llvm-nm` 检查的未定义符号为 0。详见[完整结果说明](ROUTE_A_GENERIC_KERNEL_RESULT.md)、[构建证据](evidence/route-a-generic-kernel-build-20261124.json)和[独立审计](evidence/route-a-kernel-candidate-audit-20261124.json)。
+
+独立编码核对扫描了 3 个指令区间的 2,220,163 个候选 4 字节字：分类器识别的非 HINT PAuth 为 0，精确 POE2 TCHANGE 为 0，另有 180 个 `XPACLRI` HINT。范围限于所声明的指令区间与固定分类规则，不构成全部 ISA 或可达性证明。实际整份 `debug.c` 已生成对象；[helper 反汇编与重定位](evidence/route-a-compiled-fileset-helper-20261124.json)确认返回地址使用 `0xd50320ff` HINT 字，并且调用仍指向 `_panic`。
+
+完整 TB371FC board/profile、provider/archive 依赖、全部 ISA、27 用户空间和设备启动仍未验收。第二轮成功记录不覆盖旧的工具链与首次失败报告；下面保留首次尝试的实际结果。
+
 定制 Clang 已完成构建，19 个 XNU type builtin 语义断言通过，最终 host-tools 状态为 `host_tools_built`、`combined_toolchain_verified=true`。[工具链完成记录](evidence/route-a-toolchain-success-20261124.json) 保留实际执行的旧 driver 身份及原始报告摘要；当时的探针只验收类型语义和 Mach-O header，没有覆盖完整指令集。
 
-首次完整 builder 已真正执行，生成 **716 个 `.o` / `.cpo` 文件**，随后以 2 退出。唯一 Clang error 为 `osfmk/kern/debug.c:2590:6: this target does not support pointer authentication`，出现在 950,343 行日志的第 538,726 行；之后其他并行 make job 的 warning 会把它挤出日志尾部。没有生成 link filelist 或普通 ARM64 kernel candidate，完整内核仍未编译／链接成功。详见[首次失败证据](evidence/route-a-first-kernel-failure-20261124.json)。
+首次完整 builder 生成 **716 个 `.o` / `.cpo` 文件**，随后以 2 退出。唯一 Clang error 为 `osfmk/kern/debug.c:2590:6: this target does not support pointer authentication`，出现在 950,343 行日志的第 538,726 行；之后其他并行 make job 的 warning 会把它挤出日志尾部。该次没有生成 link filelist 或普通 ARM64 kernel candidate。旧工作树保留为 `kernel-build-attempt-001`，详见[首次失败证据](evidence/route-a-first-kernel-failure-20261124.json)。
 
 错误来自上游新增的 `unixnu_fileset_unmapped` 无条件使用 `__builtin_ptrauth_strip`。新增[局部修复](ROUTE_A_FILESET_PTRAUTH.md)按编译器能力保留认证操作，同时保留普通 ARM64 的返回地址和 panic 行为。实际测试还发现 Darwin target 默认 `apple-a12` 可使 `__builtin_return_address` 生成 `XPACI`；完整构建现在显式选择 `-mcpu=generic`，并在调用 builder 前通过实际安装的 Clang shim 运行返回地址 codegen 检查。该检查不在自己的参数里补 CPU，因而能发现真实环境遗漏或覆盖。
 
@@ -103,7 +109,7 @@ run 检查 source staging 状态、XNU files、每个公开 reference 的 HEAD/�
 
 非零 builder 退出会使 CLI 返回 2，并记录 `builder_failed`；不会将“生成了一些 headers”归类为 kernel build 成功。builder 返回 0 后，还要求实际候选文件为 Mach-O 64 位、ARM64、subtype 0、`MH_EXECUTE`；缺失或不符会记录 `output_check_failed` 并返回 2，原始 builder exit code 仍保存为 0。只有这一步也通过才记录 `builder_completed`。报告记录每个候选的真实 header words，但完整 board/archive、最终 ISA/ABI、预链接和启动验证没有由这个 header 检查自动证明。`kernel_compiled`、`kernel_linked` 与 `os_boot_verified` 的完整候选资格字段继续为 false，实际生成了什么由独立 artifact 列表和真实 exit code 描述。
 
-下一轮应根据实际首个 compile/link error 修复明确输入，保存编译命令和 provider/link filelist，继续关闭未定义符号、指令集、Darwin 26 / dyld TPRO、TB371FC boot 与外设依赖。没有完整链接/硬件证据之前，不能称其为可启动 iPadOS 27 内核。
+第二轮已完成这个通用候选的实际编译／链接，结果另设 `generic_kernel_compiled_and_linked=true`，并保留原 builder 的完整候选资格字段。后续应绑定并构建完整 TB371FC provider/archive 依赖，审计全部 kernel/archive/kext 指令与系统寄存器使用，继续完成 Darwin 26 / dyld TPRO、加载链、设备启动和外设验收。当前普通候选的链接成功和零未定义符号不证明完整板级依赖已经接入，也不证明 iPadOS 27 可启动。
 
 ## 固定上游入口
 

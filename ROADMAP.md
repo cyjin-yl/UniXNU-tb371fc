@@ -16,8 +16,10 @@
 - [x] 主机组件构建及自写样本：普通 ARM64 静态链接、MIGCOM 生成、LZFSE 往返通过。
 - [x] 定制 Clang 固定版本编译与 19 个类型语义断言通过，最终组合工具链完成。
 - [x] 首轮真实 XNU builder 执行，保留 716 个目标文件与首个 PAuth 编译错误。
+- [x] 第二轮通用候选编译／链接成功：1,086 个对象、1,067 行 link filelist、普通 ARM64 `MH_EXECUTE` 候选。
+- [x] 候选有限编码核对和未定义符号检查完成；完整 ISA 与实机资格仍未完成。
 - [ ] 真实 27 完整共享缓存转换。
-- [ ] 完整 XNU 构建和 TB371FC 启动。
+- [ ] 完整 TB371FC profile、provider/archive 依赖的 XNU 构建和设备启动。
 - [ ] 27 的 Darwin 进程、桌面及整机硬件验收。
 
 “门禁实现”与“真实完整输入通过门禁”分别计数；已完成单文件转换不能替代整包验证。
@@ -27,11 +29,13 @@
 | ID | 任务 | 当前证据 | 本阶段完成条件 |
 | --- | --- | --- | --- |
 | A01 | `dyld` 非 TPRO 启动约定 | 4 个实际局部分支匹配，2 个条件区域闭合、2 个保持不完整；内核能力发布源码已核对 | 追踪 apple 向量键来源、早启动与相关寄存器路径；全部 236 处仍需逐项闭合 |
-| A02 | 普通 arm64、XNU 12377 构建 | 定制 Clang 和组合工具链完成；首轮真实 builder 生成 716 个对象后因无条件 PAuth builtin 失败，局部修复和 CPU 约定检查已接入 | 在新工作树复编，解决实际后续错误，完成内核编译／链接和产物审计 |
+| A02 | 普通 arm64、XNU 12377 构建 | 第二轮通用候选已编译／链接成功，0 编译 error、0 未定义符号；有限 PAuth/TCHANGE 编码核对完成 | 完成 TB371FC profile、provider/archive 依赖与完整 kernel/archive/kext ISA 审计，再接入加载与启动链 |
 | A03 | 真实完整 27 shared cache | 严格 proof 与改写器已有实现，完整输入未验证 | 提取完整主／子缓存集合，锁定来源与 UUID，完整覆盖、改写及签名页检查通过 |
 | A04 | 加载与普通指针 ABI 闭合 | 用户文件新信任条目信息准备；尚未安装 | dyld fixups、共享区、pager、信任目录和所有指针生产者采用一致约定 |
 
 A01 的可重复入口见 [TPRO 审计](docs/ROUTE_A_TPRO.md) 与 [内核能力发布核对](docs/ROUTE_A_TPRO_KERNEL_PUBLICATION.md)；A02 依次使用 [内核准备](docs/ROUTE_A_KERNEL_BUILD.md)、[工具链](docs/ROUTE_A_TOOLCHAIN.md) 和 [首次 builder](docs/ROUTE_A_FIRST_KERNEL_BUILD.md)。每一步是否实际通过，以对应输入报告为准。
+
+A02 的[第二轮结果](docs/ROUTE_A_GENERIC_KERNEL_RESULT.md)保存 21,905,888 bytes（20.89 MiB）的普通 ARM64、subtype 0 候选。独立检查覆盖 3 个指令区间的 2,220,163 个候选 4 字节字：分类器识别的非 HINT PAuth 为 0、精确 POE2 TCHANGE 为 0，记录 180 个 `XPACLRI` HINT。该计数不证明可达性或全部 ISA；原始首次失败的 716 个对象和日志保持留存。
 
 A01 不能通过“把 `dyld_hw_tpro` 设为 0”关闭硬件路径，已有二进制检查只看键是否存在。还需分别核对 DATA_CONST pager 的 TPRO 策略和早期能力发布。不得用批量 NOP 掩盖未证明的指令路径。
 
@@ -40,6 +44,8 @@ A01 不能通过“把 `dyld_hw_tpro` 设为 0”关闭硬件路径，已有二�
 A02 不能直接选择针对旧 XNU 的 arm64 profile，也不能把 V135 的保留内核替换几条指令当作 27 内核。当前目标基于固定 XNU 12377.121.6 加 Darwin 26 兼容工作；目标用户空间版本不等于内核源码已经升级成完整 Darwin 26。细项见 [内核缺口](docs/ROUTE_A_KERNEL_GAPS.md)。
 
 TB371FC 的 QEMU 板级模型在 [qemu-tb371fc](https://github.com/cyjin-yl/qemu-tb371fc) 并行推进，作为可重复验证中断、地址转换、DMA 与设备状态的环境。SMMU 迁移修复及 Linux 验证保存在该仓库的独立提交和 CI；QEMU 组件结果不填入下方实机 27 硬件验收表。
+
+SMMU 16／64 KiB granule 与迁移兼容工作已通过[最终 CI](https://github.com/cyjin-yl/qemu-tb371fc/actions/runs/45224664341)，并由 [PR #2](https://github.com/cyjin-yl/qemu-tb371fc/pull/2) 合并到 `69ca28d`。这项模型进展不改变以下 27 实机验收状态。
 
 ## 集成里程碑
 
@@ -52,7 +58,7 @@ TB371FC 的 QEMU 板级模型在 [qemu-tb371fc](https://github.com/cyjin-yl/qemu
 | M5：硬件完整与性能 | M4 可稳定复现 | 以下硬件矩阵全部验收；记录稳定性、性能和电源管理 |
 | M6：macOS 27 独立适配 | 可复用的构建、加载与驱动基础 | macOS 自己的输入、ABI、服务、UI 和硬件证据 |
 
-阶段可交叉推进；每项完成以证据为准。**M4 进入桌面只算中间里程碑。** 当前没有 M2 的完整内核构建通过记录，也没有 M3—M6 的 27 运行结果。
+阶段可交叉推进；每项完成以证据为准。**M4 进入桌面只算中间里程碑。** M2 已有通用候选编译／链接记录，但完整 TB371FC profile、archives、ISA 和加载链尚未验收；M3—M6 仍无 27 运行结果。
 
 ## 整机硬件验收矩阵
 

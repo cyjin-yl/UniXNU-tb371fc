@@ -2,7 +2,7 @@
 
 [prepare_route_a_toolchain.py](../scripts/prepare_route_a_toolchain.py) 实际构建固定版本的 LLVM/Clang 和 Linux 主机工具，目标是让 [71 项补丁源码候选](ROUTE_A_KERNEL_BUILD.md) 进入真实 XNU 编译。它不下载 iPadOS 镜像，也不选择 crypto provider。内核第一轮构建入口另见 [ROUTE_A_FIRST_KERNEL_BUILD.md](ROUTE_A_FIRST_KERNEL_BUILD.md)。
 
-已有 CI 证明普通 Clang 能生成普通 arm64 配置探针，但三个 `__builtin_xnu_type_*` 表达式不能编译。因此继续添加普通 Clang 宏检查不能消除缺口。本入口应用上游自己的 type builtin 实现，真正重建编译器，并验证其常量求值行为。
+最初的 CI 证明所用普通 Clang 能生成普通 arm64 配置探针，但三个 `__builtin_xnu_type_*` 表达式不能编译。本入口应用上游自己的 type builtin 实现，真正重建编译器，并验证其常量求值行为。定制编译器现已完成，并用于[第二轮通用内核的成功编译／链接](ROUTE_A_GENERIC_KERNEL_RESULT.md)；完整 TB371FC board/archive、ISA 和启动资格仍单独记录。
 
 ## 固定源码与实际产物
 
@@ -81,7 +81,7 @@ python3 SOURCE/scripts/prepare_route_a_toolchain.py host-tools \
 
 这一步要求 Linux 专用 Docker/Podman 容器的 root，因为固定上游把 `xcrun`、`plutil`、`codesign` shims 安装到 `/usr/bin`。项目 prefix 内的 `clang`、`clang++`、`cc`、`install`、`gm4` 也被记录。原生主机工具仍由 Linux compiler 编译，交叉 wrapper 则明确使用 `arm64-apple-ios27.0`。`codesign`/`plutil` shims 的存在不表示设备固件或系统镜像得到 Apple 授权签名。
 
-最终成功状态是 `host_tools_built`，并写入 `toolchain-environment.json`。它表示此处的编译器、组件、shim 检查完成；SDK kernel headers、XNU 生成的 MIG/IIG interfaces、完整 kernel link 和设备启动仍各自待验证。
+最终成功状态是 `host_tools_built`，并写入 `toolchain-environment.json`。这个状态本身只表示此处的编译器、组件、shim 检查完成，不包含 SDK kernel headers、XNU 生成的 MIG/IIG interfaces、kernel link 或设备启动的独立资格。后续真实 builder 已完成本通用候选所需的构建与链接，见下方实际记录；完整板级和设备启动仍未验收。
 
 ## 编译器语义验证
 
@@ -127,6 +127,10 @@ python3 SOURCE/scripts/check_route_a_host_tools.py \
 开发工作根中的 `build-followthrough-v1/status.json`、`runner.log` 记录接续阶段；`clang-job-status.json` 与 `toolchain-work/state.json` 记录实际编译进度；首次 kernel builder 真正进入后，结果在 `kernel-build/.route-a/build-report.json`。接续任务为一次执行，不重跑已存在的 kernel build，也不取消之前启动的 Clang 任务。
 
 2026-11-24 已取回[完成结果](evidence/route-a-toolchain-success-20261124.json)：旧 driver 实际完成定制 Clang 和 host-tools finalization，19 个类型语义断言通过。后续 builder 生成 716 个目标文件后[因 PAuth builtin 失败](evidence/route-a-first-kernel-failure-20261124.json)。原始编译器与完成报告保留；新版本增加 CPU codegen 检查，不将原报告追溯改写为已经执行了这项新检查。
+
+同日[第二轮真实构建](evidence/route-a-generic-kernel-build-20261124.json)使用该编译器，先重新通过 19 项类型语义断言与返回地址 codegen，再通过实际生产 shim 的 7 项检查，最后完成通用候选编译／链接。结果为 1,086 个 `.o` / `.cpo`、1,067 行非空 link filelist，以及 21,905,888 bytes（20.89 MiB）的普通 ARM64 `MH_EXECUTE`、subtype 0 产物。编译 error 为 0；[独立检查](evidence/route-a-kernel-candidate-audit-20261124.json)的未定义符号为 0。原始工具链报告仍维持其自身的有限资格，不被追溯改写成完整设备验收。
+
+生产 shim 的 IR features 实际为 `+ete,+fp-armv8,+neon,+trbe,+v8a`，而显式带 `-march=armv8-a` 的直接探针只有 `+fp-armv8,+neon,+v8a`。固定 LLVM 的 [generic CPU 默认集合](https://github.com/llvm/llvm-project/blob/58c46bae21181fb4240cf964461bea738d96d50e/llvm/lib/Target/AArch64/AArch64Processors.td#L1274-L1294)包含 ETE，[ETE 定义](https://github.com/llvm/llvm-project/blob/58c46bae21181fb4240cf964461bea738d96d50e/llvm/lib/Target/AArch64/AArch64Features.td#L388-L392)隐含 TRBE；[driver](https://github.com/llvm/llvm-project/blob/58c46bae21181fb4240cf964461bea738d96d50e/clang/lib/Driver/ToolChains/Arch/AArch64.cpp#L283-L295)有 `-march` 时使用架构默认集合，否则使用显式 `-mcpu` 的默认集合。源码说明这些 trace 扩展只开放显式汇编系统寄存器名称，不改变编译器自动生成代码；这些 feature 字符串不证明 TB371FC 的实际硬件支持，完整 ISA 和寄存器审计继续保留。
 
 | 文件 | 含义 |
 | --- | --- |

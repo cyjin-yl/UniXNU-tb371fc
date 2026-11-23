@@ -1,0 +1,511 @@
+{
+  "audit_source_commit": "ce834a0e2e9d63803d920f39f30012e4759102cf",
+  "audit_source_manifest_sha256": "3ab63ba73d3c45763ffcee6a908020705181083c1e4908c7ca46a6d50e53d0d0",
+  "candidate_bytes": 8880652,
+  "candidate_range_count": 3,
+  "candidate_ranges_are_code_proof": false,
+  "candidate_unchanged": true,
+  "commands": [
+    {
+      "command": [
+        "/usr/bin/llvm-nm-19",
+        "--version"
+      ],
+      "exit_code": 0,
+      "stderr": "llvm-nm.version.stderr",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout": "llvm-nm.version.stdout",
+      "stdout_sha256": "7ec9f72f893c3ca98da0315e6d2f6d690cf3de2705bdb8f4dc345a3c2e0d101e"
+    },
+    {
+      "command": [
+        "/usr/bin/llvm-objdump-19",
+        "--version"
+      ],
+      "exit_code": 0,
+      "stderr": "llvm-objdump.version.stderr",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout": "llvm-objdump.version.stdout",
+      "stdout_sha256": "8f851aeb4841527fde28d21bfa1a3b09298628c9a1b46f75a0f6d6e62d5116e8"
+    },
+    {
+      "command": [
+        "/usr/bin/llvm-objdump-19",
+        "--macho",
+        "--private-headers",
+        "WORK/kernel-build/build/xnu/ios-obj/DEVELOPMENT_ARM64_BCM2837/mach.development.bcm2837.unstripped"
+      ],
+      "exit_code": 0,
+      "stderr": "macho-private-headers.stderr",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout": "macho-private-headers.stdout",
+      "stdout_sha256": "799a661a33a4d00a7b6d027ca3afd71e0d89f539c2ba92ab2c9c42d6c204d5d8"
+    },
+    {
+      "command": [
+        "/usr/bin/llvm-nm-19",
+        "--undefined-only",
+        "--format=posix",
+        "WORK/kernel-build/build/xnu/ios-obj/DEVELOPMENT_ARM64_BCM2837/mach.development.bcm2837.unstripped"
+      ],
+      "exit_code": 0,
+      "stderr": "undefined-symbols.stderr",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout": "undefined-symbols.stdout",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "complete_board_qualification": false,
+  "counts": {
+    "compatible_pauth_hint": {
+      "XPACLRI": 180
+    },
+    "nonhint_pauth": {},
+    "poe2_tchange": {}
+  },
+  "data_in_code_entry_count": 0,
+  "encoding_findings_path": "route-a-kernel-audit-20261124/encoding-findings.jsonl",
+  "encoding_findings_sha256": "b53e37d9d5de488d0ee41d9f4ad6179e8a2a17dab7522349769363403a330e6e",
+  "excluded_data_bytes": 0,
+  "executable_sections": [
+    {
+      "address": "0xfffffff0072ac000",
+      "declared_instructions": true,
+      "file_offset": "0x2a8000",
+      "flags": "0x80000400",
+      "name": "__text",
+      "segment": "__TEXT_EXEC",
+      "size": 8873048
+    },
+    {
+      "address": "0xfffffff007b22460",
+      "declared_instructions": true,
+      "file_offset": "0xb1e460",
+      "flags": "0x80000400",
+      "name": "__hib_text",
+      "segment": "__TEXT_EXEC",
+      "size": 3140
+    },
+    {
+      "address": "0xfffffff007b24000",
+      "declared_instructions": true,
+      "file_offset": "0xb20000",
+      "flags": "0x80000400",
+      "name": "__text",
+      "segment": "__KLD",
+      "size": 4464
+    },
+    {
+      "address": "0xfffffff007b2c000",
+      "declared_instructions": false,
+      "file_offset": "0x0",
+      "flags": "0x1",
+      "name": "__last",
+      "segment": "__LAST",
+      "size": 0
+    },
+    {
+      "address": "0xfffffff004004000",
+      "declared_instructions": false,
+      "file_offset": "0xc48000",
+      "flags": "0x0",
+      "name": "__text",
+      "segment": "__PRELINK_TEXT",
+      "size": 0
+    }
+  ],
+  "finished": 1795454615.4534085,
+  "finished_at": "2026-11-24T01:23:35.453408+08:00",
+  "geometry_sha256": "2d8adf5c73dfc0484ad6993c6ace24c88580fa71eb16685e9c969bc008ee94f4",
+  "input_bytes": 21905888,
+  "input_path": "WORK/kernel-build/build/xnu/ios-obj/DEVELOPMENT_ARM64_BCM2837/mach.development.bcm2837.unstripped",
+  "input_sha256_after": "a58cdeedb9b7a4c152867c3487f28658a3799b0158f5046bbad6d2d58e741469",
+  "input_sha256_before": "a58cdeedb9b7a4c152867c3487f28658a3799b0158f5046bbad6d2d58e741469",
+  "limitations": [
+    "This is a bounded encoding census, not a full A77 instruction-feature audit.",
+    "Only instruction-flagged sections are scanned; LC_DATA_IN_CODE bytes are excluded.",
+    "Literal pools without LC_DATA_IN_CODE markings may still be inside candidate ranges.",
+    "A word matching a rule, a Capstone decode or a nearby symbol does not prove execution or reachability.",
+    "The PAuth classifier covers the original Armv8.3 families, not every later extension.",
+    "POE2 coverage is the project's exact TCHANGEF/TCHANGEB forms only.",
+    "No patching, loader, board-device, full-archive-closure or boot qualification was performed."
+  ],
+  "limited_checks_passed": true,
+  "load_commands": [
+    "0x19",
+    "0x19",
+    "0x19",
+    "0x19",
+    "0x19",
+    "0x19",
+    "0x19",
+    "0x19",
+    "0x19",
+    "0x19",
+    "0x19",
+    "0x19",
+    "0x19",
+    "0x19",
+    "0x19",
+    "0x19",
+    "0x19",
+    "0x19",
+    "0x2",
+    "0xb",
+    "0x1b",
+    "0x32",
+    "0x2a",
+    "0x5",
+    "0x26"
+  ],
+  "log_sha256": "99af610255907cfa36791fd12138cc5d5f49856e81661e574944ecd0bf117e71",
+  "macho_header_words": [
+    4277009103,
+    16777228,
+    0,
+    2,
+    25,
+    5856,
+    2097153,
+    0
+  ],
+  "noctf_sha256_after": "a58cdeedb9b7a4c152867c3487f28658a3799b0158f5046bbad6d2d58e741469",
+  "noctf_sha256_before": "a58cdeedb9b7a4c152867c3487f28658a3799b0158f5046bbad6d2d58e741469",
+  "noctf_unchanged": true,
+  "normalization": "Only known development prefixes are replaced with WORK/VENV in this summary. The raw evidence directory retains the exact reports, audit runner, pinned classifier snapshots, outputs and SHA-256 readback manifest.",
+  "not_matched_by_scoped_rules": 2219983,
+  "ordinary_arm64_mh_execute": true,
+  "original_audit_sha256": "4546d4cdeed742b48ad4dce2dca2b80aad20b05dc82f0b795db450d3b737a552",
+  "os_boot_verified": false,
+  "parser_blockers": [],
+  "parser_warnings": [],
+  "raw_evidence_directory": "route-a-kernel-audit-20261124",
+  "raw_evidence_manifest": "route-a-kernel-audit-20261124/readback-manifest.json",
+  "reachability_proven": false,
+  "record_date": "2026-11-24",
+  "record_timezone": "Asia/Shanghai",
+  "related_build_evidence": "route-a-generic-kernel-build-20261124.json",
+  "rewritten": false,
+  "samples": {
+    "compatible_pauth_hint": [
+      {
+        "address": "0xfffffff0072f61b0",
+        "capstone": {
+          "mnemonic": "xpaclri",
+          "operands": ""
+        },
+        "category": "compatible_pauth_hint",
+        "family": "hint",
+        "file_offset": "0x2f21b0",
+        "mnemonic": "XPACLRI",
+        "nearest_defined_section_symbol": {
+          "address": "0xfffffff0072f61ac",
+          "distance": 4,
+          "is_function_or_reachability_proof": false,
+          "name": "_Debugger"
+        },
+        "pure_instruction_section": true,
+        "reachable_instruction_proven": false,
+        "section": "__text",
+        "segment": "__TEXT_EXEC",
+        "word": "0xd50320ff"
+      },
+      {
+        "address": "0xfffffff0072f77d4",
+        "capstone": {
+          "mnemonic": "xpaclri",
+          "operands": ""
+        },
+        "category": "compatible_pauth_hint",
+        "family": "hint",
+        "file_offset": "0x2f37d4",
+        "mnemonic": "XPACLRI",
+        "nearest_defined_section_symbol": {
+          "address": "0xfffffff0072f77c4",
+          "distance": 16,
+          "is_function_or_reachability_proof": false,
+          "name": "_log"
+        },
+        "pure_instruction_section": true,
+        "reachable_instruction_proven": false,
+        "section": "__text",
+        "segment": "__TEXT_EXEC",
+        "word": "0xd50320ff"
+      },
+      {
+        "address": "0xfffffff007310a64",
+        "capstone": {
+          "mnemonic": "xpaclri",
+          "operands": ""
+        },
+        "category": "compatible_pauth_hint",
+        "family": "hint",
+        "file_offset": "0x30ca64",
+        "mnemonic": "XPACLRI",
+        "nearest_defined_section_symbol": {
+          "address": "0xfffffff007310a50",
+          "distance": 20,
+          "is_function_or_reachability_proof": false,
+          "name": "_lck_rw_lock_exclusive"
+        },
+        "pure_instruction_section": true,
+        "reachable_instruction_proven": false,
+        "section": "__text",
+        "segment": "__TEXT_EXEC",
+        "word": "0xd50320ff"
+      },
+      {
+        "address": "0xfffffff007310c48",
+        "capstone": {
+          "mnemonic": "xpaclri",
+          "operands": ""
+        },
+        "category": "compatible_pauth_hint",
+        "family": "hint",
+        "file_offset": "0x30cc48",
+        "mnemonic": "XPACLRI",
+        "nearest_defined_section_symbol": {
+          "address": "0xfffffff007310c24",
+          "distance": 36,
+          "is_function_or_reachability_proof": false,
+          "name": "_lck_rw_lock_exclusive_b"
+        },
+        "pure_instruction_section": true,
+        "reachable_instruction_proven": false,
+        "section": "__text",
+        "segment": "__TEXT_EXEC",
+        "word": "0xd50320ff"
+      },
+      {
+        "address": "0xfffffff007310e24",
+        "capstone": {
+          "mnemonic": "xpaclri",
+          "operands": ""
+        },
+        "category": "compatible_pauth_hint",
+        "family": "hint",
+        "file_offset": "0x30ce24",
+        "mnemonic": "XPACLRI",
+        "nearest_defined_section_symbol": {
+          "address": "0xfffffff007310e10",
+          "distance": 20,
+          "is_function_or_reachability_proof": false,
+          "name": "_lck_rw_lock_shared"
+        },
+        "pure_instruction_section": true,
+        "reachable_instruction_proven": false,
+        "section": "__text",
+        "segment": "__TEXT_EXEC",
+        "word": "0xd50320ff"
+      },
+      {
+        "address": "0xfffffff007311060",
+        "capstone": {
+          "mnemonic": "xpaclri",
+          "operands": ""
+        },
+        "category": "compatible_pauth_hint",
+        "family": "hint",
+        "file_offset": "0x30d060",
+        "mnemonic": "XPACLRI",
+        "nearest_defined_section_symbol": {
+          "address": "0xfffffff007311038",
+          "distance": 40,
+          "is_function_or_reachability_proof": false,
+          "name": "_lck_rw_lock_shared_b"
+        },
+        "pure_instruction_section": true,
+        "reachable_instruction_proven": false,
+        "section": "__text",
+        "segment": "__TEXT_EXEC",
+        "word": "0xd50320ff"
+      },
+      {
+        "address": "0xfffffff007311754",
+        "capstone": {
+          "mnemonic": "xpaclri",
+          "operands": ""
+        },
+        "category": "compatible_pauth_hint",
+        "family": "hint",
+        "file_offset": "0x30d754",
+        "mnemonic": "XPACLRI",
+        "nearest_defined_section_symbol": {
+          "address": "0xfffffff00731128c",
+          "distance": 1224,
+          "is_function_or_reachability_proof": false,
+          "name": "_lck_rw_lock_shared_to_exclusive"
+        },
+        "pure_instruction_section": true,
+        "reachable_instruction_proven": false,
+        "section": "__text",
+        "segment": "__TEXT_EXEC",
+        "word": "0xd50320ff"
+      },
+      {
+        "address": "0xfffffff00731181c",
+        "capstone": {
+          "mnemonic": "xpaclri",
+          "operands": ""
+        },
+        "category": "compatible_pauth_hint",
+        "family": "hint",
+        "file_offset": "0x30d81c",
+        "mnemonic": "XPACLRI",
+        "nearest_defined_section_symbol": {
+          "address": "0xfffffff007311764",
+          "distance": 184,
+          "is_function_or_reachability_proof": false,
+          "name": "_lck_rw_lock_exclusive_to_shared"
+        },
+        "pure_instruction_section": true,
+        "reachable_instruction_proven": false,
+        "section": "__text",
+        "segment": "__TEXT_EXEC",
+        "word": "0xd50320ff"
+      },
+      {
+        "address": "0xfffffff007311958",
+        "capstone": {
+          "mnemonic": "xpaclri",
+          "operands": ""
+        },
+        "category": "compatible_pauth_hint",
+        "family": "hint",
+        "file_offset": "0x30d958",
+        "mnemonic": "XPACLRI",
+        "nearest_defined_section_symbol": {
+          "address": "0xfffffff007311944",
+          "distance": 20,
+          "is_function_or_reachability_proof": false,
+          "name": "_lck_rw_lock"
+        },
+        "pure_instruction_section": true,
+        "reachable_instruction_proven": false,
+        "section": "__text",
+        "segment": "__TEXT_EXEC",
+        "word": "0xd50320ff"
+      },
+      {
+        "address": "0xfffffff007311968",
+        "capstone": {
+          "mnemonic": "xpaclri",
+          "operands": ""
+        },
+        "category": "compatible_pauth_hint",
+        "family": "hint",
+        "file_offset": "0x30d968",
+        "mnemonic": "XPACLRI",
+        "nearest_defined_section_symbol": {
+          "address": "0xfffffff007311944",
+          "distance": 36,
+          "is_function_or_reachability_proof": false,
+          "name": "_lck_rw_lock"
+        },
+        "pure_instruction_section": true,
+        "reachable_instruction_proven": false,
+        "section": "__text",
+        "segment": "__TEXT_EXEC",
+        "word": "0xd50320ff"
+      },
+      {
+        "address": "0xfffffff007311d88",
+        "capstone": {
+          "mnemonic": "xpaclri",
+          "operands": ""
+        },
+        "category": "compatible_pauth_hint",
+        "family": "hint",
+        "file_offset": "0x30dd88",
+        "mnemonic": "XPACLRI",
+        "nearest_defined_section_symbol": {
+          "address": "0xfffffff007311d74",
+          "distance": 20,
+          "is_function_or_reachability_proof": false,
+          "name": "_lck_rw_try_lock_shared"
+        },
+        "pure_instruction_section": true,
+        "reachable_instruction_proven": false,
+        "section": "__text",
+        "segment": "__TEXT_EXEC",
+        "word": "0xd50320ff"
+      },
+      {
+        "address": "0xfffffff007311f18",
+        "capstone": {
+          "mnemonic": "xpaclri",
+          "operands": ""
+        },
+        "category": "compatible_pauth_hint",
+        "family": "hint",
+        "file_offset": "0x30df18",
+        "mnemonic": "XPACLRI",
+        "nearest_defined_section_symbol": {
+          "address": "0xfffffff007311f04",
+          "distance": 20,
+          "is_function_or_reachability_proof": false,
+          "name": "_lck_rw_try_lock_exclusive"
+        },
+        "pure_instruction_section": true,
+        "reachable_instruction_proven": false,
+        "section": "__text",
+        "segment": "__TEXT_EXEC",
+        "word": "0xd50320ff"
+      }
+    ],
+    "nonhint_pauth": [],
+    "poe2_tchange": []
+  },
+  "scanned_candidate_words": 2220163,
+  "schema_version": 1,
+  "scope": "original Armv8.3 PAuth and exact POE2 TCHANGE encodings in declared instruction-section candidate ranges",
+  "status": "completed",
+  "symbol_table_entries": 218377,
+  "tools": {
+    "capstone": {
+      "core_version": [
+        5,
+        0,
+        1280
+      ],
+      "module_path": "VENV/lib/python3.13/site-packages/capstone/__init__.py",
+      "module_sha256": "de6aa463d9008ce52827d5b6074780bc141f5422ccc07e4163851d0fee7c1719",
+      "native_library": {
+        "path": "VENV/lib/python3.13/site-packages/capstone/lib/libcapstone.so",
+        "sha256": "fb3e851989440c51fa026fa5be0441a5d5f09d3c4018f6521138762bfbf473b8"
+      },
+      "version": "5.0.6"
+    },
+    "llvm-nm": {
+      "path": "/usr/bin/llvm-nm-19",
+      "realpath": "/usr/lib/llvm-19/bin/llvm-nm",
+      "sha256": "ed2427f2e14ac235a12fc3ca878f3621dd347e1e0dba7a316824f4d2a5e78403",
+      "version": "llvm-nm, compatible with GNU nm\nDebian LLVM version 19.1.7\n  Optimized build.\n"
+    },
+    "llvm-objdump": {
+      "path": "/usr/bin/llvm-objdump-19",
+      "realpath": "/usr/lib/llvm-19/bin/llvm-objdump",
+      "sha256": "c904a20cf0caeb812b542b69488e5c79738951a92ca99098fbb8941505eb789d",
+      "version": "Debian LLVM version 19.1.7\n  Optimized build.\n\n\n  Registered Targets:\n    aarch64     - AArch64 (little endian)\n    aarch64_32  - AArch64 (little endian ILP32)\n    aarch64_be  - AArch64 (big endian)\n    amdgcn      - AMD GCN GPUs\n    arm         - ARM\n    arm64       - ARM64 (little endian)\n    arm64_32    - ARM64 (little endian ILP32)\n    armeb       - ARM (big endian)\n    avr         - Atmel AVR Microcontroller\n    bpf         - BPF (host endian)\n    bpfeb       - BPF (big endian)\n    bpfel       - BPF (little endian)\n    hexagon     - Hexagon\n    lanai       - Lanai\n    loongarch32 - 32-bit LoongArch\n    loongarch64 - 64-bit LoongArch\n    m68k        - Motorola 68000 family\n    mips        - MIPS (32-bit big endian)\n    mips64      - MIPS (64-bit big endian)\n    mips64el    - MIPS (64-bit little endian)\n    mipsel      - MIPS (32-bit little endian)\n    msp430      - MSP430 [experimental]\n    nvptx       - NVIDIA PTX 32-bit\n    nvptx64     - NVIDIA PTX 64-bit\n    ppc32       - PowerPC 32\n    ppc32le     - PowerPC 32 LE\n    ppc64       - PowerPC 64\n    ppc64le     - PowerPC 64 LE\n    r600        - AMD GPUs HD2XXX-HD6XXX\n    riscv32     - 32-bit RISC-V\n    riscv64     - 64-bit RISC-V\n    sparc       - Sparc\n    sparcel     - Sparc LE\n    sparcv9     - Sparc V9\n    systemz     - SystemZ\n    thumb       - Thumb\n    thumbeb     - Thumb (big endian)\n    ve          - VE\n    wasm32      - WebAssembly 32-bit\n    wasm64      - WebAssembly 64-bit\n    x86         - 32-bit X86: Pentium-Pro and above\n    x86-64      - 64-bit X86: EM64T and AMD64\n    xcore       - XCore\n    xtensa      - Xtensa 32\n"
+    },
+    "python": {
+      "path": "VENV/bin/python",
+      "realpath": "/usr/bin/python3.13",
+      "sha256": "889c603f0d17cb54060951bcf4c4f9b8c9ebd9e52b392c70209bbb9755d797d9",
+      "version": "3.13.5 (main, Aug 10 2026, 12:06:59) [GCC 14.2.0]"
+    }
+  },
+  "totals": {
+    "compatible_pauth_hint": 180,
+    "nonhint_pauth": 0,
+    "poe2_tchange": 0
+  },
+  "undefined_symbols": {
+    "count": 0,
+    "first_50": [],
+    "full_output": "undefined-symbols.stdout",
+    "output_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "truncated": false
+  },
+  "whole_instruction_set_verified": false
+}

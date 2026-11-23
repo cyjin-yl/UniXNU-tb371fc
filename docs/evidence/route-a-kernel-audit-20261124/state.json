@@ -1,0 +1,10 @@
+{
+  "audit_sha256": "4546d4cdeed742b48ad4dce2dca2b80aad20b05dc82f0b795db450d3b737a552",
+  "exit_code": 0,
+  "finished": 1795454615.4534085,
+  "pid": 107105,
+  "stage": "scanning_candidate_ranges",
+  "started": 1795454606.512896,
+  "status": "completed",
+  "undefined_symbol_count": 0
+}

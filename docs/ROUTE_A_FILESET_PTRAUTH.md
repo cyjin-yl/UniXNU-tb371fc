@@ -68,4 +68,4 @@ ROUTE_A_FILESET_CLANG=/absolute/path/to/verified/clang \
 
 已核对这两个 trace feature 的来源：固定 LLVM 的 [Generic CPU 默认集合](https://github.com/llvm/llvm-project/blob/58c46bae21181fb4240cf964461bea738d96d50e/llvm/lib/Target/AArch64/AArch64Processors.td) 包含 ETE，[ETE 定义](https://github.com/llvm/llvm-project/blob/58c46bae21181fb4240cf964461bea738d96d50e/llvm/lib/Target/AArch64/AArch64Features.td) 再依赖 TRBE。[Clang driver](https://github.com/llvm/llvm-project/blob/58c46bae21181fb4240cf964461bea738d96d50e/clang/lib/Driver/ToolChains/Arch/AArch64.cpp) 优先采用 `-march` 的架构扩展；没有它时才采用显式 `-mcpu` 的 CPU 扩展，因此两次探针的列表不同。LLVM 注释明确限制这两个默认项的作用：不会因此自动生成相关代码，但可允许汇编显式引用新的系统寄存器。这不证明 TB371FC 支持对应 trace 功能，最终内联汇编和系统寄存器访问仍需审计。
 
-这些回归只验证该诊断函数的源码选择和生成结果。完整 XNU 编译／链接、所有文件的指令集、外部 archive、板级配置与设备启动均需要各自的后续证据。
+这些专项回归只验证该诊断函数的源码选择和生成结果。后续[第二轮通用内核构建](ROUTE_A_GENERIC_KERNEL_RESULT.md)已实际完成编译／链接；完整 `debug.c` 生成的 `debug.o` 中，[helper 的反汇编与重定位](evidence/route-a-compiled-fileset-helper-20261124.json)也确认了 HINT 返回地址路径和 `_panic` 调用。所有文件的完整指令集、外部 archive、TB371FC 板级配置与设备启动仍需各自的证据。

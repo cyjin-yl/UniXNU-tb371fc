@@ -1,0 +1,1 @@
+{"status": "completed", "totals": {"compatible_pauth_hint": 180, "nonhint_pauth": 0, "poe2_tchange": 0}, "undefined_symbols": {"count": 0, "first_50": [], "truncated": false, "full_output": "undefined-symbols.stdout", "output_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"}, "candidate_unchanged": true}
