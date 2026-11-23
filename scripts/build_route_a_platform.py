@@ -28,6 +28,9 @@ from prepare_route_a_toolchain import sha256_file, save_json
 ROOT = Path(__file__).resolve().parents[1]
 CONFIG = ROOT / "configs/route-a-platform.json"
 PLAIN_HEADER = (0xFEEDFACF, 0x0100000C, 0)
+RETAINED_RECIPE_WARNINGS = (
+    "-Wno-missing-designated-field-initializers", "-Wno-unused-but-set-global",
+)
 STANDALONE_FLAGS = {
     "-xc++", "--driver-mode=g++", "-c", "-std=gnu++2b", "-fsized-deallocation",
     "-fapple-kext", "-g", "-nostdlibinc", "-ferror-limit=10000", "-fno-builtin",
@@ -143,7 +146,7 @@ def macho(data: bytes, filetype: int) -> tuple[dict, dict]:
 
 
 def replay_recipe(record: dict, kernel: Path, source: Path, output: Path,
-                  warnings: list[str]) -> tuple[list[str], dict]:
+                  warnings: list[str], retained_recipe_warnings=()) -> tuple[list[str], dict]:
     """Accept the reviewed driver option grammar; never forward unknown flags."""
     args = record["arguments"]
     require(isinstance(args, list) and len(args) > 1 and all(isinstance(v, str) and v for v in args),
@@ -157,6 +160,10 @@ def replay_recipe(record: dict, kernel: Path, source: Path, output: Path,
     require(source.is_absolute() and output.is_absolute(), "isolated source/output must be absolute")
     destination = output / (source.stem + ".o")
     depfile, mjfile = output / "dependencies.d", output / "compile-record.json"
+    retained = tuple(retained_recipe_warnings)
+    require(len(set(retained)) == len(retained) and all(v in RETAINED_RECIPE_WARNINGS for v in retained),
+            "only the two fixed recipe compiler compatibility warnings may be retained")
+    observed = {value: 0 for value in retained}
     result, removed, isolated = [args[0], "--no-default-config"], [], []
     counts = {key: 0 for key in ("source", "output", "arch", "cpu", "target", "minos", "compile")}
     index = 1
@@ -183,10 +190,16 @@ def replay_recipe(record: dict, kernel: Path, source: Path, output: Path,
             warning = following()
             require(warning.startswith("-W") and not warning.startswith(("-Wp,", "-Wa,", "-Wl,")),
                     "unreviewed -Xclang option (plugins and extra cc1 outputs are not permitted)")
-            removed.extend((value, warning))
+            if warning in observed:
+                observed[warning] += 1
+            else:
+                removed.extend((value, warning))
             index += 1
         elif value.startswith("-W"):
-            removed.append(value)
+            if value in observed:
+                observed[value] += 1
+            else:
+                removed.append(value)
         elif value in ("-MD", "-MMD", "-MP"):
             isolated.append({"flag": value, "replacement": "explicit -MD/-MF/-MT below"})
         elif any(value.startswith(flag) for flag in ("-MF", "-MJ", "-MT", "-MQ")):
@@ -252,11 +265,14 @@ def replay_recipe(record: dict, kernel: Path, source: Path, output: Path,
             counts["target"] >= 1, f"recipe target/source/output contract is incomplete: {counts}")
     require(warnings and all(v.startswith("-W") and not v.startswith(("-Wp,", "-Wa,", "-Wl,")) for v in warnings)
             and "-Werror" in warnings, "invalid upstream warning policy")
-    result.extend([*warnings, "-I", str(kernel / ".cache/xnu-work/osfmk"),
+    require(all(observed.values()), "a required retained compiler warning is absent from the original recipe")
+    result.extend([*warnings, *retained, "-I", str(kernel / ".cache/xnu-work/osfmk"),
                    "-MD", "-MF", str(depfile), "-MT", str(destination)])
     return result, {"removed_warning_arguments": removed, "isolated_outputs": isolated,
                     "added_no_default_config": True, "added_dependency_inventory": str(depfile),
-                    "upstream_warning_arguments": warnings, "cpu": "generic", "target": "arm64-apple-ios27.0"}
+                    "upstream_warning_arguments": warnings,
+                    "retained_recipe_warnings": list(retained), "retained_recipe_warning_occurrences": observed,
+                    "cpu": "generic", "target": "arm64-apple-ios27.0"}
 
 
 def git(repository: Path, *args) -> bytes:
@@ -404,14 +420,15 @@ def dependencies(path: Path, cwd: Path, roots: list[Path]) -> list[dict]:
 
 
 def compile_component(spec: dict, snapshot: dict, recipe: dict, kernel: Path,
-                      prefix: Path, output: Path, ar: Path, warnings: list[str], execution: Execution) -> dict:
+                      prefix: Path, output: Path, ar: Path, warnings: list[str], execution: Execution,
+                      retained_recipe_warnings=()) -> dict:
     name = spec["name"]
     component = {"name": name, "status": "compiling", "source": snapshot}
     execution.report["components"].append(component)
     destination = output / name
     destination.mkdir()
     source = output / "sources" / name / spec["translation_unit"]
-    argv, changes = replay_recipe(recipe, kernel, source, destination, warnings)
+    argv, changes = replay_recipe(recipe, kernel, source, destination, warnings, retained_recipe_warnings)
     component["recipe_changes"] = changes
     save_json(destination / "compile-command.json", argv)
     item = execution.run(name + "-compile", argv, Path(recipe["directory"]))
@@ -501,6 +518,8 @@ def build(args) -> dict:
     require(config.get("schema_version") == 1 and config["target"] == {
         "architecture": "arm64", "cpu": "generic", "platform": 2, "minimum_os": "27.0", "macho_subtype": 0},
         "unsupported provider configuration")
+    require(config["retained_recipe_warnings"] == list(RETAINED_RECIPE_WARNINGS),
+            "configuration must retain exactly the two fixed compiler compatibility warnings")
     kernel, toolwork, sources = args.kernel_dir.resolve(), args.toolchain_work.resolve(), args.sources.resolve()
     for path in (kernel, toolwork, sources):
         require(path.is_dir(), f"missing input directory: {path}")
@@ -512,6 +531,9 @@ def build(args) -> dict:
     report = {"schema_version": 1, "status": "validating", "scope": config["scope"],
               "driver": file_identity(Path(__file__)), "config": config_id, "output": str(output),
               "support_files": [file_identity(Path(sha256_file.__code__.co_filename))],
+              "warning_policy": {"upstream": config["upstream_compile_policy"],
+                                 "retained_recipe_warnings": config["retained_recipe_warnings"],
+                                 "retained_recipe_warning_basis": config["retained_recipe_warning_basis"]},
               "commands": [], "components": [], "provider_archives_built": False,
               "provider_kernel_link_verified": False, "complete_board_archive_closure": False,
               "tb371fc_kernel_qualified": False, "full_instruction_set_audited": False, "os_boot_verified": False,
@@ -570,7 +592,8 @@ def build(args) -> dict:
             report["source_snapshots"] = snapshots
             for spec in config["components"]:
                 compile_component(spec, snapshots[spec["name"]], recipe, kernel, prefix, output, ar,
-                                  config["upstream_compile_policy"]["warnings"], execution)
+                                  config["upstream_compile_policy"]["warnings"], execution,
+                                  config["retained_recipe_warnings"])
             comparison = output / "symbol-comparison.json"
             save_json(comparison, symbol_comparison(kernel_symbols, report["components"]))
             report["symbol_comparison"] = file_identity(comparison)

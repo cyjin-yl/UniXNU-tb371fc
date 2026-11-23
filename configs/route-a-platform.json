@@ -23,6 +23,11 @@
       "-Wno-unnecessary-virtual-specifier"
     ]
   },
+  "retained_recipe_warnings": [
+    "-Wno-missing-designated-field-initializers",
+    "-Wno-unused-but-set-global"
+  ],
+  "retained_recipe_warning_basis": "Inherit only these two compiler compatibility options already present in the exact successful IOPlatformExpert recipe. Both must be observed in its original arguments. These are separate from the fixed upstream eight-warning driver policy.",
   "baseline": {
     "build_report_path": ".route-a/build-report.json",
     "build_report_sha256": "34c40f71b43000dff0cc39b97264fc93ef1fd3b3027735c4a710817863b71044",
