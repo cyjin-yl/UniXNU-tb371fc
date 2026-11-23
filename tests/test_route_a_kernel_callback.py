@@ -24,9 +24,10 @@ def object_fixture(words=None, references=None, weak=False):
                       0xd2800001, 0x94000000, 0x90000008, 0xf9400108, 0xb4000088,
                       0x52800000, 0xd63f0100, 0xd503201f, 0xd65f03c0, 0xd65f03c0]
     code = struct.pack("<" + "I" * len(words), *words)
+    function_end, hook_address = len(code) - 4, (len(code) + 7) & ~7
     # index, n_type, section, n_desc, value
-    entries = [("_ml_arm_sleep", 0xf, 1, 0, 0), ("_next_function", 0xf, 1, 0, 56),
-               ("_arm64_platform_sleep_hook", 0xf, 2, 0x80 if weak else 0, 64),
+    entries = [("_ml_arm_sleep", 0xf, 1, 0, 0), ("_next_function", 0xf, 1, 0, function_end),
+               ("_arm64_platform_sleep_hook", 0xf, 2, 0x80 if weak else 0, hook_address),
                ("_arm_init_cpu", 1, 0, 0, 0), ("_unrelated", 1, 0, 0, 0)]
     text_offset = 32 + 232 + 24 + 24
     reloc_offset = (text_offset + len(code) + 7) & ~7
@@ -42,13 +43,22 @@ def object_fixture(words=None, references=None, weak=False):
     def section(name, segment, address, size, offset, relocs, count, flags):
         return struct.pack("<16s16sQQ8I", name.encode(), segment.encode(), address, size, offset,
                            3 if name == "__bss" else 2, relocs, count, flags, 0, 0, 0)
-    segment = struct.pack("<II16sQQQQIIII", 0x19, 232, b"", 0, 72, text_offset, len(code), 7, 7, 2, 0)
+    segment = struct.pack("<II16sQQQQIIII", 0x19, 232, b"", 0, hook_address + 8, text_offset, len(code), 7, 7, 2, 0)
     segment += section("__text", "__TEXT", 0, len(code), text_offset, reloc_offset, len(references), 0x80000400)
-    segment += section("__bss", "__DATA", 64, 8, 0, 0, 0, 1)
+    segment += section("__bss", "__DATA", hook_address, 8, 0, 0, 0, 1)
     commands = segment + struct.pack("<6I", 0x32, 24, 2, 27 << 16, 0, 0)
     commands += struct.pack("<6I", 2, 24, symoff, len(entries), symoff + len(symbols), len(strings))
     header = struct.pack("<8I", 0xfeedfacf, 0x0100000c, 0, 1, 3, len(commands), 0, 0)
     return header + commands + code + b"\0" * (reloc_offset - text_offset - len(code)) + relocations + symbols + strings
+
+
+def tail_words():
+    # The secondary CBNZ at 36 targets 60, bypassing a call and an unrelated
+    # block. The B at 56 prevents fallthrough into MOV w0,wzr; BLR x8.
+    return [0x90000008, 0xf9400108, 0xb40000a8, 0x52800020, 0xd63f0100,
+            0xd2800001, 0x94000000, 0x90000008, 0xf9400108, 0xb50000c8,
+            0x52800020, 0x94000000, 0xd503201f, 0xd503201f, 0x17fffff2,
+            0x2a1f03e0, 0xd63f0100, 0x52800020, 0x94000000, 0xd65f03c0]
 
 
 def context_fixture(patch):
@@ -161,6 +171,49 @@ class CallbackTests(unittest.TestCase):
                 self.evidence(object_fixture(references=references))
         with self.assertRaisesRegex(MODULE.CallbackError, "strong section definition"):
             self.evidence(object_fixture(weak=True))
+
+    def test_secondary_callback_follows_only_the_explicit_cbnz_taken_tail(self):
+        result = self.evidence(object_fixture(words=tail_words()))
+        calls = {item["argument_value"]: item for item in result["dispatch_calls"]}
+        self.assertEqual(calls[1]["control_flow_shape"], "cbz-fallthrough")
+        self.assertEqual(calls[0]["control_flow_shape"], "cbnz-taken-tail-block")
+        self.assertEqual(calls[0]["null_guard_address"], "0x24")
+        self.assertEqual(calls[0]["guard_taken_target"], "0x3c")
+        self.assertEqual(calls[0]["address"], "0x40")
+        self.assertEqual(calls[0]["local_direct_incoming"], ["0x24"])
+        self.assertEqual(calls[0]["tail_entry_predecessor"], {"address": "0x38", "instruction": "b"})
+        self.assertFalse(result["full_control_flow_proven"])
+        self.assertFalse(result["runtime_path_execution_verified"])
+
+    def test_tail_rejects_changed_guard_pointer_path_argument_or_incoming_edges(self):
+        cases = [("wrong edge", 9, 0xb40000c8), ("wrong guard register", 9, 0xb50000c9),
+                 ("narrow guard", 9, 0x350000c8), ("narrow pointer", 8, 0xb9400108),
+                 ("skipped argument", 9, 0xb50000e8), ("wrong BLR register", 16, 0xd63f0120),
+                 ("missing BLR", 16, 0xd503201f), ("TRUE in secondary", 15, 0x52800020),
+                 ("nonboolean argument", 15, 0x52800040), ("physical fallthrough", 14, 0xd503201f),
+                 ("extra entry", 12, 0x14000003), ("entry at BLR", 12, 0x14000004),
+                 ("branch in tail", 15, 0x14000001)]
+        for label, index, word in cases:
+            words = tail_words()
+            words[index] = word
+            with self.subTest(label=label), self.assertRaises(MODULE.CallbackError):
+                self.evidence(object_fixture(words=words))
+        for word in (0x2a1f03e8, 0xaa1f03e8):  # Both W8 and X8 clobber the hook register.
+            words = tail_words()
+            words.insert(15, word)
+            with self.subTest(clobber=hex(word)), self.assertRaisesRegex(MODULE.CallbackError, "clobber"):
+                self.evidence(object_fixture(words=words))
+        references = [(0, 3, 2, True), (4, 4, 2, False), (24, 2, 3, True),
+                      (28, 3, 4, True), (32, 4, 2, False)]
+        with self.assertRaisesRegex(MODULE.CallbackError, "actual ADRP relocation"):
+            self.evidence(object_fixture(words=tail_words(), references=references))
+        # A bogus external PAGE21 must not hide a second direct B into the tail.
+        words = tail_words()
+        words[12] = 0x14000003
+        references = [(0, 3, 2, True), (4, 4, 2, False), (24, 2, 3, True),
+                      (28, 3, 2, True), (32, 4, 2, False), (48, 3, 4, True)]
+        with self.assertRaisesRegex(MODULE.CallbackError, "another explicit local incoming edge"):
+            self.evidence(object_fixture(words=words, references=references))
 
     def test_nonplain_object_and_bad_relocation_geometry_are_rejected(self):
         raw = bytearray(object_fixture())

@@ -307,8 +307,8 @@ def callback_evidence(data: bytes, symbols: dict, sections: list[dict], relocati
     def writes(ins, name):
         return name in {reg(ins, value) for value in ins.regs_access()[1]}
 
-    def last_write(before, name, window=24):
-        for index in range(before - 1, max(-1, before - window - 1), -1):
+    def last_write(before, name, window=24, minimum=0):
+        for index in range(before - 1, max(minimum - 1, before - window - 1), -1):
             ins = instructions[index]
             if ins.mnemonic in ("bl", "blr", "b", "br", "ret"):
                 return None
@@ -316,8 +316,8 @@ def callback_evidence(data: bytes, symbols: dict, sections: list[dict], relocati
                 return index
         return None
 
-    def constant(before, name):
-        index = last_write(before, name)
+    def constant(before, name, minimum=0):
+        index = last_write(before, name, minimum=minimum)
         if index is None:
             return None
         ins = instructions[index]
@@ -329,14 +329,68 @@ def callback_evidence(data: bytes, symbols: dict, sections: list[dict], relocati
                 return 0
         return None
 
+    def taken_tail(call_index, target):
+        # The observed secondary dispatch is a forward CBNZ edge to a detached
+        # MOV/BLR tail. Do not infer register values from the intervening block's
+        # physical bytes, and do not generalize this into a control-flow proof.
+        candidates = []
+        for guard_index, guard in enumerate(instructions[:call_index]):
+            if (guard.mnemonic == "cbnz" and len(guard.operands) == 2
+                    and guard.operands[0].type == 1
+                    and guard.reg_name(guard.operands[0].reg) == target
+                    and guard.operands[1].type == 2):
+                address = guard.operands[1].imm
+                if guard.address < address < instructions[call_index].address and (address - start) % 4 == 0:
+                    tail_index = (address - start) // 4
+                    if 0 < call_index - tail_index <= 8:
+                        candidates.append((guard_index, tail_index))
+        if not candidates:
+            return None
+        require(len(candidates) == 1, "tail callback has ambiguous CBNZ guards")
+        guard_index, tail_index = candidates[0]
+        guard = instructions[guard_index]
+        load_index = last_write(guard_index, target)
+        require(load_index == guard_index - 1 and load_index > 0,
+                "tail hook guard does not immediately follow its pointer load")
+        load = instructions[load_index]
+        require(load.mnemonic == "ldr" and len(load.operands) == 2 and load.operands[0].type == 1
+                and load.reg_name(load.operands[0].reg) == target,
+                "tail guard does not test the actual 64-bit hook load")
+        for item in instructions[tail_index:call_index]:
+            require(item.mnemonic in ("mov", "movz", "nop") and not writes(item, target),
+                    "unreviewed tail instruction or hook-register clobber")
+        predecessor = instructions[tail_index - 1]
+        require(predecessor.mnemonic in ("b", "ret"), "tail block has an unreviewed fallthrough entry")
+        incoming = []
+        for item in instructions:
+            direct = item.mnemonic in ("b", "bl", "cbz", "cbnz", "tbz", "tbnz") or item.mnemonic.startswith("b.")
+            reference = reloc.get(item.address)
+            # An external BRANCH26 relocation does not encode a local target.
+            external_branch = (item.mnemonic in ("b", "bl") and reference and reference["external"]
+                               and reference["type"] == 2 and reference["pcrel"] and reference["length"] == 2)
+            if direct and not external_branch:
+                if item.operands and item.operands[-1].type == 2:
+                    address = item.operands[-1].imm
+                    if instructions[tail_index].address <= address <= instructions[call_index].address:
+                        incoming.append(item.address)
+        require(incoming == [guard.address], "tail block has another explicit local incoming edge")
+        return {"load_index": load_index, "guard_index": guard_index, "tail_index": tail_index,
+                "control_flow_shape": "cbnz-taken-tail-block", "guard_taken_target": hex(guard.operands[1].imm),
+                "tail_entry_predecessor": {"address": hex(predecessor.address), "instruction": predecessor.mnemonic},
+                "local_direct_incoming": [hex(address) for address in incoming]}
+
     calls = []
     for index, ins in enumerate(instructions):
         if ins.mnemonic != "blr" or len(ins.operands) != 1 or ins.operands[0].type != 1:
             continue
         target = reg(ins, ins.operands[0].reg)
         load_index = last_write(index, target)
-        if load_index is None:
-            continue
+        tail = None
+        if load_index is None or reloc.get(instructions[load_index].address, {}).get("symbol") != HOOK:
+            tail = taken_tail(index, target)
+            if tail is None:
+                continue
+            load_index = tail["load_index"]
         load = instructions[load_index]
         reference = reloc.get(load.address)
         if load.mnemonic != "ldr" or reference is None or reference["symbol"] != HOOK or reference["type"] != 4:
@@ -346,24 +400,33 @@ def callback_evidence(data: bytes, symbols: dict, sections: list[dict], relocati
         base = reg(load, load.operands[1].mem.base)
         page_index = last_write(load_index, base)
         require(page_index is not None, "hook load has no bounded page definition")
+        if tail:
+            require(page_index == load_index - 1, "tail hook load does not immediately follow its page definition")
         page = instructions[page_index]
         page_reloc = reloc.get(page.address)
         require(page.mnemonic == "adrp" and page_reloc is not None and page_reloc["symbol"] == HOOK
                 and page_reloc["type"] == 3 and page_reloc["pcrel"] and page_reloc["length"] == 2,
                 "hook address is not backed by its actual ADRP relocation")
-        guards = [item for item in instructions[load_index + 1:index]
-                  if item.mnemonic == "cbz" and len(item.operands) == 2 and item.operands[0].type == 1
-                  and reg(item, item.operands[0].reg) == target and item.operands[1].type == 2
-                  and not load.address <= item.operands[1].imm <= ins.address]
-        require(guards, "hook call has no bounded NULL-skipping CBZ guard")
-        argument = constant(index, "x0")
+        if tail:
+            guards = [instructions[tail["guard_index"]]]
+            argument = constant(index, "x0", minimum=tail["tail_index"])
+            require(argument == 0, "secondary tail callback lacks a path-local FALSE argument")
+            flow = {key: value for key, value in tail.items() if not key.endswith("_index")}
+        else:
+            guards = [item for item in instructions[load_index + 1:index]
+                      if item.mnemonic == "cbz" and len(item.operands) == 2 and item.operands[0].type == 1
+                      and reg(item, item.operands[0].reg) == target and item.operands[1].type == 2
+                      and not load.address <= item.operands[1].imm <= ins.address]
+            require(guards, "hook call has no bounded NULL-skipping CBZ guard")
+            argument = constant(index, "x0")
+            flow = {"control_flow_shape": "cbz-fallthrough"}
         require(argument in (0, 1), "hook call argument is not a bounded TRUE/FALSE constant")
         calls.append({"instruction": "blr", "address": hex(ins.address),
                       "file_offset": offset + ins.address - start, "argument_value": argument,
                       "target_register": target, "null_guard_address": hex(guards[-1].address),
                       "pointer_load": {"address": hex(load.address), "relocation": reference},
                       "pointer_page": {"address": hex(page.address), "relocation": page_reloc},
-                      "instruction_index": index})
+                      "instruction_index": index, **flow})
     require(len(calls) == 2 and sorted(item["argument_value"] for item in calls) == [0, 1],
             "expected two relocation-backed hook calls with FALSE and TRUE arguments")
     boot = next(item for item in calls if item["argument_value"] == 1)
