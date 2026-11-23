@@ -1,5 +1,7 @@
 """Fail-closed platform-link contracts, using small synthetic Mach-O inputs."""
 import importlib.util
+import difflib
+import copy
 import json
 from pathlib import Path
 import struct
@@ -14,19 +16,26 @@ MODULE = importlib.util.module_from_spec(SPEC)
 SPEC.loader.exec_module(MODULE)
 
 
-def image(symbols=(), *, filetype=1, subtype=0, entry=None, constructors=(), platform=2, minos=27 << 16):
+def image(symbols=(), *, filetype=1, subtype=0, entry=None, constructors=(), platform=2, minos=27 << 16,
+          data_section=False):
     base = 0xFFFFFFF007004000 if filetype == 2 else 0
     text = struct.pack("<16s16sQQ8I", b"__text", b"__TEXT_EXEC", base, 0x40,
                        0x1000, 2, 0, 0, 0x80000400, 0, 0, 0)
     init = struct.pack("<16s16sQQ8I", b"__mod_init_func", b"__DATA_CONST", base + 0x40, 8 * len(constructors),
                        0x1040, 3, 0, 0, 9, 0, 0, 0)
-    segment = struct.pack("<II16sQQQQ4I", 0x19, 232, b"__TEXT_EXEC", base, 0x80,
-                          0x1000, 0x80, 7, 5, 2, 0) + text + init
+    sections = text + init
+    if data_section:
+        sections += struct.pack("<16s16sQQ8I", b"__data", b"__DATA", base + 0x60, 0x20,
+                                0x1060, 3, 0, 0, 0, 0, 0, 0)
+    segment = struct.pack("<II16sQQQQ4I", 0x19, 72 + len(sections), b"__TEXT_EXEC", base, 0x80,
+                          0x1000, 0x80, 7, 5, 3 if data_section else 2, 0) + sections
     strings, nlists = bytearray(b"\0"), bytearray()
-    for name, n_type, desc, value in symbols:
+    for symbol in symbols:
+        name, n_type, desc, value = symbol[:4]
+        n_sect = symbol[4] if len(symbol) == 5 else (1 if n_type & 0xE == 0xE else 0)
         at = len(strings)
         strings += name.encode() + b"\0"
-        nlists += struct.pack("<IBBHQ", at, n_type, 1 if n_type & 0xE == 0xE else 0, desc, value)
+        nlists += struct.pack("<IBBHQ", at, n_type, n_sect, desc, value)
     symoff, stroff = 0x1100, 0x1100 + len(nlists)
     commands = (segment + struct.pack("<6I", 2, 24, symoff, len(symbols), stroff, len(strings)) +
                 struct.pack("<6I", 0x32, 24, platform, minos, minos, 0))
@@ -53,6 +62,282 @@ def ar_member(name, payload, *, bsd=False):
         rawname = name + "/"
     header = (f"{rawname:<16}{0:<12}{0:<6}{0:<6}{'100644':<8}{len(payload):<10}`\n").encode()
     return header + payload + (b"\n" if len(payload) % 2 else b"")
+
+
+def callback_source_fixture():
+    """Three separated synthetic hunks; no real kernel source is distributed."""
+    before = "".join(f"unchanged_{i};\n" for i in range(30))
+    after = before.replace("unchanged_2;", "void (*arm64_platform_sleep_hook)(int);\nunchanged_2;")
+    after = after.replace("unchanged_14;", "arm64_platform_sleep_hook(1);\narm_init_cpu(0, 0);\nunchanged_14;")
+    after = after.replace("unchanged_25;", "arm64_platform_sleep_hook(0);\nunchanged_25;")
+    delta = "# Copyright: synthetic test fixture\n\n" + "".join(difflib.unified_diff(
+        before.splitlines(True), after.splitlines(True), fromfile="a/osfmk/arm64/cpu.c",
+        tofile="b/osfmk/arm64/cpu.c", n=2))
+    return before.encode(), delta.encode(), after.encode()
+
+
+class PlatformCallbackContractsTests(unittest.TestCase):
+    def test_exact_three_hunks_allow_unique_offsets_but_reject_fuzzy_or_ambiguous_context(self):
+        before, delta, after = callback_source_fixture()
+        self.assertEqual(MODULE.apply_cpu_patch(before, delta), after)
+        # Pinned earlier patches can shift upstream line numbers; complete
+        # matching context still has to be unique and ordered.
+        shifted = b"earlier unchanged line;\n" + before
+        self.assertEqual(MODULE.apply_cpu_patch(shifted, delta), b"earlier unchanged line;\n" + after)
+        for invalid in (before.replace(b"unchanged_13;", b"different;"), before + before):
+            with self.assertRaisesRegex(MODULE.LinkError, "absent or ambiguous"):
+                MODULE.apply_cpu_patch(invalid, delta)
+        with self.assertRaisesRegex(MODULE.LinkError, "another file"):
+            MODULE.apply_cpu_patch(before, delta + b"--- a/other.c\n+++ b/other.c\n")
+
+    def test_replacement_inventory_keeps_real_weak_winner_and_does_not_double_count_old_cpu(self):
+        kernel = MODULE.macho(image([("_ml_arm_sleep", 0xF, 0, 4), ("_weak_in_cpu", 0xF, 0, 8)]), 1)
+        old = MODULE.macho(image([("_ml_arm_sleep", 0xF, 0, 4), ("_weak_in_cpu", 0xF, 0x80, 8)]), 1)
+        new = MODULE.macho(image([("_ml_arm_sleep", 0xF, 0, 4), ("_weak_in_cpu", 0xF, 0x80, 8),
+                                  (MODULE.CALLBACK_SYMBOL, 0xF, 0, 0x60, 3)], data_section=True), 1)
+        callback = {"name": "replacement cpu", "macho": new, "original_macho": old}
+        provider = {"name": "ArmCpu", "macho": MODULE.macho(image([(MODULE.CALLBACK_SYMBOL, 1, 0x40, 0)]), 1)}
+        sources = MODULE.callback_kernel_symbols(kernel, callback)
+        result = MODULE.symbol_closure(sources, [provider])
+        self.assertEqual(result["duplicate_strong_definitions"], {})
+        self.assertEqual(result["unresolved_platform_weak"], [])
+        self.assertEqual([s["name"] for s in sources[0]["macho"]["symbols"]["defined_external"]], ["_weak_in_cpu"])
+        self.assertFalse(result["inventory_is_link_success"])
+
+    def test_hook_must_be_strong_pointer_sized_data_not_a_function_or_weak_stub(self):
+        good = image([(MODULE.CALLBACK_SYMBOL, 0xF, 0, 0x60, 3)], data_section=True)
+        self.assertEqual(MODULE.hook_definition(MODULE.macho(good, 1))["section"]["name"], "__data")
+        for symbols in ([(MODULE.CALLBACK_SYMBOL, 0xF, 0x80, 0x60, 3)],
+                        [(MODULE.CALLBACK_SYMBOL, 0xF, 0, 0x10)],
+                        [(MODULE.CALLBACK_SYMBOL, 0xF, 0, 0x7C, 3)]):
+            with self.assertRaises(MODULE.LinkError):
+                MODULE.hook_definition(MODULE.macho(image(symbols, data_section=True), 1))
+
+    def test_replacement_filelist_changes_exactly_one_entry_and_preserves_baseline(self):
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            old, new = root / "kernel/cpu.o", root / "callback/cpu.o"
+            callback = {"evidence": {"original_object": {"path": str(old)},
+                                      "replacement_object": {"path": str(new)}}}
+            baseline, platform = root / "link.filelist", root / "platform.filelist"
+            raw = b"before.o\ncpu.o\nafter.o\n"
+            baseline.write_bytes(raw)
+            recipe = {"cwd": str(old.parent), "linked_object_count": 7}
+            with patch.object(MODULE, "FILELIST_SHA256", MODULE.sha256(raw)):
+                evidence = MODULE.replace_cpu_filelist(recipe, baseline, platform, callback)
+            self.assertEqual(baseline.read_bytes(), raw)
+            self.assertEqual(platform.read_text().splitlines(), ["before.o", str(new), "after.o"])
+            self.assertEqual(evidence["replacement_count"], 1)
+            self.assertEqual(evidence["unchanged_original_linked_object_count"], 6)
+            for bad in (b"before.o\nafter.o\n", b"cpu.o\ncpu.o\n"):
+                baseline.write_bytes(bad)
+                destination = root / ("missing" if bad.count(b"cpu.o") == 0 else "duplicate")
+                with patch.object(MODULE, "FILELIST_SHA256", MODULE.sha256(bad)):
+                    with self.assertRaisesRegex(MODULE.LinkError, "exactly once"):
+                        MODULE.replace_cpu_filelist(recipe, baseline, destination, callback)
+                self.assertFalse(destination.exists())
+
+    def test_map_requires_new_cpu_hook_and_sleep_function_and_excludes_original_cpu(self):
+        base = 0xFFFFFFF007004000
+        data = image([(MODULE.CALLBACK_SYMBOL, 0xF, 0, base + 0x60, 3),
+                      ("_ml_arm_sleep", 0xF, 0, base + 0x10)], filetype=2, data_section=True)
+        parsed = MODULE.macho(data, 2)
+        callback = {"evidence": {"original_object": {"path": "/old/cpu.o"},
+                                  "replacement_object": {"path": "/new/cpu.o"}}}
+        text = (f"[ 9] /new/cpu.o\n0x{base + 0x60:X} 0x8 [ 9] {MODULE.CALLBACK_SYMBOL}\n"
+                f"0x{base + 0x10:X} 0x8 [ 9] _ml_arm_sleep\n")
+        self.assertEqual(MODULE.verify_callback_link_map(text, callback, parsed)["object_index"], 9)
+        for wrong, error in ((text + "[ 10] /old/cpu.o\n", "original cpu.o"),
+                             (text.replace("/new/cpu.o", "/different/cpu.o"), "actual replacement"),
+                             (text.replace("_ml_arm_sleep", "_unrelated"), "not retained"),
+                             (text.replace(f"0x{base + 0x60:X}", f"0x{base + 0x68:X}"), "map address")):
+            with self.assertRaisesRegex(MODULE.LinkError, error):
+                MODULE.verify_callback_link_map(wrong, callback, parsed)
+
+    def test_codegen_consumes_real_decoder_evidence_and_rejects_changed_blr_bytes(self):
+        from test_route_a_kernel_callback import object_fixture
+        producer = MODULE.callback_producer()
+        raw = object_fixture()
+        _, symbols, sections, relocations = producer.object_layout(raw)
+        decoder, decoder_id = producer.decoder_identity()
+        proof = producer.callback_evidence(raw, symbols, sections, relocations, decoder)
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            source = {"sha256": MODULE.sha256(b"synthetic callback source")}
+            disassembly = root / "disassembly.txt"
+            disassembly.write_text("synthetic fixture: actual code bytes decoded independently\n")
+            observed = {**proof, "object_sha256": MODULE.sha256(raw), "source_sha256": source["sha256"],
+                        "disassembly": MODULE.identity(disassembly)}
+            evidence = root / "evidence.json"
+            evidence.write_text(json.dumps(observed))
+            report = {"callback_evidence": MODULE.identity(evidence), "decoder": decoder_id,
+                      "disassembly": MODULE.identity(disassembly)}
+            result, inputs = MODULE.callback_codegen(producer, report, raw, source)
+            self.assertTrue(result["recomputed_from_replacement_object"])
+            self.assertTrue(MODULE.check_unchanged(inputs)["unchanged"])
+            # Updating only the reported object digest must not preserve a
+            # stale passing proof after one actual indirect call is removed.
+            changed = bytearray(raw)
+            struct.pack_into("<I", changed, proof["dispatch_calls"][0]["file_offset"], 0xD503201F)
+            observed["object_sha256"] = MODULE.sha256(changed)
+            evidence.write_text(json.dumps(observed))
+            report["callback_evidence"] = MODULE.identity(evidence)
+            with self.assertRaisesRegex(MODULE.LinkError, "generated-code verification failed"):
+                MODULE.callback_codegen(producer, report, changed, source)
+
+
+class PlatformCallbackReportTests(unittest.TestCase):
+    """Real recipe replay and metadata checks; the code decoder is a fixture.
+
+    The producer has its own emitted-instruction tests. These tests exercise
+    the consuming boundary, including forged reports and changed arguments.
+    """
+    def setUp(self):
+        self.temp = tempfile.TemporaryDirectory()
+        self.root = Path(self.temp.name)
+        self.kernel, self.prefix = self.root / "kernel", self.root / "tools"
+        self.producer = MODULE.callback_producer()
+        self.patches = ExitStack()
+
+        def file(path, content):
+            path.parent.mkdir(parents=True, exist_ok=True)
+            path.write_bytes(content)
+            return MODULE.identity(path)
+
+        self.file = file
+        before, delta, after = callback_source_fixture()
+        original = file(self.kernel / MODULE.CPU_OBJECT_RELATIVE, image([("_ml_arm_sleep", 0xF, 0, 0x10)]))
+        self.candidate = self.kernel / MODULE.KERNEL_RELATIVE / MODULE.KERNEL_NAME
+        candidate = file(self.candidate, image([("_ml_arm_sleep", 0xF, 0, 0xFFFFFFF007004010)], filetype=2))
+        old_source = file(self.kernel / MODULE.CPU_SOURCE_RELATIVE, before)
+        source = file(self.root / "callback/source/cpu.c", after)
+        delta_id = file(self.root / "callback/selection.patch", delta)
+        compiler = file(self.prefix / "llvm/bin/clang", b"synthetic compiler identity")
+        command = {"directory": str(Path(original["path"]).parent), "file": old_source["path"], "output": "cpu.o",
+                   "arguments": [compiler["path"], "-xc", old_source["path"], "-o", "cpu.o",
+                                 "--target=arm64-apple-ios27.0", "-mcpu=generic", "-arch", "arm64",
+                                 "-mios-version-min=27.0", "-c", "-O2", "-D", "KEEP_ABI=1", "-I", ".",
+                                 "-Wno-unused", "-Wno-unused", "-MJ", "cpu.o.json"]}
+        original_recipe = file(Path(original["path"]).with_name("cpu.o.json"), (json.dumps(command) + ",\n").encode())
+        replacement = file(self.root / "callback/replacement/cpu.o", image([
+            ("_ml_arm_sleep", 0xF, 0, 0x10), (MODULE.CALLBACK_SYMBOL, 0xF, 0, 0x60, 3)], data_section=True))
+        replacement["symbols"] = file(self.root / "callback/replacement/symbols.json", json.dumps(
+            MODULE.macho(Path(replacement["path"]).read_bytes(), 1)["symbols"]).encode())
+        argv, changes = self.producer.replay_recipe(command, self.kernel, Path(source["path"]), Path(replacement["path"]).parent)
+        self.replay = {"directory": str(Path(replacement["path"]).parent), "file": source["path"],
+                       "output": replacement["path"], "arguments": argv}
+        replay = file(self.root / "callback/replacement/replay.json", json.dumps(self.replay).encode())
+        self.generated = {"passed": True, "scope": "synthetic bounded callback fixture",
+            "function": {"name": "_ml_arm_sleep", "address": "0x10", "end": "0x30"},
+            "dispatch_calls": [{"instruction": "blr", "argument_value": 1, "address": "0x10"},
+                               {"instruction": "blr", "argument_value": 0, "address": "0x20"}],
+            "resume_call": {"symbol": "_arm_init_cpu", "instruction": "bl", "second_argument": 0,
+                            "after_boot_dispatch": True, "address": "0x18"},
+            "runtime_path_execution_verified": False, "sleep_resume_verified": False,
+            "full_instruction_set_audited": False, "full_control_flow_proven": False}
+        disassembly = file(self.root / "callback/disassembly.txt", b"synthetic disassembly artifact\n")
+        self.observed = {**copy.deepcopy(self.generated), "object_sha256": replacement["sha256"],
+                         "source_sha256": source["sha256"], "disassembly": disassembly}
+        code = file(self.root / "callback/evidence.json", json.dumps(self.observed).encode())
+        decoder = {"version": "5.0.6", "core_version": [5, 0, 1280]}
+        for key in ("module", "native_library", "python"):
+            decoder[key] = file(self.root / "decoder" / key, ("decoder fixture " + key).encode())
+        support = [MODULE.identity(ROOT / "scripts/build_route_a_platform.py"),
+                   MODULE.identity(ROOT / "scripts/prepare_route_a_toolchain.py")]
+        config = {"schema_version": 1, "scope": "arm64-platform-sleep-cpu-replacement",
+                  "provenance": MODULE.CALLBACK_PROVENANCE,
+                  "patch": {"sha256": delta_id["sha256"], "result_source_sha256": source["sha256"]},
+                  "support_files": [{"path": "scripts/" + Path(item["path"]).name,
+                                     "sha256": item["sha256"]} for item in support]}
+        config_id = file(self.root / "callback/config.json", json.dumps(config).encode())
+        stdout = file(self.root / "callback/compile.stdout", b"")
+        stderr = file(self.root / "callback/compile.stderr", b"retained compiler warning\n")
+        compiled = {"label": "cpu-compile", "status": "completed", "exit_code": 0, "argv": argv,
+                    "cwd": self.replay["directory"], "stdout": stdout["path"], "stdout_sha256": stdout["sha256"],
+                    "stderr": stderr["path"], "stderr_sha256": stderr["sha256"]}
+        self.report = {"schema_version": 1, "status": "kernel_callback_built", "kernel_callback_built": True,
+            "scope": config["scope"], "provenance": MODULE.CALLBACK_PROVENANCE, "kernel": candidate,
+            "original_object": original, "replacement_object": replacement,
+            "source": {"before": old_source, "after": source},
+            "compile_record": {"original": original_recipe, "replay": replay},
+            "driver": MODULE.identity(Path(self.producer.__file__)), "compiler": compiler, "patch": delta_id,
+            "config": config_id, "support_files": support, "callback_evidence": code,
+            "recipe_changes": changes, "compile": compiled, "disassembly": disassembly, "decoder": decoder}
+        required = [candidate, original, old_source, source, original_recipe, self.report["driver"],
+                    config_id, delta_id, compiler, *support]
+        self.report["protected_input_rechecks"] = [{"path": item["path"], "expected_sha256": item["sha256"],
+            "actual_sha256": item["sha256"], "unchanged": True} for item in required]
+        self.report["protected_inputs_unchanged"] = True
+        self.report["protected_inputs_recheck"] = {"unchanged": True, "checked_file_count": len(required), "changes": []}
+        self.report_path = self.root / "callback/report.json"
+        for name, value in (("CPU_OBJECT_SHA256", original["sha256"]), ("CPU_SOURCE_SHA256", old_source["sha256"]),
+                            ("CPU_RECIPE_SHA256", original_recipe["sha256"]), ("CALLBACK_PATCH_SHA256", delta_id["sha256"]),
+                            ("CALLBACK_SOURCE_SHA256", source["sha256"]), ("CLANG_SHA256", compiler["sha256"])):
+            self.patches.enter_context(patch.object(MODULE, name, value))
+        self.patches.enter_context(patch.object(self.producer, "decoder_identity", return_value=(None, decoder)))
+        self.patches.enter_context(patch.object(self.producer, "callback_evidence", return_value=self.generated))
+
+    def tearDown(self):
+        self.patches.close()
+        self.temp.cleanup()
+
+    def verify(self):
+        self.report_path.write_text(json.dumps(self.report))
+        return MODULE.verify_callback(self.report_path, self.candidate, self.kernel, self.prefix)
+
+    def write_replay(self):
+        entry = self.report["compile_record"]["replay"]
+        self.report["compile_record"]["replay"] = self.file(Path(entry["path"]), json.dumps(self.replay).encode())
+
+    def test_full_report_binds_real_replay_source_symbols_evidence_and_protected_inputs(self):
+        callback, inputs = self.verify()
+        self.assertTrue(callback["evidence"]["recipe_reconstruction_verified"])
+        self.assertTrue(callback["evidence"]["generated_code_verification"]["recomputed_from_replacement_object"])
+        self.assertFalse(callback["evidence"]["runtime_path_execution_verified"])
+        self.assertTrue(MODULE.check_unchanged(inputs)["unchanged"])
+        Path(self.report["compile_record"]["replay"]["path"]).write_text("changed after preflight")
+        self.assertFalse(MODULE.check_unchanged(inputs)["unchanged"])
+
+    def test_changed_or_late_target_and_removed_abi_or_warning_arguments_are_rejected(self):
+        original = list(self.replay["arguments"])
+        for changed in (original + ["--target=arm64e-apple-ios27.0"], original + ["-mcpu=apple-m1"],
+                        [arg for arg in original if arg != "KEEP_ABI=1"],
+                        [arg for arg in original if arg != "-Wno-unused"]):
+            with self.subTest(changed=changed[-3:]):
+                self.replay["arguments"] = changed
+                self.write_replay()
+                with self.assertRaisesRegex(MODULE.LinkError, "CPU contract|exact reconstruction"):
+                    self.verify()
+
+    def test_missing_unchanged_receipt_or_omitted_original_source_is_rejected(self):
+        self.report["protected_inputs_unchanged"] = False
+        with self.assertRaisesRegex(MODULE.LinkError, "unchanged-input receipt"):
+            self.verify()
+        self.report["protected_inputs_unchanged"] = True
+        self.report["protected_input_rechecks"].pop(2)
+        self.report["protected_inputs_recheck"]["checked_file_count"] -= 1
+        with self.assertRaisesRegex(MODULE.LinkError, "omits a required"):
+            self.verify()
+
+    def test_forged_generated_code_calls_and_resume_are_recomputed_from_object(self):
+        original = copy.deepcopy(self.observed)
+        for key in ("passed", "dispatch_calls", "resume_call"):
+            observed = copy.deepcopy(original)
+            observed[key] = False if key == "passed" else [] if key == "dispatch_calls" else {}
+            path = Path(self.report["callback_evidence"]["path"])
+            self.report["callback_evidence"] = self.file(path, json.dumps(observed).encode())
+            with self.subTest(key=key), self.assertRaisesRegex(MODULE.LinkError, "generated-code evidence"):
+                self.verify()
+
+    def test_wrong_upstream_provenance_and_wrong_original_object_are_rejected(self):
+        self.report["provenance"] = {**MODULE.CALLBACK_PROVENANCE, "commit": "0" * 40}
+        with self.assertRaisesRegex(MODULE.LinkError, "provenance differs"):
+            self.verify()
+        self.report["provenance"] = MODULE.CALLBACK_PROVENANCE
+        Path(self.report["original_object"]["path"]).write_bytes(image())
+        self.report["original_object"].update(MODULE.identity(Path(self.report["original_object"]["path"])))
+        with self.assertRaisesRegex(MODULE.LinkError, "pinned kernel cpu.o"):
+            self.verify()
 
 
 class PlatformLinkMetadataTests(unittest.TestCase):
@@ -330,6 +615,21 @@ class PlatformLinkReplayTests(unittest.TestCase):
             MODULE.run(args)
         self.assertFalse(args.output.exists())
 
+    def test_output_inside_callback_evidence_tree_is_rejected_before_mkdir(self):
+        from argparse import Namespace
+        toolwork = self.root / "toolchain-work"
+        toolwork.mkdir()
+        (toolwork / "identity.json").write_text(json.dumps({"prefix": str(self.prefix)}))
+        platform, callback = self.root / "platform/report.json", self.root / "callback/report.json"
+        for path in (platform, callback):
+            path.parent.mkdir()
+            path.write_text("{}")
+        args = Namespace(kernel_dir=self.kernel, toolchain_work=toolwork, platform_report=platform,
+                         kernel_callback_report=callback, output=callback.parent / "forbidden-result")
+        with self.assertRaisesRegex(MODULE.LinkError, "overlaps protected"):
+            MODULE.run(args)
+        self.assertFalse(args.output.exists())
+
     def test_tool_environment_restores_recorded_source_version_and_preserves_alias_identity(self):
         toolwork = self.root / "toolchain-work"
         toolwork.mkdir()
@@ -364,10 +664,11 @@ class PlatformLinkReplayTests(unittest.TestCase):
             with self.assertRaisesRegex(MODULE.LinkError, "source version"):
                 MODULE.tool_inputs(toolwork, report)
 
-    def exercise_run(self, action):
+    def exercise_run(self, action, *, with_callback=False):
         from argparse import Namespace
         candidate = self.cwd / MODULE.KERNEL_NAME
-        candidate.write_bytes(image(filetype=2))
+        baseline_bytes = image([("_ml_arm_sleep", 0xF, 0, 0xFFFFFFF007004030)], filetype=2) if with_callback else image(filetype=2)
+        candidate.write_bytes(baseline_bytes)
         candidate.with_name(MODULE.KERNEL_NAME + ".noctf").write_bytes(candidate.read_bytes())
         metadata = self.kernel / ".route-a"
         metadata.mkdir()
@@ -401,6 +702,27 @@ class PlatformLinkReplayTests(unittest.TestCase):
 
         args = Namespace(kernel_dir=self.kernel, toolchain_work=toolwork, platform_report=platform,
                          output=self.root / "run-output")
+        if with_callback:
+            original = self.kernel / MODULE.CPU_OBJECT_RELATIVE
+            original.parent.mkdir(parents=True)
+            original.write_bytes(image([("_ml_arm_sleep", 0xF, 0, 0x30)]))
+            replacement = self.root / "callback/replacement/cpu.o"
+            replacement.parent.mkdir(parents=True)
+            replacement.write_bytes(image([("_ml_arm_sleep", 0xF, 0, 0x30),
+                                            (MODULE.CALLBACK_SYMBOL, 0xF, 0, 0x60, 3)], data_section=True))
+            args.kernel_callback_report = self.root / "callback/report.json"
+            args.kernel_callback_report.write_text("{}")
+            filelist = self.cwd / "link.filelist"
+            filelist.write_text(str(original) + "\nsecond.cpo\n")
+            self.patches.enter_context(patch.object(MODULE, "FILELIST_SHA256", MODULE.identity(filelist)["sha256"]))
+            callback = {"name": "kernel cpu callback", "original_macho": MODULE.macho(original.read_bytes(), 1),
+                        "macho": MODULE.macho(replacement.read_bytes(), 1),
+                        "evidence": {"original_object": MODULE.identity(original),
+                                     "replacement_object": MODULE.identity(replacement)}}
+            callback_inputs = [MODULE.identity(path) for path in (original, replacement, args.kernel_callback_report)]
+            # Provenance/recipe/code-evidence gates are exercised separately by
+            # PlatformCallbackReportTests; this fixture tests link sequencing.
+            self.patches.enter_context(patch.object(MODULE, "verify_callback", return_value=(callback, callback_inputs)))
         with patch.object(MODULE, "KERNEL_SHA256", MODULE.identity(candidate)["sha256"]), \
                 patch.object(MODULE, "BUILD_REPORT_SHA256", MODULE.identity(build_report)["sha256"]), \
                 patch.object(MODULE, "verify_platform", return_value=({}, components)), \
@@ -408,7 +730,7 @@ class PlatformLinkReplayTests(unittest.TestCase):
                 patch.object(MODULE, "execute", side_effect=simulated_link):
             result = MODULE.run(args)
         self.assertTrue((args.output / "report.json").is_file())
-        self.assertEqual(candidate.read_bytes(), image(filetype=2))
+        self.assertEqual(candidate.read_bytes(), baseline_bytes)
         return result, calls
 
     def test_baseline_mismatch_never_attempts_platform_link(self):
@@ -456,6 +778,81 @@ class PlatformLinkReplayTests(unittest.TestCase):
         for key in ("platform_link_compatible", "complete_board_archive_closure", "crypto_provider_selected",
                     "pthread_provider_selected", "tb371fc_kernel_qualified", "os_boot_verified"):
             self.assertFalse(result[key])
+
+    def test_callback_is_only_in_platform_filelist_after_exact_baseline_and_actual_map_checks(self):
+        base = 0xFFFFFFF007004000
+        observed_filelists = []
+
+        def action(candidate, argv, count):
+            output = Path(argv[argv.index("-o") + 1])
+            filelist = Path(argv[argv.index("-filelist") + 1])
+            observed_filelists.append(filelist.read_bytes())
+            if count == 1:
+                output.write_bytes(candidate.read_bytes())
+                self.assertEqual(filelist.read_bytes(), (self.cwd / "link.filelist").read_bytes())
+                self.assertFalse((filelist.parent / "platform-link.filelist").exists())
+                return {"exit_code": 0}
+            replacement = self.root / "callback/replacement/cpu.o"
+            self.assertEqual(filelist.read_text().splitlines(), [str(replacement), "second.cpo"])
+            output.write_bytes(image([("_ml_arm_sleep", 0xF, 0, base + 0x30),
+                                      (MODULE.CALLBACK_SYMBOL, 0xF, 0, base + 0x60, 3)],
+                                     filetype=2, constructors=(base + 0x10, base + 0x20), data_section=True))
+            map_path = Path(next(arg.split(",", 2)[2] for arg in argv if arg.startswith("-Wl,-map,")))
+            archives = [arg.split(",", 2)[2] for arg in argv if arg.startswith("-Wl,-force_load,")]
+            lines = [f"[ 9] {replacement}", f"0x{base + 0x60:X} 0x8 [ 9] {MODULE.CALLBACK_SYMBOL}",
+                     f"0x{base + 0x30:X} 0x8 [ 9] _ml_arm_sleep"]
+            for index, name in enumerate(MODULE.COMPONENTS, 1):
+                marker = "_armdt_platform_configured" if index == 1 else "_armcpu_registered"
+                lines.extend([f"[{index:3}] {archives[index - 1]}({name}.o)",
+                    f"0x{base + index * 16:X} 0x4 [{index:3}] __GLOBAL__sub_I_{name}.cpp",
+                    f"0x{base + 0x70 + index * 4:X} 0x4 [{index:3}] __ZN{name}gMetaClassE",
+                    f"0x{base + 0x80 + index * 4:X} 0x4 [{index:3}] {marker}"])
+            map_path.write_text("\n".join(lines))
+            return {"exit_code": 0}
+
+        result, calls = self.exercise_run(action, with_callback=True)
+        self.assertEqual(result["status"], "platform_link_compatible", result.get("error"))
+        self.assertEqual(len(calls), 2)
+        self.assertTrue(result["baseline_reproduced"])
+        self.assertTrue(result["kernel_callback_linked"])
+        replacement = result["kernel_callback"]["filelist_replacement"]
+        self.assertEqual(replacement["replacement_count"], 1)
+        self.assertEqual(replacement["unchanged_original_linked_object_count"], 5)
+        self.assertNotEqual(observed_filelists[0], observed_filelists[1])
+        self.assertEqual((self.cwd / "link.filelist").read_bytes(), observed_filelists[0])
+        inventory = json.loads(Path(result["protected_input_inventory"]["path"]).read_text())
+        self.assertIn(str(self.kernel / MODULE.CPU_OBJECT_RELATIVE), [item["path"] for item in inventory])
+        self.assertTrue(result["protected_inputs_recheck"]["unchanged"])
+        self.assertFalse(result["sleep_runtime_verified"])
+        self.assertFalse(result["tb371fc_kernel_qualified"])
+        self.assertFalse(result["os_boot_verified"])
+
+    def test_callback_never_replaces_baseline_filelist_when_baseline_digest_mismatches(self):
+        def action(candidate, argv, count):
+            Path(argv[argv.index("-o") + 1]).write_bytes(candidate.read_bytes() + b"mismatch")
+            return {"exit_code": 0}
+
+        result, calls = self.exercise_run(action, with_callback=True)
+        self.assertEqual(len(calls), 1)
+        self.assertFalse(result["kernel_callback_linked"])
+        self.assertFalse((Path(result["output"]) / "inputs/platform-link.filelist").exists())
+        self.assertTrue(result["protected_inputs_recheck"]["unchanged"])
+
+    def test_callback_object_is_rechecked_after_a_failing_link(self):
+        def action(candidate, argv, count):
+            if count == 1:
+                Path(argv[argv.index("-o") + 1]).write_bytes(candidate.read_bytes())
+                return {"exit_code": 0}
+            (self.root / "callback/replacement/cpu.o").write_bytes(b"unexpected external mutation")
+            return {"exit_code": 1}
+
+        result, calls = self.exercise_run(action, with_callback=True)
+        self.assertEqual(len(calls), 2)
+        self.assertFalse(result["platform_link_compatible"])
+        self.assertFalse(result["kernel_callback_linked"])
+        self.assertFalse(result["protected_inputs_recheck"]["unchanged"])
+        self.assertIn(str(self.root / "callback/replacement/cpu.o"),
+                      [item["path"] for item in result["protected_inputs_recheck"]["changes"]])
 
 
 if __name__ == "__main__":

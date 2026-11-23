@@ -28,6 +28,22 @@ KERNEL_RELATIVE = Path("build/xnu/ios-obj/DEVELOPMENT_ARM64_BCM2837")
 KERNEL_NAME = "mach.development.bcm2837.unstripped"
 KERNEL_SHA256 = "a58cdeedb9b7a4c152867c3487f28658a3799b0158f5046bbad6d2d58e741469"
 KERNEL_SOURCE_VERSION = "12377.121.6"
+CPU_OBJECT_RELATIVE = KERNEL_RELATIVE / "osfmk/DEVELOPMENT/cpu.o"
+CPU_SOURCE_RELATIVE = Path(".cache/xnu-work/osfmk/arm64/cpu.c")
+CPU_OBJECT_SHA256 = "25b913d235ed38f7d4e1910d54d79eaebdbc83003c501939822e288246ed12e4"
+CPU_SOURCE_SHA256 = "6ea14e16fab1d5a16cf3483e630863b830e07190db35d1180850f29a27d9f968"
+CPU_RECIPE_SHA256 = "bfd7ad809f8b5704f8815a4f9214cba8de8a58c949825a1d8a0bf48fb22a0002"
+CALLBACK_PATCH_SHA256 = "e241b720a828d307daba0cd57fc956515641a19867e723a58d54295a98fdb760"
+CALLBACK_SOURCE_SHA256 = "7b8eb68b50971168a7bc3d8ec05b8c76dbc9ee0b77e5f280b02d0c34a8c89bfc"
+CALLBACK_SYMBOL = "_arm64_platform_sleep_hook"
+CALLBACK_PROVENANCE = {
+    "repository": "https://github.com/UniXNU/UniXNU-sheng",
+    "commit": "c8f92b208068eeaa4cd2b0f592671f04ee70076e",
+    "path": "patches/xnu-12377/sheng-platform-sleep.patch",
+    "git_blob": "8517a5278e7fa5446a569aa111344b0c40140ce5",
+    "selected_hunks": ["cpu.c:hook-definition", "cpu.c:boot-cpu-dispatch-and-resume",
+                       "cpu.c:secondary-cpu-dispatch"],
+}
 COMPONENTS = ("ArmDTPlatform", "ArmCpu")
 SCOPE = "isolated-platform-link-compatibility"
 FLAGS_SHA256 = "122039d9686275166f9772c52c4d494adfe02e6e417c069639dee0f9c297435f"
@@ -299,8 +315,7 @@ def symbol_closure(kernel_inputs: list[dict], components: list[dict]) -> dict:
             "unextracted_baseline_archive_members_included": False}
 
 
-def verify_link_map(text: str, components: list[dict], linked: dict, data: bytes) -> dict:
-    """Require actual member allocation and its initialization in the new image."""
+def parse_link_map(text: str) -> tuple[dict, list[dict]]:
     objects, symbols = {}, []
     for line in text.splitlines():
         if line.startswith("# Dead Stripped Symbols:"):
@@ -314,6 +329,12 @@ def verify_link_map(text: str, components: list[dict], linked: dict, data: bytes
             symbols.append({"address": int(sym[1], 16), "size": int(sym[2], 16),
                             "object_index": int(sym[3]), "name": sym[4]})
     require(objects and symbols, "link map has no recognized allocated members/symbols")
+    return objects, symbols
+
+
+def verify_link_map(text: str, components: list[dict], linked: dict, data: bytes) -> dict:
+    """Require actual member allocation and its initialization in the new image."""
+    objects, symbols = parse_link_map(text)
     init_sections = [s for s in linked["sections"] if s["name"] == "__mod_init_func"]
     require(init_sections and all(s["size"] % 8 == 0 for s in init_sections), "missing or malformed constructor table")
     init_pointers = set()
@@ -340,6 +361,343 @@ def verify_link_map(text: str, components: list[dict], linked: dict, data: bytes
                          "observation_symbol": marker})
     return {"components": evidence, "constructor_pointer_count": len(init_pointers),
             "runtime_driver_matching_verified": False}
+
+
+def apply_cpu_patch(before: bytes, patch: bytes) -> bytes:
+    """Reproduce exactly three single-file unified hunks without invoking git."""
+    lines = patch.decode("utf-8").splitlines(keepends=True)
+    source = before.decode("utf-8").splitlines(keepends=True)
+    old_header = "--- a/osfmk/arm64/cpu.c\n"
+    new_header = "+++ b/osfmk/arm64/cpu.c\n"
+    require(lines.count(old_header) == 1 and lines.count(new_header) == 1,
+            "callback patch must name only osfmk/arm64/cpu.c")
+    cursor = lines.index(old_header)
+    require(cursor + 1 < len(lines) and lines[cursor + 1] == new_header, "malformed callback patch headers")
+    for line in lines[:cursor]:
+        require(line == "\n" or line.startswith("# ") or
+                line == "diff --git a/osfmk/arm64/cpu.c b/osfmk/arm64/cpu.c\n" or
+                re.fullmatch(r"index [0-9a-f]+\.\.[0-9a-f]+(?: 100644)?\n", line),
+                "callback patch has unreviewed metadata or another file")
+    cursor += 2
+    old_cursor, previous_header_end, result, hunks = 0, 0, [], 0
+    while cursor < len(lines):
+        match = re.fullmatch(r"@@ -(\d+)(?:,(\d+))? \+(\d+)(?:,(\d+))? @@[^\n]*\n", lines[cursor])
+        require(match is not None, "invalid callback hunk header")
+        old_start, old_count = int(match[1]), int(match[2] or 1)
+        new_start, new_count = int(match[3]), int(match[4] or 1)
+        require(old_start >= 1 and new_start >= 1 and old_count > 0, "unsupported callback hunk range")
+        header_start = old_start - 1
+        require(header_start >= previous_header_end, "overlapping callback hunk headers")
+        cursor += 1
+        removed, added = [], []
+        while cursor < len(lines) and not lines[cursor].startswith("@@ "):
+            line = lines[cursor]
+            require(line.startswith((" ", "+", "-")), "invalid callback hunk body or extra file")
+            require(not line.startswith(("--- ", "+++ ")), "callback patch contains another file")
+            if line[0] in " -":
+                removed.append(line[1:])
+            if line[0] in " +":
+                added.append(line[1:])
+            cursor += 1
+        require(len(removed) == old_count and len(added) == new_count, "callback hunk line count mismatch")
+        # The retained generic patch set has removed 32 earlier source lines
+        # before the last two upstream hunks. Locate each complete old context
+        # uniquely, without dropping context lines or applying fuzzy matches.
+        matches = [i for i in range(len(source) - old_count + 1) if source[i:i + old_count] == removed]
+        require(len(matches) == 1, "callback patch context is absent or ambiguous in original cpu.c")
+        start = matches[0]
+        require(old_cursor <= start, "callback contexts overlap or change order")
+        result.extend(source[old_cursor:start])
+        require(len(result) == new_start - 1 + start - header_start, "callback hunk new-file position mismatch")
+        result.extend(added)
+        old_cursor = start + old_count
+        previous_header_end = header_start + old_count
+        hunks += 1
+    require(hunks == 3, "callback patch must contain exactly the three selected cpu.c hunks")
+    result.extend(source[old_cursor:])
+    return "".join(result).encode("utf-8")
+
+
+def hook_definition(parsed: dict) -> dict:
+    definitions = [s for s in parsed["symbols"]["defined_external"] if s["name"] == CALLBACK_SYMBOL]
+    require(len(definitions) == 1 and not definitions[0]["n_desc"] & 0x80,
+            "replacement must provide one strong platform-sleep hook definition")
+    symbol = definitions[0]
+    require((symbol["n_type"] & 0xE) == 0xE and symbol["n_sect"] > 0, "callback is not a section-backed variable")
+    section = parsed["sections"][symbol["n_sect"] - 1]
+    require(symbol["value"] % 8 == 0 and not (section["flags"] & 0x80000400) and
+            (section["flags"] & 0xFF) in {0, 1, 0xC, 0x12} and
+            section["addr"] <= symbol["value"] and symbol["value"] + 8 <= section["addr"] + section["size"],
+            "callback definition is not backed by ordinary pointer-sized data storage")
+    return {"symbol": symbol, "section": section}
+
+
+def callback_producer():
+    # Deferred: ordinary archive-only replay keeps its original dependencies.
+    # The producer imports no linker module, so this does not create a cycle.
+    try:
+        import build_route_a_kernel_callback
+    except ImportError as exc:
+        raise LinkError("callback verification requires the recorded callback producer and its support modules") from exc
+    return build_route_a_kernel_callback
+
+
+def callback_recheck(report: dict, required: list[dict]):
+    checks, summary = report.get("protected_input_rechecks"), report.get("protected_inputs_recheck", {})
+    require(report.get("protected_inputs_unchanged") is True and isinstance(checks, list) and checks and
+            summary.get("unchanged") is True and summary.get("checked_file_count") == len(checks) and
+            summary.get("changes") == [], "callback build has no complete unchanged-input receipt")
+    for item in checks:
+        require(item.get("unchanged") is True and re.fullmatch(r"[0-9a-f]{64}", item.get("expected_sha256", "")) and
+                item.get("expected_sha256") == item.get("actual_sha256"), "callback build recorded a changed input")
+    observed = {(item["path"], item["expected_sha256"]) for item in checks}
+    require(all((item["path"], item["sha256"]) in observed for item in required),
+            "callback unchanged-input receipt omits a required source/recipe/driver/tool input")
+
+
+def callback_codegen(producer, report: dict, raw: bytes, after: dict) -> tuple[dict, list[dict]]:
+    """Recompute the producer's bounded code proof from the actual object."""
+    evidence_path = verify_identity(report["callback_evidence"])
+    observed = json.loads(evidence_path.read_text())
+    require(observed.get("passed") is True and observed.get("object_sha256") == sha256(raw) and
+            observed.get("source_sha256") == after["sha256"], "callback generated-code evidence is not a passing bound result")
+    try:
+        _, symbols, sections, relocations = producer.object_layout(raw)
+        decoder, decoder_id = producer.decoder_identity()
+        recomputed = producer.callback_evidence(raw, symbols, sections, relocations, decoder)
+    except (ImportError, RuntimeError, OSError, ValueError, KeyError, TypeError, struct.error) as exc:
+        raise LinkError(f"callback generated-code verification failed: {exc}") from exc
+    require(all(observed.get(key) == value for key, value in recomputed.items()),
+            "callback generated-code evidence differs from the actual bounded object sequences")
+    require(recomputed.get("passed") is True and len(recomputed.get("dispatch_calls", [])) == 2 and
+            sorted(call.get("argument_value") for call in recomputed["dispatch_calls"]) == [0, 1] and
+            all(call.get("instruction") == "blr" for call in recomputed["dispatch_calls"]),
+            "callback object lacks the two verified TRUE/FALSE dispatch calls")
+    resume = recomputed.get("resume_call", {})
+    require(resume.get("symbol") == "_arm_init_cpu" and resume.get("instruction") == "bl" and
+            resume.get("second_argument") == 0 and resume.get("after_boot_dispatch") is True,
+            "callback object lacks the verified post-boot-dispatch resume call")
+    require(all(recomputed.get(key) is False for key in (
+        "full_control_flow_proven", "full_instruction_set_audited", "runtime_path_execution_verified", "sleep_resume_verified")),
+        "callback bounded evidence overstates runtime or ISA qualification")
+    inputs = [identity(evidence_path)]
+    recorded_decoder = report["decoder"]
+    require(decoder_id["version"] == recorded_decoder["version"] == "5.0.6" and
+            decoder_id["core_version"] == recorded_decoder["core_version"], "callback decoder identity changed")
+    for key in ("module", "native_library", "python"):
+        recorded, actual = recorded_decoder[key], decoder_id[key]
+        original = tool_identity(Path(recorded["path"]))
+        current = tool_identity(Path(actual["path"]))
+        require(original["sha256"] == recorded["sha256"] == current["sha256"] == actual["sha256"],
+                f"callback decoder input differs: {key}")
+        inputs.extend((original, current))
+    disassembly = verify_identity(report["disassembly"])
+    require(observed.get("disassembly") == report["disassembly"], "callback evidence names a different disassembly artifact")
+    inputs.append(identity(disassembly))
+    return {"passed": True, "recomputed_from_replacement_object": True,
+            "scope": recomputed["scope"], "function": recomputed["function"],
+            "dispatch_calls": recomputed["dispatch_calls"], "resume_call": resume,
+            "runtime_path_execution_verified": False}, inputs
+
+
+def verify_callback(report_path: Path, candidate: Path, kernel: Path, prefix: Path) -> tuple[dict, list[dict]]:
+    report = json.loads(report_path.read_text())
+    require(report.get("schema_version") == 1 and report.get("status") == "kernel_callback_built" and
+            report.get("kernel_callback_built") is True and
+            report.get("scope") == "arm64-platform-sleep-cpu-replacement", "callback object has not been independently built")
+    provenance = report.get("provenance", {})
+    require(all(provenance.get(key) == value for key, value in CALLBACK_PROVENANCE.items()),
+            "callback patch provenance differs from the selected real XNU cpu.c wiring")
+    require(verify_identity(report["kernel"]) == candidate.resolve(), "callback targets a different kernel")
+    original = verify_identity(report["original_object"])
+    replacement = verify_identity(report["replacement_object"])
+    before = verify_identity(report["source"]["before"])
+    after = verify_identity(report["source"]["after"])
+    original_recipe = verify_identity(report["compile_record"]["original"])
+    replay_recipe = verify_identity(report["compile_record"]["replay"])
+    patch_path = verify_identity(report["patch"])
+    require(report["patch"]["sha256"] == CALLBACK_PATCH_SHA256 and
+            report["source"]["after"]["sha256"] == CALLBACK_SOURCE_SHA256,
+            "callback patch or result source differs from the pinned three-hunk selection")
+    require(original == kernel / CPU_OBJECT_RELATIVE and report["original_object"]["sha256"] == CPU_OBJECT_SHA256,
+            "callback original object is not the pinned kernel cpu.o")
+    require(before == kernel / CPU_SOURCE_RELATIVE and report["source"]["before"]["sha256"] == CPU_SOURCE_SHA256,
+            "callback original source is not the pinned kernel cpu.c")
+    require(original_recipe == original.with_name("cpu.o.json") and
+            report["compile_record"]["original"]["sha256"] == CPU_RECIPE_SHA256,
+            "callback original compilation record differs from the kernel's cpu.o recipe")
+    require(not replacement.is_relative_to(kernel) and not after.is_relative_to(kernel) and
+            replacement != original and after != before, "callback outputs overlap the protected kernel tree")
+    require(apply_cpu_patch(before.read_bytes(), patch_path.read_bytes()) == after.read_bytes(),
+            "callback patched source does not equal the three recorded cpu.c hunks")
+    input_paths = [report_path, original, replacement, before, after, original_recipe, replay_recipe, patch_path]
+    for key in ("driver", "config", "callback_evidence"):
+        input_paths.append(verify_identity(report[key]))
+    producer = callback_producer()
+    imported_driver = identity(Path(producer.__file__).resolve())
+    require(imported_driver["sha256"] == report["driver"]["sha256"],
+            "callback replay verifier differs from the driver that produced the object")
+    input_paths.append(Path(imported_driver["path"]))
+    config = json.loads(Path(report["config"]["path"]).read_text())
+    require(config.get("scope") == report["scope"] and config.get("schema_version") == 1 and
+            config.get("patch", {}).get("sha256") == CALLBACK_PATCH_SHA256 and
+            config.get("patch", {}).get("result_source_sha256") == CALLBACK_SOURCE_SHA256 and
+            all(config.get("provenance", {}).get(key) == value for key, value in CALLBACK_PROVENANCE.items()),
+            "callback configuration differs from the selected source/provenance contract")
+    support = report.get("support_files", [])
+    expected_support = {"scripts/build_route_a_platform.py": Path(producer.platform.__file__).resolve(),
+                        "scripts/prepare_route_a_toolchain.py": Path(toolchain.__file__).resolve()}
+    specs = config.get("support_files", [])
+    require(len(specs) == len(expected_support) and {item["path"] for item in specs} == set(expected_support),
+            "callback configuration has unexpected replay support modules")
+    for spec in specs:
+        imported = identity(expected_support[spec["path"]])
+        recorded = [item for item in support if Path(item["path"]).name == Path(spec["path"]).name]
+        require(len(recorded) == 1 and recorded[0]["sha256"] == imported["sha256"] == spec["sha256"],
+                "callback replay support differs from the recorded compiler contract")
+        input_paths.extend((verify_identity(recorded[0]), Path(imported["path"])))
+    compiler_record = report["compiler"]
+    compiler = Path(compiler_record["path"])
+    compiler_id = tool_identity(compiler)
+    require(compiler_id["sha256"] == compiler_record.get("sha256") == CLANG_SHA256 and
+            compiler.resolve() == (prefix / "llvm/bin/clang").resolve(), "callback compiler is not the verified kernel compiler")
+    old_command = json.loads(original_recipe.read_text().strip().rstrip(","))
+    new_command = json.loads(replay_recipe.read_text())
+    cwd = Path(old_command["directory"])
+    require(cwd.is_absolute() and cwd == original.parent and old_command["file"] == str(before),
+            "callback original source/cwd disagrees with the fixed recipe")
+    require(new_command.get("directory") == str(replacement.parent) and new_command.get("file") == str(after),
+            "callback replay source/cwd is not the recorded isolated compilation")
+    replay_output = Path(new_command["output"])
+    require((replay_output if replay_output.is_absolute() else replacement.parent / replay_output).resolve() == replacement,
+            "callback compilation output is not the recorded replacement")
+    argv = new_command.get("arguments")
+    require(isinstance(argv, list) and argv and all(isinstance(a, str) and a and "\0" not in a for a in argv),
+            "invalid callback compiler argv")
+    require(Path(argv[0]).resolve() == compiler.resolve() and argv.count(str(after)) == 1 and argv.count("-c") == 1 and
+            argv.count("-o") == 1 and [a for a in argv if a.startswith("-mcpu")] == ["-mcpu=generic"],
+            "callback replay does not use the expected compiler/source/compile-only CPU contract")
+    at = argv.index("-o")
+    require(at + 1 < len(argv), "callback replay has no output after -o")
+    arg_output = Path(argv[at + 1])
+    require((arg_output if arg_output.is_absolute() else replacement.parent / arg_output).resolve() == replacement,
+            "callback replay argv writes a different object")
+    try:
+        expected_argv, changes = producer.replay_recipe(old_command, kernel, after, replacement.parent)
+    except (RuntimeError, ValueError, KeyError, TypeError, OSError) as exc:
+        raise LinkError(f"callback original recipe cannot be replayed safely: {exc}") from exc
+    require(argv == expected_argv and report.get("recipe_changes") == changes,
+            "callback replay argv/changes differ from exact reconstruction of the original C recipe")
+    compiled = report.get("compile", {})
+    require(compiled.get("status") == "completed" and compiled.get("exit_code") == 0 and
+            compiled.get("label") == "cpu-compile" and compiled.get("argv") == argv and
+            compiled.get("cwd") == str(replacement.parent), "callback has no matching successful compiler execution")
+    for key in ("stdout", "stderr"):
+        log = Path(compiled[key])
+        require(identity(log)["sha256"] == compiled.get(key + "_sha256"), "callback compilation log digest changed")
+        input_paths.append(log)
+    callback_recheck(report, [report["kernel"], report["original_object"], report["source"]["before"],
+                             report["source"]["after"], report["compile_record"]["original"],
+                             report["driver"], report["config"], report["patch"], report["compiler"], *support])
+    old_macho, new_macho = macho(original.read_bytes(), 1), macho(replacement.read_bytes(), 1)
+    require(not old_macho["symbols"]["common_external"] and not new_macho["symbols"]["common_external"],
+            "callback common symbols require a different link contract")
+    old_definitions = {s["name"] for s in old_macho["symbols"]["defined_external"]}
+    new_definitions = {s["name"] for s in new_macho["symbols"]["defined_external"]}
+    require(CALLBACK_SYMBOL not in old_definitions and new_definitions == old_definitions | {CALLBACK_SYMBOL},
+            "callback replacement changes external definitions beyond the sleep hook")
+    old_kinds = {s["name"]: (s["n_type"], s["n_desc"] & 0x80)
+                 for s in old_macho["symbols"]["defined_external"]}
+    new_kinds = {s["name"]: (s["n_type"], s["n_desc"] & 0x80)
+                 for s in new_macho["symbols"]["defined_external"] if s["name"] != CALLBACK_SYMBOL}
+    require(old_kinds == new_kinds, "callback replacement changes existing definition type or weak/strong binding")
+    require("_ml_arm_sleep" in old_definitions, "original cpu.o does not define ml_arm_sleep")
+    hook = hook_definition(new_macho)
+    symbols_path = verify_identity(report["replacement_object"]["symbols"])
+    require(json.loads(symbols_path.read_text()).get("records") == new_macho["symbols"]["records"],
+            "callback symbol report differs from replacement bytes")
+    input_paths.append(symbols_path)
+    generated, generated_inputs = callback_codegen(producer, report, replacement.read_bytes(), report["source"]["after"])
+    evidence = {"report": identity(report_path), "provenance": provenance,
+                "original_object": identity(original), "replacement_object": identity(replacement),
+                "source": {"before": identity(before), "after": identity(after)},
+                "compile_record": {"original": identity(original_recipe), "replay": identity(replay_recipe)},
+                "driver": report["driver"], "config": report["config"], "patch": report["patch"],
+                "compiler": compiler_id, "callback_evidence": report["callback_evidence"],
+                "recipe_reconstruction_verified": True, "recipe_changes": changes,
+                "producer_protected_inputs_recheck": report["protected_inputs_recheck"],
+                "generated_code_verification": generated, "hook_definition": hook,
+                "runtime_path_execution_verified": False}
+    return {"name": "kernel cpu callback", "macho": new_macho, "original_macho": old_macho,
+            "evidence": evidence}, [*[identity(path) for path in input_paths], compiler_id, *generated_inputs]
+
+
+def callback_kernel_symbols(kernel_metadata: dict, callback: dict | None) -> list[dict]:
+    if callback is None:
+        return [{"name": "original generic kernel", "macho": kernel_metadata}]
+    # A strong definition in the successful original link came from this
+    # object. A weak definition may have lost to another object's strong
+    # definition: keep that baseline observation, since the new weak copy
+    # cannot introduce a duplicate-strong claim. Unsupported aliases fail in
+    # macho(); this inventory is not proof of actual symbol resolution.
+    removed = {s["name"] for s in callback["original_macho"]["symbols"]["defined_external"]
+               if not (s["n_desc"] & 0x80)}
+    remaining = [s for s in kernel_metadata["symbols"]["defined_external"] if s["name"] not in removed]
+    adjusted = {**kernel_metadata, "symbols": {**kernel_metadata["symbols"], "defined_external": remaining}}
+    return [{"name": "original kernel excluding replaced cpu definitions", "macho": adjusted}, callback]
+
+
+def replace_cpu_filelist(recipe: dict, original_filelist: Path, destination: Path, callback: dict) -> dict:
+    require(destination.parent == original_filelist.parent and destination != original_filelist and not destination.exists(),
+            "replacement filelist must be a fresh sibling of the preserved baseline filelist")
+    original_path = Path(callback["evidence"]["original_object"]["path"])
+    replacement_path = Path(callback["evidence"]["replacement_object"]["path"])
+    require(replacement_path.is_absolute() and not any(c in str(replacement_path) for c in (",", "\n", "\0")),
+            "invalid replacement object path")
+    raw = original_filelist.read_bytes()
+    require(sha256(raw) == FILELIST_SHA256, "baseline filelist changed before cpu replacement")
+    lines = raw.decode("utf-8").splitlines(keepends=True)
+    cwd = Path(recipe["cwd"])
+    matches = []
+    for index, line in enumerate(lines):
+        require(line.endswith("\n") and line[:-1] == line[:-1].strip(), "unsupported filelist line form")
+        entry = Path(line[:-1])
+        if (entry if entry.is_absolute() else cwd / entry).resolve() == original_path:
+            matches.append(index)
+    require(len(matches) == 1, "original cpu.o must occur exactly once in the retained filelist")
+    changed = list(lines)
+    index = matches[0]
+    changed[index] = str(replacement_path) + "\n"
+    require(changed[index] != lines[index], "callback replacement does not change the object")
+    with destination.open("xb") as stream:
+        stream.write("".join(changed).encode("utf-8"))
+    return {"original_filelist": identity(original_filelist), "platform_filelist": identity(destination),
+            "line_index": index, "original_entry": lines[index].rstrip("\n"),
+            "replacement_entry": str(replacement_path), "replacement_count": 1,
+            "unchanged_original_linked_object_count": recipe["linked_object_count"] - 1}
+
+
+def verify_callback_link_map(text: str, callback: dict, linked: dict) -> dict:
+    objects, symbols = parse_link_map(text)
+    original = callback["evidence"]["original_object"]["path"]
+    replacement = callback["evidence"]["replacement_object"]["path"]
+    require(original not in objects.values(), "original cpu.o still appears in platform link map")
+    indexes = [index for index, path in objects.items() if path == replacement]
+    require(len(indexes) == 1, "platform link map does not identify the actual replacement cpu.o")
+    selected = [s for s in symbols if s["object_index"] == indexes[0] and s["size"] > 0]
+    hook_rows = [s for s in selected if s["name"] == CALLBACK_SYMBOL and s["size"] >= 8]
+    sleep_rows = [s for s in selected if s["name"] == "_ml_arm_sleep"]
+    require(len(hook_rows) == 1 and len(sleep_rows) == 1, "replacement hook/ml_arm_sleep were not retained from the actual object")
+    definition = hook_definition(linked)
+    require(definition["symbol"]["value"] == hook_rows[0]["address"], "linked callback symbol disagrees with its map address")
+    sleep_definitions = [s for s in linked["symbols"]["defined_external"] if s["name"] == "_ml_arm_sleep"]
+    require(len(sleep_definitions) == 1 and sleep_definitions[0]["n_sect"] > 0 and
+            sleep_definitions[0]["value"] == sleep_rows[0]["address"] and
+            linked["sections"][sleep_definitions[0]["n_sect"] - 1]["flags"] & 0x80000400,
+            "linked ml_arm_sleep is not the mapped instruction-section definition")
+    return {"map_object": replacement, "object_index": indexes[0], "hook_symbol": hook_rows[0],
+            "ml_arm_sleep_symbol": sleep_rows[0], "definition": definition,
+            "runtime_path_execution_verified": False}
 
 
 def pinned(path: Path, expected: str) -> dict:
@@ -515,6 +873,10 @@ def tool_inputs(toolwork: Path, build_report: dict) -> tuple[Path, list[dict], d
 def run(args) -> dict:
     kernel, toolwork, platform = args.kernel_dir.resolve(), args.toolchain_work.resolve(), args.platform_report.resolve()
     require(kernel.is_dir() and toolwork.is_dir() and platform.is_file(), "missing kernel/toolchain/platform inputs")
+    callback_path = getattr(args, "kernel_callback_report", None)
+    if callback_path is not None:
+        callback_path = callback_path.resolve()
+        require(callback_path.is_file(), "missing kernel callback report")
     output = args.output
     require(not output.is_symlink() and not output.exists(), "output must be unused; retain earlier attempts")
     output = output.resolve()
@@ -525,13 +887,18 @@ def run(args) -> dict:
     require(isinstance(prefix_value, str) and Path(prefix_value).is_absolute(), "invalid tool installation prefix")
     prefix_hint = Path(prefix_value).resolve()
     require(prefix_hint.is_dir(), "tool installation prefix is absent")
-    for protected in (kernel, toolwork, prefix_hint, platform.parent, Path(__file__).resolve().parents[1]):
+    protected_roots = [kernel, toolwork, prefix_hint, platform.parent, Path(__file__).resolve().parents[1]]
+    if callback_path is not None:
+        protected_roots.append(callback_path.parent)
+    for protected in protected_roots:
         require(not output.is_relative_to(protected) and not protected.is_relative_to(output), "output overlaps protected inputs")
     output.mkdir(parents=True, exist_ok=False)
     report = {"schema_version": 1, "status": "validating", "scope": SCOPE, "output": str(output),
               "driver": identity(Path(__file__).resolve()), "commands": [], "baseline_reproduced": False,
               "platform_link_compatible": False, "complete_board_archive_closure": False,
               "crypto_provider_selected": False, "pthread_provider_selected": False,
+              "kernel_callback_requested": callback_path is not None, "kernel_callback_linked": False,
+              "sleep_runtime_verified": False,
               "runtime_driver_matching_verified": False, "full_instruction_set_audited": False,
               "tb371fc_kernel_qualified": False, "os_boot_verified": False}
     toolchain.save_json(output / "report.json", report)
@@ -563,6 +930,11 @@ def run(args) -> dict:
                 (output / "tmp").mkdir()
                 env["TMPDIR"] = str(output / "tmp")
                 protected_inputs.extend(tools)
+                callback = None
+                if callback_path is not None:
+                    callback, callback_inputs = verify_callback(callback_path, candidate, kernel, prefix)
+                    protected_inputs.extend(callback_inputs)
+                    report["kernel_callback"] = callback["evidence"]
                 recipe, linked_inputs = recover_recipe(kernel, prefix)
                 protected_inputs.extend(linked_inputs)
                 # Deduplicate identical identities without omitting any path.
@@ -582,7 +954,15 @@ def run(args) -> dict:
                               original_kernel=original, platform_report=identity(platform), environment=env,
                               linked_original_object_count=recipe["linked_object_count"])
                 kernel_metadata = macho(candidate.read_bytes(), 2)
-                closure = symbol_closure([{"name": "original generic kernel", "macho": kernel_metadata}], components)
+                closure = symbol_closure(callback_kernel_symbols(kernel_metadata, callback), components)
+                if callback is not None:
+                    closure["cpu_replacement"] = {
+                        "original_object": callback["evidence"]["original_object"],
+                        "replacement_object": callback["evidence"]["replacement_object"],
+                        "original_strong_definition_names_removed": sorted(
+                            s["name"] for s in callback["original_macho"]["symbols"]["defined_external"]
+                            if not (s["n_desc"] & 0x80)),
+                        "weak_definition_winner_inferred": False}
                 toolchain.save_json(output / "symbol-closure.json", closure)
                 report["symbol_closure"] = identity(output / "symbol-closure.json")
                 require(not closure["duplicate_strong_definitions"], "duplicate strong platform/kernel definitions")
@@ -602,10 +982,15 @@ def run(args) -> dict:
                         "baseline replay differs byte-for-byte from the successful kernel; platform link not attempted")
                 report["baseline_reproduced"] = True
                 require(check_unchanged(protected_inputs)["unchanged"], "inputs changed during baseline replay")
+                platform_filelist = filelist
+                if callback is not None:
+                    platform_filelist = inputs_dir / "platform-link.filelist"
+                    report["kernel_callback"]["filelist_replacement"] = replace_cpu_filelist(
+                        recipe, filelist, platform_filelist, callback)
                 destination = output / "mach.platform-link-probe.unstripped.noctf"
                 mapfile = output / "platform.map"
                 report["status"] = "linking_platform"
-                result = execute(link_command(recipe, filelist, destination, mapfile, components), cwd=Path(recipe["cwd"]),
+                result = execute(link_command(recipe, platform_filelist, destination, mapfile, components), cwd=Path(recipe["cwd"]),
                                  env=env, output=output, label="platform-link", report=report)
                 require(result["exit_code"] == 0 and destination.is_file(), "platform compatibility link failed")
                 data = destination.read_bytes()
@@ -613,6 +998,10 @@ def run(args) -> dict:
                 require(not linked["symbols"]["strong_undefined"] and not linked["symbols"]["common_external"],
                         "linked image retains strong undefined/common symbols")
                 members = verify_link_map(mapfile.read_text(), components, linked, data)
+                if callback is not None:
+                    report["kernel_callback"]["actual_member_evidence"] = verify_callback_link_map(
+                        mapfile.read_text(), callback, linked)
+                    report["kernel_callback_linked"] = True
                 report.update(status="platform_link_compatible", platform_link_compatible=True,
                               candidate={**identity(destination), "load_contract": linked["load_contract"],
                                          "entry": linked["entry"], "file_type": linked["file_type"],
@@ -626,10 +1015,12 @@ def run(args) -> dict:
                 report["protected_inputs_recheck"] = recheck
                 if not recheck["unchanged"]:
                     report["platform_link_compatible"] = False
+                    report["kernel_callback_linked"] = False
                     raise LinkError("protected inputs changed during the compatibility experiment")
     except (LinkError, OSError, ValueError, KeyError, TypeError, struct.error, subprocess.TimeoutExpired, KeyboardInterrupt) as exc:
         report.update(failed_stage=report["status"], status="failed", error=str(exc), error_type=type(exc).__name__)
         report["platform_link_compatible"] = False
+        report["kernel_callback_linked"] = False
     finally:
         report["finished_at_utc"] = time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())
         toolchain.save_json(output / "report.json", report)
@@ -641,6 +1032,8 @@ def main(argv=None) -> int:
     parser.add_argument("--kernel-dir", type=Path, required=True)
     parser.add_argument("--toolchain-work", type=Path, required=True)
     parser.add_argument("--platform-report", type=Path, required=True)
+    parser.add_argument("--kernel-callback-report", type=Path,
+                        help="optional independent, source-bound cpu.o callback replacement report")
     parser.add_argument("--output", type=Path, required=True)
     args = parser.parse_args(argv)
     try:
