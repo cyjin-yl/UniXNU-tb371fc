@@ -4,9 +4,15 @@
 
 同轮文档的 Linux 研究基线为 `ec42c48405eb3966ca2539e53d96d02a5e725059`（`research/reproducible-build-gpu-20261123`），QEMU 已发布基线为 `69ca28dec6add998d252fa6436dfcc9b9cab6e36`（`tb371fc`）。这些是本轮引用的快照，后续代码进展仍由各自分支与新证据记录。
 
+### 合入后的进展
+
+上述固定基线保留作历史起点。其后合入的 [平台结果](ROUTE_A_PLATFORM_RESULT.md) 已完成 `ArmDTPlatform`、`ArmCpu` 的实际编译、真实 `cpu.c` callback 接线与独立链接；新候选为 21,942,456 字节，SHA-256 `46eff436250d905e9f3aec59dbcc8c04d594e614e790860236917c7cbfe39f1b`，强／弱未定义符号均为零。该候选又已通过 [DarwinBoot 主机合同](ROUTE_A_LOADER_CONTRACT.md) 的实际 parser／复制代码、102,103 条 local pointer 全表、入口直接分支和启动参数布局检查。完整 provider／archive 闭包、板级 ADT、设备入口执行及 iPadOS／macOS 27 仍未验收。
+
+QEMU 的 [PR #4](https://github.com/cyjin-yl/qemu-tb371fc/pull/4) 与 [PR #5](https://github.com/cyjin-yl/qemu-tb371fc/pull/5) 也已合入；UFS 迁移边界、拒绝路径与相关模型证据由该仓库分别记录。它们扩展后续可重复的组件测试基础，不提升本仓库的 XNU 启动或实机硬件资格。
+
 主线 Linux 适合作为这台平板的长期通用系统方向；本仓库继续推进既定的路线 A：离线 arm64e → 普通 arm64 转换、CPU 原生执行，先 iPadOS 27，再独立验证 macOS 27。三条工程线共享板级事实和测试输入，各自完成操作系统接口与运行验收。厂商源码的来源核验、Linux 驱动补齐与 XNU 板级集成可以并行。
 
-本轮变更只补充工程文档，没有重建内核、启动 27 或改变历史硬件验收状态。
+初始固定基线的整理只补充工程文档。后续实现以“合入后的进展”和所链接的新报告为准，27 运行与历史硬件验收状态继续分别记录。
 
 ## 1. 已有结果与下一步的准确起点
 

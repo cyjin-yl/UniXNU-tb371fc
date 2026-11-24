@@ -38,7 +38,11 @@ python3 -m venv "$ROUTE_A_WORK/venv"
 "$ROUTE_A_WORK/venv/bin/python" scripts/prepare_route_a_xnu.py \
   --output "$ROUTE_A_WORK/xnu-pager"
 
+"$ROUTE_A_WORK/venv/bin/python" scripts/probe_route_a_loader.py prepare-sources \
+  --output "$ROUTE_A_WORK/loader-sources"
+
 ROUTE_A_XNU_PREPARED_DIR="$ROUTE_A_WORK/xnu-pager/tree" \
+ROUTE_A_LOADER_SOURCES="$ROUTE_A_WORK/loader-sources" \
   "$ROUTE_A_WORK/venv/bin/python" scripts/check_route_a.py
 
 "$ROUTE_A_WORK/venv/bin/python" scripts/route_a.py targets
@@ -49,6 +53,8 @@ ROUTE_A_XNU_PREPARED_DIR="$ROUTE_A_WORK/xnu-pager/tree" \
 `ROUTE_A_XNU_PREPARED_DIR` 让回归测试编译并调用修改后的真实 pager C 函数。**没有准备该源码树时，相关 C 测试会跳过；这不能复现首轮“120 项通过、0 跳过”的完整结果。** 首轮 120 是历史快照，之后新增测试应以本次输出为准。检查终端最后的通过、失败和跳过数量，不以进程返回 0 单独代表全覆盖。
 
 这些 C 测试替换了部分内核类型和诊断依赖，覆盖普通指针解码、分块边界、调用顺序及错误传播；没有编译或启动完整 XNU。[CI](.github/workflows/source-check.yml) 使用同一准备步骤与测试入口。
+
+`probe_route_a_loader.py prepare-sources` 另准备六份固定 DarwinBoot／XNU 声明与许可证文件。`ROUTE_A_LOADER_SOURCES` 让 loader 测试实际编译原样提取的 parser、段复制循环和 boot_args 声明；缺少此变量时该 C 测试类明确跳过。这些自写 Mach-O fixture 的 host 检查与[真实候选加载合同](docs/ROUTE_A_LOADER_CONTRACT.md)分别记录，均不执行内核入口。
 
 可选的独立编码复核：
 
@@ -94,6 +100,7 @@ ROUTE_A_XNU_PREPARED_DIR="$ROUTE_A_WORK/xnu-pager/tree" \
 - [第一次完整编译](docs/ROUTE_A_FIRST_KERNEL_BUILD.md)：`stage` 固定公开 reference 与缺失 headers，保留已适配文件；`run` 调用实际 upstream builder，记录退出码、部分对象及候选 Mach-O。一次构建使用一个新工作树，失败产物保留。
 - [平台组件实验](docs/ROUTE_A_PLATFORM_RESULT.md)：基于真实成功 kernel recipe 编译固定的 `ArmDTPlatform` / `ArmCpu`，保留源码与依赖身份、失败诊断及归档成员摘要。独立链接实验先要求逐字节重现原内核，再核验新成员及构造函数实际进入候选；全部输出使用新目录。
 - kernel callback 接线实验使用 `build_route_a_kernel_callback.py`：只选择固定上游的三个 `cpu.c` hunk，用原 C 配方编译外部副本；`link_route_a_platform.py --kernel-callback-report` 在通过原 baseline SHA 后替换唯一对象。完整睡眠策略、唤醒和设备运行分别验收。
+- [DarwinBoot 加载合同](docs/ROUTE_A_LOADER_CONTRACT.md)：固定实际平台候选及其成功 link report，执行原样 parser／复制代码、独立段边界与补零核对、单条入口 B trampoline 和 boot_args／真实 assym 偏移核验。所有输出位于新目录，物理分配与设备 entry 另验。
 
 CI 的 `Prepare ordinary arm64 kernel sources` 作业实际执行 71 项 patch 准备及 source/header staging；它不在每次提交时编译整个 LLVM 或 XNU。准备报告、源码摘要和编译器诊断保存在该次 Actions 产物中。[191 项回归对应的实际 staging 报告](docs/evidence/route-a-kernel-staging-20261123.json) 记录了 7 份公开源码、21 个保留 header 和 5 个新增 header。
 
@@ -113,6 +120,7 @@ CI 的 `Prepare ordinary arm64 kernel sources` 作业实际执行 71 项 patch �
 | `scripts/build_route_a_platform.py` | 固定平台源码、真实 C++ 配方重放与独立归档 |
 | `scripts/build_route_a_kernel_callback.py` | 真实 `cpu.c` 配方重编译、来源绑定的接线与有限生成代码检查 |
 | `scripts/link_route_a_platform.py` | 原候选字节一致重放、平台成员装载与输入保护核验 |
+| `scripts/probe_route_a_loader.py` | 固定生产 loader parser／复制代码、真实候选 heap 装载与 boot_args 合同 |
 | `scripts/check_route_a_host_tools.py` | 已构建主机工具的实际语义小样本 |
 | `tests/test_route_a_*.py` | 回归检查；由统一入口发现 |
 | `patches/route-a-*.patch` | 本轮提取工具与内核补丁 |
