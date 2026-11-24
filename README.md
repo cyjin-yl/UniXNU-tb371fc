@@ -36,6 +36,7 @@
 | --- | --- |
 | [开发指南](DEVELOPMENT.md) | 克隆、依赖、包含真实 pager C 的完整检查、输入输出约定 |
 | [路线图与验收表](ROADMAP.md) | 进行中的任务、依赖、完成条件和整机硬件矩阵 |
+| [Linux / QEMU / XNU 共用硬件资料](docs/CROSS_PROJECT_HARDWARE.md) | 板级事实复用、原生 CPU 资格与 macOS 27 独立验收 |
 | [路线 A 实现](docs/ROUTE_A.md) | 转换规则、严格检查、真实 27 输入结果和使用方法 |
 | [证据索引](docs/evidence/README.md) | 来源、测试报告、未证明范围与 CI |
 | [普通指针内核补丁](docs/ROUTE_A_PLAIN_AUTH_PATCH.md) | 固定 XNU 基线、补丁与提取 C 测试 |
