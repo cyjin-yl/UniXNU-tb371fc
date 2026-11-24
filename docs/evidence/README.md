@@ -2,6 +2,21 @@
 
 本目录保存可公开、可追溯的结果摘要。系统二进制和原始私有日志不在仓库分发。文件名日期是该次记录日期，不代表之后所有改动都已重新执行相同测试。
 
+## 真实候选的 DarwinBoot 主机加载合同：2026-11-24
+
+平台候选 `46eff436…` 已通过固定 DarwinBoot 原始 parser／段复制代码、完整 local pointer 表和真实 `boot_args` 声明的主机检查。第三次执行返回 `host_loader_contract_verified`；两个原始失败报告及对应 driver 的精确恢复 patch 保留。完整实现、来源与条件见 [加载合同](../ROUTE_A_LOADER_CONTRACT.md)。
+
+| 记录 | 实际结果 | 范围 |
+| --- | --- | --- |
+| [本轮汇总](route-a-loader-contract-20261124.json) | 同一候选的 10 个已加载段、23,035,904 字节 heap 映像、入口直接分支和 1,152 字节 boot_args 布局通过；16 项输入前后一致 | host parser／字节／ABI 成功；物理内存、ADT、MMU 交接和设备 entry 未执行 |
+| [第一次失败](route-a-loader-20261124/attempt-001/report.json) | 外层未支持真实段表中的 `SG_NORELOC=0x4`；三个 host verified 为 false | 未进入 C 编译或装载；后续按固定 loader.h 语义显式支持该注记 |
+| [第二次失败](route-a-loader-20261124/attempt-002/report.json) | 外层发现非空 local relocation 表；三个 host verified 为 false | undefined／external relocation 为 0；后续增加全表验证，未静默忽略表 |
+| [第三次成功](route-a-loader-20261124/attempt-003/report.json) | 102,103 条 local unsigned64 全部检查，0 跳过／改写；102,101 个 section 内目标与 2 个精确空边界；实际复制后指针字节一致 | 固定零虚拟 slide 合同；不证明运行时 slide、通用 fixup 闭包或 CPU 未对齐访问 |
+| [原始产物与版本链](route-a-loader-20261124/README.md) | 三份原报告、传输清单、实际生成 C 的原字节文本、空编译日志与原许可证；v3→v2→v1 精确恢复已验证 | 生成内核映像和 host shared library 只记录哈希，留在仓库外 |
+| [本地回归日志](route-a-loader-20261124/local-regression.log) | 新增 loader 32 项／0 跳过，其中 7 项实际提取生产 C；完整入口报告 `Ran 295 tests`、`OK (skipped=10)` | 9 个 pager C 因本地缺 prepared tree 跳过，1 个 fileset 编译类因本地无 Clang 跳过；不称完整 CI，后续 CI 单独记录 |
+
+原 229 份源码／许可证清单和 13 个 catalog 区域检查均通过。本轮没有执行内核指令，也没有更改 27 系统、桌面或整机硬件的验收状态。
+
 ## 平台组件编译、归档与独立链接：2026-11-24
 
 `ArmDTPlatform` 与 `ArmCpu` 已用成功通用内核的真实 C++ 配方、自建 Clang 和 XNU 头文件完成编译、归档与成员字节核验。来源绑定的 `cpu.c` callback 对象也已真实编译通过，并在第四轮与两个 provider 一同通过独立内核链接，产物为 21,942,456 B 的普通 ARM64 / subtype 0 候选，目标为 iOS 27.0。完整来源、命令和验收边界见 [平台组件结果](../ROUTE_A_PLATFORM_RESULT.md)。

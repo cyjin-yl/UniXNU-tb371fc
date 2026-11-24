@@ -1,0 +1,198 @@
+{
+  "board_adt_verified": false,
+  "boot_args_abi_verified": false,
+  "error": "unsupported segment flags or protections",
+  "finished_at_utc": "2026-11-24T02:05:52.390530+00:00",
+  "full_instruction_set_audited": false,
+  "host_loader_probe_verified": false,
+  "kernel": {
+    "path": "/work/route-a-platform-20261124/link-attempt-004/mach.platform-link-probe.unstripped.noctf",
+    "sha256": "46eff436250d905e9f3aec59dbcc8c04d594e614e790860236917c7cbfe39f1b",
+    "size": 21942456
+  },
+  "kernel_entry_executed": false,
+  "kernel_segment_bytes_verified": false,
+  "os_boot_verified": false,
+  "output": "/work/route-a-loader-20261124/attempt-001",
+  "protected_inputs": [
+    {
+      "path": "/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/arm64/start.s",
+      "sha256": "115d15ee67b62c480b2122ced06bfd64e0151c514cf63a2cd578a1feff19548d",
+      "size": 25194
+    },
+    {
+      "path": "/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/pexpert/pexpert/arm64/boot.h",
+      "sha256": "479a74f100116358a0e425d8deefc62c5bcbee72e49e69721c9e2d9c53465cd3",
+      "size": 2805
+    },
+    {
+      "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/DEVELOPMENT_ARM64_BCM2837/osfmk/DEVELOPMENT/assym.s",
+      "sha256": "b29e64676013a588acc16d0d0829701fac15ff93b1bd2accb2c6157724854636",
+      "size": 8422
+    },
+    {
+      "path": "/work/route-a-loader-20261124/driver-v1/configs/route-a-loader-probe.json",
+      "sha256": "d66d9e078441c851fe4c6f1abc429c4e5c8cbfc6262fccebdf726e57482ac4d2",
+      "size": 3179
+    },
+    {
+      "path": "/work/route-a-loader-20261124/driver-v1/public-sources/darwinboot/DarwinBootPkg/Driver/BootArgs.h",
+      "sha256": "1d6b172a306bf5d3fc409d22bd7e674d166e5fde92652c4135de5c79f3eddd16",
+      "size": 1012
+    },
+    {
+      "path": "/work/route-a-loader-20261124/driver-v1/public-sources/darwinboot/DarwinBootPkg/Driver/DarwinBoot.c",
+      "sha256": "f3815791ad63b87b11ee28118ad1f35a7d0c5258ea70b7b76eda68914fa2b8cf",
+      "size": 36608
+    },
+    {
+      "path": "/work/route-a-loader-20261124/driver-v1/public-sources/darwinboot/DarwinBootPkg/Driver/Entry.S",
+      "sha256": "44c05d16af1fbe51cfdcf074ff590ec214dbe3e8efdc4b83a9d06f7e49be44bd",
+      "size": 980
+    },
+    {
+      "path": "/work/route-a-loader-20261124/driver-v1/public-sources/darwinboot/LICENSE",
+      "sha256": "513308769e962347c3b987ddac32f5f5c9849acced235e5580ab2c7ebf067900",
+      "size": 2677
+    },
+    {
+      "path": "/work/route-a-loader-20261124/driver-v1/public-sources/xnu/APPLE_LICENSE",
+      "sha256": "e5881019d8766c1e88a5fe1dbca4ba40c78011d41fcb18f6e9f50df60182685b",
+      "size": 19829
+    },
+    {
+      "path": "/work/route-a-loader-20261124/driver-v1/public-sources/xnu/pexpert/pexpert/arm64/boot.h",
+      "sha256": "479a74f100116358a0e425d8deefc62c5bcbee72e49e69721c9e2d9c53465cd3",
+      "size": 2805
+    },
+    {
+      "path": "/work/route-a-loader-20261124/driver-v1/scripts/link_route_a_platform.py",
+      "sha256": "13a22e44c1e4e2e7a9ce6118e62fe0ddd0dd82ceeb5384fc04b2461d65fa5f9b",
+      "size": 68253
+    },
+    {
+      "path": "/work/route-a-loader-20261124/driver-v1/scripts/prepare_route_a_toolchain.py",
+      "sha256": "9680894acc78dbbdf2e990860a3f4506742ae5f4e945d9fc84a606618ddde275",
+      "size": 36843
+    },
+    {
+      "path": "/work/route-a-loader-20261124/driver-v1/scripts/probe_route_a_loader.py",
+      "sha256": "68c6e3b7473676a59a786df55f1f64e42d2f4d5b6dfa14b65f84b3ce4b66025b",
+      "size": 36385
+    },
+    {
+      "path": "/work/route-a-platform-20261124/link-attempt-004/mach.platform-link-probe.unstripped.noctf",
+      "sha256": "46eff436250d905e9f3aec59dbcc8c04d594e614e790860236917c7cbfe39f1b",
+      "size": 21942456
+    },
+    {
+      "path": "/work/route-a-platform-20261124/link-attempt-004/report.json",
+      "sha256": "738a7af11b32c08d0a4261611ba69f325d5a29bf424791b18e98879864feff7c",
+      "size": 31408
+    },
+    {
+      "kind": "tool",
+      "path": "/usr/bin/cc",
+      "realpath": "/usr/bin/x86_64-linux-gnu-gcc-14",
+      "sha256": "a23ecab8ff08f09ad8c80602c2c5df7f49e09c25905cb8975902e101bf72635f",
+      "size": 1162264,
+      "symlink_target": "/etc/alternatives/cc"
+    }
+  ],
+  "protected_inputs_recheck": {
+    "changes": [],
+    "checked_file_count": 16,
+    "scope": "declared files only; host system headers and libraries are not a frozen toolchain",
+    "unchanged": true
+  },
+  "schema_version": 1,
+  "scope": "fixed-platform-candidate-host-loader-contract",
+  "source_provenance": {
+    "candidate": {
+      "early_cpu_symbol": "_start_first_cpu",
+      "link_report_sha256": "738a7af11b32c08d0a4261611ba69f325d5a29bf424791b18e98879864feff7c",
+      "required_entry_symbol": "__start",
+      "sha256": "46eff436250d905e9f3aec59dbcc8c04d594e614e790860236917c7cbfe39f1b",
+      "size": 21942456
+    },
+    "darwinboot": {
+      "catalog_commit": "8542980d02b4d2cc5c32ee3542de1760b2562aac",
+      "catalog_path": "components.toml",
+      "catalog_repository": "https://github.com/UniXNU/UniXNU",
+      "commit": "3c75734014cdab0acd9541e88057b7606ee7ae08",
+      "files": [
+        {
+          "git_blob": "3b6cafc015e19dc291a0bbfd7fe6af71103360db",
+          "path": "DarwinBootPkg/Driver/DarwinBoot.c",
+          "sha256": "f3815791ad63b87b11ee28118ad1f35a7d0c5258ea70b7b76eda68914fa2b8cf",
+          "size": 36608
+        },
+        {
+          "git_blob": "aefcd90dbe85248c1d5fd49d6e883645bd5fa381",
+          "path": "DarwinBootPkg/Driver/BootArgs.h",
+          "sha256": "1d6b172a306bf5d3fc409d22bd7e674d166e5fde92652c4135de5c79f3eddd16",
+          "size": 1012
+        },
+        {
+          "git_blob": "a7a55c2bd768e5cc1f233ee483101f50fce998f8",
+          "path": "DarwinBootPkg/Driver/Entry.S",
+          "sha256": "44c05d16af1fbe51cfdcf074ff590ec214dbe3e8efdc4b83a9d06f7e49be44bd",
+          "size": 980
+        },
+        {
+          "git_blob": "4a71558d51ed029463a356c0824417185c106455",
+          "path": "LICENSE",
+          "sha256": "513308769e962347c3b987ddac32f5f5c9849acced235e5580ab2c7ebf067900",
+          "size": 2677
+        }
+      ],
+      "license": "BSD-2-Clause-Patent",
+      "repository": "https://github.com/UniXNU/DarwinBoot"
+    },
+    "prepared_xnu": {
+      "assym": {
+        "sha256": "b29e64676013a588acc16d0d0829701fac15ff93b1bd2accb2c6157724854636",
+        "size": 8422
+      },
+      "provenance": "Actual successful DEVELOPMENT_ARM64_BCM2837 build; selected 71-patch source candidate and retained generated assym.s. start.s is a prepared source, not the pristine upstream file.",
+      "start_source": {
+        "path": "osfmk/arm64/start.s",
+        "sha256": "115d15ee67b62c480b2122ced06bfd64e0151c514cf63a2cd578a1feff19548d",
+        "size": 25194
+      }
+    },
+    "qualification": {
+      "board_adt_verified": false,
+      "full_instruction_set_audited": false,
+      "kernel_entry_executed": false,
+      "os_boot_verified": false,
+      "tb371fc_kernel_qualified": false,
+      "uefi_allocation_verified": false
+    },
+    "schema_version": 1,
+    "scope": "fixed-platform-candidate-host-loader-contract",
+    "xnu": {
+      "commit": "ac9718fb1af618d5ce8678d0dc6e8a58f252216f",
+      "files": [
+        {
+          "git_blob": "61cd9e7936c62b31f45e07b677c82c7fb76d89aa",
+          "path": "pexpert/pexpert/arm64/boot.h",
+          "sha256": "479a74f100116358a0e425d8deefc62c5bcbee72e49e69721c9e2d9c53465cd3",
+          "size": 2805
+        },
+        {
+          "git_blob": "fe81a60cae982c042a69f97623b427666c455093",
+          "path": "APPLE_LICENSE",
+          "sha256": "e5881019d8766c1e88a5fe1dbca4ba40c78011d41fcb18f6e9f50df60182685b",
+          "size": 19829
+        }
+      ],
+      "license_notice": "Preserve the Apple and OSF copyright notices; this header is not relicensed as BSD.",
+      "repository": "https://github.com/apple-oss-distributions/xnu"
+    }
+  },
+  "started_at_utc": "2026-11-24T02:05:51.495091+00:00",
+  "status": "failed",
+  "tb371fc_kernel_qualified": false,
+  "uefi_allocation_verified": false
+}

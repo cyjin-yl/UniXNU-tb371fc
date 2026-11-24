@@ -1,0 +1,243 @@
+--- a/scripts/probe_route_a_loader.py
++++ b/scripts/probe_route_a_loader.py
+@@ -9,6 +9,7 @@
+ 
+ import argparse
+ from contextlib import ExitStack
++from collections import Counter
+ import ctypes
+ import datetime
+ import fcntl
+@@ -32,6 +33,7 @@
+ BLOCK_SIZE = 0x200000
+ WINDOW_SIZE = 0x10000000
+ SG_NORELOC = 0x4
++LINK_VIRTUAL_BASE = 0xFFFFFFF007004000
+ GUARD_SIZE = 64
+ ABI_FIELDS = (
+     ("Revision", "Revision"), ("Version", "Version"),
+@@ -301,6 +303,7 @@
+             "kernel still has unresolved or common external symbols")
+     command_end = 32 + struct.unpack_from("<I", data, 20)[0]
+     cursor, commands, zero_sections = 32, [], []
++    dysymtab, symtab = None, None
+     # Metadata-only commands used by this non-prelinked MH_EXECUTE. Dynamic
+     # fixups, dylib loading, encryption and code-signature handling are outside
+     # this probe. An unrecognized command never silently acquires acceptance.
+@@ -346,10 +349,10 @@
+                             "section file bytes lie outside their segment")
+                     require(va - address == offset - fileoff, "section file/virtual mapping disagrees")
+         elif cmd == 0xB:
+-            require(length == 80, "invalid LC_DYSYMTAB size")
+-            fields = struct.unpack_from("<18I", data, cursor + 8)
+-            require(fields[5] == fields[15] == fields[17] == 0,
+-                    "dynamic symbol table retains undefined symbols or relocations")
++            require(length == 80 and dysymtab is None, "invalid or duplicate LC_DYSYMTAB")
++            dysymtab = struct.unpack_from("<18I", data, cursor + 8)
++        elif cmd == 2:
++            symtab = struct.unpack_from("<4I", data, cursor + 8)
+         elif cmd in {0x26, 0x29}:
+             require(length == 16, "invalid linkedit data command")
+             offset, amount = struct.unpack_from("<II", data, cursor + 8)
+@@ -363,6 +366,7 @@
+         cursor += length
+     segments = [segment for segment in raw_segments if segment["vmsize"]]
+     require(0 < len(segments) <= 64, "unsupported loaded segment count")
++    require(len({s["name"] for s in raw_segments}) == len(raw_segments), "duplicate segment names")
+     ordered = sorted(segments, key=lambda segment: segment["vmaddr"])
+     for before, after in zip(ordered, ordered[1:]):
+         require(before["vmaddr"] + before["vmsize"] <= after["vmaddr"], "overlapping virtual segments")
+@@ -380,10 +384,125 @@
+                       and s["flags"] & 0x80000000 and (s["flags"] & 0xFF) == 0]
+     require(len(entry_sections) == 1 and info["entry"] + 4 <= entry_sections[0]["addr"] + entry_sections[0]["size"],
+             "entry is not a complete instruction in one pure-instruction section")
++    relocations = audit_local_relocations(data, info, raw_segments, dysymtab, symtab)
+     return {"metadata": info, "segments": segments, "ignored_empty_segments": [s for s in raw_segments if not s["vmsize"]],
+             "commands": commands, "zero_sections": zero_sections,
++            "local_relocations": relocations,
+             "segment_annotations": [{k: s[k] for k in ("name", "vmsize", "filesize", "flags", "maxprot", "initprot")}
+                                     for s in raw_segments]}
++
++
++def audit_local_relocations(data, info, segments, fields, symtab, *, virtual_slide=0):
++    """Validate every supported local pointer at its fixed linked virtual VA.
++
++    Physical placement is not a virtual slide. No pointer or relocation record
++    is rewritten. This does not establish a running kernel's chosen slide.
++    """
++    require(virtual_slide == 0, "only zero virtual slide is supported")
++    base = info["load_contract"]["virtual_base"]
++    require(base == LINK_VIRTUAL_BASE and segments[0]["vmaddr"] == base and segments[0]["fileoff"] == 0,
++            "fixed virtual mapping requires the first segment/header at the linked iOS ARM64 base")
++    require(not info["flags"] & (0x20 | 0x80000000),
++            "MH_SPLIT_SEGS or MH_DYLIB_IN_CACHE has different relocation/slide semantics")
++    require(not any(s["name"] == "__thread_starts" and s["size"] for s in info["sections"]),
++            "nonempty __thread_starts requires a separate threaded fixup contract")
++    names = ("ilocalsym", "nlocalsym", "iextdefsym", "nextdefsym", "iundefsym", "nundefsym",
++             "tocoff", "ntoc", "modtaboff", "nmodtab", "extrefsymoff", "nextrefsyms",
++             "indirectsymoff", "nindirectsyms", "extreloff", "nextrel", "locreloff", "nlocrel")
++    command_present = fields is not None
++    if fields is None:
++        fields = (0,) * 18
++    else:
++        require(fields[5] == fields[15] == 0,
++                f"unsupported dynamic undefined/external relocations: nundefsym={fields[5]}, nextrel={fields[15]}")
++        require(all(value == 0 for value in fields[6:16]),
++                "dynamic module/reference/indirect/external tables are outside this fixed local-pointer contract")
++        require(fields[0] == 0 and fields[2] == fields[1] and fields[4] == fields[2] + fields[3]
++                and fields[4] == symtab[1], "dynamic symbol groups do not partition the actual nlist table")
++    offset, count = fields[16:18]
++    amount = count * 8
++    require(offset <= len(data) and amount <= len(data) - offset, "local relocation table lies outside file")
++    loaded = [s for s in segments if s["vmsize"]]
++    if count:
++        owner = [s for s in loaded if s["fileoff"] <= offset and offset + amount <= s["fileoff"] + s["filesize"]]
++        require(len(owner) == 1 and owner[0]["name"] == "__LINKEDIT",
++                "local relocation table is not entirely in one __LINKEDIT file range")
++        for start, size in ((symtab[0], symtab[1] * 16), (symtab[2], symtab[3])):
++            require(not size or offset + amount <= start or start + size <= offset,
++                    "local relocation table overlaps the symbol or string table")
++    elif offset:
++        require(offset <= len(data), "empty local relocation offset lies outside file")
++    by_name = {s["name"]: s for s in segments}
++    locations, boundaries, samples = [], [], []
++    target_sections, location_segments, target_segments, alignments = Counter(), Counter(), Counter(), Counter()
++    bindings = hashlib.sha256()
++    for index in range(count):
++        address, bits = struct.unpack_from("<iI", data, offset + index * 8)
++        symbolnum, pcrel, length, external, kind = (bits & 0xFFFFFF, (bits >> 24) & 1,
++                                                   (bits >> 25) & 3, (bits >> 27) & 1, bits >> 28)
++        require(address >= 0, f"local relocation {index}: negative/scattered r_address is unsupported")
++        require((kind, length, pcrel, external) == (0, 3, 0, 0),
++                f"local relocation {index}: unsupported type/length/pcrel/extern {(kind, length, pcrel, external)}")
++        require(1 <= symbolnum <= len(info["sections"]),
++                f"local relocation {index}: missing real target section ordinal {symbolnum}")
++        location = base + address
++        require(location <= MAX_U64 - 8, f"local relocation {index}: storage address overflow")
++        owners = [s for s in loaded if s["vmaddr"] <= location and location + 8 <= s["vmaddr"] + s["filesize"]]
++        require(len(owners) == 1, f"local relocation {index}: complete 8-byte storage is not uniquely file-backed")
++        owner = owners[0]
++        source_offset = owner["fileoff"] + location - owner["vmaddr"]
++        value = struct.unpack_from("<Q", data, source_offset)[0]
++        section = info["sections"][symbolnum - 1]
++        target_owner = by_name[section["segment"]]
++        require(target_owner["vmsize"] and target_owner["vmaddr"] <= value < target_owner["vmaddr"] + target_owner["vmsize"],
++                f"local relocation {index}: target is not inside its loaded parent segment")
++        inside = section["size"] > 0 and section["addr"] <= value < section["addr"] + section["size"]
++        boundary = section["size"] == 0 and value == section["addr"]
++        require(inside or boundary,
++                f"local relocation {index}: target is outside its declared section or exact empty boundary")
++        require(not (owner["flags"] | target_owner["flags"]) & SG_NORELOC,
++                f"local relocation {index}: SG_NORELOC contradicts actual storage/target membership")
++        target_kind = "empty_section_boundary" if boundary else "within_declared_section"
++        key = f"{symbolnum}:{section['segment']},{section['name']}"
++        target_sections[key] += 1
++        location_segments[owner["name"]] += 1
++        target_segments[target_owner["name"]] += 1
++        alignments[str(location % 8)] += 1
++        locations.append(location)
++        # Fixed-width canonical tuples cover every binding without publishing a
++        # 100k-row pointer dump. The raw table also has its own full SHA-256.
++        bindings.update(struct.pack("<IQQQIB", index, location, source_offset, value, symbolnum, int(boundary)))
++        if boundary or len(samples) < 5:
++            record = {"index": index, "r_address": address, "storage_va": location,
++                      "storage_file_offset": source_offset, "target_va": value,
++                      "target_section_ordinal": symbolnum, "target_section": key, "target_kind": target_kind}
++            if boundary:
++                record["storage_symbols"] = [s for s in info["symbols"]["records"]
++                                             if s["value"] == location and s["n_type"] & 0xE == 0xE]
++                record["boundary_implies_dereferenceable_object"] = False
++                boundaries.append(record)
++            else:
++                samples.append(record)
++    ordered = sorted(locations)
++    require(all(after >= before + 8 for before, after in zip(ordered, ordered[1:])),
++            "local relocation storage locations duplicate or overlap")
++    return {"scope": "all local unsigned64 records at the fixed linked virtual mapping",
++            "virtual_slide": 0, "relocation_base": base, "load_command_present": command_present,
++            "dysymtab": dict(zip(names, fields)),
++            "record_count": count, "records_checked": count, "records_skipped": 0,
++            "table": {"offset": offset, "size": amount, "sha256": sha256(data[offset:offset + amount])},
++            "binding_sha256": bindings.hexdigest(),
++            "binding_encoding": "little-endian <IQQQIB per original record order: index, storage VA, storage file offset, target VA, section ordinal, empty-boundary flag",
++            "record_class": {"r_type": 0, "name": "ARM64_RELOC_UNSIGNED", "r_length": 3, "r_pcrel": 0, "r_extern": 0},
++            "location_alignment_mod8": dict(sorted(alignments.items())),
++            "location_segment_counts": dict(sorted(location_segments.items())),
++            "target_segment_counts": dict(sorted(target_segments.items())),
++            "target_section_counts": dict(sorted(target_sections.items())),
++            "empty_section_boundary_records": boundaries, "sample_records": samples,
++            "duplicate_or_overlapping_storage_count": 0, "sg_noreloc_membership_conflicts": 0,
++            "relocation_writes_performed": 0, "physical_placement_is_virtual_slide": False,
++            "runtime_kernel_slide_verified": False, "full_loader_fixup_closure_verified": False,
++            "cpu_unaligned_access_verified": False, "general_relocation_support": False}
+ 
+ 
+ def c_geometry(kernel):
+@@ -560,6 +679,9 @@
+             records.append(platform_link.tool_identity(compiler))
+             report["protected_inputs"] = records
+             report["source_provenance"] = config
++            require(config["local_relocation_contract"]["virtual_slide"] == 0
++                    and int(config["local_relocation_contract"]["linked_virtual_base"], 0) == LINK_VIRTUAL_BASE,
++                    "configuration does not describe the supported fixed virtual mapping")
+             for source in sources.values():
+                 now = identity(Path(source["path"]))
+                 require(now["sha256"] == sha256(source["bytes"]) and now["size"] == len(source["bytes"]),
+@@ -590,9 +712,13 @@
+             report["entry_symbols"] = check_entry_symbols(strict, config, data)
+             lib = build_harness(sources, output, compiler, report)
+             report["byte_load"] = verify_load(lib, data, strict, output / "kernel.load.bin")
++            report["local_relocations"] = {**strict["local_relocations"],
++                                            "source_contract": config["local_relocation_contract"],
++                                            "copied_pointer_storage_bytes_unchanged": True}
+             report["boot_args_abi"] = check_abi(lib, assym_path.read_text())
+             contract = strict["metadata"]["load_contract"]
+             report["load_contract"] = {**contract,
++                "virtual_slide": 0, "runtime_kernel_slide_verified": False,
+                 "physical_base": None, "board_adt": None, "uefi_window_size": None,
+                 "physical_allocation_rule": "AllocateAddress in a real EfiConventionalMemory run; physical base modulo 2 MiB equals virtual base modulo 2 MiB",
+                 "boot_args_physical_rule": "align_up(physical_base + memory_span, 16384)",
+--- a/configs/route-a-loader-probe.json
++++ b/configs/route-a-loader-probe.json
+@@ -10,6 +10,41 @@
+     "SG_NORELOC": 4,
+     "meaning": "The segment has nothing relocated in it and nothing relocated to it; this annotation does not change the file-to-memory copy mapping.",
+     "annotation_is_loader_fixup_proof": false
++  },
++  "local_relocation_contract": {
++    "virtual_slide": 0,
++    "linked_virtual_base": "0xfffffff007004000",
++    "supported_record": "nonscattered local ARM64_RELOC_UNSIGNED, r_length=3, r_pcrel=0, r_extern=0, real nonzero section ordinal",
++    "empty_section_boundary": "A zero-length declared section may have its start/end address stored as a boundary value; the loaded parent segment must contain that address. This does not establish dereferenceability.",
++    "format_sources": [
++      {
++        "repository": "https://github.com/apple-oss-distributions/xnu",
++        "commit": "ac9718fb1af618d5ce8678d0dc6e8a58f252216f",
++        "path": "EXTERNAL_HEADERS/mach-o/loader.h",
++        "git_blob": "ceac12be93a14807f8e600c97e0b5105f2d9d2d7"
++      },
++      {
++        "repository": "https://github.com/apple-oss-distributions/xnu",
++        "commit": "ac9718fb1af618d5ce8678d0dc6e8a58f252216f",
++        "path": "EXTERNAL_HEADERS/mach-o/reloc.h",
++        "git_blob": "d5741efa3fe1428fd36eb26f6c494ce425d4dd92"
++      },
++      {
++        "repository": "https://github.com/apple-oss-distributions/xnu",
++        "commit": "ac9718fb1af618d5ce8678d0dc6e8a58f252216f",
++        "path": "EXTERNAL_HEADERS/mach-o/arm64/reloc.h",
++        "git_blob": "0a98f18e77675421350386ab1ee73dac15840d39"
++      }
++    ],
++    "boundary_semantics_reference": {
++      "repository": "https://github.com/llvm/llvm-project",
++      "commit": "58c46bae21181fb4240cf964461bea738d96d50e",
++      "path": "compiler-rt/lib/profile/InstrProfilingPlatformDarwin.c",
++      "git_blob": "8c682ae11835829ba06b793ca9ce95ff47c666c2",
++      "role": "Source-level explanation of CurrentVNode/EndVNode boundary pointers; not a new claim about the compiled runtime provider's provenance."
++    },
++    "runtime_kernel_slide_verified": false,
++    "general_relocation_support": false
+   },
+   "darwinboot": {
+     "repository": "https://github.com/UniXNU/DarwinBoot",

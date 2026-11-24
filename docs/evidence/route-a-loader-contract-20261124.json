@@ -1,0 +1,586 @@
+{
+  "schema_version": 1,
+  "recorded_date": "2026-11-24",
+  "timezone": "UTC",
+  "scope": "fixed-platform-candidate-host-loader-contract",
+  "source_repository": "https://github.com/cyjin-yl/UniXNU-tb371fc",
+  "base_commit": "f016cc9ae750b798b60a3e3e1a0f0955bf9a78b0",
+  "driver": "scripts/probe_route_a_loader.py",
+  "config": "configs/route-a-loader-probe.json",
+  "candidate": {
+    "path": "/work/route-a-platform-20261124/link-attempt-004/mach.platform-link-probe.unstripped.noctf",
+    "sha256": "46eff436250d905e9f3aec59dbcc8c04d594e614e790860236917c7cbfe39f1b",
+    "size": 21942456
+  },
+  "attempts": [
+    {
+      "name": "attempt-001",
+      "driver_revision": "v1",
+      "status": "failed",
+      "error": "unsupported segment flags or protections",
+      "started_at_utc": "2026-11-24T02:05:51.495091+00:00",
+      "finished_at_utc": "2026-11-24T02:05:52.390530+00:00",
+      "report": {
+        "path": "docs/evidence/route-a-loader-20261124/attempt-001/report.json",
+        "size": 8028,
+        "sha256": "605a9bb3a16a5c1c8e352580164b3bde89846ab7c9721db637f534f3a0d4f80a"
+      },
+      "transfer_manifest": {
+        "path": "docs/evidence/route-a-loader-20261124/attempt-001/transfer-manifest.json",
+        "size": 1801,
+        "sha256": "820d4bf39a9cf8647c5838df607bb8727bc43f931beee0f7041ae6517b0e9573"
+      },
+      "driver_files": [
+        {
+          "path": "configs/route-a-loader-probe.json",
+          "size": 3179,
+          "sha256": "d66d9e078441c851fe4c6f1abc429c4e5c8cbfc6262fccebdf726e57482ac4d2"
+        },
+        {
+          "path": "scripts/probe_route_a_loader.py",
+          "size": 36385,
+          "sha256": "68c6e3b7473676a59a786df55f1f64e42d2f4d5b6dfa14b65f84b3ce4b66025b"
+        }
+      ],
+      "host_c_compile_executed": false,
+      "kernel_heap_materialized": false,
+      "protected_inputs_recheck": {
+        "changes": [],
+        "checked_file_count": 16,
+        "scope": "declared files only; host system headers and libraries are not a frozen toolchain",
+        "unchanged": true
+      },
+      "host_loader_probe_verified": false,
+      "kernel_segment_bytes_verified": false,
+      "boot_args_abi_verified": false,
+      "kernel_entry_executed": false,
+      "uefi_allocation_verified": false,
+      "board_adt_verified": false,
+      "full_instruction_set_audited": false,
+      "tb371fc_kernel_qualified": false,
+      "os_boot_verified": false
+    },
+    {
+      "name": "attempt-002",
+      "driver_revision": "v2",
+      "status": "failed",
+      "error": "dynamic symbol table retains undefined symbols or relocations",
+      "started_at_utc": "2026-11-24T02:11:43.753758+00:00",
+      "finished_at_utc": "2026-11-24T02:11:44.528721+00:00",
+      "report": {
+        "path": "docs/evidence/route-a-loader-20261124/attempt-002/report.json",
+        "size": 8612,
+        "sha256": "571a416e1858ccc0660286d1850786925599daed6a2284dac6e8ff5bc8fba34f"
+      },
+      "transfer_manifest": {
+        "path": "docs/evidence/route-a-loader-20261124/attempt-002/transfer-manifest.json",
+        "size": 1801,
+        "sha256": "43891b8cf29a083d0d9b1fc6226f7c67d151c07860d7de2954357cda98ff6c43"
+      },
+      "driver_files": [
+        {
+          "path": "configs/route-a-loader-probe.json",
+          "size": 3698,
+          "sha256": "f07fd43457da22454df9b16c3ab2aa2c0a0b8e9d43f60977a0df9efd8e4a4af3"
+        },
+        {
+          "path": "scripts/probe_route_a_loader.py",
+          "size": 37387,
+          "sha256": "90ea8d86e618ddf173976c935149210db9f65830342ccee5f7e221019b71a530"
+        }
+      ],
+      "host_c_compile_executed": false,
+      "kernel_heap_materialized": false,
+      "protected_inputs_recheck": {
+        "changes": [],
+        "checked_file_count": 16,
+        "scope": "declared files only; host system headers and libraries are not a frozen toolchain",
+        "unchanged": true
+      },
+      "host_loader_probe_verified": false,
+      "kernel_segment_bytes_verified": false,
+      "boot_args_abi_verified": false,
+      "kernel_entry_executed": false,
+      "uefi_allocation_verified": false,
+      "board_adt_verified": false,
+      "full_instruction_set_audited": false,
+      "tb371fc_kernel_qualified": false,
+      "os_boot_verified": false
+    },
+    {
+      "name": "attempt-003",
+      "driver_revision": "v3",
+      "status": "host_loader_contract_verified",
+      "error": null,
+      "started_at_utc": "2026-11-24T02:29:08.685981+00:00",
+      "finished_at_utc": "2026-11-24T02:29:12.900350+00:00",
+      "report": {
+        "path": "docs/evidence/route-a-loader-20261124/attempt-003/report.json",
+        "size": 38468,
+        "sha256": "300da6b39a2fa06a7cde38043eca046ce27e4be5c96f55a6afa6aff758f7fb98"
+      },
+      "transfer_manifest": {
+        "path": "docs/evidence/route-a-loader-20261124/attempt-003/transfer-manifest.json",
+        "size": 1801,
+        "sha256": "0d5f3edf8d77f5e1ddfb2f117402370ab2f8b9f695a44b10871a975fffa46ba1"
+      },
+      "driver_files": [
+        {
+          "path": "configs/route-a-loader-probe.json",
+          "size": 5527,
+          "sha256": "fd029b04c8953d825dea1a9e5fb878b169a38fcbe163d0def7678eac939b84e1"
+        },
+        {
+          "path": "scripts/probe_route_a_loader.py",
+          "size": 46424,
+          "sha256": "9957a85ecb92fbe962b22a01e36a34422d65b443002d50fe9ff672d236a74fb9"
+        }
+      ],
+      "host_c_compile_executed": true,
+      "kernel_heap_materialized": true,
+      "protected_inputs_recheck": {
+        "changes": [],
+        "checked_file_count": 16,
+        "scope": "declared files only; host system headers and libraries are not a frozen toolchain",
+        "unchanged": true
+      },
+      "host_loader_probe_verified": true,
+      "kernel_segment_bytes_verified": true,
+      "boot_args_abi_verified": true,
+      "kernel_entry_executed": false,
+      "uefi_allocation_verified": false,
+      "board_adt_verified": false,
+      "full_instruction_set_audited": false,
+      "tb371fc_kernel_qualified": false,
+      "os_boot_verified": false
+    }
+  ],
+  "successful_attempt": {
+    "name": "attempt-003",
+    "process_exit_code": 0,
+    "status": "host_loader_contract_verified",
+    "loaded_segment_count": 10,
+    "ignored_empty_segment_count": 8,
+    "heap_image": {
+      "path": "/work/route-a-loader-20261124/attempt-003/kernel.load.bin",
+      "sha256": "3b7fd3784364b4392b2b0fcded0ec0d99dc2075dd149fd32972a1709fce50f5c",
+      "size": 23035904
+    },
+    "copied_segment_count": 10,
+    "zero_fill_tail_count": 2,
+    "declared_zero_section_count": 3,
+    "zeroed_gap_count": 0,
+    "destination_guards_unchanged": true,
+    "independent_geometry_matches": true,
+    "host_compile": {
+      "argv": [
+        "/usr/bin/cc",
+        "-std=c11",
+        "-O2",
+        "-Wall",
+        "-Wextra",
+        "-Werror",
+        "-shared",
+        "-fPIC",
+        "/work/route-a-loader-20261124/attempt-003/loader-probe.c",
+        "-o",
+        "/work/route-a-loader-20261124/attempt-003/loader-probe.so"
+      ],
+      "cwd": "/work/route-a-loader-20261124/attempt-003",
+      "environment": {
+        "LANG": "C",
+        "LC_ALL": "C",
+        "PATH": "/bin:/usr/bin",
+        "TMPDIR": "/work/route-a-loader-20261124/attempt-003"
+      },
+      "exit_code": 0,
+      "library": {
+        "path": "/work/route-a-loader-20261124/attempt-003/loader-probe.so",
+        "sha256": "430a4f4f46683af439057e8c770d0b226c2a6082789d31b68171a415684a005a",
+        "size": 15776
+      },
+      "source": {
+        "path": "/work/route-a-loader-20261124/attempt-003/loader-probe.c",
+        "sha256": "6f20d5b6c4860a78afd7c2712dd1c7040b5171f10f6c9068cd09ebd04399cfd3",
+        "size": 17396
+      },
+      "stderr": {
+        "path": "/work/route-a-loader-20261124/attempt-003/compile.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "size": 0
+      },
+      "stdout": {
+        "path": "/work/route-a-loader-20261124/attempt-003/compile.stdout",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "size": 0
+      }
+    },
+    "production_extractions": [
+      {
+        "first_line": 24,
+        "label": "DarwinBoot SEGMENT/KERNEL declarations",
+        "last_line": 39,
+        "sha256": "fe0f06b226d9fc111e5e2aad9718c1856f3dd1ce451a0b99573fde1a4c0ed8a4",
+        "size": 260,
+        "source_bytes_unchanged": true
+      },
+      {
+        "first_line": 112,
+        "label": "DarwinBoot production parser",
+        "last_line": 267,
+        "sha256": "e710a78bec5a61793b6b1f263d0a5386ecff7e64d51ff1f9b5b36724b516bc48",
+        "size": 6695,
+        "source_bytes_unchanged": true
+      },
+      {
+        "first_line": 18,
+        "label": "XNU Boot_Video and boot_args declarations",
+        "last_line": 65,
+        "sha256": "43b7285e82a768e11932c0b4bf641a76d6ff9e0994da14f72080b17c3121051f",
+        "size": 2218,
+        "source_bytes_unchanged": true
+      },
+      {
+        "first_line": 737,
+        "label": "DarwinBoot production zero/copy block",
+        "last_line": 741,
+        "sha256": "815e77e7f25a70653f2638c88be4aecaa1f309cffcd56889bceed36b25d79ba1",
+        "size": 296,
+        "source_bytes_unchanged": true
+      }
+    ],
+    "local_relocations": {
+      "virtual_slide": 0,
+      "record_count": 102103,
+      "records_checked": 102103,
+      "records_skipped": 0,
+      "relocation_writes_performed": 0,
+      "table": {
+        "offset": 13189120,
+        "sha256": "10e8066c80e3f621ef811f313ffa0cfb95cc56a0660079289e104682aeb832de",
+        "size": 816824
+      },
+      "binding_sha256": "fa3a9285e725336e38d5d3ead99e991b16ce5ac81e21ef01c9bdbd96231a3a83",
+      "binding_encoding": "little-endian <IQQQIB per original record order: index, storage VA, storage file offset, target VA, section ordinal, empty-boundary flag",
+      "record_class": {
+        "name": "ARM64_RELOC_UNSIGNED",
+        "r_extern": 0,
+        "r_length": 3,
+        "r_pcrel": 0,
+        "r_type": 0
+      },
+      "location_alignment_mod8": {
+        "0": 92343,
+        "4": 9760
+      },
+      "location_segment_counts": {
+        "__BOOTDATA": 27874,
+        "__DATA": 6147,
+        "__DATA_CONST": 67410,
+        "__KLDDATA": 671,
+        "__LASTDATA_CONST": 1
+      },
+      "target_segment_counts": {
+        "__BOOTDATA": 914,
+        "__DATA": 4591,
+        "__DATA_CONST": 28134,
+        "__KLD": 2,
+        "__KLDDATA": 652,
+        "__TEXT": 38023,
+        "__TEXT_EXEC": 29787
+      },
+      "target_section_counts": {
+        "10:__DATA_CONST,__kalloc_type": 3,
+        "12:__DATA_CONST,__sdt_cstring": 4650,
+        "14:__DATA_CONST,__hib_const": 1,
+        "16:__TEXT_EXEC,__text": 29786,
+        "17:__TEXT_EXEC,__hib_text": 1,
+        "18:__KLD,__text": 2,
+        "1:__TEXT,__const": 102,
+        "21:__KLDDATA,__const": 638,
+        "22:__KLDDATA,__cstring": 14,
+        "28:__DATA,__data": 2167,
+        "29:__DATA,__lock_grp": 526,
+        "2:__TEXT,__cstring": 37921,
+        "30:__DATA,__percpu": 2,
+        "31:__DATA,__refgrps": 8,
+        "34:__DATA,__llvm_prf_vnds": 2,
+        "37:__DATA,__common": 1411,
+        "38:__DATA,__bss": 475,
+        "40:__BOOTDATA,__init_entry_set": 1,
+        "41:__BOOTDATA,__init": 913,
+        "8:__DATA_CONST,__const": 23480
+      },
+      "duplicate_or_overlapping_storage_count": 0,
+      "sg_noreloc_membership_conflicts": 0,
+      "copied_pointer_storage_bytes_unchanged": true,
+      "physical_placement_is_virtual_slide": false,
+      "runtime_kernel_slide_verified": false,
+      "general_relocation_support": false,
+      "full_loader_fixup_closure_verified": false,
+      "cpu_unaligned_access_verified": false,
+      "within_nonempty_declared_section_count": 102101,
+      "empty_section_boundary_count": 2,
+      "empty_section_boundary_storage_symbols": [
+        [
+          "_CurrentVNode"
+        ],
+        [
+          "_EndVNode"
+        ]
+      ],
+      "empty_section_boundary_is_dereferenceable_object_proof": false
+    },
+    "boot_args_abi": {
+      "size": 1152,
+      "field_count": 13,
+      "video_member_count": 6,
+      "actual_target_assym_definition_count": 10,
+      "actual_target_assym_checked": true,
+      "boot_args_instance_generated": false
+    },
+    "entry": {
+      "symbol": "__start",
+      "virtual_address": "0xfffffff007511488",
+      "file_offset": 5297288,
+      "instruction_hex": "140006f5",
+      "direct_branch_target_symbol": "_start_first_cpu",
+      "direct_branch_target_virtual_address": "0xfffffff00751305c",
+      "entry_executed": false
+    },
+    "protected_inputs_recheck": {
+      "changes": [],
+      "checked_file_count": 16,
+      "scope": "declared files only; host system headers and libraries are not a frozen toolchain",
+      "unchanged": true
+    },
+    "host_loader_probe_verified": true,
+    "kernel_segment_bytes_verified": true,
+    "boot_args_abi_verified": true,
+    "kernel_entry_executed": false,
+    "uefi_allocation_verified": false,
+    "board_adt_verified": false,
+    "full_instruction_set_audited": false,
+    "tb371fc_kernel_qualified": false,
+    "os_boot_verified": false
+  },
+  "retained_success_files": [
+    {
+      "original_relative_path": "compile.stderr",
+      "stored_path": "docs/evidence/route-a-loader-20261124/attempt-003/compile.stderr",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes_unchanged": true
+    },
+    {
+      "original_relative_path": "compile.stdout",
+      "stored_path": "docs/evidence/route-a-loader-20261124/attempt-003/compile.stdout",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes_unchanged": true
+    },
+    {
+      "original_relative_path": "loader-probe.c",
+      "stored_path": "docs/evidence/route-a-loader-20261124/attempt-003/loader-probe.c.txt",
+      "size": 17396,
+      "sha256": "6f20d5b6c4860a78afd7c2712dd1c7040b5171f10f6c9068cd09ebd04399cfd3",
+      "bytes_unchanged": true
+    },
+    {
+      "original_relative_path": "report.json",
+      "stored_path": "docs/evidence/route-a-loader-20261124/attempt-003/report.json",
+      "size": 38468,
+      "sha256": "300da6b39a2fa06a7cde38043eca046ce27e4be5c96f55a6afa6aff758f7fb98",
+      "bytes_unchanged": true
+    },
+    {
+      "original_relative_path": "sources/darwinboot/LICENSE",
+      "stored_path": "docs/evidence/route-a-loader-20261124/attempt-003/sources/darwinboot/LICENSE",
+      "size": 2677,
+      "sha256": "513308769e962347c3b987ddac32f5f5c9849acced235e5580ab2c7ebf067900",
+      "bytes_unchanged": true
+    },
+    {
+      "original_relative_path": "sources/xnu/APPLE_LICENSE",
+      "stored_path": "docs/evidence/route-a-loader-20261124/attempt-003/sources/xnu/APPLE_LICENSE",
+      "size": 19829,
+      "sha256": "e5881019d8766c1e88a5fe1dbca4ba40c78011d41fcb18f6e9f50df60182685b",
+      "bytes_unchanged": true
+    },
+    {
+      "original_relative_path": "transfer-manifest.json",
+      "stored_path": "docs/evidence/route-a-loader-20261124/attempt-003/transfer-manifest.json",
+      "size": 1801,
+      "sha256": "0d5f3edf8d77f5e1ddfb2f117402370ab2f8b9f695a44b10871a975fffa46ba1",
+      "bytes_unchanged": true
+    }
+  ],
+  "generated_source_record": {
+    "original_name": "loader-probe.c",
+    "stored_name": "loader-probe.c.txt",
+    "reason": "Original generated translation unit retained as raw evidence text, outside the frozen upstream source set.",
+    "bytes_unchanged": true
+  },
+  "driver_history": {
+    "current_driver_sha256": "9957a85ecb92fbe962b22a01e36a34422d65b443002d50fe9ff672d236a74fb9",
+    "current_config_sha256": "fd029b04c8953d825dea1a9e5fb878b169a38fcbe163d0def7678eac939b84e1",
+    "patches": [
+      {
+        "path": "docs/evidence/route-a-loader-20261124/patches/driver-v1-to-v2.patch",
+        "size": 5014,
+        "sha256": "0b7a456e24bda54846422e38d2e8e9f7cede3f497312b26cc26d3818a5232abb"
+      },
+      {
+        "path": "docs/evidence/route-a-loader-20261124/patches/driver-v2-to-v3.patch",
+        "size": 15521,
+        "sha256": "468a047aee0aff84ed802d80a56b7f9c549323a9280c1243f4a53ff81f4fba26"
+      }
+    ],
+    "reverse_order": [
+      "driver-v2-to-v3.patch",
+      "driver-v1-to-v2.patch"
+    ],
+    "reverse_application_recovers_v2_and_v1_script_and_config_bytes": true,
+    "unchanged_helpers_and_public_sources_are_bound_by_each_transfer_manifest": true
+  },
+  "local_verification": {
+    "loader_tests": {
+      "tests_run": 32,
+      "skipped": 0,
+      "production_c_tests": 7,
+      "status": "OK",
+      "command": "ROUTE_A_LOADER_SOURCES=/absolute/pinned/loader-sources python3 -m unittest discover -s tests -p test_route_a_loader.py -v",
+      "tests_file": {
+        "path": "tests/test_route_a_loader.py",
+        "size": 28357,
+        "sha256": "9e3956f6f16a2f34551ea57703707c6c137d1480561cf1e2e36560f610c9c374"
+      }
+    },
+    "regression_entry": {
+      "command": "ROUTE_A_LOADER_SOURCES=/absolute/pinned/loader-sources PYTHONPATH=/absolute/capstone-deps python3 scripts/check_route_a.py",
+      "tests_run": 295,
+      "unittest_skip_count": 10,
+      "status": "OK (skipped=10)",
+      "skip_reasons": [
+        {
+          "count": 9,
+          "kind": "individual tests",
+          "reason": "prepared XNU pager source tree unavailable in this local workspace"
+        },
+        {
+          "count": 1,
+          "kind": "class-level skip",
+          "affected_test_method_count": 4,
+          "reason": "Clang unavailable in this local workspace"
+        }
+      ],
+      "log": {
+        "path": "docs/evidence/route-a-loader-20261124/local-regression.log",
+        "size": 49122,
+        "sha256": "7ee22a225a7b36c8b422c3b59c29227465bae16215b5ef40c529b3d189811e51"
+      },
+      "complete_ci_run": false
+    },
+    "repository_check": {
+      "original_source_and_license_files": 229,
+      "status": "passed",
+      "original_manifest_modified": false
+    },
+    "catalog_check": {
+      "structured_areas": 13,
+      "status": "passed"
+    }
+  },
+  "source_scope": {
+    "darwinboot_commit": "3c75734014cdab0acd9541e88057b7606ee7ae08",
+    "xnu_commit": "ac9718fb1af618d5ce8678d0dc6e8a58f252216f",
+    "public_sources_and_license_count": 6,
+    "preserved_licenses": [
+      "BSD-2-Clause-Patent (DarwinBoot original notice)",
+      "XNU APPLE_LICENSE and Apple/OSF header notices"
+    ],
+    "prepared_start_s": {
+      "path": "osfmk/arm64/start.s",
+      "sha256": "115d15ee67b62c480b2122ced06bfd64e0151c514cf63a2cd578a1feff19548d",
+      "size": 25194
+    },
+    "actual_assym": {
+      "sha256": "b29e64676013a588acc16d0d0829701fac15ff93b1bd2accb2c6157724854636",
+      "size": 8422
+    },
+    "local_relocation_contract": {
+      "boundary_semantics_reference": {
+        "commit": "58c46bae21181fb4240cf964461bea738d96d50e",
+        "git_blob": "8c682ae11835829ba06b793ca9ce95ff47c666c2",
+        "path": "compiler-rt/lib/profile/InstrProfilingPlatformDarwin.c",
+        "repository": "https://github.com/llvm/llvm-project",
+        "role": "Source-level explanation of CurrentVNode/EndVNode boundary pointers; not a new claim about the compiled runtime provider's provenance."
+      },
+      "empty_section_boundary": "A zero-length declared section may have its start/end address stored as a boundary value; the loaded parent segment must contain that address. This does not establish dereferenceability.",
+      "format_sources": [
+        {
+          "commit": "ac9718fb1af618d5ce8678d0dc6e8a58f252216f",
+          "git_blob": "ceac12be93a14807f8e600c97e0b5105f2d9d2d7",
+          "path": "EXTERNAL_HEADERS/mach-o/loader.h",
+          "repository": "https://github.com/apple-oss-distributions/xnu"
+        },
+        {
+          "commit": "ac9718fb1af618d5ce8678d0dc6e8a58f252216f",
+          "git_blob": "d5741efa3fe1428fd36eb26f6c494ce425d4dd92",
+          "path": "EXTERNAL_HEADERS/mach-o/reloc.h",
+          "repository": "https://github.com/apple-oss-distributions/xnu"
+        },
+        {
+          "commit": "ac9718fb1af618d5ce8678d0dc6e8a58f252216f",
+          "git_blob": "0a98f18e77675421350386ab1ee73dac15840d39",
+          "path": "EXTERNAL_HEADERS/mach-o/arm64/reloc.h",
+          "repository": "https://github.com/apple-oss-distributions/xnu"
+        }
+      ],
+      "general_relocation_support": false,
+      "linked_virtual_base": "0xfffffff007004000",
+      "runtime_kernel_slide_verified": false,
+      "supported_record": "nonscattered local ARM64_RELOC_UNSIGNED, r_length=3, r_pcrel=0, r_extern=0, real nonzero section ordinal",
+      "virtual_slide": 0
+    },
+    "physical_to_virtual_startup_reasoning": "Conditional source-level argument; fixed linked/header VA and correct firmware/MMU handoff are prerequisites. No startup instruction body or runtime slide was executed or established.",
+    "host_c_status_mapping": "Only success/failure for original parser return set SUCCESS/LOAD_ERROR/UNSUPPORTED; host enum values are not raw firmware EFI_STATUS.",
+    "heap_used": "Kernel.End - Kernel.Base only; actual Boot Used additionally includes boot_args, ADT and supplied sidecars.",
+    "prepared_start_source_reconstruction": {
+      "method": "Independent source-only in-memory application of the two fixed public patches, in order, matches the actual prepared input SHA and Git blob.",
+      "upstream_repository": "https://github.com/apple-oss-distributions/xnu",
+      "upstream_commit": "ac9718fb1af618d5ce8678d0dc6e8a58f252216f",
+      "upstream_path": "osfmk/arm64/start.s",
+      "patch_repository": "https://github.com/UniXNU/UniXNU",
+      "patch_commit": "8542980d02b4d2cc5c32ee3542de1760b2562aac",
+      "patches": [
+        {
+          "path": "patches/xnu-12377/apple-only-cpu-tunables.patch",
+          "sha256": "3e639e6549c6fc56599d95c4a84ae5ee6123628108ece5976c30e65c19659dee"
+        },
+        {
+          "path": "patches/xnu-12377/native-4k-bootstrap-capacity.patch",
+          "sha256": "0f6e27ff7ffaa6daed425b6a57e2edce981f27cc5326845ee76b7b402531957b"
+        }
+      ],
+      "prepared_size": 25194,
+      "prepared_sha256": "115d15ee67b62c480b2122ced06bfd64e0151c514cf63a2cd578a1feff19548d",
+      "prepared_git_blob": "a757713d9cffc305dd37c2df64fef2f12f252c76",
+      "original_preparation_evidence": "docs/evidence/route-a-kernel-preparation-20261123.json",
+      "compiled_machine_code_or_runtime_boot_proof": false
+    },
+    "arm_init_reference_scope": "Fixed pristine osfmk/arm/arm_init.c source only; its final prepared whole file and preprocessed candidate machine code were not independently audited."
+  },
+  "unverified": [
+    "Actual UEFI memory ownership, including the 16 KiB prefix caused by 2 MiB block rounding and the trailing unmapped 16 KiB of a block-multiple window",
+    "Physical base, board ADT, boot_args instance, sidecars and complete provider/prelink closure",
+    "Firmware entry, MMU transition, runtime slide and early CPU control flow",
+    "Full kernel ISA, physical TB371FC qualification and kernel execution",
+    "27 Darwin userspace, desktop, hardware operation and performance"
+  ],
+  "binary_publication": {
+    "kernel_and_heap_image_published": false,
+    "host_shared_library_published": false,
+    "hashes_and_original_public_source_evidence_only": true
+  }
+}

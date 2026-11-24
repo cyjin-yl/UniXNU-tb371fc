@@ -20,6 +20,8 @@
 - [x] 首轮真实 XNU builder 执行，保留 716 个目标文件与首个 PAuth 编译错误。
 - [x] 第二轮通用候选编译／链接成功：1,086 个对象、1,067 行 link filelist、普通 ARM64 `MH_EXECUTE` 候选。
 - [x] 候选有限编码核对和未定义符号检查完成；完整 ISA 与实机资格仍未完成。
+- [x] 固定 `ArmDTPlatform`、`ArmCpu` 实际编译和真实 `cpu.c` callback 接线对象独立链接；完整 provider 闭包另验。
+- [x] 同一真实平台候选通过固定 DarwinBoot parser／段复制、102,103 条 local pointer 全表及 boot_args ABI 的主机合同检查；设备 entry 未执行。
 - [ ] 真实 27 完整共享缓存转换。
 - [ ] 完整 TB371FC profile、provider/archive 依赖的 XNU 构建和设备启动。
 - [ ] 27 的 Darwin 进程、桌面及整机硬件验收。
@@ -31,7 +33,7 @@
 | ID | 任务 | 当前证据 | 本阶段完成条件 |
 | --- | --- | --- | --- |
 | A01 | `dyld` 非 TPRO 启动约定 | 4 个实际局部分支匹配，2 个条件区域闭合、2 个保持不完整；内核能力发布源码已核对 | 追踪 apple 向量键来源、早启动与相关寄存器路径；全部 236 处仍需逐项闭合 |
-| A02 | 普通 arm64、XNU 12377 构建 | 第二轮通用候选已编译／链接成功，0 编译 error、0 未定义符号；有限 PAuth/TCHANGE 编码核对完成 | 完成 TB371FC profile、provider/archive 依赖与完整 kernel/archive/kext ISA 审计，再接入加载与启动链 |
+| A02 | 普通 arm64、XNU 12377 构建 | 通用候选与新增两份平台 provider／真实 callback 的独立链接完成；有限编码核对、真实候选 host loader／local pointers／boot_args 合同通过 | 完成 TB371FC profile、完整 provider/archive 依赖、完整 ISA 与设备加载／启动链 |
 | A03 | 真实完整 27 shared cache | 严格 proof 与改写器已有实现，完整输入未验证 | 提取完整主／子缓存集合，锁定来源与 UUID，完整覆盖、改写及签名页检查通过 |
 | A04 | 加载与普通指针 ABI 闭合 | 用户文件新信任条目信息准备；尚未安装 | dyld fixups、共享区、pager、信任目录和所有指针生产者采用一致约定 |
 
@@ -39,9 +41,11 @@ A01 的可重复入口见 [TPRO 审计](docs/ROUTE_A_TPRO.md) 与 [内核能力�
 
 A02 的[第二轮结果](docs/ROUTE_A_GENERIC_KERNEL_RESULT.md)保存 21,905,888 bytes（20.89 MiB）的普通 ARM64、subtype 0 候选。独立检查覆盖 3 个指令区间的 2,220,163 个候选 4 字节字：分类器识别的非 HINT PAuth 为 0、精确 POE2 TCHANGE 为 0，记录 180 个 `XPACLRI` HINT。该计数不证明可达性或全部 ISA；原始首次失败的 716 个对象和日志保持留存。
 
+随后[平台候选](docs/ROUTE_A_PLATFORM_RESULT.md)已加入实际 `ArmDTPlatform`、`ArmCpu` 与真实 `cpu.c` callback，候选 SHA 为 `46eff436250d905e9f3aec59dbcc8c04d594e614e790860236917c7cbfe39f1b`。该候选的 [DarwinBoot 合同](docs/ROUTE_A_LOADER_CONTRACT.md)已在第三次真实执行中通过：生产 parser 和复制代码处理 10 段，23,035,904 字节映像一致，102,103 条 local pointer 全表、入口 trampoline 和 boot_args 布局完成核验；前两次失败及原 driver 可精确恢复。UEFI 分配、板级 ADT、MMU 交接、设备 entry 及 OS boot 保持独立门槛。
+
 A01 不能通过“把 `dyld_hw_tpro` 设为 0”关闭硬件路径，已有二进制检查只看键是否存在。还需分别核对 DATA_CONST pager 的 TPRO 策略和早期能力发布。不得用批量 NOP 掩盖未证明的指令路径。
 
-本轮 [CI](https://github.com/cyjin-yl/UniXNU-tb371fc/actions/runs/45221437252) 已完成 **210 项回归（0 跳过）**、通用源码准备和包含 fileset 修复的公开输入 staging。原 71 项 inventory 与 headers 后清单仍匹配历史摘要，修复后最终源码清单为 `9a2f18aa42773260f52adeeeff20a5f0257fc4360858aa90a3871714f7b84008`。`zzz-boot-progress.patch` 的 PMGR／watchdog 前置依赖待 TB371FC 板级接入，报告明确 `full_upstream_profile_applied=false`；它需要在后续实际板级配置中恢复验证。
+fileset 修复轮次的 [CI](https://github.com/cyjin-yl/UniXNU-tb371fc/actions/runs/45221437252) 已完成 **210 项回归（0 跳过）**、通用源码准备和包含 fileset 修复的公开输入 staging。原 71 项 inventory 与 headers 后清单仍匹配历史摘要，修复后最终源码清单为 `9a2f18aa42773260f52adeeeff20a5f0257fc4360858aa90a3871714f7b84008`。`zzz-boot-progress.patch` 的 PMGR／watchdog 前置依赖待 TB371FC 板级接入，报告明确 `full_upstream_profile_applied=false`；它需要在后续实际板级配置中恢复验证。
 
 A02 不能直接选择针对旧 XNU 的 arm64 profile，也不能把 V135 的保留内核替换几条指令当作 27 内核。当前目标基于固定 XNU 12377.121.6 加 Darwin 26 兼容工作；目标用户空间版本不等于内核源码已经升级成完整 Darwin 26。细项见 [内核缺口](docs/ROUTE_A_KERNEL_GAPS.md)。
 

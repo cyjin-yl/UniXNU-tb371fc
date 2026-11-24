@@ -21,9 +21,12 @@ jobs:
           "$RUNNER_TEMP/route-a-venv/bin/python" -m pip install --requirement requirements-route-a.txt
       - name: Verify pinned pager patch application and reversal
         run: python3 scripts/prepare_route_a_xnu.py --output "$RUNNER_TEMP/route-a-xnu"
+      - name: Prepare fixed public DarwinBoot parser and XNU boot argument declarations
+        run: python3 scripts/probe_route_a_loader.py prepare-sources --output "$RUNNER_TEMP/route-a-loader-sources"
       - name: Check Route A parsing, lowering, proof gates and extracted pager C
         run: |
           ROUTE_A_XNU_PREPARED_DIR="$RUNNER_TEMP/route-a-xnu/tree" \
+          ROUTE_A_LOADER_SOURCES="$RUNNER_TEMP/route-a-loader-sources" \
             "$RUNNER_TEMP/route-a-venv/bin/python" scripts/check_route_a.py
   kernel-preparation:
     name: Prepare ordinary arm64 kernel sources

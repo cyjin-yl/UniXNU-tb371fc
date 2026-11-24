@@ -21,11 +21,13 @@
 | 实际生产 compiler wrapper | **3 次真实编译、7 项返回地址检查通过**；CPU 配置由真实构建环境提供 | [实际报告](docs/evidence/route-a-production-shim-20261124.json)；样本不含要求 PAuth 的指令，完整内核 ISA 待审计 |
 | 第二轮通用内核编译／链接 | **成功**；1,086 个 `.o` / `.cpo`，link filelist 有 1,067 个非空行；生成普通 ARM64 `MH_EXECUTE`、subtype 0 候选 | [实际结果](docs/ROUTE_A_GENERIC_KERNEL_RESULT.md)；21,905,888 bytes（20.89 MiB），0 编译 error、0 未定义符号；完整板级和启动资格未完成 |
 | 候选的有限编码核对 | 扫描 3 个区域、2,220,163 个候选 4 字节字；分类器识别的非 HINT PAuth 为 0，精确 POE2 TCHANGE 为 0；180 个 `XPACLRI` HINT | [独立记录](docs/evidence/route-a-kernel-candidate-audit-20261124.json)；不证明可达性，也不覆盖全部 ISA 或外部 archives |
+| 平台组件与真实 kernel callback | 固定 `ArmDTPlatform`、`ArmCpu` 实际编译，真实 `cpu.c` callback 接线对象完成独立链接；21,942,456 字节新候选，强／弱未定义均为 0 | [平台结果](docs/ROUTE_A_PLATFORM_RESULT.md)；完整 provider 闭包、运行时匹配与设备 entry 继续单独验收 |
+| 真实候选的 DarwinBoot 主机装载 | 原 C parser／复制代码通过；10 段、23,035,904 字节映像逐字节一致；102,103 条 local pointer 记录全部核验，`boot_args` ABI 一致 | [实际结果与前两次失败](docs/ROUTE_A_LOADER_CONTRACT.md)；固定虚拟地址合同，未执行 UEFI 分配、MMU 交接或设备内核入口 |
 | 首轮编译失败保留 | 716 个目标文件后因 fileset panic 的无条件 PAuth builtin 退出；旧目录和日志保留 | [历史失败证据](docs/evidence/route-a-first-kernel-failure-20261124.json)；第二轮已越过该阻塞 |
 | 主机工具实际验收 | 普通 ARM64 样本链接、MIG 接口生成、LZFSE 往返 **3/3 组通过** | 自写样本；完整 XNU、SDK 和定制 Clang 资格单独验证 |
 | 真实 dyld 局部 TPRO 路径 | 4 个分支均匹配；2 个条件区域闭合，2 个仍有调用／异常／间接转移缺口 | 固定原始 dyld；全部 236 处与早期运行时路径仍未证明 |
 | 普通指针 pager 补丁 | v3/v5/分块 v5、dyld pager 和错误返回传播 | 固定源码应用／反向恢复；提取 C 函数验证 |
-| 最新主机回归检查 | **210 项通过，0 跳过**，包含 9 项提取真实 pager C 的测试 | 新增 fileset、构建修复与 CPU 约定检查；[本轮 CI](https://github.com/cyjin-yl/UniXNU-tb371fc/actions/runs/45221437252) |
+| fileset 修复轮次的主机回归 | **210 项通过，0 跳过**，包含 9 项提取真实 pager C 的测试 | 该轮 fileset、构建修复与 CPU 约定检查；[历史 CI](https://github.com/cyjin-yl/UniXNU-tb371fc/actions/runs/45221437252)，后续新增检查以对应报告为准 |
 | 独立汇编器复核 | 54/54 原始编码，45/45 替换编码 | 编码与基础 `armv8-a` 输出核对 |
 
 普通 arm64 通用候选已经完成源码编译与链接。TB371FC 板级 profile、完整 provider/archive 依赖、全部 ISA、27 共享缓存和 Darwin 进程启动仍在集成。macOS 27 当前只有目标配置记录，没有对应用户空间实测。最终验收包括 GPU、显示与刷新率、触控笔、键盘、网络、音频、相机、USB、存储、充电与休眠唤醒；进入桌面是中间里程碑。
@@ -46,6 +48,8 @@
 | [定制 Clang 与主机工具](docs/ROUTE_A_TOOLCHAIN.md) | 固定编译器、19 项语义断言、主机组件和实际验收 |
 | [第一次完整内核编译入口](docs/ROUTE_A_FIRST_KERNEL_BUILD.md) | 固定 source/header staging、真实 builder、失败与产物记录 |
 | [通用内核编译／链接结果](docs/ROUTE_A_GENERIC_KERNEL_RESULT.md) | 第二轮成功候选、实际 helper 代码、有限编码核对和剩余资格 |
+| [平台组件与 callback 链接](docs/ROUTE_A_PLATFORM_RESULT.md) | 固定 provider 编译、真实 callback C 对象与独立内核候选 |
+| [DarwinBoot 加载与启动参数](docs/ROUTE_A_LOADER_CONTRACT.md) | 生产 parser／复制代码、真实候选装载合同、入口 trampoline 与 boot_args ABI |
 | [首个编译阻塞与 CPU 修复](docs/ROUTE_A_FILESET_PTRAUTH.md) | fileset panic 能力分支、实际返回地址 codegen 与生产 CPU 约定 |
 | [内核 TPRO 能力发布核对](docs/ROUTE_A_TPRO_KERNEL_PUBLICATION.md) | apple 向量、task security_config、commpage 与最终配置边界 |
 | [输入提取方法](docs/ROUTE_A_EXTRACTION.md) | 官方镜像定位、分段读取与 APFS type 4 支持 |

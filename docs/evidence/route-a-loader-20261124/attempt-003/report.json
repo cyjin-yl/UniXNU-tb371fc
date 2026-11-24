@@ -1,0 +1,1299 @@
+{
+  "board_adt_verified": false,
+  "boot_args_abi": {
+    "actual_target_assym_checked": true,
+    "assym_offsets": {
+      "BA_BOOT_FLAGS": 1136,
+      "BA_BOOT_FLAGS_NUM": 1136,
+      "BA_MEM_SIZE": 24,
+      "BA_MEM_SIZE_NUM": 24,
+      "BA_PHYS_BASE": 16,
+      "BA_PHYS_BASE_NUM": 16,
+      "BA_TOP_OF_KERNEL_DATA": 32,
+      "BA_TOP_OF_KERNEL_DATA_NUM": 32,
+      "BA_VIRT_BASE": 8,
+      "BA_VIRT_BASE_NUM": 8
+    },
+    "boot_args_instance_generated": false,
+    "fields": [
+      {
+        "loader_field": "Revision",
+        "offset": 0,
+        "size": 2,
+        "xnu_field": "Revision"
+      },
+      {
+        "loader_field": "Version",
+        "offset": 2,
+        "size": 2,
+        "xnu_field": "Version"
+      },
+      {
+        "loader_field": "VirtualBase",
+        "offset": 8,
+        "size": 8,
+        "xnu_field": "virtBase"
+      },
+      {
+        "loader_field": "PhysicalBase",
+        "offset": 16,
+        "size": 8,
+        "xnu_field": "physBase"
+      },
+      {
+        "loader_field": "MemorySize",
+        "offset": 24,
+        "size": 8,
+        "xnu_field": "memSize"
+      },
+      {
+        "loader_field": "TopOfKernelData",
+        "offset": 32,
+        "size": 8,
+        "xnu_field": "topOfKernelData"
+      },
+      {
+        "loader_field": "Video",
+        "offset": 40,
+        "size": 48,
+        "xnu_field": "Video"
+      },
+      {
+        "loader_field": "MachineType",
+        "offset": 88,
+        "size": 4,
+        "xnu_field": "machineType"
+      },
+      {
+        "loader_field": "DeviceTree",
+        "offset": 96,
+        "size": 8,
+        "xnu_field": "deviceTreeP"
+      },
+      {
+        "loader_field": "DeviceTreeLength",
+        "offset": 104,
+        "size": 4,
+        "xnu_field": "deviceTreeLength"
+      },
+      {
+        "loader_field": "CommandLine",
+        "offset": 108,
+        "size": 1024,
+        "xnu_field": "CommandLine"
+      },
+      {
+        "loader_field": "BootFlags",
+        "offset": 1136,
+        "size": 8,
+        "xnu_field": "bootFlags"
+      },
+      {
+        "loader_field": "MemorySizeActual",
+        "offset": 1144,
+        "size": 8,
+        "xnu_field": "memSizeActual"
+      }
+    ],
+    "host_lp64_layout_matches": true,
+    "size": 1152,
+    "video_fields": [
+      {
+        "loader_field": "Video[0]",
+        "offset": 40,
+        "size": 8,
+        "xnu_field": "Video.v_baseAddr"
+      },
+      {
+        "loader_field": "Video[1]",
+        "offset": 48,
+        "size": 8,
+        "xnu_field": "Video.v_display"
+      },
+      {
+        "loader_field": "Video[2]",
+        "offset": 56,
+        "size": 8,
+        "xnu_field": "Video.v_rowBytes"
+      },
+      {
+        "loader_field": "Video[3]",
+        "offset": 64,
+        "size": 8,
+        "xnu_field": "Video.v_width"
+      },
+      {
+        "loader_field": "Video[4]",
+        "offset": 72,
+        "size": 8,
+        "xnu_field": "Video.v_height"
+      },
+      {
+        "loader_field": "Video[5]",
+        "offset": 80,
+        "size": 8,
+        "xnu_field": "Video.v_depth"
+      }
+    ]
+  },
+  "boot_args_abi_verified": true,
+  "byte_load": {
+    "copied_segments": [
+      {
+        "destination_offset": 0,
+        "segment": "__TEXT",
+        "sha256": "f83e326f41dec9baafcfa9a334b05b7e0987f2ec2473d7ba4e98f8e006c524f7",
+        "size": 1622016,
+        "source_offset": 0
+      },
+      {
+        "destination_offset": 1622016,
+        "segment": "__DATA_CONST",
+        "sha256": "6a023fd0b032295fffa95534c3e1cf62a496ff23f383a577fb7c1da610c533ef",
+        "size": 1163264,
+        "source_offset": 1622016
+      },
+      {
+        "destination_offset": 2785280,
+        "segment": "__TEXT_EXEC",
+        "sha256": "a8b0a8c8ea69c9882d53a51ed1a37cba43848432ee853200e98ad4dab6068fa5",
+        "size": 8896512,
+        "source_offset": 2785280
+      },
+      {
+        "destination_offset": 11681792,
+        "segment": "__KLD",
+        "sha256": "61d0b4b448842a81e4307158c19d062045bf9a7e55ec4b3d28dc7fb47d76cc26",
+        "size": 16384,
+        "source_offset": 11681792
+      },
+      {
+        "destination_offset": 11698176,
+        "segment": "__LASTDATA_CONST",
+        "sha256": "cb4c69290ed3c90da8ced9475fa74cc6ca3e6afcc18d1f09e17001aac3a9b8bf",
+        "size": 16384,
+        "source_offset": 11698176
+      },
+      {
+        "destination_offset": 11714560,
+        "segment": "__KLDDATA",
+        "sha256": "4bbf7f56b199a179143ec5f52082be6bceeb80e99ac0b4de157506fec40b1074",
+        "size": 32768,
+        "source_offset": 11714560
+      },
+      {
+        "destination_offset": 11747328,
+        "segment": "__DATA",
+        "sha256": "335bc543e7fc4b598da9eb5d3a86daa74783115197da28837a310de54a9cd37e",
+        "size": 278528,
+        "source_offset": 11747328
+      },
+      {
+        "destination_offset": 13107200,
+        "segment": "__BOOTDATA",
+        "sha256": "567679f1124059862355a52fcd7aac613288ab8bbdc8de9978c06271f03a8811",
+        "size": 868352,
+        "source_offset": 12025856
+      },
+      {
+        "destination_offset": 13975552,
+        "segment": "__LINKINFO",
+        "sha256": "0c2152d18de90dda074ffe34901ebcf6d92808219ecb0ef0b06bcaef04c4a0a8",
+        "size": 294912,
+        "source_offset": 12894208
+      },
+      {
+        "destination_offset": 14270464,
+        "segment": "__LINKEDIT",
+        "sha256": "ede9d2c0283cd3b250cfd9a460ff93b708e6e1569b6c1cf08b8e181ffbd8aaf5",
+        "size": 8753336,
+        "source_offset": 13189120
+      }
+    ],
+    "declared_zero_sections_checked": [
+      {
+        "section": "__bss",
+        "segment": "__KLDDATA",
+        "size": 1,
+        "vmaddr": 18446744005119264368
+      },
+      {
+        "section": "__common",
+        "segment": "__DATA",
+        "size": 782104,
+        "vmaddr": 18446744005119545344
+      },
+      {
+        "section": "__bss",
+        "segment": "__DATA",
+        "size": 302760,
+        "vmaddr": 18446744005120327680
+      }
+    ],
+    "destination_guards_unchanged": true,
+    "entry_destination_offset": 5297288,
+    "entry_first_16_bytes": "f5060014000000000000000000000000",
+    "heap_materialization_only": true,
+    "image": {
+      "path": "/work/route-a-loader-20261124/attempt-003/kernel.load.bin",
+      "sha256": "3b7fd3784364b4392b2b0fcded0ec0d99dc2075dd149fd32972a1709fce50f5c",
+      "size": 23035904
+    },
+    "independent_geometry_matches": true,
+    "kernel_bytes_executed": false,
+    "production_geometry": {
+      "base": 18446744005107531776,
+      "end": 18446744005130567680,
+      "entry": 18446744005112829064,
+      "segments": [
+        {
+          "fileoff": 0,
+          "filesize": 1622016,
+          "initprot": 1,
+          "vmaddr": 18446744005107531776,
+          "vmsize": 1622016
+        },
+        {
+          "fileoff": 1622016,
+          "filesize": 1163264,
+          "initprot": 1,
+          "vmaddr": 18446744005109153792,
+          "vmsize": 1163264
+        },
+        {
+          "fileoff": 2785280,
+          "filesize": 8896512,
+          "initprot": 5,
+          "vmaddr": 18446744005110317056,
+          "vmsize": 8896512
+        },
+        {
+          "fileoff": 11681792,
+          "filesize": 16384,
+          "initprot": 5,
+          "vmaddr": 18446744005119213568,
+          "vmsize": 16384
+        },
+        {
+          "fileoff": 11698176,
+          "filesize": 16384,
+          "initprot": 1,
+          "vmaddr": 18446744005119229952,
+          "vmsize": 16384
+        },
+        {
+          "fileoff": 11714560,
+          "filesize": 32768,
+          "initprot": 3,
+          "vmaddr": 18446744005119246336,
+          "vmsize": 32768
+        },
+        {
+          "fileoff": 11747328,
+          "filesize": 278528,
+          "initprot": 3,
+          "vmaddr": 18446744005119279104,
+          "vmsize": 1359872
+        },
+        {
+          "fileoff": 12025856,
+          "filesize": 868352,
+          "initprot": 3,
+          "vmaddr": 18446744005120638976,
+          "vmsize": 868352
+        },
+        {
+          "fileoff": 12894208,
+          "filesize": 294912,
+          "initprot": 1,
+          "vmaddr": 18446744005121507328,
+          "vmsize": 294912
+        },
+        {
+          "fileoff": 13189120,
+          "filesize": 8753336,
+          "initprot": 1,
+          "vmaddr": 18446744005121802240,
+          "vmsize": 8765440
+        }
+      ]
+    },
+    "production_parser_exit_code": 0,
+    "zero_fill_tails": [
+      {
+        "offset": 12025856,
+        "segment": "__DATA",
+        "size": 1081344
+      },
+      {
+        "offset": 23023800,
+        "segment": "__LINKEDIT",
+        "size": 12104
+      }
+    ],
+    "zeroed_gaps": []
+  },
+  "entry_symbols": {
+    "early_cpu": {
+      "n_desc": 0,
+      "n_sect": 16,
+      "n_type": 15,
+      "name": "_start_first_cpu",
+      "value": 18446744005112836188
+    },
+    "entry": {
+      "n_desc": 0,
+      "n_sect": 16,
+      "n_type": 15,
+      "name": "__start",
+      "value": 18446744005112829064
+    },
+    "entry_executed": false,
+    "trampoline": {
+      "decoded_target": 18446744005112836188,
+      "file_offset": 5297288,
+      "instruction_hex": "140006f5",
+      "instruction_word": 335546101,
+      "scope": "one direct B instruction; early CPU body not control-flow verified"
+    }
+  },
+  "finished_at_utc": "2026-11-24T02:29:12.900350+00:00",
+  "full_instruction_set_audited": false,
+  "host_adapters": [
+    "UEFI scalar typedefs to fixed-width/size_t types",
+    "unaligned reads and ZeroMem/CopyMem/CompareMem to libc memory operations",
+    "original boot argument declarations in an LP64 host translation unit",
+    "Used = Kernel.End - Kernel.Base for kernel-span-only heap zero/copy; production Boot additionally includes boot_args, ADT and supplied sidecars"
+  ],
+  "host_compile": {
+    "argv": [
+      "/usr/bin/cc",
+      "-std=c11",
+      "-O2",
+      "-Wall",
+      "-Wextra",
+      "-Werror",
+      "-shared",
+      "-fPIC",
+      "/work/route-a-loader-20261124/attempt-003/loader-probe.c",
+      "-o",
+      "/work/route-a-loader-20261124/attempt-003/loader-probe.so"
+    ],
+    "cwd": "/work/route-a-loader-20261124/attempt-003",
+    "environment": {
+      "LANG": "C",
+      "LC_ALL": "C",
+      "PATH": "/bin:/usr/bin",
+      "TMPDIR": "/work/route-a-loader-20261124/attempt-003"
+    },
+    "exit_code": 0,
+    "library": {
+      "path": "/work/route-a-loader-20261124/attempt-003/loader-probe.so",
+      "sha256": "430a4f4f46683af439057e8c770d0b226c2a6082789d31b68171a415684a005a",
+      "size": 15776
+    },
+    "source": {
+      "path": "/work/route-a-loader-20261124/attempt-003/loader-probe.c",
+      "sha256": "6f20d5b6c4860a78afd7c2712dd1c7040b5171f10f6c9068cd09ebd04399cfd3",
+      "size": 17396
+    },
+    "stderr": {
+      "path": "/work/route-a-loader-20261124/attempt-003/compile.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size": 0
+    },
+    "stdout": {
+      "path": "/work/route-a-loader-20261124/attempt-003/compile.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size": 0
+    }
+  },
+  "host_loader_probe_verified": true,
+  "ignored_empty_segments": [
+    {
+      "fileoff": 0,
+      "filesize": 0,
+      "flags": 0,
+      "initprot": 5,
+      "maxprot": 5,
+      "name": "__LAST",
+      "vmaddr": 18446744005119246336,
+      "vmsize": 0
+    },
+    {
+      "fileoff": 12894208,
+      "filesize": 0,
+      "flags": 4,
+      "initprot": 5,
+      "maxprot": 5,
+      "name": "__PRELINK_TEXT",
+      "vmaddr": 18446744005057200128,
+      "vmsize": 0
+    },
+    {
+      "fileoff": 12894208,
+      "filesize": 0,
+      "flags": 4,
+      "initprot": 3,
+      "maxprot": 3,
+      "name": "__PRELINK_INFO",
+      "vmaddr": 18446744005121507328,
+      "vmsize": 0
+    },
+    {
+      "fileoff": 12894208,
+      "filesize": 0,
+      "flags": 4,
+      "initprot": 3,
+      "maxprot": 3,
+      "name": "__PLK_TEXT_EXEC",
+      "vmaddr": 18446744005121507328,
+      "vmsize": 0
+    },
+    {
+      "fileoff": 12894208,
+      "filesize": 0,
+      "flags": 4,
+      "initprot": 3,
+      "maxprot": 3,
+      "name": "__PRELINK_DATA",
+      "vmaddr": 18446744005121507328,
+      "vmsize": 0
+    },
+    {
+      "fileoff": 12894208,
+      "filesize": 0,
+      "flags": 4,
+      "initprot": 3,
+      "maxprot": 3,
+      "name": "__PLK_DATA_CONST",
+      "vmaddr": 18446744005121507328,
+      "vmsize": 0
+    },
+    {
+      "fileoff": 12894208,
+      "filesize": 0,
+      "flags": 4,
+      "initprot": 3,
+      "maxprot": 3,
+      "name": "__PLK_LLVM_COV",
+      "vmaddr": 18446744005121507328,
+      "vmsize": 0
+    },
+    {
+      "fileoff": 12894208,
+      "filesize": 0,
+      "flags": 4,
+      "initprot": 3,
+      "maxprot": 3,
+      "name": "__PLK_LINKEDIT",
+      "vmaddr": 18446744005121507328,
+      "vmsize": 0
+    }
+  ],
+  "kernel": {
+    "path": "/work/route-a-platform-20261124/link-attempt-004/mach.platform-link-probe.unstripped.noctf",
+    "sha256": "46eff436250d905e9f3aec59dbcc8c04d594e614e790860236917c7cbfe39f1b",
+    "size": 21942456
+  },
+  "kernel_entry_executed": false,
+  "kernel_segment_bytes_verified": true,
+  "load_commands": [
+    {
+      "command": 25,
+      "offset": 32,
+      "size": 552
+    },
+    {
+      "command": 25,
+      "offset": 584,
+      "size": 792
+    },
+    {
+      "command": 25,
+      "offset": 1376,
+      "size": 232
+    },
+    {
+      "command": 25,
+      "offset": 1608,
+      "size": 152
+    },
+    {
+      "command": 25,
+      "offset": 1760,
+      "size": 152
+    },
+    {
+      "command": 25,
+      "offset": 1912,
+      "size": 152
+    },
+    {
+      "command": 25,
+      "offset": 2064,
+      "size": 472
+    },
+    {
+      "command": 25,
+      "offset": 2536,
+      "size": 1112
+    },
+    {
+      "command": 25,
+      "offset": 3648,
+      "size": 472
+    },
+    {
+      "command": 25,
+      "offset": 4120,
+      "size": 152
+    },
+    {
+      "command": 25,
+      "offset": 4272,
+      "size": 152
+    },
+    {
+      "command": 25,
+      "offset": 4424,
+      "size": 152
+    },
+    {
+      "command": 25,
+      "offset": 4576,
+      "size": 152
+    },
+    {
+      "command": 25,
+      "offset": 4728,
+      "size": 152
+    },
+    {
+      "command": 25,
+      "offset": 4880,
+      "size": 152
+    },
+    {
+      "command": 25,
+      "offset": 5032,
+      "size": 152
+    },
+    {
+      "command": 25,
+      "offset": 5184,
+      "size": 152
+    },
+    {
+      "command": 25,
+      "offset": 5336,
+      "size": 72
+    },
+    {
+      "command": 2,
+      "offset": 5408,
+      "size": 24
+    },
+    {
+      "command": 11,
+      "offset": 5432,
+      "size": 80
+    },
+    {
+      "command": 27,
+      "offset": 5512,
+      "size": 24
+    },
+    {
+      "command": 50,
+      "offset": 5536,
+      "size": 32
+    },
+    {
+      "command": 42,
+      "offset": 5568,
+      "size": 16
+    },
+    {
+      "command": 5,
+      "offset": 5584,
+      "size": 288
+    },
+    {
+      "command": 38,
+      "offset": 5872,
+      "size": 16
+    }
+  ],
+  "load_contract": {
+    "board_adt": null,
+    "boot_args_physical_rule": "align_up(physical_base + memory_span, 16384)",
+    "device_tree_physical_rule": "boot_args_physical + 4096",
+    "device_tree_pointer_rule": "virtual_base + device_tree_physical - physical_base",
+    "entry_offset": 5297288,
+    "entry_rule": "x0 = boot_args physical address; branch to physical_base + entry_offset at EL1",
+    "loader_initial_window_bytes": 268435456,
+    "loader_kernel_span_limit": 266338304,
+    "memory_span": 23035904,
+    "physical_allocation_rule": "AllocateAddress in a real EfiConventionalMemory run; physical base modulo 2 MiB equals virtual base modulo 2 MiB",
+    "physical_base": null,
+    "required_physical_base_low_21_bits": 16384,
+    "runtime_kernel_slide_verified": false,
+    "source_basis": "fixed DarwinBoot.c AllocateWindow/Boot and Entry.S; no allocation or EL1 transition executed",
+    "top_of_kernel_data_rule": "physical_base + Used, including actual ADT and all supplied sidecars",
+    "uefi_window_size": null,
+    "virtual_base": 18446744005107531776,
+    "virtual_slide": 0,
+    "window_available_on_device": false
+  },
+  "local_relocations": {
+    "binding_encoding": "little-endian <IQQQIB per original record order: index, storage VA, storage file offset, target VA, section ordinal, empty-boundary flag",
+    "binding_sha256": "fa3a9285e725336e38d5d3ead99e991b16ce5ac81e21ef01c9bdbd96231a3a83",
+    "copied_pointer_storage_bytes_unchanged": true,
+    "cpu_unaligned_access_verified": false,
+    "duplicate_or_overlapping_storage_count": 0,
+    "dysymtab": {
+      "extrefsymoff": 0,
+      "extreloff": 0,
+      "iextdefsym": 195394,
+      "ilocalsym": 0,
+      "indirectsymoff": 0,
+      "iundefsym": 218920,
+      "locreloff": 13189120,
+      "modtaboff": 0,
+      "nextdefsym": 23526,
+      "nextrefsyms": 0,
+      "nextrel": 0,
+      "nindirectsyms": 0,
+      "nlocalsym": 195394,
+      "nlocrel": 102103,
+      "nmodtab": 0,
+      "ntoc": 0,
+      "nundefsym": 0,
+      "tocoff": 0
+    },
+    "empty_section_boundary_records": [
+      {
+        "boundary_implies_dereferenceable_object": false,
+        "index": 74166,
+        "r_address": 11898456,
+        "storage_file_offset": 11898456,
+        "storage_symbols": [
+          {
+            "n_desc": 0,
+            "n_sect": 28,
+            "n_type": 30,
+            "name": "_CurrentVNode",
+            "value": 18446744005119430232
+          }
+        ],
+        "storage_va": 18446744005119430232,
+        "target_kind": "empty_section_boundary",
+        "target_section": "34:__DATA,__llvm_prf_vnds",
+        "target_section_ordinal": 34,
+        "target_va": 18446744005119543400
+      },
+      {
+        "boundary_implies_dereferenceable_object": false,
+        "index": 74167,
+        "r_address": 11898464,
+        "storage_file_offset": 11898464,
+        "storage_symbols": [
+          {
+            "n_desc": 0,
+            "n_sect": 28,
+            "n_type": 30,
+            "name": "_EndVNode",
+            "value": 18446744005119430240
+          }
+        ],
+        "storage_va": 18446744005119430240,
+        "target_kind": "empty_section_boundary",
+        "target_section": "34:__DATA,__llvm_prf_vnds",
+        "target_section_ordinal": 34,
+        "target_va": 18446744005119543400
+      }
+    ],
+    "full_loader_fixup_closure_verified": false,
+    "general_relocation_support": false,
+    "load_command_present": true,
+    "location_alignment_mod8": {
+      "0": 92343,
+      "4": 9760
+    },
+    "location_segment_counts": {
+      "__BOOTDATA": 27874,
+      "__DATA": 6147,
+      "__DATA_CONST": 67410,
+      "__KLDDATA": 671,
+      "__LASTDATA_CONST": 1
+    },
+    "physical_placement_is_virtual_slide": false,
+    "record_class": {
+      "name": "ARM64_RELOC_UNSIGNED",
+      "r_extern": 0,
+      "r_length": 3,
+      "r_pcrel": 0,
+      "r_type": 0
+    },
+    "record_count": 102103,
+    "records_checked": 102103,
+    "records_skipped": 0,
+    "relocation_base": 18446744005107531776,
+    "relocation_writes_performed": 0,
+    "runtime_kernel_slide_verified": false,
+    "sample_records": [
+      {
+        "index": 0,
+        "r_address": 1622016,
+        "storage_file_offset": 1622016,
+        "storage_va": 18446744005109153792,
+        "target_kind": "within_declared_section",
+        "target_section": "16:__TEXT_EXEC,__text",
+        "target_section_ordinal": 16,
+        "target_va": 18446744005117729192
+      },
+      {
+        "index": 1,
+        "r_address": 1622024,
+        "storage_file_offset": 1622024,
+        "storage_va": 18446744005109153800,
+        "target_kind": "within_declared_section",
+        "target_section": "16:__TEXT_EXEC,__text",
+        "target_section_ordinal": 16,
+        "target_va": 18446744005117737100
+      },
+      {
+        "index": 2,
+        "r_address": 1622032,
+        "storage_file_offset": 1622032,
+        "storage_va": 18446744005109153808,
+        "target_kind": "within_declared_section",
+        "target_section": "16:__TEXT_EXEC,__text",
+        "target_section_ordinal": 16,
+        "target_va": 18446744005117739340
+      },
+      {
+        "index": 3,
+        "r_address": 1622040,
+        "storage_file_offset": 1622040,
+        "storage_va": 18446744005109153816,
+        "target_kind": "within_declared_section",
+        "target_section": "16:__TEXT_EXEC,__text",
+        "target_section_ordinal": 16,
+        "target_va": 18446744005117743708
+      },
+      {
+        "index": 4,
+        "r_address": 1622048,
+        "storage_file_offset": 1622048,
+        "storage_va": 18446744005109153824,
+        "target_kind": "within_declared_section",
+        "target_section": "16:__TEXT_EXEC,__text",
+        "target_section_ordinal": 16,
+        "target_va": 18446744005117744924
+      }
+    ],
+    "scope": "all local unsigned64 records at the fixed linked virtual mapping",
+    "sg_noreloc_membership_conflicts": 0,
+    "source_contract": {
+      "boundary_semantics_reference": {
+        "commit": "58c46bae21181fb4240cf964461bea738d96d50e",
+        "git_blob": "8c682ae11835829ba06b793ca9ce95ff47c666c2",
+        "path": "compiler-rt/lib/profile/InstrProfilingPlatformDarwin.c",
+        "repository": "https://github.com/llvm/llvm-project",
+        "role": "Source-level explanation of CurrentVNode/EndVNode boundary pointers; not a new claim about the compiled runtime provider's provenance."
+      },
+      "empty_section_boundary": "A zero-length declared section may have its start/end address stored as a boundary value; the loaded parent segment must contain that address. This does not establish dereferenceability.",
+      "format_sources": [
+        {
+          "commit": "ac9718fb1af618d5ce8678d0dc6e8a58f252216f",
+          "git_blob": "ceac12be93a14807f8e600c97e0b5105f2d9d2d7",
+          "path": "EXTERNAL_HEADERS/mach-o/loader.h",
+          "repository": "https://github.com/apple-oss-distributions/xnu"
+        },
+        {
+          "commit": "ac9718fb1af618d5ce8678d0dc6e8a58f252216f",
+          "git_blob": "d5741efa3fe1428fd36eb26f6c494ce425d4dd92",
+          "path": "EXTERNAL_HEADERS/mach-o/reloc.h",
+          "repository": "https://github.com/apple-oss-distributions/xnu"
+        },
+        {
+          "commit": "ac9718fb1af618d5ce8678d0dc6e8a58f252216f",
+          "git_blob": "0a98f18e77675421350386ab1ee73dac15840d39",
+          "path": "EXTERNAL_HEADERS/mach-o/arm64/reloc.h",
+          "repository": "https://github.com/apple-oss-distributions/xnu"
+        }
+      ],
+      "general_relocation_support": false,
+      "linked_virtual_base": "0xfffffff007004000",
+      "runtime_kernel_slide_verified": false,
+      "supported_record": "nonscattered local ARM64_RELOC_UNSIGNED, r_length=3, r_pcrel=0, r_extern=0, real nonzero section ordinal",
+      "virtual_slide": 0
+    },
+    "table": {
+      "offset": 13189120,
+      "sha256": "10e8066c80e3f621ef811f313ffa0cfb95cc56a0660079289e104682aeb832de",
+      "size": 816824
+    },
+    "target_section_counts": {
+      "10:__DATA_CONST,__kalloc_type": 3,
+      "12:__DATA_CONST,__sdt_cstring": 4650,
+      "14:__DATA_CONST,__hib_const": 1,
+      "16:__TEXT_EXEC,__text": 29786,
+      "17:__TEXT_EXEC,__hib_text": 1,
+      "18:__KLD,__text": 2,
+      "1:__TEXT,__const": 102,
+      "21:__KLDDATA,__const": 638,
+      "22:__KLDDATA,__cstring": 14,
+      "28:__DATA,__data": 2167,
+      "29:__DATA,__lock_grp": 526,
+      "2:__TEXT,__cstring": 37921,
+      "30:__DATA,__percpu": 2,
+      "31:__DATA,__refgrps": 8,
+      "34:__DATA,__llvm_prf_vnds": 2,
+      "37:__DATA,__common": 1411,
+      "38:__DATA,__bss": 475,
+      "40:__BOOTDATA,__init_entry_set": 1,
+      "41:__BOOTDATA,__init": 913,
+      "8:__DATA_CONST,__const": 23480
+    },
+    "target_segment_counts": {
+      "__BOOTDATA": 914,
+      "__DATA": 4591,
+      "__DATA_CONST": 28134,
+      "__KLD": 2,
+      "__KLDDATA": 652,
+      "__TEXT": 38023,
+      "__TEXT_EXEC": 29787
+    },
+    "virtual_slide": 0
+  },
+  "os_boot_verified": false,
+  "output": "/work/route-a-loader-20261124/attempt-003",
+  "production_extractions": [
+    {
+      "first_line": 24,
+      "label": "DarwinBoot SEGMENT/KERNEL declarations",
+      "last_line": 39,
+      "sha256": "fe0f06b226d9fc111e5e2aad9718c1856f3dd1ce451a0b99573fde1a4c0ed8a4",
+      "size": 260,
+      "source_bytes_unchanged": true
+    },
+    {
+      "first_line": 112,
+      "label": "DarwinBoot production parser",
+      "last_line": 267,
+      "sha256": "e710a78bec5a61793b6b1f263d0a5386ecff7e64d51ff1f9b5b36724b516bc48",
+      "size": 6695,
+      "source_bytes_unchanged": true
+    },
+    {
+      "first_line": 18,
+      "label": "XNU Boot_Video and boot_args declarations",
+      "last_line": 65,
+      "sha256": "43b7285e82a768e11932c0b4bf641a76d6ff9e0994da14f72080b17c3121051f",
+      "size": 2218,
+      "source_bytes_unchanged": true
+    },
+    {
+      "first_line": 737,
+      "label": "DarwinBoot production zero/copy block",
+      "last_line": 741,
+      "sha256": "815e77e7f25a70653f2638c88be4aecaa1f309cffcd56889bceed36b25d79ba1",
+      "size": 296,
+      "source_bytes_unchanged": true
+    }
+  ],
+  "protected_inputs": [
+    {
+      "path": "/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/osfmk/arm64/start.s",
+      "sha256": "115d15ee67b62c480b2122ced06bfd64e0151c514cf63a2cd578a1feff19548d",
+      "size": 25194
+    },
+    {
+      "path": "/work/route-a-continue-20261123/kernel-build/.cache/xnu-work/pexpert/pexpert/arm64/boot.h",
+      "sha256": "479a74f100116358a0e425d8deefc62c5bcbee72e49e69721c9e2d9c53465cd3",
+      "size": 2805
+    },
+    {
+      "path": "/work/route-a-continue-20261123/kernel-build/build/xnu/ios-obj/DEVELOPMENT_ARM64_BCM2837/osfmk/DEVELOPMENT/assym.s",
+      "sha256": "b29e64676013a588acc16d0d0829701fac15ff93b1bd2accb2c6157724854636",
+      "size": 8422
+    },
+    {
+      "path": "/work/route-a-loader-20261124/driver-v3/configs/route-a-loader-probe.json",
+      "sha256": "fd029b04c8953d825dea1a9e5fb878b169a38fcbe163d0def7678eac939b84e1",
+      "size": 5527
+    },
+    {
+      "path": "/work/route-a-loader-20261124/driver-v3/public-sources/darwinboot/DarwinBootPkg/Driver/BootArgs.h",
+      "sha256": "1d6b172a306bf5d3fc409d22bd7e674d166e5fde92652c4135de5c79f3eddd16",
+      "size": 1012
+    },
+    {
+      "path": "/work/route-a-loader-20261124/driver-v3/public-sources/darwinboot/DarwinBootPkg/Driver/DarwinBoot.c",
+      "sha256": "f3815791ad63b87b11ee28118ad1f35a7d0c5258ea70b7b76eda68914fa2b8cf",
+      "size": 36608
+    },
+    {
+      "path": "/work/route-a-loader-20261124/driver-v3/public-sources/darwinboot/DarwinBootPkg/Driver/Entry.S",
+      "sha256": "44c05d16af1fbe51cfdcf074ff590ec214dbe3e8efdc4b83a9d06f7e49be44bd",
+      "size": 980
+    },
+    {
+      "path": "/work/route-a-loader-20261124/driver-v3/public-sources/darwinboot/LICENSE",
+      "sha256": "513308769e962347c3b987ddac32f5f5c9849acced235e5580ab2c7ebf067900",
+      "size": 2677
+    },
+    {
+      "path": "/work/route-a-loader-20261124/driver-v3/public-sources/xnu/APPLE_LICENSE",
+      "sha256": "e5881019d8766c1e88a5fe1dbca4ba40c78011d41fcb18f6e9f50df60182685b",
+      "size": 19829
+    },
+    {
+      "path": "/work/route-a-loader-20261124/driver-v3/public-sources/xnu/pexpert/pexpert/arm64/boot.h",
+      "sha256": "479a74f100116358a0e425d8deefc62c5bcbee72e49e69721c9e2d9c53465cd3",
+      "size": 2805
+    },
+    {
+      "path": "/work/route-a-loader-20261124/driver-v3/scripts/link_route_a_platform.py",
+      "sha256": "13a22e44c1e4e2e7a9ce6118e62fe0ddd0dd82ceeb5384fc04b2461d65fa5f9b",
+      "size": 68253
+    },
+    {
+      "path": "/work/route-a-loader-20261124/driver-v3/scripts/prepare_route_a_toolchain.py",
+      "sha256": "9680894acc78dbbdf2e990860a3f4506742ae5f4e945d9fc84a606618ddde275",
+      "size": 36843
+    },
+    {
+      "path": "/work/route-a-loader-20261124/driver-v3/scripts/probe_route_a_loader.py",
+      "sha256": "9957a85ecb92fbe962b22a01e36a34422d65b443002d50fe9ff672d236a74fb9",
+      "size": 46424
+    },
+    {
+      "path": "/work/route-a-platform-20261124/link-attempt-004/mach.platform-link-probe.unstripped.noctf",
+      "sha256": "46eff436250d905e9f3aec59dbcc8c04d594e614e790860236917c7cbfe39f1b",
+      "size": 21942456
+    },
+    {
+      "path": "/work/route-a-platform-20261124/link-attempt-004/report.json",
+      "sha256": "738a7af11b32c08d0a4261611ba69f325d5a29bf424791b18e98879864feff7c",
+      "size": 31408
+    },
+    {
+      "kind": "tool",
+      "path": "/usr/bin/cc",
+      "realpath": "/usr/bin/x86_64-linux-gnu-gcc-14",
+      "sha256": "a23ecab8ff08f09ad8c80602c2c5df7f49e09c25905cb8975902e101bf72635f",
+      "size": 1162264,
+      "symlink_target": "/etc/alternatives/cc"
+    }
+  ],
+  "protected_inputs_recheck": {
+    "changes": [],
+    "checked_file_count": 16,
+    "scope": "declared files only; host system headers and libraries are not a frozen toolchain",
+    "unchanged": true
+  },
+  "schema_version": 1,
+  "scope": "fixed-platform-candidate-host-loader-contract",
+  "segment_flags": {
+    "annotation_is_loader_fixup_proof": false,
+    "observed": [
+      {
+        "filesize": 1622016,
+        "flags": 0,
+        "initprot": 1,
+        "maxprot": 1,
+        "name": "__TEXT",
+        "vmsize": 1622016
+      },
+      {
+        "filesize": 1163264,
+        "flags": 0,
+        "initprot": 1,
+        "maxprot": 1,
+        "name": "__DATA_CONST",
+        "vmsize": 1163264
+      },
+      {
+        "filesize": 8896512,
+        "flags": 0,
+        "initprot": 5,
+        "maxprot": 5,
+        "name": "__TEXT_EXEC",
+        "vmsize": 8896512
+      },
+      {
+        "filesize": 16384,
+        "flags": 0,
+        "initprot": 5,
+        "maxprot": 5,
+        "name": "__KLD",
+        "vmsize": 16384
+      },
+      {
+        "filesize": 16384,
+        "flags": 0,
+        "initprot": 1,
+        "maxprot": 1,
+        "name": "__LASTDATA_CONST",
+        "vmsize": 16384
+      },
+      {
+        "filesize": 0,
+        "flags": 0,
+        "initprot": 5,
+        "maxprot": 5,
+        "name": "__LAST",
+        "vmsize": 0
+      },
+      {
+        "filesize": 32768,
+        "flags": 0,
+        "initprot": 3,
+        "maxprot": 3,
+        "name": "__KLDDATA",
+        "vmsize": 32768
+      },
+      {
+        "filesize": 278528,
+        "flags": 0,
+        "initprot": 3,
+        "maxprot": 3,
+        "name": "__DATA",
+        "vmsize": 1359872
+      },
+      {
+        "filesize": 868352,
+        "flags": 0,
+        "initprot": 3,
+        "maxprot": 3,
+        "name": "__BOOTDATA",
+        "vmsize": 868352
+      },
+      {
+        "filesize": 0,
+        "flags": 4,
+        "initprot": 5,
+        "maxprot": 5,
+        "name": "__PRELINK_TEXT",
+        "vmsize": 0
+      },
+      {
+        "filesize": 0,
+        "flags": 4,
+        "initprot": 3,
+        "maxprot": 3,
+        "name": "__PRELINK_INFO",
+        "vmsize": 0
+      },
+      {
+        "filesize": 0,
+        "flags": 4,
+        "initprot": 3,
+        "maxprot": 3,
+        "name": "__PLK_TEXT_EXEC",
+        "vmsize": 0
+      },
+      {
+        "filesize": 0,
+        "flags": 4,
+        "initprot": 3,
+        "maxprot": 3,
+        "name": "__PRELINK_DATA",
+        "vmsize": 0
+      },
+      {
+        "filesize": 0,
+        "flags": 4,
+        "initprot": 3,
+        "maxprot": 3,
+        "name": "__PLK_DATA_CONST",
+        "vmsize": 0
+      },
+      {
+        "filesize": 0,
+        "flags": 4,
+        "initprot": 3,
+        "maxprot": 3,
+        "name": "__PLK_LLVM_COV",
+        "vmsize": 0
+      },
+      {
+        "filesize": 0,
+        "flags": 4,
+        "initprot": 3,
+        "maxprot": 3,
+        "name": "__PLK_LINKEDIT",
+        "vmsize": 0
+      },
+      {
+        "filesize": 294912,
+        "flags": 4,
+        "initprot": 1,
+        "maxprot": 1,
+        "name": "__LINKINFO",
+        "vmsize": 294912
+      },
+      {
+        "filesize": 8753336,
+        "flags": 0,
+        "initprot": 1,
+        "maxprot": 1,
+        "name": "__LINKEDIT",
+        "vmsize": 8765440
+      }
+    ],
+    "source_reference": {
+      "SG_NORELOC": 4,
+      "accepted_flags": [
+        0,
+        4
+      ],
+      "annotation_is_loader_fixup_proof": false,
+      "commit": "ac9718fb1af618d5ce8678d0dc6e8a58f252216f",
+      "git_blob": "ceac12be93a14807f8e600c97e0b5105f2d9d2d7",
+      "meaning": "The segment has nothing relocated in it and nothing relocated to it; this annotation does not change the file-to-memory copy mapping.",
+      "path": "EXTERNAL_HEADERS/mach-o/loader.h",
+      "repository": "https://github.com/apple-oss-distributions/xnu"
+    }
+  },
+  "source_provenance": {
+    "candidate": {
+      "early_cpu_symbol": "_start_first_cpu",
+      "link_report_sha256": "738a7af11b32c08d0a4261611ba69f325d5a29bf424791b18e98879864feff7c",
+      "required_entry_symbol": "__start",
+      "sha256": "46eff436250d905e9f3aec59dbcc8c04d594e614e790860236917c7cbfe39f1b",
+      "size": 21942456
+    },
+    "darwinboot": {
+      "catalog_commit": "8542980d02b4d2cc5c32ee3542de1760b2562aac",
+      "catalog_path": "components.toml",
+      "catalog_repository": "https://github.com/UniXNU/UniXNU",
+      "commit": "3c75734014cdab0acd9541e88057b7606ee7ae08",
+      "files": [
+        {
+          "git_blob": "3b6cafc015e19dc291a0bbfd7fe6af71103360db",
+          "path": "DarwinBootPkg/Driver/DarwinBoot.c",
+          "sha256": "f3815791ad63b87b11ee28118ad1f35a7d0c5258ea70b7b76eda68914fa2b8cf",
+          "size": 36608
+        },
+        {
+          "git_blob": "aefcd90dbe85248c1d5fd49d6e883645bd5fa381",
+          "path": "DarwinBootPkg/Driver/BootArgs.h",
+          "sha256": "1d6b172a306bf5d3fc409d22bd7e674d166e5fde92652c4135de5c79f3eddd16",
+          "size": 1012
+        },
+        {
+          "git_blob": "a7a55c2bd768e5cc1f233ee483101f50fce998f8",
+          "path": "DarwinBootPkg/Driver/Entry.S",
+          "sha256": "44c05d16af1fbe51cfdcf074ff590ec214dbe3e8efdc4b83a9d06f7e49be44bd",
+          "size": 980
+        },
+        {
+          "git_blob": "4a71558d51ed029463a356c0824417185c106455",
+          "path": "LICENSE",
+          "sha256": "513308769e962347c3b987ddac32f5f5c9849acced235e5580ab2c7ebf067900",
+          "size": 2677
+        }
+      ],
+      "license": "BSD-2-Clause-Patent",
+      "repository": "https://github.com/UniXNU/DarwinBoot"
+    },
+    "local_relocation_contract": {
+      "boundary_semantics_reference": {
+        "commit": "58c46bae21181fb4240cf964461bea738d96d50e",
+        "git_blob": "8c682ae11835829ba06b793ca9ce95ff47c666c2",
+        "path": "compiler-rt/lib/profile/InstrProfilingPlatformDarwin.c",
+        "repository": "https://github.com/llvm/llvm-project",
+        "role": "Source-level explanation of CurrentVNode/EndVNode boundary pointers; not a new claim about the compiled runtime provider's provenance."
+      },
+      "empty_section_boundary": "A zero-length declared section may have its start/end address stored as a boundary value; the loaded parent segment must contain that address. This does not establish dereferenceability.",
+      "format_sources": [
+        {
+          "commit": "ac9718fb1af618d5ce8678d0dc6e8a58f252216f",
+          "git_blob": "ceac12be93a14807f8e600c97e0b5105f2d9d2d7",
+          "path": "EXTERNAL_HEADERS/mach-o/loader.h",
+          "repository": "https://github.com/apple-oss-distributions/xnu"
+        },
+        {
+          "commit": "ac9718fb1af618d5ce8678d0dc6e8a58f252216f",
+          "git_blob": "d5741efa3fe1428fd36eb26f6c494ce425d4dd92",
+          "path": "EXTERNAL_HEADERS/mach-o/reloc.h",
+          "repository": "https://github.com/apple-oss-distributions/xnu"
+        },
+        {
+          "commit": "ac9718fb1af618d5ce8678d0dc6e8a58f252216f",
+          "git_blob": "0a98f18e77675421350386ab1ee73dac15840d39",
+          "path": "EXTERNAL_HEADERS/mach-o/arm64/reloc.h",
+          "repository": "https://github.com/apple-oss-distributions/xnu"
+        }
+      ],
+      "general_relocation_support": false,
+      "linked_virtual_base": "0xfffffff007004000",
+      "runtime_kernel_slide_verified": false,
+      "supported_record": "nonscattered local ARM64_RELOC_UNSIGNED, r_length=3, r_pcrel=0, r_extern=0, real nonzero section ordinal",
+      "virtual_slide": 0
+    },
+    "prepared_xnu": {
+      "assym": {
+        "sha256": "b29e64676013a588acc16d0d0829701fac15ff93b1bd2accb2c6157724854636",
+        "size": 8422
+      },
+      "provenance": "Actual successful DEVELOPMENT_ARM64_BCM2837 build; selected 71-patch source candidate and retained generated assym.s. start.s is a prepared source, not the pristine upstream file.",
+      "start_source": {
+        "path": "osfmk/arm64/start.s",
+        "sha256": "115d15ee67b62c480b2122ced06bfd64e0151c514cf63a2cd578a1feff19548d",
+        "size": 25194
+      }
+    },
+    "qualification": {
+      "board_adt_verified": false,
+      "full_instruction_set_audited": false,
+      "kernel_entry_executed": false,
+      "os_boot_verified": false,
+      "tb371fc_kernel_qualified": false,
+      "uefi_allocation_verified": false
+    },
+    "schema_version": 1,
+    "scope": "fixed-platform-candidate-host-loader-contract",
+    "segment_flags_reference": {
+      "SG_NORELOC": 4,
+      "accepted_flags": [
+        0,
+        4
+      ],
+      "annotation_is_loader_fixup_proof": false,
+      "commit": "ac9718fb1af618d5ce8678d0dc6e8a58f252216f",
+      "git_blob": "ceac12be93a14807f8e600c97e0b5105f2d9d2d7",
+      "meaning": "The segment has nothing relocated in it and nothing relocated to it; this annotation does not change the file-to-memory copy mapping.",
+      "path": "EXTERNAL_HEADERS/mach-o/loader.h",
+      "repository": "https://github.com/apple-oss-distributions/xnu"
+    },
+    "xnu": {
+      "commit": "ac9718fb1af618d5ce8678d0dc6e8a58f252216f",
+      "files": [
+        {
+          "git_blob": "61cd9e7936c62b31f45e07b677c82c7fb76d89aa",
+          "path": "pexpert/pexpert/arm64/boot.h",
+          "sha256": "479a74f100116358a0e425d8deefc62c5bcbee72e49e69721c9e2d9c53465cd3",
+          "size": 2805
+        },
+        {
+          "git_blob": "fe81a60cae982c042a69f97623b427666c455093",
+          "path": "APPLE_LICENSE",
+          "sha256": "e5881019d8766c1e88a5fe1dbca4ba40c78011d41fcb18f6e9f50df60182685b",
+          "size": 19829
+        }
+      ],
+      "license_notice": "Preserve the Apple and OSF copyright notices; this header is not relicensed as BSD.",
+      "repository": "https://github.com/apple-oss-distributions/xnu"
+    }
+  },
+  "started_at_utc": "2026-11-24T02:29:08.685981+00:00",
+  "status": "host_loader_contract_verified",
+  "tb371fc_kernel_qualified": false,
+  "uefi_allocation_verified": false
+}

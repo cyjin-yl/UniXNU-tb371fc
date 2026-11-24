@@ -1,0 +1,81 @@
+--- a/scripts/probe_route_a_loader.py
++++ b/scripts/probe_route_a_loader.py
+@@ -31,6 +31,7 @@
+ MAX_U64 = (1 << 64) - 1
+ BLOCK_SIZE = 0x200000
+ WINDOW_SIZE = 0x10000000
++SG_NORELOC = 0x4
+ GUARD_SIZE = 64
+ ABI_FIELDS = (
+     ("Revision", "Revision"), ("Version", "Version"),
+@@ -313,12 +314,18 @@
+             name = data[cursor + 8:cursor + 24].split(b"\0", 1)[0].decode("ascii")
+             address, size, fileoff, filesize, maximum, protection, count, flags = struct.unpack_from("<4Q4I", data, cursor + 24)
+             require(size <= WINDOW_SIZE and address <= MAX_U64 - size, "segment address overflow or loader size bound")
+-            require(flags == 0 and not (maximum | protection) & ~7 and not protection & ~maximum,
+-                    "unsupported segment flags or protections")
++            # Fixed XNU loader.h defines SG_NORELOC as a relocation annotation,
++            # with no alternate copy placement. HIGHVM/protected/fixup-dependent
++            # flags and every unknown bit/combination remain unsupported.
++            require(flags in {0, SG_NORELOC},
++                    f"{name}: unsupported segment flags {flags:#x}; expected 0 or SG_NORELOC=0x4")
++            require(not (maximum | protection) & ~7 and not protection & ~maximum,
++                    f"{name}: unsupported segment protections maxprot={maximum:#x} initprot={protection:#x} flags={flags:#x}")
+             require(not size or (address % 4096 == 0 and size % 4096 == 0), "unaligned nonempty segment")
+             require(size or not filesize, "empty segment has file-backed bytes")
+             segment = {"name": name, "vmaddr": address, "vmsize": size,
+-                       "fileoff": fileoff, "filesize": filesize, "initprot": protection}
++                       "fileoff": fileoff, "filesize": filesize, "initprot": protection,
++                       "maxprot": maximum, "flags": flags}
+             raw_segments.append(segment)
+             for index in range(count):
+                 at = cursor + 72 + index * 80
+@@ -328,7 +335,7 @@
+                 require(owner == name, "section names a different owning segment")
+                 require(address <= va <= address + size and amount <= address + size - va,
+                         "section memory lies outside its segment")
+-                require(nreloc == 0, "section has unresolved relocations")
++                require(nreloc == 0, f"{name},{section_name}: section has unresolved relocations (nreloc={nreloc}, flags={flags:#x})")
+                 require(alignment < 64 and (not amount or va % (1 << alignment) == 0),
+                         "section address violates its declared alignment")
+                 if (sectflags & 0xFF) in {1, 0xC, 0x12}:
+@@ -374,7 +381,9 @@
+     require(len(entry_sections) == 1 and info["entry"] + 4 <= entry_sections[0]["addr"] + entry_sections[0]["size"],
+             "entry is not a complete instruction in one pure-instruction section")
+     return {"metadata": info, "segments": segments, "ignored_empty_segments": [s for s in raw_segments if not s["vmsize"]],
+-            "commands": commands, "zero_sections": zero_sections}
++            "commands": commands, "zero_sections": zero_sections,
++            "segment_annotations": [{k: s[k] for k in ("name", "vmsize", "filesize", "flags", "maxprot", "initprot")}
++                                    for s in raw_segments]}
+ 
+ 
+ def c_geometry(kernel):
+@@ -575,6 +584,9 @@
+                     "current load contract differs from the successful link receipt")
+             report["load_commands"] = strict["commands"]
+             report["ignored_empty_segments"] = strict["ignored_empty_segments"]
++            report["segment_flags"] = {"source_reference": config["segment_flags_reference"],
++                                        "observed": strict["segment_annotations"],
++                                        "annotation_is_loader_fixup_proof": False}
+             report["entry_symbols"] = check_entry_symbols(strict, config, data)
+             lib = build_harness(sources, output, compiler, report)
+             report["byte_load"] = verify_load(lib, data, strict, output / "kernel.load.bin")
+--- a/configs/route-a-loader-probe.json
++++ b/configs/route-a-loader-probe.json
+@@ -1,6 +1,16 @@
+ {
+   "schema_version": 1,
+   "scope": "fixed-platform-candidate-host-loader-contract",
++  "segment_flags_reference": {
++    "repository": "https://github.com/apple-oss-distributions/xnu",
++    "commit": "ac9718fb1af618d5ce8678d0dc6e8a58f252216f",
++    "path": "EXTERNAL_HEADERS/mach-o/loader.h",
++    "git_blob": "ceac12be93a14807f8e600c97e0b5105f2d9d2d7",
++    "accepted_flags": [0, 4],
++    "SG_NORELOC": 4,
++    "meaning": "The segment has nothing relocated in it and nothing relocated to it; this annotation does not change the file-to-memory copy mapping.",
++    "annotation_is_loader_fixup_proof": false
++  },
+   "darwinboot": {
+     "repository": "https://github.com/UniXNU/DarwinBoot",
+     "commit": "3c75734014cdab0acd9541e88057b7606ee7ae08",
