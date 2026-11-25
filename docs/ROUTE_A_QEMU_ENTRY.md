@@ -103,7 +103,7 @@ Darwin ARM64 的 `va_list` 是 `char*`，变参使用 8 字节栈槽，见 [Appl
 
 `--clock-mode host-virtual` 是默认值，保留 run004 的原 QEMU 参数，不添加 `-icount`。显式选择 `--clock-mode instruction-1ns` 时，只增加固定参数 `-icount shift=0,align=off,sleep=off`。没有任意 QEMU extra-args 接口；未知模式在启动 QEMU 前拒绝。报告中的 `qemu.clock_mode`、`qemu.icount` 与实际执行的完整 `argv` 同时记录。
 
-固定 [QEMU v10.0.13 的 icount 实现](https://github.com/qemu/qemu/blob/v10.0.13/accel/tcg/icount-common.c)按 instruction count 左移 shift 得到纳秒，`shift=0` 对应每条 guest instruction 1 ns；`sleep=off` 下空闲时间还可推进至下一 timer。[TCG 的 virtual clock 路径](https://github.com/qemu/qemu/blob/v10.0.13/accel/tcg/tcg-accel-ops.c)用于这一模式。它是计时模型隔离实验，不是周期精确模拟或处理器性能测量。
+固定 [QEMU v10.0.13／`98f88efe` 的 icount 实现](https://github.com/qemu/qemu/blob/98f88efe8f07067667b8d9b1a5ce9551d34036c1/accel/tcg/icount-common.c)按 instruction count 左移 shift 得到纳秒，`shift=0` 对应每条 guest instruction 1 ns；`sleep=off` 下空闲时间还可推进至下一 timer。[TCG 的 virtual clock 路径](https://github.com/qemu/qemu/blob/98f88efe8f07067667b8d9b1a5ce9551d34036c1/accel/tcg/tcg-accel-ops.c)用于这一模式。它是计时模型隔离实验，不是周期精确模拟或处理器性能测量。
 
 两种模式使用同一 CPU／GIC、62.5 MHz 计数器检查、seed／ADT／boot buffer／trampoline 生成方式及 guest panic／timeout 代码。比较实验仍需独立核对生成物摘要。主机观察总时限不变；在截止前没有命中 debugger 观察点，只能记为未观察到，快照资格保持 false，不能据此宣称 panic 消失、早期初始化完成或 TB371FC／OS 启动通过。
 
