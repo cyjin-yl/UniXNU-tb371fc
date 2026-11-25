@@ -59,6 +59,28 @@ python3 scripts/probe_route_a_qemu_entry.py \
 
 工具可以通过 `--clang`、`--linker`、`--objcopy`、`--qemu` 指定。CPU 选择必须真实存在于所选 QEMU；不把 A76／A710 模型的结果当作 Snapdragon 870 实机资格。单次运行最多 60 秒，QEMU 的每份输出文件有 16 MiB 硬上限。观察第一条 QEMU 异常、达到时间／日志限制或 QEMU 退出后即结束；必要时先 SIGTERM、两秒后 SIGKILL，并回收子进程。异常是否致命仍由保存的日志与代码位置判断。
 
+## 可选 debugger 入口快照与 seed 复用
+
+在上述命令中显式加入 `--debugger-snapshot`，才会启用第二个观察点。脚本先完成原来的 `__start` 断点与单步，再在固定候选自身的 `_DebuggerTrapWithState` 入口设置硬断点。地址由实际 Mach-O 的唯一强 section 符号解析，并核对纯指令 section、同一可执行段、文件后备范围与 4 字节对齐；没有人工指定地址的参数。命中后还要验证 PC、AArch64 EL1 状态和与候选一致的原始首指令字节。
+
+观察器保存全部 34 个 core 寄存器及原始 core 回复，并仅通过 GDB `m` 读取以下字段：
+
+| 字段 | 固定上限与解释 |
+| --- | --- |
+| `x1` / message、`x2` / panic format | 各最多 512 字节，遇 NUL 停止；原始字节为准，UTF-8 文本只供阅读 |
+| `x3` / `va_list*` cell | 恰好 8 字节，按 LE64 读出一个 cursor |
+| cursor 的参数槽 | 最多 256 字节原始数据；只做上述一次间接读 |
+| `sp` 栈窗口 | 最多 256 字节，不回溯栈帧 |
+| `x7`、`x30`、`x29` | 保存原始 caller / LR / FP 值，不自动归因到最近符号 |
+
+Darwin ARM64 的 `va_list` 是 `char*`，变参使用 8 字节栈槽，见 [Apple 官方 ABI 文档](https://developer.apple.com/documentation/xcode/writing-arm64-code-for-apple-platforms#Update-code-that-passes-arguments-to-variadic-functions)。这里的参数是 `va_list*`，因此先读 cursor cell，再读有限参数槽；不会将 guest 的 format string 交给 host `printf`，也不做通用指针追踪。所有非空指针必须落在声明的初始线性映射与 QEMU RAM 的交集中，每个请求最多 64 字节且不跨 4 KiB 边界，地址计算不得溢出 uint64。这个窗口是读取上界，仍需实际 GDB 读取成功，不构成页表验证。
+
+`x1`／`x2`／`x3` 或变参 cursor 的合法 NULL 明确记为 `null`，不读取；SP 不能为 NULL。未知／越界指针、不可读 cell、非法 cursor、槽空间不足、字符串没有 NUL、超时与断点移除失败分别保留状态。已经取得的寄存器、各段原始字节和错误回复仍保留在 `debugger_snapshot` 中。只有所需字段完整读取或合法为空、断点清理及后续输入／EL／计数器检查均通过，才会得到 `qemu_debugger_snapshot_verified=true` 和 `status=qemu_debugger_snapshot_observed`；任何截断都不能获得这一完整快照标志。此模式的报告地址及寄存器用十六进制字符串表示，以避免高虚拟地址在 JSON 使用方被舍入。
+
+快照使用与原入口观察相同的总超时。命中后不再继续或单步，不执行函数体或跳过 trap；移除硬断点后保持暂停，由主机停止并回收 QEMU。寄存器和内存均不写入，原内核文件不改动。没有传入该选项时，仍采用原来的入口证明后运行至首异常／时间限制流程。
+
+可另加 `--seed-file /absolute/path/run003-random-seed.bin`，复用恰好 256 字节的合成 ADT seed。只接受普通文件，拒绝 symlink、FIFO、目录与错误长度，且只适用于 `--adt qemu-virt`。seed 的输入身份与结束复核纳入报告；默认仍生成新 seed。要声称复用了旧启动输入，必须在新尝试中独立比对旧、新 ADT、`boot-args.bin` 和 `entry.bin` 的实际摘要，并核对 CPU、布局、命令行与原工具／源码身份；指定同一 seed 本身不代表整个实验已冻结，也不改变旧尝试的报告。
+
 ## 结果怎么读
 
 输出包括 `report.json`、原始 UART／异常／stderr、编译命令与输出、trampoline、boot buffer 和合成 ADT。报告保存输入、工具及源码身份、QEMU 命令、实际 stop reason／退出码、子进程回收状态，以及入口单步前后寄存器。对首个异常能映射回候选时，另记虚拟地址、所属段与原指令字。
@@ -75,4 +97,4 @@ python3 scripts/probe_route_a_qemu_entry.py \
 python3 -m unittest discover -s tests -p test_route_a_qemu_entry.py -v
 ```
 
-回归覆盖输入改写、BSS 补零、入口证据、物理布局、ADT 资源一致性、GDB 校验／分包／RLE、意外 PC 以及 UART 意图与实际执行的区别。它们使用自写合成 Mach-O，不需要私有候选，也不会启动 QEMU；真实候选的运行结果另存本次证据，不能从单元测试推断。
+回归覆盖输入改写、BSS 补零、入口证据、物理布局、ADT 资源一致性、GDB 校验／分包／RLE、意外 PC 以及 UART 意图与实际执行的区别。可选快照另覆盖真实 nlist 归属、完整 core 包、指针／页／字节／时间边界、NULL、截断、一次变参间接读、partial 证据、seed 普通文件与复核、后置检查撤销通过标志及默认路径兼容性。它们使用自写合成 Mach-O，不需要私有候选，也不会启动 QEMU；真实候选的运行结果另存本次证据，不能从单元测试推断。

@@ -18,6 +18,7 @@ import re
 import resource
 import shutil
 import socket
+import stat
 import struct
 import subprocess
 import sys
@@ -33,10 +34,15 @@ SOURCES = Path(__file__).resolve().parent / "route_a_qemu_entry"
 RAM_BASE, RAM_SIZE, BLOCK = 0x40000000, 0x20000000, 0x200000
 STUB_BASE, STUB_LIMIT, BOOT_SIZE = 0x40080000, 0x40090000, 0x4000
 MAX_LOG = 16 * 1024 * 1024
+UINT64_END = 1 << 64
+DEBUGGER_SYMBOL = "_DebuggerTrapWithState"
+STRING_LIMIT, STACK_LIMIT, VA_LIST_LIMIT, READ_CHUNK = 512, 256, 256, 64
+CORE_NAMES = tuple(f"x{i}" for i in range(31)) + ("sp", "pc", "cpsr")
 CPUS = ("cortex-a53", "cortex-a57", "cortex-a72", "cortex-a76", "cortex-a710")
 QUALIFICATION = {
     "qemu_kernel_entry_executed": False,
     "qemu_early_cpu_entry_observed": False,
+    "qemu_debugger_snapshot_verified": False,
     "runtime_kernel_slide_verified": False,
     "uefi_allocation_verified": False,
     "board_adt_verified": False,
@@ -70,6 +76,19 @@ def regular(path):
     path = path.resolve()
     require(not any(c in str(path) for c in ",\r\n"), "QEMU input path contains a delimiter")
     return path
+
+
+def read_seed(path):
+    """Read exactly one regular 256-byte seed, never a stream or a symlink."""
+    path = regular(path)
+    descriptor = os.open(path, os.O_RDONLY | os.O_NONBLOCK | os.O_NOFOLLOW)
+    with os.fdopen(descriptor, "rb") as stream:
+        info = os.fstat(stream.fileno())
+        require(stat.S_ISREG(info.st_mode) and info.st_size == 256,
+                "seed file must be regular and exactly 256 bytes")
+        seed = stream.read(257)
+    require(len(seed) == 256, "seed file changed size while reading")
+    return seed, {"path": str(path), "size": len(seed), "sha256": digest(seed)}
 
 
 def select_tool(name):
@@ -197,6 +216,50 @@ def validate_inputs(kernel, image, report, config):
     symbols = loader.check_entry_symbols(strict, config, kernel)
     require(symbols == report.get("entry_symbols"), "loader entry evidence differs from actual symbols")
     return strict, symbols
+
+
+def debugger_target(strict, kernel):
+    """Resolve the fixed candidate's actual symbol; no user-supplied PC root."""
+    info = strict["metadata"]
+    found = [s for s in info["symbols"]["records"] if s["name"] == DEBUGGER_SYMBOL]
+    require(len(found) == 1, "debugger symbol absent or ambiguous")
+    symbol = found[0]
+    require(symbol["n_type"] == 0xF and not symbol["n_desc"] & 0x80
+            and 1 <= symbol["n_sect"] <= len(info["sections"]),
+            "debugger symbol is not a unique strong section definition")
+    address = symbol["value"]
+    section = info["sections"][symbol["n_sect"] - 1]
+    require(0 <= address <= UINT64_END - 4 and address % 4 == 0,
+            "debugger symbol address is unaligned or outside uint64")
+    require(section["flags"] & 0x80000000 and section["flags"] & 0xFF == 0
+            and section["addr"] <= address and address + 4 <= section["addr"] + section["size"],
+            "debugger section does not contain a complete pure instruction")
+    owners = [s for s in strict["segments"] if s["initprot"] & 4
+              and s["vmaddr"] <= address and address + 4 <= s["vmaddr"] + s["filesize"]]
+    require(len(owners) == 1 and owners[0]["name"] == section["segment"],
+            "debugger symbol is not in its file-backed executable segment")
+    offset = owners[0]["fileoff"] + address - owners[0]["vmaddr"]
+    require(0 <= offset and offset + 4 <= len(kernel), "debugger instruction is outside the candidate file")
+    return {"symbol": DEBUGGER_SYMBOL, "va": hex(address), "file_offset": hex(offset),
+            "segment": owners[0]["name"], "section": section["name"],
+            "section_ordinal": symbol["n_sect"], "n_type": hex(symbol["n_type"]),
+            "instruction_bytes": kernel[offset:offset + 4].hex()}
+
+
+def debugger_read_window(strict, layout):
+    """Only the declared initial linear mapping intersected with owned RAM.
+
+    This is an upper bound for reads, not a page-table/mapping qualification.
+    The debugger must still return every requested byte successfully.
+    """
+    base = strict["metadata"]["load_contract"]["virtual_base"]
+    physical = layout["physical_base"]
+    start_pa = max(physical, layout["ram_base"])
+    end_pa = min(physical + layout["memory_size"], layout["ram_base"] + layout["ram_size"],
+                 layout["conservative_bootstrap_mapped_end"])
+    start, end = base + start_pa - physical, base + end_pa - physical
+    require(0 <= start < end <= UINT64_END, "invalid debugger read window")
+    return start, end
 
 
 def decode_rsp(payload):
@@ -361,14 +424,24 @@ class Remote:
         expected = [(f"x{i}", i, 64) for i in range(31)] + [("sp", 31, 64), ("pc", 32, 64), ("cpsr", 33, 32)]
         require(registers == expected, "unexpected AArch64 core register layout")
 
-    def registers(self):
+    def core_registers(self, record=None):
+        if record is not None:
+            require(time.monotonic() < self.deadline, "debugger snapshot timed out")
         packet = self.request("g")
-        require(len(packet) >= 536 and re.fullmatch("[0-9a-fA-F]+", packet) is not None,
+        if record is not None:
+            # The verified core prefix contains all 34 core registers. Do not
+            # copy unneeded FPU/system-register tails into the snapshot report.
+            record.update(raw_core_reply=packet[:536], register_reply_chars=len(packet),
+                          register_reply_sha256=digest(packet.encode("ascii")))
+        require(536 <= len(packet) <= 1 << 20 and len(packet) % 2 == 0
+                and re.fullmatch("[0-9a-fA-F]+", packet) is not None,
                 "invalid AArch64 core register reply")
-        raw = bytes.fromhex(packet)
-        return {"x0": struct.unpack_from("<Q", raw, 0)[0],
-                "pc": struct.unpack_from("<Q", raw, 256)[0],
-                "cpsr": struct.unpack_from("<I", raw, 264)[0]}
+        raw = bytes.fromhex(packet[:536])
+        return dict(zip(CORE_NAMES, struct.unpack("<33QI", raw)))
+
+    def registers(self):
+        core = self.core_registers()
+        return {name: core[name] for name in ("x0", "pc", "cpsr")}
 
 
 def observe_entry(remote, layout, symbols):
@@ -393,6 +466,129 @@ def observe_entry(remote, layout, symbols):
     return {"before_branch": before, "after_branch": after,
             "instruction_bytes": expected.hex(), "gdb_stop_before": stopped, "gdb_stop_after": stepped,
             "scope": "one unchanged kernel B instruction actually single-stepped in QEMU; early CPU body not yet qualified"}
+
+
+def bounded_memory_read(remote, address, limit, window, *, c_string=False, nullable=False, alignment=1):
+    """Read small page-bounded chunks; retain partial bytes and every status.
+
+    Limits are fixed by this diagnostic, never derived from guest strings or a
+    format specifier. A short/error response is not silently treated as data.
+    """
+    result = {"address": hex(address), "limit_bytes": limit, "status": "not-read",
+              "bytes_read": 0, "data_hex": "", "chunks": []}
+    if c_string:
+        result.update(nul_terminated=False, truncated=False)
+    data = bytearray()
+    try:
+        start, end = window
+        require(0 < limit <= STRING_LIMIT and 0 <= start < end <= UINT64_END,
+                "invalid bounded memory read limits")
+        if address == 0 and nullable:
+            result["status"] = "null"
+            return result
+        require(0 < address < UINT64_END and address + limit <= UINT64_END
+                and start <= address < end and address % alignment == 0,
+                "pointer is outside the declared linear RAM window, overflows, or is unaligned")
+        available = min(limit, end - address)
+        while len(data) < available:
+            require(time.monotonic() < remote.deadline, "debugger snapshot timed out")
+            at = address + len(data)
+            count = min(READ_CHUNK, available - len(data), 0x1000 - at % 0x1000)
+            command = f"m{at:x},{count:x}"
+            chunk = {"address": hex(at), "requested_bytes": count, "command": command}
+            result["chunks"].append(chunk)
+            reply = remote.request(command)
+            chunk.update(response=reply[:2 * count + 32], response_chars=len(reply),
+                         response_sha256=digest(reply.encode("ascii")))
+            valid_hex = len(reply) % 2 == 0 and re.fullmatch("[0-9a-fA-F]*", reply) is not None
+            if valid_hex and len(reply) <= 2 * count:
+                data += bytes.fromhex(reply)
+            require(valid_hex and len(reply) == 2 * count, "GDB memory read returned an error or wrong byte count")
+            if c_string and b"\0" in data:
+                nul = data.index(0)
+                result.update(status="complete", nul_terminated=True, nul_offset=nul,
+                              text_utf8=data[:nul].decode("utf-8", errors="replace"))
+                break
+        else:
+            result["status"] = "truncated" if c_string or available < limit else "complete"
+            if result["status"] == "truncated":
+                result.update(truncated=True, truncation_reason="read-window-end" if available < limit else "byte-limit")
+                if c_string:
+                    result["text_utf8"] = data.decode("utf-8", errors="replace")
+    except (EntryError, OSError, ValueError) as exc:
+        result.update(status="read-error" if result["chunks"] else "invalid-pointer" if "pointer" in str(exc) else "read-error",
+                      error=f"{type(exc).__name__}: {exc}")
+    finally:
+        result.update(bytes_read=len(data), data_hex=data.hex())
+    return result
+
+
+def observe_debugger(remote, target, window, record):
+    """Stop at the real function entry and read; never resume past this stop."""
+    address = int(target["va"], 16)
+    record.update(status="observing", verified=False, registers_captured=False,
+                  debugger_entry_observed=False, breakpoint_installed=False, breakpoint_removed=False,
+                  read_window={"start": hex(window[0]), "end_exclusive": hex(window[1]),
+                               "scope": "declared linear RAM upper bound; actual reads must also succeed"})
+    paused = False
+    def request(command):
+        require(time.monotonic() < remote.deadline, "debugger snapshot timed out")
+        return remote.request(command)
+    try:
+        reply = request(f"Z1,{address:x},4")
+        record["breakpoint_set_response"] = reply[:64]
+        require(reply == "OK", "QEMU rejected debugger hardware breakpoint")
+        record["breakpoint_installed"] = True
+        stopped = request("c")
+        record.update(gdb_stop=stopped[:4096], gdb_stop_chars=len(stopped))
+        paused = len(stopped) >= 3 and stopped[0] in ("T", "S") and re.fullmatch("[0-9a-fA-F]{2}", stopped[1:3]) is not None
+        require(stopped.startswith(("T05", "S05")) and len(stopped) <= 4096,
+                "unexpected stop before debugger entry")
+        registers = remote.core_registers(record)
+        record.update(registers={name: hex(value) for name, value in registers.items()}, registers_captured=True)
+        require(registers["pc"] == address and registers["cpsr"] & 0x1F in (4, 5),
+                "debugger breakpoint does not show expected PC and EL1")
+        instruction = bounded_memory_read(remote, address, 4, window, alignment=4)
+        record["instruction_read"] = instruction
+        require(instruction["status"] == "complete" and instruction["data_hex"] == target["instruction_bytes"],
+                "actual debugger entry instruction differs or is unreadable")
+        record["debugger_entry_observed"] = True
+        record["callers"] = {"panic_caller_x7": hex(registers["x7"]),
+                             "link_register_x30": hex(registers["x30"]),
+                             "frame_pointer_x29": hex(registers["x29"]),
+                             "scope": "raw register values; no caller attribution or frame unwinding"}
+        fields = record["memory"] = {}
+        fields["message"] = bounded_memory_read(remote, registers["x1"], STRING_LIMIT, window, c_string=True, nullable=True)
+        fields["panic_format"] = bounded_memory_read(remote, registers["x2"], STRING_LIMIT, window, c_string=True, nullable=True)
+        cell = fields["va_list_cell"] = bounded_memory_read(remote, registers["x3"], 8, window, nullable=True, alignment=8)
+        if cell["status"] in ("complete", "null"):
+            # Darwin va_list is char*. This parameter is va_list*: exactly one
+            # LE64 cursor cell, then a fixed raw slot window, not a pointer walk.
+            cursor = int.from_bytes(bytes.fromhex(cell["data_hex"]), "little") if cell["status"] == "complete" else 0
+            record["va_list_cursor"] = hex(cursor)
+            fields["va_list_slots"] = bounded_memory_read(remote, cursor, VA_LIST_LIMIT, window, nullable=True, alignment=8)
+        else:
+            fields["va_list_slots"] = {"status": "not-read", "reason": "va_list_cell_incomplete", "bytes_read": 0, "data_hex": ""}
+        fields["stack"] = bounded_memory_read(remote, registers["sp"], STACK_LIMIT, window, alignment=16)
+        record["memory_complete"] = all(item["status"] in ("complete", "null") for item in fields.values())
+        if not record["memory_complete"]:
+            record["error"] = "one or more bounded memory fields failed or were truncated"
+    except (EntryError, OSError, ValueError) as exc:
+        record["error"] = f"{type(exc).__name__}: {exc}"
+    finally:
+        # If c timed out the guest may still be running. Do not issue a packet
+        # which assumes it is stopped; run_qemu will terminate/reap it instead.
+        if paused and record["breakpoint_installed"] and time.monotonic() < remote.deadline:
+            try:
+                reply = remote.request(f"z1,{address:x},4")
+                record["breakpoint_remove_response"] = reply[:64]
+                require(reply == "OK", "QEMU could not remove debugger breakpoint")
+                record["breakpoint_removed"] = True
+            except (EntryError, OSError, ValueError) as exc:
+                record["cleanup_error"] = f"{type(exc).__name__}: {exc}"
+        record["verified"] = bool(record["debugger_entry_observed"] and record.get("memory_complete")
+                                  and record["breakpoint_removed"])
+        record["status"] = "captured" if record["verified"] else "partial" if record["debugger_entry_observed"] else "failed"
 
 
 def read_text(path):
@@ -462,16 +658,22 @@ def run_qemu(args, output, layout, symbols, image, strict, report):
             report["entry_observation"] = observe_entry(remote, layout, symbols)
             report["qemu_kernel_entry_executed"] = True
             report["qemu_early_cpu_entry_observed"] = True
-            remote.send("c")
-            reason = "timeout"
-            while process.poll() is None and time.monotonic() < deadline:
-                if "Taking exception" in read_text(trace) or "exception captured" in read_text(serial):
-                    reason = "first-exception"
-                    break
-                if any(p.exists() and p.stat().st_size >= MAX_LOG for p in (serial, trace)):
-                    reason = "log-limit"
-                    break
-                time.sleep(0.05)
+            if getattr(args, "debugger_snapshot", False):
+                snapshot = report["debugger_snapshot"]
+                observe_debugger(remote, snapshot["target"], debugger_read_window(strict, layout), snapshot)
+                report["qemu_debugger_snapshot_verified"] = snapshot["verified"]
+                reason = "debugger-snapshot" if snapshot["verified"] else "debugger-snapshot-incomplete"
+            else:
+                remote.send("c")
+                reason = "timeout"
+                while process.poll() is None and time.monotonic() < deadline:
+                    if "Taking exception" in read_text(trace) or "exception captured" in read_text(serial):
+                        reason = "first-exception"
+                        break
+                    if any(p.exists() and p.stat().st_size >= MAX_LOG for p in (serial, trace)):
+                        reason = "log-limit"
+                        break
+                    time.sleep(0.05)
             if process.poll() is not None:
                 reason = "qemu-exit"
             report["qemu"]["stop_reason"] = reason
@@ -502,6 +704,8 @@ def run(args):
     report = {"schema": "route-a-qemu-entry-v1", "status": "failed", **QUALIFICATION,
               "started_at_utc": datetime.datetime.now(datetime.timezone.utc).isoformat(),
               "scope": "isolated single-CPU QEMU virt entry diagnostic with synthetic firmware inputs"}
+    if getattr(args, "debugger_snapshot", False):
+        report["debugger_snapshot"] = {"requested": True, "verified": False, "status": "not-started"}
     inputs = []
     try:
         require(0.5 <= args.timeout <= 60, "timeout must be between 0.5 and 60 seconds")
@@ -512,11 +716,24 @@ def run(args):
         config = json.loads(loader.CONFIG.read_text())
         kernel, image = args.kernel.read_bytes(), args.loaded_image.read_bytes()
         strict, symbols = validate_inputs(kernel, image, json.loads(args.loader_report.read_text()), config)
-        adt = make_adt(args.cpu, os.urandom(256)) if args.adt == "qemu-virt" else b""
+        seed_file = getattr(args, "seed_file", None)
+        require(seed_file is None or args.adt == "qemu-virt", "seed file requires --adt qemu-virt")
+        if seed_file is not None:
+            seed, seed_identity = read_seed(seed_file)
+            inputs.append(seed_identity)
+        else:
+            seed = os.urandom(256) if args.adt == "qemu-virt" else b""
+        adt = make_adt(args.cpu, seed) if args.adt == "qemu-virt" else b""
+        if seed:
+            report["random_seed"] = {"source": "file" if seed_file is not None else "generated",
+                                     "size": len(seed), "sha256": digest(seed)}
         boot, layout = make_boot_args(strict["metadata"]["load_contract"], args.physical_base,
                                       args.boot_args_pa, adt, args.command_line)
         report.update(layout=layout, adt={"kind": args.adt, "bytes": len(adt), "sha256": digest(adt),
                                         "synthetic": True, "board_identity": False})
+        if getattr(args, "debugger_snapshot", False):
+            report["debugger_snapshot"]["target"] = debugger_target(strict, kernel)
+            debugger_read_window(strict, layout)  # Validate the declared bound before QEMU launch.
         (output / "boot-args.bin").write_bytes(boot)
         if adt:
             (output / "synthetic-qemu.adt").write_bytes(adt)
@@ -564,10 +781,20 @@ def run(args):
             require(report["exception"].get("CNTFRQ") == 62500000,
                     "actual QEMU counter frequency differs from the synthetic ADT")
         require(report["qemu"]["stop_reason"] != "qemu-exit", "QEMU exited unexpectedly; inspect logs")
-        report["status"] = "qemu_entry_observed"
+        if getattr(args, "debugger_snapshot", False):
+            require(report["qemu_debugger_snapshot_verified"], "debugger snapshot was not complete; inspect partial evidence")
+            report["status"] = "qemu_debugger_snapshot_observed"
+        else:
+            report["status"] = "qemu_entry_observed"
     except (EntryError, loader.ProbeError, loader.platform_link.LinkError, OSError,
             ValueError, KeyError, ET.ParseError, subprocess.SubprocessError) as exc:
         report["error"] = f"{type(exc).__name__}: {exc}"
+        if "debugger_snapshot" in report:
+            report["qemu_debugger_snapshot_verified"] = False
+            report["debugger_snapshot"]["verified"] = False
+            if report["debugger_snapshot"]["status"] == "captured":
+                report["debugger_snapshot"].update(status="invalidated-diagnostic-failure",
+                                                   qualification_error=report["error"])
     finally:
         changes = []
         for before in inputs:
@@ -580,7 +807,29 @@ def run(args):
         report["input_recheck"] = {"unchanged": not changes, "changed_paths": changes}
         if changes:
             report.update(status="failed", error="declared inputs changed during the diagnostic",
-                          qemu_kernel_entry_executed=False, qemu_early_cpu_entry_observed=False)
+                          qemu_kernel_entry_executed=False, qemu_early_cpu_entry_observed=False,
+                          qemu_debugger_snapshot_verified=False)
+            if "debugger_snapshot" in report:
+                report["debugger_snapshot"].update(verified=False, status="invalidated-input-change")
+        if "debugger_snapshot" in report:
+            # The opt-in report uses strings for legacy address/register fields
+            # too, so JavaScript readers cannot round high virtual addresses.
+            # Keep the default execution/report path compatible with run003.
+            report["address_encoding"] = "hex-strings"
+            for name in ("boot_args_pa", "bootstrap_prefix_start", "conservative_bootstrap_mapped_end",
+                         "device_tree_pa", "device_tree_va", "entry_pa", "physical_base", "ram_base",
+                         "top_of_kernel_data", "virtual_slide"):
+                value = report.get("layout", {}).get(name)
+                if value is not None:
+                    report["layout"][name] = hex(value)
+            for branch in ("before_branch", "after_branch"):
+                values = report.get("entry_observation", {}).get(branch, {})
+                for name, value in values.items():
+                    values[name] = hex(value)
+            for name in ("fault_pc", "fault_va", "CurrentEL", "MMFR0", "ESR_EL1", "ELR_EL1", "FAR_EL1"):
+                value = report.get("exception", {}).get(name)
+                if value is not None:
+                    report["exception"][name] = hex(value)
         report["outputs"] = [identity(p) for p in sorted(output.iterdir()) if p.is_file() and not p.is_symlink()]
         report["finished_at_utc"] = datetime.datetime.now(datetime.timezone.utc).isoformat()
         (output / "report.json").write_text(json.dumps(report, indent=2, sort_keys=True) + "\n")
@@ -596,6 +845,9 @@ def main():
     parser.add_argument("--physical-base", type=lambda value: int(value, 0), default=0x50004000)
     parser.add_argument("--boot-args-pa", type=lambda value: int(value, 0), default=0x52000000)
     parser.add_argument("--adt", choices=("none", "qemu-virt"), default="qemu-virt")
+    parser.add_argument("--seed-file", type=Path, help="replay an exact regular 256-byte synthetic ADT seed")
+    parser.add_argument("--debugger-snapshot", action="store_true",
+                        help="stop at the real DebuggerTrapWithState entry and capture bounded read-only state")
     parser.add_argument("--cpu", choices=CPUS, default="cortex-a76")
     parser.add_argument("--command-line", default="-v serial=3 debug=0x14e")
     parser.add_argument("--timeout", type=float, default=10)
@@ -609,8 +861,9 @@ def main():
     except EntryError as exc:
         parser.error(str(exc))
     print(json.dumps({k: report.get(k) for k in ("status", "error", "qemu_kernel_entry_executed",
-                     "qemu_early_cpu_entry_observed", "tb371fc_kernel_qualified", "os_boot_verified")}, sort_keys=True))
-    return 0 if report["status"] == "qemu_entry_observed" else 2
+                     "qemu_early_cpu_entry_observed", "qemu_debugger_snapshot_verified",
+                     "tb371fc_kernel_qualified", "os_boot_verified")}, sort_keys=True))
+    return 0 if report["status"] in ("qemu_entry_observed", "qemu_debugger_snapshot_observed") else 2
 
 
 if __name__ == "__main__":
