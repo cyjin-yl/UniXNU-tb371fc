@@ -56,3 +56,5 @@ python3 scripts/probe_route_a_allocation.py run \
 回归覆盖原版前缀遗漏、零／最大 page-aligned 前缀、相邻乱序 free descriptors、保留区间断、差一页容量、分配失败及下一连续区重试、地址零分配／释放、非法对齐和溢出描述符，以及 guard、清零／cache／释放范围的一致性。源码派生的区间检查还覆盖全部 512 种 page-aligned 前缀。
 
 当 `ROUTE_A_ALLOCATION_SOURCES` 缺失时，提取 C 的测试明确跳过，不能把该轮描述为完整回归。成功报告使用 `host_allocator_contract_verified`；`patched_firmware_compiled`、`uefi_allocation_verified`、`bootstrap_mapping_executed`、`cache_maintenance_executed`、`kernel_entry_executed` 和 `os_boot_verified` 均保持 false。真正的固件构建、实际 memory map／分配收据与设备启动仍需后续验收。
+
+[2026-11-26 主机摘要](evidence/route-a-allocation-prefix-20261126.json) 绑定实际执行提交、原始报告摘要、两份生成 C 与 host library 摘要，记录 12 项定向测试、0 跳过及 8 组独立 probe 回合。[Source integrity workflow](../.github/workflows/source-check.yml) 已加入这组固定来源准备，并为统一 `check_route_a.py` 设置 `ROUTE_A_ALLOCATION_SOURCES`；新增配置不是已经执行的远端 CI 成功结果。
