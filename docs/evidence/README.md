@@ -2,6 +2,12 @@
 
 本目录保存可公开、可追溯的结果摘要。系统二进制和原始私有日志不在仓库分发。文件名日期是该次记录日期，不代表之后所有改动都已重新执行相同测试。
 
+## 固定指令计时与不完整快照：2026-11-26
+
+[run005 公开证据](route-a-qemu-instruction-clock-20261126.json)记录 `instruction-1ns` 模式下的真实失败：入口单步通过，首异常为 Data Abort，ELR `0xfffffff007a06264`、FAR `0x150`、ESR `0x96000005`。随后 debugger 入口的 34 个 core 寄存器仍完整，但 `x3`／SP 超出原允许窗口、panic format 在 512 字节内没有 NUL，因此快照为 `partial`，完整资格 false，诊断器退出 2。QEMU 被主机正常停止并回收的退出码 0 不改变该失败结果。
+
+三份 guest 生成物与 run003／run004 相同；QEMU 的实质配置变化为固定 icount，runner 源码的 clock-mode 控制和报告字段变化另列，不声称观察程序字节一致。固定候选静态核对已定位 `_crypto_random_kmem_ctx_size` 的 provider 调度读取及 panic caller；fault 前的 X8／global／LR 尚未动态确认。原报告为 26,996 字节，SHA-256 `bf1125b86142f2997168576991430b097f75ab484a41968a55b33614b3b72fb6`，输入复核不变。没有扩大观察边界、重写旧结果或提升板级／OS 资格，详见[诊断文档](../ROUTE_A_QEMU_ENTRY.md)。
+
 ## 同一启动输入下的 debugger 快照：2026-11-26
 
 [run004 公开证据](route-a-qemu-debugger-20261126.json)记录固定候选在 `_DebuggerTrapWithState` 首指令前的真实停点：`PC=0xfffffff0072f5ef4`、EL1t、34 个 core 寄存器完整，`db_op=3`。两段字符串、8 字节 cursor cell、256 字节参数槽与 256 字节栈窗口均在有限范围内读取成功，没有截断。参数槽已捕获 `1.984 ms >= 1.920 ms` 及 start／end 计数，实际差值对应 1.984688 ms；两处 caller `BL` 和首个 panic 字符串的固定候选静态来源另列，避免与现场读取混同。

@@ -45,7 +45,7 @@ A02 的[第二轮结果](docs/ROUTE_A_GENERIC_KERNEL_RESULT.md)保存 21,905,888
 
 随后[平台候选](docs/ROUTE_A_PLATFORM_RESULT.md)已加入实际 `ArmDTPlatform`、`ArmCpu` 与真实 `cpu.c` callback，候选 SHA 为 `46eff436250d905e9f3aec59dbcc8c04d594e614e790860236917c7cbfe39f1b`。该候选的 [DarwinBoot 合同](docs/ROUTE_A_LOADER_CONTRACT.md)已在第三次真实执行中通过：生产 parser 和复制代码处理 10 段，23,035,904 字节映像一致，102,103 条 local pointer 全表、入口 trampoline 和 boot_args 布局完成核验；前两次失败及原 driver 可精确恢复。UEFI 分配、板级 ADT、MMU 交接、设备 entry 及 OS boot 保持独立门槛。
 
-2026-11-26 的[独立 QEMU 诊断](docs/ROUTE_A_QEMU_ENTRY.md)已实际观察 `__start` → `_start_first_cpu`，随后在 `0xfffffff0072f5fe4` 捕获 Undefined Instruction。run004 复用同一 ADT／boot buffer／trampoline，停在 debugger 函数入口，取得完整有限寄存器与参数快照；实际 `BL` caller 及文本指向 preemption timeout panic，计数差值对应 1.984688 ms。下一步独立核对计时阈值和时钟行为；这些合成 ADT／标准 `virt` 结果不填写设备 M3 或整机硬件验收状态。
+2026-11-26 的[独立 QEMU 诊断](docs/ROUTE_A_QEMU_ENTRY.md)已实际观察 `__start` → `_start_first_cpu`，随后在 `0xfffffff0072f5fe4` 捕获 Undefined Instruction。run004 复用同一 ADT／boot buffer／trampoline，取得完整有限 debugger 快照，实际 caller 及参数指向 preemption timeout panic，计数差值对应 1.984688 ms。run005 仅改变 QEMU 计时选项，首异常变为 `_crypto_random_kmem_ctx_size` 的 Data Abort；保留的 34 个 core 寄存器不代表完整快照，原窗口拒绝与格式串截断使本轮严格失败。后续需故障前的动态状态核对 provider 调度前置条件；这些合成 ADT／标准 `virt` 结果不填写设备 M3 或整机硬件验收状态。
 
 A01 不能通过“把 `dyld_hw_tpro` 设为 0”关闭硬件路径，已有二进制检查只看键是否存在。还需分别核对 DATA_CONST pager 的 TPRO 策略和早期能力发布。不得用批量 NOP 掩盖未证明的指令路径。
 

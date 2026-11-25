@@ -36,6 +36,26 @@ caller 归因也使用实际指令核对：`x7-4 = 0xfffffff00736cb4c` 位于 `_
 
 QEMU 实际运行 **0.98557 秒**；断点移除后保持暂停，由主机 SIGTERM 停止，退出码 0 且已回收，输入复核全部不变。本次获得完整有限快照资格；它没有继续执行 debugger 函数体，因此 `exception_observed=false` 不代表原异常已经解决。原报告为 **26,398 字节**、SHA-256 `931db1b66f0c30ea58980f470a386e345e3e2be6bfb0582632ee475412b25071`。计时阈值与时钟行为的进一步来源仍需独立核对，不能据这一次观察把 TCG 等机制判为唯一原因；完整 MMU／slide、板级、实机和 OS boot 资格保持 false。
 
+## run005：指令计时下的新异常与不完整快照
+
+北京时间 **2026-11-26 03:26:59–03:27:10**，`67470a7` 使用固定 `-icount shift=0,align=off,sleep=off` 完成真实尝试。独立检查确认 seed、布局、工具与三份 guest 生成物仍和 run003／run004 一致；除输出位置外，QEMU 选项只增加上述 icount 参数。runner 源码加入了 clock-mode 控制与报告字段，**不能说观察器程序本身的字节也完全相同**。[run005 公开证据](evidence/route-a-qemu-instruction-clock-20261126.json)保存两版 runner 身份及这一区分。
+
+入口分支仍实际单步通过，本次首个异常变为 **Data Abort**：ELR／VA `0xfffffff007a06264`、FAR `0x150`、ESR `0x96000005`，原指令字 `0xf940a900`。异常随后进入 panic 路径，在 `_DebuggerTrapWithState` 入口再次捕获了全部 34 个 core 寄存器。但完整快照门槛未通过：
+
+| 字段 | 实际结果 |
+| --- | --- |
+| message | 64 字节内取得完整 `panic` 字符串 |
+| panic format | 已读 512 字节，未见 NUL，明确记为 `truncated` |
+| `x3` cell | `0xfffffff10fa1c848` 超出原允许窗口，读取前拒绝，0 字节 |
+| 参数槽 | cell 未读，记为 `not-read` |
+| SP 栈窗口 | `0xfffffff10fa1c690` 超出原允许窗口，读取前拒绝，0 字节 |
+
+原允许窗口仍为 `[0xfffffff007004000, 0xfffffff016e00000)`。窗口拒绝只说明本观察器没有资格读取这些地址，不证明 guest 的 SP 或 `x3` 本身错误。没有为了该结果扩大读窗口、增加新观察点或放宽字符串完整性检查。报告准确保留 `debugger_snapshot.status=partial`、`qemu_debugger_snapshot_verified=false`、整体 `status=failed`，诊断器返回 **2**；这不是完整快照或超时结果。
+
+固定候选的独立静态核对把 fault 定位到 `_crypto_random_kmem_ctx_size`（起点 `0xfffffff007a06258`）：`LDR X0, [X8, #0x150]` 前序从 `_g_crypto_funcs` cell `0xfffffff0071f9a50` 取得 X8。对应源码通过 `g_crypto_funcs->random_kmem_ctx_size_fn()` 调度；注册源码把该全局指针初始置为 NULL，再由 `register_crypto_functions` 赋值，而 VM map 的早期调用注明 corecrypto 应已 setup。**这定位了 provider 调度的前置条件，尚未动态证明故障时 provider 未注册。** 仍需故障前的 X8、该全局 cell 和 LR；稍后 debugger 捕获的 X8 不能替代故障现场值。`x7-4 = 0xfffffff007b2174c` 的原字 `0x97ffc815` 另确认是 `_panic_with_thread_kernel_state` 中调用 `_panic` 的 `BL`。
+
+QEMU 运行 **1.450781 秒**后由主机 SIGTERM 停止，退出码 0 且已回收；这一主机退出码与诊断器失败码分开记录。全部声明输入复核不变。原始报告为 **26,996 字节**、SHA-256 `bf1125b86142f2997168576991430b097f75ab484a41968a55b33614b3b72fb6`。本次只表明固定计时模型下观察到不同异常及观察器的现有边界，未证明唯一根因、稳定推进、完整 MMU／slide、实机或 OS 启动。
+
 ## 输入与布局
 
 输入为固定的 `46eff436…` 平台候选、对应 loader 报告和内存映像。脚本重算候选与映像摘要、检查 loader 的三个实际通过标志与输入复核结果，并重新解析真实段、local relocation 和入口符号。它逐字节重建完整内存映像，包括段间间隙和 BSS；修改映像并同步修改报告摘要也不能获得通过。
