@@ -18,6 +18,24 @@ run003 整个诊断入口在北京时间 **02:34:28–02:34:44** 执行，其中
 
 本次已观察到高虚拟地址执行和异常转入，但没有独立完成整个 MMU／slide 交接验收。两个 QEMU 入口标志为 true；UEFI、板级 ADT、TB371FC 实机与 OS boot 资格仍为 false。前两次失败不回填为成功；本地及独立的 33 项定向回归均通过，实际 CI 以相应提交的作业结果为准。
 
+## run004：同一启动输入下的 panic 快照
+
+北京时间 **2026-11-26 03:06:20–03:06:32**，`d9052126` 的显式快照模式完成真实执行。它复用了 run003 的 256 字节 seed；独立结束检查确认旧报告未变，`entry.bin`（4,344 字节）、`boot-args.bin`（16,384 字节）及合成 ADT（1,780 字节）的长度和 SHA-256 均与 run003 一致。观察方式增加了 debugger 入口断点，运行时确定性没有因此得到保证。[run004 公开证据](evidence/route-a-qemu-debugger-20261126.json)保存原报告、重放检查和各输入的完整摘要。
+
+原入口单步仍通过；随后在 `_DebuggerTrapWithState` 的首指令前停于 `0xfffffff0072f5ef4`，实际指令字节 `ff0306d1` 与固定候选一致，PSTATE 为 `0x600003c4`（AArch64 EL1t）。全部 34 个 core 寄存器已捕获，`x0=0x3` 表示 panic，`x1` 字符串为 `panic`，`x2` 格式为 `%s %s (start: %llu, end: %llu)%s`。
+
+| 有限读取 | 实际读取／上限 | 结果 |
+| --- | --- | --- |
+| message、panic format | 各 64／512 字节 | 均完整，已见 NUL，无截断 |
+| `x3` cursor cell | 8／8 字节 | `0xfffffff007d47978` → `0xfffffff007d47990` |
+| 参数槽、SP 栈窗口 | 各 256／256 字节 | 均完整，没有额外追踪指针或回溯 |
+
+参数槽中已捕获的第二个字符串为 `1.984 ms >= 1.920 ms`，第五个字符串为空。start 为 **2,827,029 ticks**，end 为 **2,951,072 ticks**，差值 **124,043 ticks**；按现场记录的 **62.5 MHz**，对应 **1.984688 ms**。第一个字符串 `preemption disable timeout exceeded:` 来自同一固定候选的静态只读提取，公开证据单独标记其来源，未把它写成本次额外 guest 读取。
+
+caller 归因也使用实际指令核对：`x7-4 = 0xfffffff00736cb4c` 位于 `_kern_timeout_try_panic`，原字 `0x941e9b15` 解码为到 `_panic` 的 `BL`；`x30-4 = 0xfffffff0072f74f0` 的 `0x97fffa81` 则调用 `_DebuggerTrapWithState`。`x7` 本身恰位于下一 `_timer_init` 符号边界，不能直接用返回地址的最近符号命名 panic 来源。
+
+QEMU 实际运行 **0.98557 秒**；断点移除后保持暂停，由主机 SIGTERM 停止，退出码 0 且已回收，输入复核全部不变。本次获得完整有限快照资格；它没有继续执行 debugger 函数体，因此 `exception_observed=false` 不代表原异常已经解决。原报告为 **26,398 字节**、SHA-256 `931db1b66f0c30ea58980f470a386e345e3e2be6bfb0582632ee475412b25071`。计时阈值与时钟行为的进一步来源仍需独立核对，不能据这一次观察把 TCG 等机制判为唯一原因；完整 MMU／slide、板级、实机和 OS boot 资格保持 false。
+
 ## 输入与布局
 
 输入为固定的 `46eff436…` 平台候选、对应 loader 报告和内存映像。脚本重算候选与映像摘要、检查 loader 的三个实际通过标志与输入复核结果，并重新解析真实段、local relocation 和入口符号。它逐字节重建完整内存映像，包括段间间隙和 BSS；修改映像并同步修改报告摘要也不能获得通过。

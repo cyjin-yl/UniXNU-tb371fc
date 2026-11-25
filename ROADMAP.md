@@ -23,6 +23,7 @@
 - [x] 固定 `ArmDTPlatform`、`ArmCpu` 实际编译和真实 `cpu.c` callback 接线对象独立链接；完整 provider 闭包另验。
 - [x] 同一真实平台候选通过固定 DarwinBoot parser／段复制、102,103 条 local pointer 全表及 boot_args ABI 的主机合同检查；设备 entry 未执行。
 - [x] 固定平台候选在独立标准 QEMU 中完成真实入口单步，并捕获高虚拟地址的首个异常；TB371FC 实机与 OS boot 另验。
+- [x] 同一 QEMU 启动输入下取得完整有限 debugger 入口快照，实际 caller 与参数指向 preemption timeout panic；计时行为另验。
 - [ ] 真实 27 完整共享缓存转换。
 - [ ] 完整 TB371FC profile、provider/archive 依赖的 XNU 构建和设备启动。
 - [ ] 27 的 Darwin 进程、桌面及整机硬件验收。
@@ -44,7 +45,7 @@ A02 的[第二轮结果](docs/ROUTE_A_GENERIC_KERNEL_RESULT.md)保存 21,905,888
 
 随后[平台候选](docs/ROUTE_A_PLATFORM_RESULT.md)已加入实际 `ArmDTPlatform`、`ArmCpu` 与真实 `cpu.c` callback，候选 SHA 为 `46eff436250d905e9f3aec59dbcc8c04d594e614e790860236917c7cbfe39f1b`。该候选的 [DarwinBoot 合同](docs/ROUTE_A_LOADER_CONTRACT.md)已在第三次真实执行中通过：生产 parser 和复制代码处理 10 段，23,035,904 字节映像一致，102,103 条 local pointer 全表、入口 trampoline 和 boot_args 布局完成核验；前两次失败及原 driver 可精确恢复。UEFI 分配、板级 ADT、MMU 交接、设备 entry 及 OS boot 保持独立门槛。
 
-2026-11-26 的[独立 QEMU 诊断](docs/ROUTE_A_QEMU_ENTRY.md)已实际观察 `__start` → `_start_first_cpu`，随后在 `0xfffffff0072f5fe4` 捕获 Undefined Instruction。后续按真实候选的异常调用路径推进早期初始化；本次合成 ADT／标准 `virt` 结果不填写设备 M3 或整机硬件验收状态。
+2026-11-26 的[独立 QEMU 诊断](docs/ROUTE_A_QEMU_ENTRY.md)已实际观察 `__start` → `_start_first_cpu`，随后在 `0xfffffff0072f5fe4` 捕获 Undefined Instruction。run004 复用同一 ADT／boot buffer／trampoline，停在 debugger 函数入口，取得完整有限寄存器与参数快照；实际 `BL` caller 及文本指向 preemption timeout panic，计数差值对应 1.984688 ms。下一步独立核对计时阈值和时钟行为；这些合成 ADT／标准 `virt` 结果不填写设备 M3 或整机硬件验收状态。
 
 A01 不能通过“把 `dyld_hw_tpro` 设为 0”关闭硬件路径，已有二进制检查只看键是否存在。还需分别核对 DATA_CONST pager 的 TPRO 策略和早期能力发布。不得用批量 NOP 掩盖未证明的指令路径。
 
