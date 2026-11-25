@@ -7,6 +7,7 @@ import struct
 import tempfile
 import time
 import unittest
+from unittest.mock import patch
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -189,6 +190,104 @@ class FakeSocket:
 
 
 class RemoteTests(unittest.TestCase):
+    @staticmethod
+    def qemu_xml():
+        # The shape emitted by QEMU v10.0.0 get_feature_xml(), also observed
+        # from the Debian 10.0.13 binary. The xi prefix is intentionally absent.
+        target = ('<?xml version="1.0"?><!DOCTYPE target SYSTEM "gdb-target.dtd">'
+                  '<target><architecture>aarch64</architecture>'
+                  '<xi:include href="aarch64-core.xml"/>'
+                  '<xi:include href="aarch64-fpu.xml"/></target>')
+        regs = [(f"x{i}", 64) for i in range(31)] + [("sp", 64), ("pc", 64), ("cpsr", 32)]
+        core = ('<?xml version="1.0"?><!DOCTYPE feature SYSTEM "gdb-target.dtd">'
+                '<feature name="org.gnu.gdb.aarch64.core">' +
+                ''.join(f'<reg name="{name}" bitsize="{size}"/>' for name, size in regs) + '</feature>')
+        return {"target.xml": target, "aarch64-core.xml": core}
+
+    def test_qemu_unbound_xi_include_preserves_architecture_checks(self):
+        xml = self.qemu_xml()
+        remote = M.Remote(None, time.monotonic() + 2)
+        remote.request = lambda command: "l" + xml[command.split(":")[3]]
+        # No DTD loader or network resolver is used by the finite XML parser.
+        with patch("builtins.open", side_effect=AssertionError("unexpected external resource read")):
+            remote.validate_architecture()
+        self.assertEqual(remote.xml_records[0]["raw_xml_text"], xml["target.xml"])
+        self.assertTrue(remote.xml_records[0]["complete"])
+        xml["target.xml"] = xml["target.xml"].replace("<architecture>aarch64", "<architecture>arm")
+        with self.assertRaisesRegex(M.EntryError, "architecture"):
+            remote.validate_architecture()
+
+    def test_qemu_xml_checks_entire_core_register_layout(self):
+        for original, changed in [('name="x1" bitsize="64"', 'name="x1" bitsize="32"'),
+                                  ('name="sp" bitsize="64"', 'name="x0" bitsize="64"'),
+                                  ('name="pc" bitsize="64"', 'name="pc" bitsize="64" regnum="33"')]:
+            xml = self.qemu_xml()
+            xml["aarch64-core.xml"] = xml["aarch64-core.xml"].replace(original, changed)
+            remote = M.Remote(None, time.monotonic() + 2)
+            remote.request = lambda command: "l" + xml[command.split(":")[3]]
+            with self.subTest(changed=changed), self.assertRaisesRegex(M.EntryError, "core register layout"):
+                remote.validate_architecture()
+
+    def test_only_the_known_xi_include_form_is_accepted(self):
+        valid = self.qemu_xml()["target.xml"]
+        declared = valid.replace("<target>", '<target xmlns:xi="http://www.w3.org/2001/XInclude">')
+        self.assertEqual(M.parse_gdb_xml(declared, "target.xml").tag, "target")
+        for bad in (valid.replace("xi:include", "other:include"),
+                    valid.replace('href="aarch64-core.xml"', 'href="https://invalid.example/core.xml"'),
+                    valid.replace('href="aarch64-core.xml"', 'href="../aarch64-core.xml"'),
+                    declared.replace("http://www.w3.org/2001/XInclude", "urn:other")):
+            with self.subTest(xml=bad), self.assertRaises(M.EntryError):
+                M.parse_gdb_xml(bad, "target.xml")
+
+    def test_dtd_internal_subset_and_entities_are_rejected(self):
+        valid = self.qemu_xml()["target.xml"]
+        for bad in (valid.replace('SYSTEM "gdb-target.dtd"', 'SYSTEM "file:///tmp/external.dtd"'),
+                    valid.replace('SYSTEM "gdb-target.dtd">', '[<!ENTITY a "aarch64">]>'),
+                    valid.replace('SYSTEM "gdb-target.dtd">', '[<!ENTITY a SYSTEM "https://invalid.example/e">]>')):
+            with self.subTest(xml=bad), self.assertRaisesRegex(M.EntryError, "DTD or internal subset"):
+                M.parse_gdb_xml(bad, "target.xml")
+
+    def test_undeclared_entities_cannot_silently_change_identifiers(self):
+        xml = self.qemu_xml()
+        variants = [
+            ("target.xml", xml["target.xml"].replace("aarch64</architecture>", "aarch64&undefined;</architecture>")),
+            ("target.xml", xml["target.xml"].replace('href="aarch64-core.xml"', 'href="aarch64&undefined;-core.xml"')),
+            ("aarch64-core.xml", xml["aarch64-core.xml"].replace('name="x0"', 'name="x&undefined;0"')),
+            ("target.xml", xml["target.xml"].replace("aarch64</architecture>", "aarch&#54;4</architecture>")),
+        ]
+        for annex, text in variants:
+            with self.subTest(annex=annex, xml=text), self.assertRaisesRegex(M.EntryError, "entity/reference"):
+                M.parse_gdb_xml(text, annex)
+
+    def test_raw_xml_and_responses_survive_parse_failure(self):
+        text = '<target><architecture>aarch64</architecture><xi:include href="aarch64-core.xml"/>'
+        with tempfile.TemporaryDirectory() as folder:
+            records = []
+            remote = M.Remote(None, time.monotonic() + 2, Path(folder), records)
+            remote.request = lambda command: "l" + text
+            with self.assertRaisesRegex(M.EntryError, "invalid target.xml"):
+                remote.xml("target.xml")
+            self.assertEqual((Path(folder) / "gdb-target.xml").read_text(), text)
+            packets = json.loads((Path(folder) / "gdb-target.xml.responses.json").read_text())
+            self.assertEqual(packets, [{"command": "qXfer:features:read:target.xml:0,800", "response": "l" + text}])
+            self.assertEqual(records[0]["raw_xml"]["sha256"], M.digest(text.encode()))
+            self.assertEqual(records[0]["packet_count"], 1)
+
+    def test_core_must_be_the_first_include(self):
+        xml = self.qemu_xml()
+        xml["target.xml"] = xml["target.xml"].replace('<xi:include href="aarch64-core.xml"/>', '')
+        remote = M.Remote(None, time.monotonic() + 2)
+        remote.request = lambda command: "l" + xml[command.split(":")[3]]
+        with self.assertRaisesRegex(M.EntryError, "first and exactly once"):
+            remote.validate_architecture()
+
+    def test_empty_continuation_xml_response_is_rejected(self):
+        remote = M.Remote(None, time.monotonic() + 2)
+        remote.request = lambda command: "m"
+        with self.assertRaisesRegex(M.EntryError, "empty continuation"):
+            remote.xml("target.xml")
+        self.assertFalse(remote.xml_records[0]["complete"])
+
     def test_fragmented_packet_ack_checksum_and_rle(self):
         data = b"0* "  # Four zeros: initial zero plus three repeats.
         socket = FakeSocket(b"+" + b"$" + data + b"#" + f"{sum(data) % 256:02x}".encode())

@@ -26,7 +26,9 @@
 
 ## 执行
 
-需要 Linux、Python 3.11+、Clang／LLD／llvm-objcopy 和支持所选 CPU 的 `qemu-system-aarch64`。不需要运行 GDB 客户端：脚本通过仅位于输出目录的 Unix socket 使用 QEMU GDB remote protocol，先验证 QEMU 提供的 AArch64 寄存器 XML，再按已验证的布局读取寄存器。
+需要 Linux、Python 3.11+、Clang／LLD／llvm-objcopy 和支持所选 CPU 的 `qemu-system-aarch64`。不需要运行 GDB 客户端：脚本通过仅位于输出目录的 Unix socket 使用 QEMU GDB remote protocol，先验证 QEMU 提供的 AArch64 寄存器 XML，再按已验证的布局读取寄存器。工具的调用路径保留 `ld.lld` 等 multicall 名称，实际指向的二进制身份另行记录。
+
+QEMU 的 [`get_feature_xml()`](https://github.com/qemu/qemu/blob/v10.0.0/gdbstub/gdbstub.c) 会生成没有声明 `xmlns:xi` 的 `<xi:include>`。解析器仅支持这类已知的字面标签及本地 feature 名称，仍要求唯一 `aarch64` architecture、首个且唯一的 core include，以及全部 34 个 core 寄存器的名称、编号、位宽与顺序。它不展开 namespace 或 XInclude，不加载外部 DTD，不支持实体和内部 DTD subset；标准 `gdb-target.dtd` 声明只作为元数据接受。每份收到的原始 XML 和各段 qXfer 响应在解析前保存为 `gdb-*.xml`／`.responses.json`，报告保存其身份，解析失败也保留证据。
 
 在满足主机资源与共享构建槽约定后执行；输出必须是仓库外的新目录：
 
@@ -41,7 +43,7 @@ python3 scripts/probe_route_a_qemu_entry.py \
   --output /absolute/new/qemu-entry-attempt
 ```
 
-工具可以通过 `--clang`、`--linker`、`--objcopy`、`--qemu` 指定。CPU 选择必须真实存在于所选 QEMU；不把 A76／A710 模型的结果当作 Snapdragon 870 实机资格。单次运行最多 60 秒，每份子进程输出文件有 16 MiB 硬上限。观察第一条 QEMU 异常、达到时间／日志限制或 QEMU 退出后即结束；必要时先 SIGTERM、两秒后 SIGKILL，并回收子进程。异常是否致命仍由保存的日志与代码位置判断。
+工具可以通过 `--clang`、`--linker`、`--objcopy`、`--qemu` 指定。CPU 选择必须真实存在于所选 QEMU；不把 A76／A710 模型的结果当作 Snapdragon 870 实机资格。单次运行最多 60 秒，QEMU 的每份输出文件有 16 MiB 硬上限。观察第一条 QEMU 异常、达到时间／日志限制或 QEMU 退出后即结束；必要时先 SIGTERM、两秒后 SIGKILL，并回收子进程。异常是否致命仍由保存的日志与代码位置判断。
 
 ## 结果怎么读
 

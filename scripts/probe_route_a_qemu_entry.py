@@ -23,6 +23,7 @@ import subprocess
 import sys
 import time
 import xml.etree.ElementTree as ET
+from xml.parsers import expat
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import probe_route_a_loader as loader
@@ -220,10 +221,66 @@ def decode_rsp(payload):
     return bytes(out)
 
 
+def parse_gdb_xml(text, annex):
+    """Parse QEMU's finite GDB XML dialect without fetching any DTD/include.
+
+    QEMU get_feature_xml emits literal xi:include tags under <target> without
+    declaring xmlns:xi. Expat without namespace expansion preserves that known
+    spelling; it does not silently discard architecture or include information.
+    The only external declaration accepted is inert gdb-target.dtd metadata.
+    """
+    require(annex in ("target.xml", "aarch64-core.xml"), "unexpected GDB XML annex")
+    # Neither of these fixed QEMU descriptions needs character/entity references.
+    # Expat can silently omit undeclared entities after an unread external DTD,
+    # including in attributes where SkippedEntityHandler is not called. Reject
+    # reference syntax before parsing instead of accepting altered identifiers.
+    require("&" not in text, "GDB XML entity/reference syntax is not supported")
+    expected_root = "target" if annex == "target.xml" else "feature"
+    builder = ET.TreeBuilder()
+    parser = expat.ParserCreate()  # No namespace separator: xi:include is literal.
+    parser.StartElementHandler = builder.start
+    parser.EndElementHandler = builder.end
+    parser.CharacterDataHandler = builder.data
+    parser.SetParamEntityParsing(expat.XML_PARAM_ENTITY_PARSING_NEVER)
+    def doctype(name, system, public, internal):
+        require(name == expected_root and system == "gdb-target.dtd" and public is None and not internal,
+                "unsupported GDB XML DTD or internal subset")
+    def reject_entity(*_):
+        raise EntryError("GDB XML entities and external resources are not supported")
+    parser.StartDoctypeDeclHandler = doctype
+    parser.EntityDeclHandler = reject_entity
+    parser.ExternalEntityRefHandler = reject_entity
+    parser.SkippedEntityHandler = reject_entity
+    try:
+        parser.Parse(text, True)
+        root = builder.close()
+    except expat.ExpatError as exc:
+        raise EntryError(f"invalid {annex}: {exc}") from exc
+    require(root.tag == expected_root, "unexpected GDB XML root")
+    if annex == "target.xml":
+        require(root.attrib in ({}, {"xmlns:xi": "http://www.w3.org/2001/XInclude"}),
+                "unsupported GDB target namespace or attributes")
+        for child in root:
+            require(child.tag in ("architecture", "xi:include") and not list(child),
+                    "unsupported GDB target element")
+            if child.tag == "architecture":
+                require(not child.attrib, "unexpected GDB architecture attributes")
+            else:
+                require(set(child.attrib) == {"href"} and
+                        re.fullmatch(r"[A-Za-z0-9_-][A-Za-z0-9_.-]*\.xml", child.attrib["href"]) is not None,
+                        "GDB include must name a local feature annex")
+    else:
+        require(root.attrib == {"name": "org.gnu.gdb.aarch64.core"}, "unexpected GDB core feature")
+        require(all(child.tag == "reg" and not list(child) for child in root), "unsupported GDB core element")
+    return root
+
+
 class Remote:
     """Small ACK-mode GDB remote client, on a private local Unix socket."""
-    def __init__(self, connection, deadline):
+    def __init__(self, connection, deadline, evidence_directory=None, xml_records=None):
         self.connection, self.deadline = connection, deadline
+        self.evidence_directory = evidence_directory
+        self.xml_records = xml_records if xml_records is not None else []
 
     def byte(self):
         while True:
@@ -259,26 +316,50 @@ class Remote:
         return self.receive()
 
     def xml(self, name):
-        result = ""
-        while len(result) <= 65536:
-            part = self.request(f"qXfer:features:read:{name}:{len(result):x},800")
-            require(part[:1] in ("m", "l"), "QEMU did not provide its register XML")
-            result += part[1:]
-            if part[0] == "l":
-                return ET.fromstring(result)
-        raise EntryError("oversized QEMU register XML")
+        require(name in ("target.xml", "aarch64-core.xml"), "unexpected GDB XML annex")
+        result, packets = "", []
+        record = {"annex": name, "complete": False}
+        self.xml_records.append(record)
+        try:
+            while len(result) <= 65536:
+                command = f"qXfer:features:read:{name}:{len(result):x},800"
+                part = self.request(command)
+                packets.append({"command": command, "response": part})
+                require(part[:1] in ("m", "l"), "QEMU did not provide its register XML")
+                require(part[0] == "l" or len(part) > 1, "QEMU returned an empty continuation XML packet")
+                result += part[1:]
+                require(len(result) <= 65536, "oversized QEMU register XML")
+                if part[0] == "l":
+                    record["complete"] = True
+                    break
+        finally:
+            raw = result.encode("ascii")
+            record.update(size=len(raw), sha256=digest(raw), packet_count=len(packets))
+            if self.evidence_directory is not None:
+                xml_path = self.evidence_directory / ("gdb-" + name)
+                responses_path = self.evidence_directory / ("gdb-" + name + ".responses.json")
+                xml_path.write_bytes(raw)
+                responses_path.write_text(json.dumps(packets, indent=2) + "\n")
+                record.update(raw_xml=identity(xml_path), responses=identity(responses_path))
+            else:
+                record.update(raw_xml_text=result, responses=packets)
+        return parse_gdb_xml(result, name)
 
     def validate_architecture(self):
         target = self.xml("target.xml")
-        require(target.findtext("architecture") == "aarch64", "unexpected QEMU GDB architecture")
+        architectures = target.findall("architecture")
+        require(len(architectures) == 1 and architectures[0].text == "aarch64", "unexpected QEMU GDB architecture")
+        includes = [node.attrib["href"] for node in target if node.tag == "xi:include"]
+        require(includes and includes[0] == "aarch64-core.xml" and includes.count("aarch64-core.xml") == 1,
+                "QEMU target does not declare the core feature first and exactly once")
         core = self.xml("aarch64-core.xml")
-        registers, number = {}, 0
+        registers, number = [], 0
         for reg in core.iter("reg"):
             number = int(reg.get("regnum", str(number)))
-            registers[reg.get("name")] = (number, int(reg.get("bitsize", "0")))
+            registers.append((reg.get("name"), number, int(reg.get("bitsize", "0"))))
             number += 1
-        require(registers.get("x0") == (0, 64) and registers.get("pc") == (32, 64)
-                and registers.get("cpsr") == (33, 32), "unexpected AArch64 core register layout")
+        expected = [(f"x{i}", i, 64) for i in range(31)] + [("sp", 31, 64), ("pc", 32, 64), ("cpsr", 33, 32)]
+        require(registers == expected, "unexpected AArch64 core register layout")
 
     def registers(self):
         packet = self.request("g")
@@ -377,7 +458,7 @@ def run_qemu(args, output, layout, symbols, image, strict, report):
                     break
                 except (FileNotFoundError, ConnectionRefusedError):
                     time.sleep(0.02)
-            remote = Remote(connection, deadline)
+            remote = Remote(connection, deadline, output, report.setdefault("gdb_xml", []))
             report["entry_observation"] = observe_entry(remote, layout, symbols)
             report["qemu_kernel_entry_executed"] = True
             report["qemu_early_cpu_entry_observed"] = True
