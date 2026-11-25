@@ -1,0 +1,28 @@
+{
+  "repository": "https://github.com/UniXNU/UniXNU",
+  "commit": "8542980d02b4d2cc5c32ee3542de1760b2562aac",
+  "license": "BSD-2-Clause-Patent",
+  "files": [
+    {
+      "path": "entry.S",
+      "upstream_path": "scripts/qemu-entry/entry.S",
+      "size": 1537,
+      "sha256": "52df20763edfda536344e4b31869fcde666ffbd6552865d2d8b2089cbc42de78",
+      "git_blob": "fa1de6c13d5ee8b37f5d96d91e91317573d710b0"
+    },
+    {
+      "path": "link.ld",
+      "upstream_path": "scripts/qemu-entry/link.ld",
+      "size": 186,
+      "sha256": "76b9b4ec804ec01c78751fbfc6c008a27cbd648769757a8635a9c4a34a866f68",
+      "git_blob": "ea65984ddd25adcdf19a6eeaeeca4bc0d8fe05e9"
+    },
+    {
+      "path": "LICENSE",
+      "upstream_path": "LICENSE",
+      "size": 2673,
+      "sha256": "5b1d3d911103cb0f41641ec0964c5ac1f7e229f57aa072b6ac38bae913a1307b",
+      "git_blob": "f63d2a6e4c80c3bf8d44b047458468289927593d"
+    }
+  ]
+}

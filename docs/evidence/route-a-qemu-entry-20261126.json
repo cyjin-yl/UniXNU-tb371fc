@@ -1,0 +1,158 @@
+{
+  "schema": "route-a-qemu-entry-public-evidence-v1",
+  "date_local": "2026-11-26",
+  "timezone": "Asia/Shanghai",
+  "scope": "Actual fixed ordinary ARM64 candidate in independent standard QEMU virt; synthetic boot_args and ADT; no physical TB371FC, stock Android board model, or OS userspace.",
+  "summary_not_original_report": true,
+  "input_identities": {
+    "kernel": {
+      "size": 21942456,
+      "sha256": "46eff436250d905e9f3aec59dbcc8c04d594e614e790860236917c7cbfe39f1b"
+    },
+    "loaded_image": {
+      "size": 23035904,
+      "sha256": "3b7fd3784364b4392b2b0fcded0ec0d99dc2075dd149fd32972a1709fce50f5c"
+    },
+    "loader_report": {
+      "size": 38468,
+      "sha256": "300da6b39a2fa06a7cde38043eca046ce27e4be5c96f55a6afa6aff758f7fb98"
+    }
+  },
+  "attempts": [
+    {
+      "attempt": "run001",
+      "source_commit": "27608264fbcaf4156309c81fef36422bbac458ab",
+      "status": "failed",
+      "stage": "tool-version check before QEMU launch",
+      "error": "EntryError: tool version check failed: /usr/lib/llvm-19/bin/lld",
+      "cause": "Resolving ld.lld to the multicall binary changed argv[0] to lld.",
+      "fixed_by": "5932fa3cc97b3cd798ece57c6ef14d94d4df361e",
+      "qemu_kernel_entry_executed": false,
+      "original_attempt_preserved": true
+    },
+    {
+      "attempt": "run002",
+      "source_commit": "5932fa3cc97b3cd798ece57c6ef14d94d4df361e",
+      "status": "failed",
+      "stage": "QEMU paused; GDB target XML parsing before guest continuation",
+      "error": "ParseError: unbound prefix: line 1, column 106",
+      "cause": "QEMU emits xi:include without an xmlns:xi declaration.",
+      "fixed_by": "17687033109a4699896f96cf3cd7cb457028c996",
+      "qemu_kernel_entry_executed": false,
+      "original_attempt_preserved": true
+    },
+    {
+      "attempt": "run003",
+      "source_commit": "17687033109a4699896f96cf3cd7cb457028c996",
+      "status": "qemu_entry_observed",
+      "original_report": {
+        "size": 15859,
+        "sha256": "321b7e4c5947ae6d5dfd13e467dd516fef20aa62b9f0d53227736131f7213370"
+      },
+      "started_at_utc": "2026-11-25T18:34:28.784780+00:00",
+      "finished_at_utc": "2026-11-25T18:34:44.966891+00:00",
+      "machine": "virt,virtualization=off,secure=off,gic-version=3",
+      "accelerator": "tcg",
+      "cpu": "cortex-a76",
+      "cpus": 1,
+      "layout": {
+        "boot_args_pa": "0x52000000",
+        "bootstrap_prefix_start": "0x50000000",
+        "conservative_bootstrap_mapped_end": "0x5fe00000",
+        "device_tree_pa": "0x52001000",
+        "device_tree_va": "0xfffffff009001000",
+        "entry_pa": "0x50511488",
+        "memory_size": 268419072,
+        "physical_base": "0x50004000",
+        "ram_base": "0x40000000",
+        "ram_size": 536870912,
+        "synthetic_fixture": true,
+        "top_of_kernel_data": "0x52004000",
+        "virtual_slide": 0
+      },
+      "adt": {
+        "board_identity": false,
+        "bytes": 1780,
+        "kind": "qemu-virt",
+        "sha256": "21c6a1795d429cda7c380a5d68dd8d8f33eef493733bc42f97767a8b19edac1b",
+        "synthetic": true
+      },
+      "entry_observation": {
+        "before_branch": {
+          "cpsr": "0x800003c5",
+          "pc": "0x50511488",
+          "x0": "0x52000000"
+        },
+        "after_branch": {
+          "cpsr": "0x800003c5",
+          "pc": "0x5051305c",
+          "x0": "0x52000000"
+        },
+        "instruction_bytes": "f5060014",
+        "gdb_stop_before": "T05thread:01;",
+        "gdb_stop_after": "T05thread:01;",
+        "scope": "one unchanged kernel B instruction actually single-stepped in QEMU; early CPU body not yet qualified"
+      },
+      "first_exception": {
+        "CNTFRQ": 62500000,
+        "CurrentEL": "0x4",
+        "MMFR0": "0x101122",
+        "exception_observed": true,
+        "fault_address_space": "kernel-virtual",
+        "fault_opcode": "0xe7ffdeff",
+        "fault_pc": "0xfffffff0072f5fe4",
+        "fault_segment": "__TEXT_EXEC",
+        "fault_va": "0xfffffff0072f5fe4",
+        "first_exception": {
+          "cpu": 0,
+          "description": "Undefined Instruction",
+          "number": 1
+        },
+        "qemu_esr_text": "0x0/0x2000000"
+      },
+      "trace_excerpt": "Taking exception 1 [Undefined Instruction] on CPU 0\n...from EL1 to EL1\n...with ESR 0x0/0x2000000\n...with SPSR 0x600003c4\n...with ELR 0xfffffff0072f5fe4\n...to EL1 PC 0xfffffff00750c000 PSTATE 0x4003c5\n",
+      "serial_excerpt": "ENTRY-PROBE: CurrentEL=0x0000000000000004\nENTRY-PROBE: MMFR0=0x0000000000101122\nENTRY-PROBE: CNTFRQ=0x0000000003b9aca0\nENTRY-PROBE: entering unchanged kernel\n",
+      "execution": {
+        "elapsed_seconds": 1.08898,
+        "exit_code": 0,
+        "gic_version": 3,
+        "max_file_bytes": 16777216,
+        "network_devices": [],
+        "storage_devices": [],
+        "reaped": true,
+        "stop_reason": "first-exception",
+        "termination": "SIGTERM",
+        "timeout_seconds": 10.0
+      },
+      "input_recheck": {
+        "changed_paths": [],
+        "unchanged": true
+      },
+      "qualification": {
+        "qemu_kernel_entry_executed": true,
+        "qemu_early_cpu_entry_observed": true,
+        "high_virtual_exception_pc_observed": true,
+        "runtime_kernel_slide_verified": false,
+        "complete_mmu_handoff_verified": false,
+        "uefi_allocation_verified": false,
+        "board_adt_verified": false,
+        "tb371fc_kernel_qualified": false,
+        "os_boot_verified": false
+      }
+    }
+  ],
+  "validation": {
+    "focused_tests_passed": 33,
+    "focused_tests_skipped": 0,
+    "independent_focused_rerun_passed": 33,
+    "original_source_license_files_checked": 229,
+    "catalog_areas_checked": 13,
+    "ci_for_this_change": "not recorded here; consult the exact commit workflow"
+  },
+  "limits": [
+    "The high virtual exception PC is a runtime observation, not a separate complete MMU/slide qualification.",
+    "QEMU exit 0 follows host SIGTERM after capturing an exception and does not establish guest boot success.",
+    "No kernel image, generated boot image, firmware, or Apple system payload is distributed with this summary.",
+    "Source-level cause of the first exception is a separate follow-up; this record does not infer it from the opcode alone."
+  ]
+}

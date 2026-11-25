@@ -1,6 +1,6 @@
 # 路线图与验收
 
-更新：2026-11-24。目标是 **TB371FC 上可稳定使用、硬件功能完整的 iPadOS 27 原生执行方案**；macOS 27 作为后续独立目标。CPU 采用路线 A 的离线转换与普通 arm64 指针约定。本文记录任务和验收条件，已取得的证据见 [索引](docs/evidence/README.md)。
+更新：2026-11-26。目标是 **TB371FC 上可稳定使用、硬件功能完整的 iPadOS 27 原生执行方案**；macOS 27 作为后续独立目标。CPU 采用路线 A 的离线转换与普通 arm64 指针约定。本文记录任务和验收条件，已取得的证据见 [索引](docs/evidence/README.md)。
 
 主线 Linux 的长期设备支持与本路线并行推进；板级描述、固件协议和边界测试在 [跨仓库硬件资料](docs/CROSS_PROJECT_HARDWARE.md) 中约定复用方式。Linux 驱动、QEMU 模型和 XNU provider 各自适配接口并完成运行验收；本轮文档整理不更改下表完成状态。
 
@@ -22,6 +22,7 @@
 - [x] 候选有限编码核对和未定义符号检查完成；完整 ISA 与实机资格仍未完成。
 - [x] 固定 `ArmDTPlatform`、`ArmCpu` 实际编译和真实 `cpu.c` callback 接线对象独立链接；完整 provider 闭包另验。
 - [x] 同一真实平台候选通过固定 DarwinBoot parser／段复制、102,103 条 local pointer 全表及 boot_args ABI 的主机合同检查；设备 entry 未执行。
+- [x] 固定平台候选在独立标准 QEMU 中完成真实入口单步，并捕获高虚拟地址的首个异常；TB371FC 实机与 OS boot 另验。
 - [ ] 真实 27 完整共享缓存转换。
 - [ ] 完整 TB371FC profile、provider/archive 依赖的 XNU 构建和设备启动。
 - [ ] 27 的 Darwin 进程、桌面及整机硬件验收。
@@ -42,6 +43,8 @@ A01 的可重复入口见 [TPRO 审计](docs/ROUTE_A_TPRO.md) 与 [内核能力�
 A02 的[第二轮结果](docs/ROUTE_A_GENERIC_KERNEL_RESULT.md)保存 21,905,888 bytes（20.89 MiB）的普通 ARM64、subtype 0 候选。独立检查覆盖 3 个指令区间的 2,220,163 个候选 4 字节字：分类器识别的非 HINT PAuth 为 0、精确 POE2 TCHANGE 为 0，记录 180 个 `XPACLRI` HINT。该计数不证明可达性或全部 ISA；原始首次失败的 716 个对象和日志保持留存。
 
 随后[平台候选](docs/ROUTE_A_PLATFORM_RESULT.md)已加入实际 `ArmDTPlatform`、`ArmCpu` 与真实 `cpu.c` callback，候选 SHA 为 `46eff436250d905e9f3aec59dbcc8c04d594e614e790860236917c7cbfe39f1b`。该候选的 [DarwinBoot 合同](docs/ROUTE_A_LOADER_CONTRACT.md)已在第三次真实执行中通过：生产 parser 和复制代码处理 10 段，23,035,904 字节映像一致，102,103 条 local pointer 全表、入口 trampoline 和 boot_args 布局完成核验；前两次失败及原 driver 可精确恢复。UEFI 分配、板级 ADT、MMU 交接、设备 entry 及 OS boot 保持独立门槛。
+
+2026-11-26 的[独立 QEMU 诊断](docs/ROUTE_A_QEMU_ENTRY.md)已实际观察 `__start` → `_start_first_cpu`，随后在 `0xfffffff0072f5fe4` 捕获 Undefined Instruction。后续按真实候选的异常调用路径推进早期初始化；本次合成 ADT／标准 `virt` 结果不填写设备 M3 或整机硬件验收状态。
 
 A01 不能通过“把 `dyld_hw_tpro` 设为 0”关闭硬件路径，已有二进制检查只看键是否存在。还需分别核对 DATA_CONST pager 的 TPRO 策略和早期能力发布。不得用批量 NOP 掩盖未证明的指令路径。
 

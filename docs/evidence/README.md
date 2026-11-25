@@ -2,6 +2,14 @@
 
 本目录保存可公开、可追溯的结果摘要。系统二进制和原始私有日志不在仓库分发。文件名日期是该次记录日期，不代表之后所有改动都已重新执行相同测试。
 
+## 独立 QEMU 真实入口与首异常：2026-11-26
+
+固定普通 ARM64 平台候选已在标准 QEMU `virt`／Cortex-A76 中实际执行入口分支。硬断点与单步记录 `PC 0x50511488 → 0x5051305c`、`x0=0x52000000`、EL1h，随后在 `0xfffffff0072f5fe4` 捕获 Undefined Instruction，原指令字 `0xe7ffdeff`。这是合成启动输入下的内核执行证据；完整 MMU／slide、TB371FC 实机与 27 OS 启动仍未验收。
+
+[本轮摘要](route-a-qemu-entry-20261126.json)保存三个独立尝试：run001 在 QEMU 启动前暴露 multicall 工具名错误；run002 在初始暂停态暴露 GDB XML 前缀兼容问题；run003 使用 `1768703` 完成入口观察并记录首异常。原始 run003 报告为 15,859 字节，SHA-256 `321b7e4c5947ae6d5dfd13e467dd516fef20aa62b9f0d53227736131f7213370`，全部声明输入复核不变；QEMU 由主机在捕获异常后停止并回收。原始失败与历史 loader 报告保持不变，公开摘要的地址均保存为十六进制字符串。
+
+实现、复现命令及范围见[入口诊断](../ROUTE_A_QEMU_ENTRY.md)。33 项定向回归本地与独立复跑均通过；它们与真实候选执行、随后 CI 分别记录，不分发内核或生成镜像。
+
 ## DarwinBoot 初始映射前缀所有权：2026-11-26
 
 [本轮主机摘要](route-a-allocation-prefix-20261126.json) 记录固定 DarwinBoot 原版与修复版真实 C 的合成 memory-map 检查：12 项定向测试通过、0 跳过，独立 probe 的 8 组分配回合通过。原版没有拥有／清零 kernel PA 前的 16 KiB，修复后的 allocation、清零、cache 参数及失败释放范围一致。修改保持原 kernel PA 与 `boot_args.memSize`，并明确最后 16 KiB 广告内存仍未初始映射。
