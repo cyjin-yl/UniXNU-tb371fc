@@ -71,6 +71,21 @@ def regular(path):
     return path
 
 
+def select_tool(name):
+    """Preserve argv[0] for multicall drivers while identifying their binary."""
+    selected = shutil.which(name)
+    require(selected is not None, f"tool missing: {name}")
+    invocation = os.path.abspath(selected)
+    binary = str(Path(invocation).resolve(strict=True))
+    version = subprocess.run([invocation, "--version"], capture_output=True, timeout=10)
+    require(version.returncode == 0, f"tool version check failed: {invocation}")
+    return invocation, {
+        "invocation_path": invocation,
+        "resolved_binary": identity(binary),
+        "version": (version.stdout + version.stderr).decode(errors="replace")[:4096],
+    }
+
+
 def adt_node(name, properties=(), children=()):
     """Apple flattened-tree format; values are explicitly little-endian here."""
     properties = [("name", name.encode("ascii") + b"\0"), *properties]
@@ -435,15 +450,14 @@ def run(args):
             inputs.append(identity(path))
         report["tools"] = {}
         for name in ("clang", "linker", "objcopy", "qemu"):
-            path = shutil.which(getattr(args, name))
-            require(path is not None, f"tool missing: {getattr(args, name)}")
-            path = str(Path(path).resolve())
-            setattr(args, name, path)
-            item = identity(path)
-            inputs.append(item)
-            version = subprocess.run([path, "--version"], capture_output=True, timeout=10)
-            require(version.returncode == 0, f"tool version check failed: {path}")
-            report["tools"][name] = {**item, "version": (version.stdout + version.stderr).decode(errors="replace")[:4096]}
+            invocation, record = select_tool(getattr(args, name))
+            setattr(args, name, invocation)
+            # Recheck both selection and bytes: retargeting a driver symlink
+            # must not silently substitute a different executable mid-run.
+            inputs.append(identity(invocation))
+            if record["resolved_binary"]["path"] != invocation:
+                inputs.append(record["resolved_binary"])
+            report["tools"][name] = record
         report["compile"] = []
         commands = [
             [args.clang, "--target=aarch64-none-elf", "-c", f"-DBOOT_ARGS_PA={args.boot_args_pa}",

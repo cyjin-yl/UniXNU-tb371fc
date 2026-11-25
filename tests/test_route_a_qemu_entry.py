@@ -4,6 +4,7 @@ import importlib.util
 import json
 from pathlib import Path
 import struct
+import tempfile
 import time
 import unittest
 
@@ -242,6 +243,23 @@ class RemoteTests(unittest.TestCase):
 
 
 class EvidenceTests(unittest.TestCase):
+    def test_multicall_tool_keeps_selected_symlink_basename(self):
+        with tempfile.TemporaryDirectory() as folder:
+            root = Path(folder)
+            binary = root / "multicall"
+            binary.write_text('#!/bin/sh\ncase "$0" in */ld.lld) echo "test LLD";; *) exit 42;; esac\n')
+            binary.chmod(0o755)
+            selected = root / "ld.lld"
+            selected.symlink_to(binary.name)
+            invocation, record = M.select_tool(str(selected))
+            self.assertEqual(invocation, str(selected))
+            self.assertEqual(record["invocation_path"], str(selected))
+            self.assertEqual(record["resolved_binary"]["path"], str(binary))
+            self.assertEqual(record["resolved_binary"]["sha256"], M.digest(binary.read_bytes()))
+            self.assertEqual(record["version"], "test LLD\n")
+            with self.assertRaisesRegex(M.EntryError, "version check failed"):
+                M.select_tool(str(binary))
+
     def test_uart_intent_does_not_establish_instruction_execution(self):
         kernel, image, report, config = inputs()
         strict, _ = M.validate_inputs(kernel, image, report, config)
