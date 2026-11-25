@@ -706,7 +706,8 @@ class SeedAndReportTests(unittest.TestCase):
                     M.read_seed(path)
 
     def run_report_fixture(self, root, *, snapshot=True, seed_file=True, adt="qemu-virt",
-                           mutate_seed=False, current_el=4, counter=62500000, partial=False):
+                           mutate_seed=False, current_el=4, counter=62500000, partial=False,
+                           clock_mode="host-virtual", qemu_driver=None):
         """Exercise report/input invalidation with authored bytes and fake tools.
 
         Neither the compiler nor QEMU is executed. Real entry execution remains
@@ -724,6 +725,7 @@ class SeedAndReportTests(unittest.TestCase):
                                loader_report=folder / "loader.json", seed_file=folder / "seed.bin" if seed_file else None,
                                adt=adt, cpu="cortex-a76", physical_base=0x50004000, boot_args_pa=0x52000000,
                                command_line="-v", timeout=10, debugger_snapshot=snapshot,
+                               clock_mode=clock_mode,
                                clang="fake-clang", linker="fake-linker", objcopy="fake-objcopy", qemu="fake-qemu")
         observed = []
         def fake_tool(_):
@@ -752,7 +754,7 @@ class SeedAndReportTests(unittest.TestCase):
         with patch.object(M.loader, "CONFIG", folder / "config.json"), \
                 patch.object(M, "select_tool", side_effect=fake_tool), \
                 patch.object(M.subprocess, "run", side_effect=fake_compile), \
-                patch.object(M, "run_qemu", side_effect=fake_qemu):
+                patch.object(M, "run_qemu", side_effect=qemu_driver or fake_qemu):
             report = M.run(args)
         self.assertEqual(report, json.loads((args.output / "report.json").read_text()))
         return report, observed
@@ -820,6 +822,66 @@ class SeedAndReportTests(unittest.TestCase):
             self.assertNotIn("address_encoding", report)
             self.assertIsInstance(report["layout"]["device_tree_va"], int)
             self.assertEqual(report["random_seed"]["source"], "generated")
+
+
+    def test_unknown_clock_mode_is_rejected_before_any_emulator_stage(self):
+        with tempfile.TemporaryDirectory() as folder:
+            report, observed = self.run_report_fixture(Path(folder), clock_mode="auto")
+            self.assertEqual(observed, [])
+            self.assertEqual(report["status"], "failed")
+            self.assertIn("unsupported clock mode", report["error"])
+            self.assertNotIn("qemu", report)
+            self.assertFalse(report["qemu_debugger_snapshot_verified"])
+
+    def test_clock_report_matches_actual_launch_and_preserves_generated_input_identity(self):
+        # Exercise the real launcher/report path while replacing the process,
+        # socket and target peer. This does not launch QEMU or any compiler.
+        actual_driver = M.run_qemu
+        records = []
+        class Process:
+            pid, returncode = 1234, None
+            def poll(self):
+                return self.returncode
+            def terminate(self):
+                self.returncode = 0
+            def wait(self, timeout):
+                return self.returncode
+        for mode in ("host-virtual", "instruction-1ns"):
+            with tempfile.TemporaryDirectory() as folder:
+                root = Path(folder)
+                peer = SnapshotRemote()
+                launched = []
+                def launch(argv, **_):
+                    launched.append(list(argv))
+                    serial = Path(argv[argv.index("-serial") + 1].removeprefix("file:"))
+                    serial.write_text("ENTRY-PROBE: CurrentEL=0x4\nENTRY-PROBE: CNTFRQ=0x3b9aca0\n")
+                    return Process()
+                def remote(connection, deadline, *_):
+                    peer.deadline = deadline
+                    return peer
+                connection = SimpleNamespace(connect=lambda _: None, close=lambda: None)
+                observed_entry = {"before_branch": {"pc": peer.layout["entry_pa"], "x0": 0x52000000, "cpsr": 5},
+                                  "after_branch": {"pc": peer.layout["entry_pa"] + 16, "x0": 0x52000000, "cpsr": 5}}
+                with patch.object(M.subprocess, "Popen", side_effect=launch), \
+                        patch.object(M.socket, "socket", return_value=connection), \
+                        patch.object(M, "Remote", side_effect=remote), \
+                        patch.object(M, "observe_entry", return_value=observed_entry):
+                    report, _ = self.run_report_fixture(root, clock_mode=mode, qemu_driver=actual_driver)
+                self.assertEqual(report["status"], "qemu_debugger_snapshot_observed")
+                self.assertEqual(len(launched), 1)
+                self.assertEqual(report["qemu"]["argv"], launched[0])
+                self.assertEqual(report["qemu"]["clock_mode"], mode)
+                argv = launched[0]
+                icount = [argv[i + 1] for i, value in enumerate(argv) if value == "-icount"]
+                self.assertEqual(icount, [] if mode == "host-virtual" else ["shift=0,align=off,sleep=off"])
+                self.assertEqual(report["qemu"]["icount"], icount[0] if icount else None)
+                if icount:
+                    at = argv.index("-icount")
+                    argv = argv[:at] + argv[at + 2:]
+                records.append(([value.replace(str(root), "<fixture>") for value in argv],
+                                {Path(item["path"]).name: (item["size"], item["sha256"])
+                                 for item in report["generated_inputs"]}))
+        self.assertEqual(records[0], records[1])
 
 
 class EvidenceTests(unittest.TestCase):

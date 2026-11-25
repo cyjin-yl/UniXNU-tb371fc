@@ -39,6 +39,8 @@ DEBUGGER_SYMBOL = "_DebuggerTrapWithState"
 STRING_LIMIT, STACK_LIMIT, VA_LIST_LIMIT, READ_CHUNK = 512, 256, 256, 64
 CORE_NAMES = tuple(f"x{i}" for i in range(31)) + ("sp", "pc", "cpsr")
 CPUS = ("cortex-a53", "cortex-a57", "cortex-a72", "cortex-a76", "cortex-a710")
+CLOCK_MODES = ("host-virtual", "instruction-1ns")
+INSTRUCTION_CLOCK = "shift=0,align=off,sleep=off"
 QUALIFICATION = {
     "qemu_kernel_entry_executed": False,
     "qemu_early_cpu_entry_observed": False,
@@ -625,16 +627,21 @@ def exception_summary(trace, serial, strict, image, layout):
 
 
 def run_qemu(args, output, layout, symbols, image, strict, report):
+    clock_mode = getattr(args, "clock_mode", "host-virtual")
+    require(clock_mode in CLOCK_MODES, "unsupported clock mode")
+    icount = INSTRUCTION_CLOCK if clock_mode == "instruction-1ns" else None
+    clock_args = ["-icount", icount] if icount is not None else []
     endpoint = output / "gdb.sock"
     require(len(os.fsencode(endpoint)) <= 100, "output path is too long for the local GDB socket")
     serial, trace = output / "serial.log", output / "exceptions.log"
-    argv = [args.qemu, "-M", "virt,virtualization=off,secure=off,gic-version=3", "-accel", "tcg",
+    argv = [args.qemu, "-M", "virt,virtualization=off,secure=off,gic-version=3", "-accel", "tcg", *clock_args,
             "-cpu", args.cpu, "-m", "512", "-smp", "1", "-display", "none", "-monitor", "none",
             "-nic", "none", "-no-reboot", "-serial", f"file:{serial}", "-kernel", str(output / "entry.bin"),
             "-d", "int", "-D", str(trace), "-S", "-gdb", f"unix:{endpoint},server=on,wait=off",
             "-device", f"loader,file={args.loaded_image},addr={layout['physical_base']:#x},force-raw=on",
             "-device", f"loader,file={output / 'boot-args.bin'},addr={layout['boot_args_pa']:#x},force-raw=on"]
     report["qemu"] = {"argv": argv, "cpu": args.cpu, "gic_version": 3, "timeout_seconds": args.timeout,
+                      "clock_mode": clock_mode, "icount": icount,
                       "max_file_bytes": MAX_LOG, "storage_devices": [], "network_devices": []}
     started = time.monotonic()
     connection = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
@@ -709,6 +716,7 @@ def run(args):
     inputs = []
     try:
         require(0.5 <= args.timeout <= 60, "timeout must be between 0.5 and 60 seconds")
+        require(getattr(args, "clock_mode", "host-virtual") in CLOCK_MODES, "unsupported clock mode")
         for name in ("kernel", "loaded_image", "loader_report"):
             setattr(args, name, regular(getattr(args, name)))
             require(getattr(args, name).parent not in output.parents, "output must not be inside an input directory")
@@ -849,6 +857,8 @@ def main():
     parser.add_argument("--debugger-snapshot", action="store_true",
                         help="stop at the real DebuggerTrapWithState entry and capture bounded read-only state")
     parser.add_argument("--cpu", choices=CPUS, default="cortex-a76")
+    parser.add_argument("--clock-mode", choices=CLOCK_MODES, default="host-virtual",
+                        help="QEMU default virtual clock or fixed one-nanosecond instruction counting")
     parser.add_argument("--command-line", default="-v serial=3 debug=0x14e")
     parser.add_argument("--timeout", type=float, default=10)
     parser.add_argument("--clang", default="clang")
