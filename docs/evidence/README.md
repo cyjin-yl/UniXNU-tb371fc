@@ -10,6 +10,12 @@
 
 实现、复现命令及范围见[入口诊断](../ROUTE_A_QEMU_ENTRY.md)。33 项定向回归本地与独立复跑均通过；它们与真实候选执行、随后 CI 分别记录，不分发内核或生成镜像。
 
+## DarwinBoot 初始映射前缀所有权：2026-11-26
+
+[本轮主机摘要](route-a-allocation-prefix-20261126.json) 记录固定 DarwinBoot 原版与修复版真实 C 的合成 memory-map 检查：12 项定向测试通过、0 跳过，独立 probe 的 8 组分配回合通过。原版没有拥有／清零 kernel PA 前的 16 KiB，修复后的 allocation、清零、cache 参数及失败释放范围一致。修改保持原 kernel PA 与 `boot_args.memSize`，并明确最后 16 KiB 广告内存仍未初始映射。
+
+完整来源、补丁与复现入口见 [分配前缀说明](../ROUTE_A_ALLOCATION_PREFIX.md)。[CI](../../.github/workflows/source-check.yml) 新增固定源码准备与 `ROUTE_A_ALLOCATION_SOURCES`，使这组真实 C 测试进入 `check_route_a.py`。本记录是 **host synthetic-map only**，不是新的 CI 成功收据；没有编译完整固件、调用真实 UEFI allocator、执行 cache／MMU 或启动内核与系统。
+
 ## 真实候选的 DarwinBoot 主机加载合同：2026-11-24
 
 平台候选 `46eff436…` 已通过固定 DarwinBoot 原始 parser／段复制代码、完整 local pointer 表和真实 `boot_args` 声明的主机检查。第三次执行返回 `host_loader_contract_verified`；两个原始失败报告及对应 driver 的精确恢复 patch 保留。完整实现、来源与条件见 [加载合同](../ROUTE_A_LOADER_CONTRACT.md)。

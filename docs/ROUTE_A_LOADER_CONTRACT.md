@@ -175,3 +175,5 @@ ROUTE_A_LOADER_SOURCES=/absolute/loader-public-sources \
 未设置 `ROUTE_A_LOADER_SOURCES` 时真实 production C 测试类明确跳过；纯结构测试仍可执行。[CI](../.github/workflows/source-check.yml) 会准备同一批固定源文件并设置该变量，pager C 源准备继续单独执行。
 
 下一项启动证据需要真实板级 ADT、可用且无保留区冲突的 UEFI memory map、完整 provider／prelink 依赖和匹配的固件交接产物。随后才能在可恢复的设备路径中观察真正的 `__start`／early CPU 执行及首个失败点；本次 host 合同不会替代那些门槛。
+
+2026-11-26 新增的 [DarwinBoot 分配前缀修复](ROUTE_A_ALLOCATION_PREFIX.md) 单独处理上文 2 MiB block 映射覆盖未拥有前缀的问题，并在合成 memory map 上执行提取的原版／修复版 allocator C。该工作没有更改本文历史输入或通过旗标，真实 UEFI 分配、末尾初始映射与设备启动继续各自验收。
