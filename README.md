@@ -23,7 +23,7 @@
 | 候选的有限编码核对 | 扫描 3 个区域、2,220,163 个候选 4 字节字；分类器识别的非 HINT PAuth 为 0，精确 POE2 TCHANGE 为 0；180 个 `XPACLRI` HINT | [独立记录](docs/evidence/route-a-kernel-candidate-audit-20261124.json)；不证明可达性，也不覆盖全部 ISA 或外部 archives |
 | 平台组件与真实 kernel callback | 固定 `ArmDTPlatform`、`ArmCpu` 实际编译，真实 `cpu.c` callback 接线对象完成独立链接；21,942,456 字节新候选，强／弱未定义均为 0 | [平台结果](docs/ROUTE_A_PLATFORM_RESULT.md)；完整 provider 闭包、运行时匹配与设备 entry 继续单独验收 |
 | 真实候选的 DarwinBoot 主机装载 | 原 C parser／复制代码通过；10 段、23,035,904 字节映像逐字节一致；102,103 条 local pointer 记录全部核验，`boot_args` ABI 一致 | [实际结果与前两次失败](docs/ROUTE_A_LOADER_CONTRACT.md)；固定虚拟地址合同，未执行 UEFI 分配、MMU 交接或设备内核入口 |
-| 独立 QEMU 真实内核入口 | 固定候选在 EL1h 实际单步执行 `__start` → `_start_first_cpu`，随后捕获高虚拟地址的 Undefined Instruction | [三次实际尝试](docs/ROUTE_A_QEMU_ENTRY.md)；标准 `virt`／Cortex-A76、合成 ADT；完整 MMU／slide、TB371FC 实机和 OS boot 资格继续独立验收 |
+| 独立 QEMU 入口、快照与计时诊断 | 实际入口单步、run004 完整有限 panic 快照；相同 guest 输入的 run005 首异常为 Data Abort，快照因原窗口与长度限制保留 `partial`／失败 | [五次实际尝试](docs/ROUTE_A_QEMU_ENTRY.md)；标准 `virt`／Cortex-A76、合成 ADT；新故障依赖、完整 MMU／slide、TB371FC 实机和 OS boot 继续独立验收 |
 | 首轮编译失败保留 | 716 个目标文件后因 fileset panic 的无条件 PAuth builtin 退出；旧目录和日志保留 | [历史失败证据](docs/evidence/route-a-first-kernel-failure-20261124.json)；第二轮已越过该阻塞 |
 | 主机工具实际验收 | 普通 ARM64 样本链接、MIG 接口生成、LZFSE 往返 **3/3 组通过** | 自写样本；完整 XNU、SDK 和定制 Clang 资格单独验证 |
 | 真实 dyld 局部 TPRO 路径 | 4 个分支均匹配；2 个条件区域闭合，2 个仍有调用／异常／间接转移缺口 | 固定原始 dyld；全部 236 处与早期运行时路径仍未证明 |
@@ -51,7 +51,7 @@
 | [通用内核编译／链接结果](docs/ROUTE_A_GENERIC_KERNEL_RESULT.md) | 第二轮成功候选、实际 helper 代码、有限编码核对和剩余资格 |
 | [平台组件与 callback 链接](docs/ROUTE_A_PLATFORM_RESULT.md) | 固定 provider 编译、真实 callback C 对象与独立内核候选 |
 | [DarwinBoot 加载与启动参数](docs/ROUTE_A_LOADER_CONTRACT.md) | 生产 parser／复制代码、真实候选装载合同、入口 trampoline 与 boot_args ABI |
-| [独立 QEMU 入口与首异常](docs/ROUTE_A_QEMU_ENTRY.md) | 固定候选的实际入口单步、合成启动输入、首异常与三个原始尝试 |
+| [独立 QEMU 入口、快照与计时诊断](docs/ROUTE_A_QEMU_ENTRY.md) | 入口单步、完整／不完整快照、固定计时模型对照与五次实际尝试 |
 | [首个编译阻塞与 CPU 修复](docs/ROUTE_A_FILESET_PTRAUTH.md) | fileset panic 能力分支、实际返回地址 codegen 与生产 CPU 约定 |
 | [内核 TPRO 能力发布核对](docs/ROUTE_A_TPRO_KERNEL_PUBLICATION.md) | apple 向量、task security_config、commpage 与最终配置边界 |
 | [输入提取方法](docs/ROUTE_A_EXTRACTION.md) | 官方镜像定位、分段读取与 APFS type 4 支持 |

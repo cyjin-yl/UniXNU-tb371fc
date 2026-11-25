@@ -18,6 +18,44 @@ run003 整个诊断入口在北京时间 **02:34:28–02:34:44** 执行，其中
 
 本次已观察到高虚拟地址执行和异常转入，但没有独立完成整个 MMU／slide 交接验收。两个 QEMU 入口标志为 true；UEFI、板级 ADT、TB371FC 实机与 OS boot 资格仍为 false。前两次失败不回填为成功；本地及独立的 33 项定向回归均通过，实际 CI 以相应提交的作业结果为准。
 
+## run004：同一启动输入下的 panic 快照
+
+北京时间 **2026-11-26 03:06:20–03:06:32**，`d9052126` 的显式快照模式完成真实执行。它复用了 run003 的 256 字节 seed；独立结束检查确认旧报告未变，`entry.bin`（4,344 字节）、`boot-args.bin`（16,384 字节）及合成 ADT（1,780 字节）的长度和 SHA-256 均与 run003 一致。观察方式增加了 debugger 入口断点，运行时确定性没有因此得到保证。[run004 公开证据](evidence/route-a-qemu-debugger-20261126.json)保存原报告、重放检查和各输入的完整摘要。
+
+原入口单步仍通过；随后在 `_DebuggerTrapWithState` 的首指令前停于 `0xfffffff0072f5ef4`，实际指令字节 `ff0306d1` 与固定候选一致，PSTATE 为 `0x600003c4`（AArch64 EL1t）。全部 34 个 core 寄存器已捕获，`x0=0x3` 表示 panic，`x1` 字符串为 `panic`，`x2` 格式为 `%s %s (start: %llu, end: %llu)%s`。
+
+| 有限读取 | 实际读取／上限 | 结果 |
+| --- | --- | --- |
+| message、panic format | 各 64／512 字节 | 均完整，已见 NUL，无截断 |
+| `x3` cursor cell | 8／8 字节 | `0xfffffff007d47978` → `0xfffffff007d47990` |
+| 参数槽、SP 栈窗口 | 各 256／256 字节 | 均完整，没有额外追踪指针或回溯 |
+
+参数槽中已捕获的第二个字符串为 `1.984 ms >= 1.920 ms`，第五个字符串为空。start 为 **2,827,029 ticks**，end 为 **2,951,072 ticks**，差值 **124,043 ticks**；按现场记录的 **62.5 MHz**，对应 **1.984688 ms**。第一个字符串 `preemption disable timeout exceeded:` 来自同一固定候选的静态只读提取，公开证据单独标记其来源，未把它写成本次额外 guest 读取。
+
+caller 归因也使用实际指令核对：`x7-4 = 0xfffffff00736cb4c` 位于 `_kern_timeout_try_panic`，原字 `0x941e9b15` 解码为到 `_panic` 的 `BL`；`x30-4 = 0xfffffff0072f74f0` 的 `0x97fffa81` 则调用 `_DebuggerTrapWithState`。`x7` 本身恰位于下一 `_timer_init` 符号边界，不能直接用返回地址的最近符号命名 panic 来源。
+
+QEMU 实际运行 **0.98557 秒**；断点移除后保持暂停，由主机 SIGTERM 停止，退出码 0 且已回收，输入复核全部不变。本次获得完整有限快照资格；它没有继续执行 debugger 函数体，因此 `exception_observed=false` 不代表原异常已经解决。原报告为 **26,398 字节**、SHA-256 `931db1b66f0c30ea58980f470a386e345e3e2be6bfb0582632ee475412b25071`。计时阈值与时钟行为的进一步来源仍需独立核对，不能据这一次观察把 TCG 等机制判为唯一原因；完整 MMU／slide、板级、实机和 OS boot 资格保持 false。
+
+## run005：指令计时下的新异常与不完整快照
+
+北京时间 **2026-11-26 03:26:59–03:27:10**，`67470a7` 使用固定 `-icount shift=0,align=off,sleep=off` 完成真实尝试。独立检查确认 seed、布局、工具与三份 guest 生成物仍和 run003／run004 一致；除输出位置外，QEMU 选项只增加上述 icount 参数。runner 源码加入了 clock-mode 控制与报告字段，**不能说观察器程序本身的字节也完全相同**。[run005 公开证据](evidence/route-a-qemu-instruction-clock-20261126.json)保存两版 runner 身份及这一区分。
+
+入口分支仍实际单步通过，本次首个异常变为 **Data Abort**：ELR／VA `0xfffffff007a06264`、FAR `0x150`、ESR `0x96000005`，原指令字 `0xf940a900`。异常随后进入 panic 路径，在 `_DebuggerTrapWithState` 入口再次捕获了全部 34 个 core 寄存器。但完整快照门槛未通过：
+
+| 字段 | 实际结果 |
+| --- | --- |
+| message | 64 字节内取得完整 `panic` 字符串 |
+| panic format | 已读 512 字节，未见 NUL，明确记为 `truncated` |
+| `x3` cell | `0xfffffff10fa1c848` 超出原允许窗口，读取前拒绝，0 字节 |
+| 参数槽 | cell 未读，记为 `not-read` |
+| SP 栈窗口 | `0xfffffff10fa1c690` 超出原允许窗口，读取前拒绝，0 字节 |
+
+原允许窗口仍为 `[0xfffffff007004000, 0xfffffff016e00000)`。窗口拒绝只说明本观察器没有资格读取这些地址，不证明 guest 的 SP 或 `x3` 本身错误。没有为了该结果扩大读窗口、增加新观察点或放宽字符串完整性检查。报告准确保留 `debugger_snapshot.status=partial`、`qemu_debugger_snapshot_verified=false`、整体 `status=failed`，诊断器返回 **2**；这不是完整快照或超时结果。
+
+固定候选的独立静态核对把 fault 定位到 `_crypto_random_kmem_ctx_size`（起点 `0xfffffff007a06258`）：`LDR X0, [X8, #0x150]` 前序从 `_g_crypto_funcs` cell `0xfffffff0071f9a50` 取得 X8。对应源码通过 `g_crypto_funcs->random_kmem_ctx_size_fn()` 调度；注册源码把该全局指针初始置为 NULL，再由 `register_crypto_functions` 赋值，而 VM map 的早期调用注明 corecrypto 应已 setup。**这定位了 provider 调度的前置条件，尚未动态证明故障时 provider 未注册。** 仍需故障前的 X8、该全局 cell 和 LR；稍后 debugger 捕获的 X8 不能替代故障现场值。`x7-4 = 0xfffffff007b2174c` 的原字 `0x97ffc815` 另确认是 `_panic_with_thread_kernel_state` 中调用 `_panic` 的 `BL`。
+
+QEMU 运行 **1.450781 秒**后由主机 SIGTERM 停止，退出码 0 且已回收；这一主机退出码与诊断器失败码分开记录。全部声明输入复核不变。原始报告为 **26,996 字节**、SHA-256 `bf1125b86142f2997168576991430b097f75ab484a41968a55b33614b3b72fb6`。本次只表明固定计时模型下观察到不同异常及观察器的现有边界，未证明唯一根因、稳定推进、完整 MMU／slide、实机或 OS 启动。
+
 ## 输入与布局
 
 输入为固定的 `46eff436…` 平台候选、对应 loader 报告和内存映像。脚本重算候选与映像摘要、检查 loader 的三个实际通过标志与输入复核结果，并重新解析真实段、local relocation 和入口符号。它逐字节重建完整内存映像，包括段间间隙和 BSS；修改映像并同步修改报告摘要也不能获得通过。
@@ -59,6 +97,36 @@ python3 scripts/probe_route_a_qemu_entry.py \
 
 工具可以通过 `--clang`、`--linker`、`--objcopy`、`--qemu` 指定。CPU 选择必须真实存在于所选 QEMU；不把 A76／A710 模型的结果当作 Snapdragon 870 实机资格。单次运行最多 60 秒，QEMU 的每份输出文件有 16 MiB 硬上限。观察第一条 QEMU 异常、达到时间／日志限制或 QEMU 退出后即结束；必要时先 SIGTERM、两秒后 SIGKILL，并回收子进程。异常是否致命仍由保存的日志与代码位置判断。
 
+## 可选 debugger 入口快照与 seed 复用
+
+在上述命令中显式加入 `--debugger-snapshot`，才会启用第二个观察点。脚本先完成原来的 `__start` 断点与单步，再在固定候选自身的 `_DebuggerTrapWithState` 入口设置硬断点。地址由实际 Mach-O 的唯一强 section 符号解析，并核对纯指令 section、同一可执行段、文件后备范围与 4 字节对齐；没有人工指定地址的参数。命中后还要验证 PC、AArch64 EL1 状态和与候选一致的原始首指令字节。
+
+观察器保存全部 34 个 core 寄存器及原始 core 回复，并仅通过 GDB `m` 读取以下字段：
+
+| 字段 | 固定上限与解释 |
+| --- | --- |
+| `x1` / message、`x2` / panic format | 各最多 512 字节，遇 NUL 停止；原始字节为准，UTF-8 文本只供阅读 |
+| `x3` / `va_list*` cell | 恰好 8 字节，按 LE64 读出一个 cursor |
+| cursor 的参数槽 | 最多 256 字节原始数据；只做上述一次间接读 |
+| `sp` 栈窗口 | 最多 256 字节，不回溯栈帧 |
+| `x7`、`x30`、`x29` | 保存原始 caller / LR / FP 值，不自动归因到最近符号 |
+
+Darwin ARM64 的 `va_list` 是 `char*`，变参使用 8 字节栈槽，见 [Apple 官方 ABI 文档](https://developer.apple.com/documentation/xcode/writing-arm64-code-for-apple-platforms#Update-code-that-passes-arguments-to-variadic-functions)。这里的参数是 `va_list*`，因此先读 cursor cell，再读有限参数槽；不会将 guest 的 format string 交给 host `printf`，也不做通用指针追踪。所有实际读取的非空指针必须落在声明的初始线性映射与 QEMU RAM 的交集中，每个请求最多 64 字节且不跨 4 KiB 边界，地址计算不得溢出 uint64。这个窗口是读取上界，仍需实际 GDB 读取成功，不构成页表验证。
+
+`x1`／`x2`／`x3` 或变参 cursor 的合法 NULL 明确记为 `null`，不读取；SP 不能为 NULL。未知／越界指针、不可读 cell、非法 cursor、槽空间不足、字符串没有 NUL、超时与断点移除失败分别保留状态。已经取得的寄存器、各段原始字节和错误回复仍保留在 `debugger_snapshot` 中。只有所需字段完整读取或合法为空、断点清理及后续输入／EL／计数器检查均通过，才会得到 `qemu_debugger_snapshot_verified=true` 和 `status=qemu_debugger_snapshot_observed`；任何截断都不能获得这一完整快照标志。此模式的报告地址及寄存器用十六进制字符串表示，以避免高虚拟地址在 JSON 使用方被舍入。
+
+快照使用与原入口观察相同的总超时。命中后不再继续或单步，不执行函数体或跳过 trap；移除硬断点后保持暂停，由主机停止并回收 QEMU。寄存器和内存均不写入，原内核文件不改动。没有传入该选项时，仍采用原来的入口证明后运行至首异常／时间限制流程。
+
+可另加 `--seed-file /absolute/path/run003-random-seed.bin`，复用恰好 256 字节的合成 ADT seed。只接受普通文件，拒绝 symlink、FIFO、目录与错误长度，且只适用于 `--adt qemu-virt`。seed 的输入身份与结束复核纳入报告；默认仍生成新 seed。要声称复用了旧启动输入，必须在新尝试中独立比对旧、新 ADT、`boot-args.bin` 和 `entry.bin` 的实际摘要，并核对 CPU、布局、命令行与原工具／源码身份；指定同一 seed 本身不代表整个实验已冻结，也不改变旧尝试的报告。
+
+## 单变量计时诊断
+
+`--clock-mode host-virtual` 是默认值，保留 run004 的原 QEMU 参数，不添加 `-icount`。显式选择 `--clock-mode instruction-1ns` 时，只增加固定参数 `-icount shift=0,align=off,sleep=off`。没有任意 QEMU extra-args 接口；未知模式在启动 QEMU 前拒绝。报告中的 `qemu.clock_mode`、`qemu.icount` 与实际执行的完整 `argv` 同时记录。
+
+固定 [QEMU v10.0.13／`98f88efe` 的 icount 实现](https://github.com/qemu/qemu/blob/98f88efe8f07067667b8d9b1a5ce9551d34036c1/accel/tcg/icount-common.c)按 instruction count 左移 shift 得到纳秒，`shift=0` 对应每条 guest instruction 1 ns；`sleep=off` 下空闲时间还可推进至下一 timer。[TCG 的 virtual clock 路径](https://github.com/qemu/qemu/blob/98f88efe8f07067667b8d9b1a5ce9551d34036c1/accel/tcg/tcg-accel-ops.c)用于这一模式。它是计时模型隔离实验，不是周期精确模拟或处理器性能测量。
+
+两种模式使用同一 CPU／GIC、62.5 MHz 计数器检查、seed／ADT／boot buffer／trampoline 生成方式及 guest panic／timeout 代码。比较实验仍需独立核对生成物摘要。主机观察总时限不变；在截止前没有命中 debugger 观察点，只能记为未观察到，快照资格保持 false，不能据此宣称 panic 消失、早期初始化完成或 TB371FC／OS 启动通过。
+
 ## 结果怎么读
 
 输出包括 `report.json`、原始 UART／异常／stderr、编译命令与输出、trampoline、boot buffer 和合成 ADT。报告保存输入、工具及源码身份、QEMU 命令、实际 stop reason／退出码、子进程回收状态，以及入口单步前后寄存器。对首个异常能映射回候选时，另记虚拟地址、所属段与原指令字。
@@ -75,4 +143,4 @@ python3 scripts/probe_route_a_qemu_entry.py \
 python3 -m unittest discover -s tests -p test_route_a_qemu_entry.py -v
 ```
 
-回归覆盖输入改写、BSS 补零、入口证据、物理布局、ADT 资源一致性、GDB 校验／分包／RLE、意外 PC 以及 UART 意图与实际执行的区别。它们使用自写合成 Mach-O，不需要私有候选，也不会启动 QEMU；真实候选的运行结果另存本次证据，不能从单元测试推断。
+回归覆盖输入改写、BSS 补零、入口证据、物理布局、ADT 资源一致性、GDB 校验／分包／RLE、意外 PC 以及 UART 意图与实际执行的区别。可选快照另覆盖真实 nlist 归属、完整 core 包、指针／页／字节／时间边界、NULL、截断、一次变参间接读、partial 证据、seed 普通文件与复核、后置检查撤销通过标志及默认路径兼容性。它们使用自写合成 Mach-O，不需要私有候选，也不会启动 QEMU；真实候选的运行结果另存本次证据，不能从单元测试推断。

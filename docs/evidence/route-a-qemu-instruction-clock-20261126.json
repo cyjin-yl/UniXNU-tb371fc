@@ -1,0 +1,406 @@
+{
+  "schema": "route-a-qemu-instruction-clock-public-evidence-v1",
+  "date_local": "2026-11-26",
+  "timezone": "Asia/Shanghai",
+  "attempt": "run005",
+  "source_commit": "67470a73f62b10e6cb0dc2389e6c440723abbf61",
+  "previous_evidence": "route-a-qemu-debugger-20261126.json",
+  "scope": "Fixed instruction-count timing experiment in standard QEMU virt; real entry plus first Data Abort and a deliberately incomplete bounded debugger snapshot.",
+  "summary_not_original_report": true,
+  "status": "failed",
+  "runner_exit": 2,
+  "error": "EntryError: debugger snapshot was not complete; inspect partial evidence",
+  "original_report": {
+    "size": 26996,
+    "sha256": "bf1125b86142f2997168576991430b097f75ab484a41968a55b33614b3b72fb6"
+  },
+  "replay_check_record": {
+    "size": 878,
+    "sha256": "f850867f7cb7fe3cd1f8b587acbee02c20daab7967d674a6f7e787969431196e"
+  },
+  "input_identities": {
+    "kernel": {
+      "size": 21942456,
+      "sha256": "46eff436250d905e9f3aec59dbcc8c04d594e614e790860236917c7cbfe39f1b"
+    },
+    "loaded_image": {
+      "size": 23035904,
+      "sha256": "3b7fd3784364b4392b2b0fcded0ec0d99dc2075dd149fd32972a1709fce50f5c"
+    },
+    "loader_report": {
+      "size": 38468,
+      "sha256": "300da6b39a2fa06a7cde38043eca046ce27e4be5c96f55a6afa6aff758f7fb98"
+    },
+    "seed": {
+      "sha256": "6a4a031fd89e80230e7cc0097b18ee9719dedf566db9b5fb78e08eb22074745e",
+      "size": 256,
+      "source": "file"
+    }
+  },
+  "generated_input_replay": {
+    "schema": "route-a-frozen-replay-v1",
+    "checked_utc": "2026-11-25T19:27:10.789558+00:00",
+    "runner_exit": 2,
+    "original_report_unchanged": true,
+    "checks": [
+      {
+        "name": "entry.bin",
+        "expected_size": 4344,
+        "expected_sha256": "c3f2bf6eb859cdc75bfcfc9de44a09cfae1bdbd17ab6beb3def60c89f85b2934",
+        "original_unchanged": true,
+        "new_identical": true
+      },
+      {
+        "name": "boot-args.bin",
+        "expected_size": 16384,
+        "expected_sha256": "602758e1e213c356c309e8ff8910cf20787cee50c6e6d4de78b6842180d4bfab",
+        "original_unchanged": true,
+        "new_identical": true
+      },
+      {
+        "name": "synthetic-qemu.adt",
+        "expected_size": 1780,
+        "expected_sha256": "21c6a1795d429cda7c380a5d68dd8d8f33eef493733bc42f97767a8b19edac1b",
+        "original_unchanged": true,
+        "new_identical": true
+      }
+    ],
+    "identical": true,
+    "scope": "entry.bin, boot-args.bin and ADT match run003/run004; this does not claim identical observer program bytes or runtime determinism."
+  },
+  "comparison_to_run004": {
+    "guest_layout_adt_seed_unchanged": true,
+    "generated_input_identities_unchanged": true,
+    "tools_unchanged": true,
+    "qemu_argv_same_except_output_paths_and_fixed_icount": true,
+    "only_changed_qemu_option": [
+      "-icount",
+      "shift=0,align=off,sleep=off"
+    ],
+    "runner_source_bytes_identical": false,
+    "run004_runner": {
+      "source_commit": "d9052126d00732a217f2d1b529193f2793576cda",
+      "size": 48585,
+      "sha256": "fbe8a9c9a2345e15c5b8f05711e27460a0f7eab0f5652f25c8040e2bedfdd30d"
+    },
+    "run005_runner": {
+      "source_commit": "67470a73f62b10e6cb0dc2389e6c440723abbf61",
+      "size": 49324,
+      "sha256": "b5ac713a034cf82a9c35fed4ced6d5fa0531788526cbe886fb178312a265c9b4"
+    },
+    "runner_source_change_scope": "Explicit clock-mode control and its report fields; original debugger observation and bounds remain unchanged.",
+    "causal_limit": "One observed comparison; it does not prove unique root cause, stable progress, or physical CPU behavior."
+  },
+  "started_at_utc": "2026-11-25T19:26:59.195693+00:00",
+  "finished_at_utc": "2026-11-25T19:27:10.482412+00:00",
+  "machine": {
+    "name": "virt",
+    "accelerator": "tcg",
+    "cpu": "cortex-a76",
+    "cpus": 1,
+    "gic_version": 3,
+    "qemu_version": "QEMU emulator version 10.0.13 (Debian 1:10.0.13+ds-0+deb13u1)\nCopyright (c) 2003-2025 Fabrice Bellard and the QEMU Project developers",
+    "layout": {
+      "boot_args_pa": "0x52000000",
+      "bootstrap_prefix_start": "0x50000000",
+      "conservative_bootstrap_mapped_end": "0x5fe00000",
+      "device_tree_pa": "0x52001000",
+      "device_tree_va": "0xfffffff009001000",
+      "entry_pa": "0x50511488",
+      "memory_size": 268419072,
+      "physical_base": "0x50004000",
+      "ram_base": "0x40000000",
+      "ram_size": 536870912,
+      "synthetic_fixture": true,
+      "top_of_kernel_data": "0x52004000",
+      "virtual_slide": "0x0"
+    },
+    "adt": {
+      "board_identity": false,
+      "bytes": 1780,
+      "kind": "qemu-virt",
+      "sha256": "21c6a1795d429cda7c380a5d68dd8d8f33eef493733bc42f97767a8b19edac1b",
+      "synthetic": true
+    }
+  },
+  "entry_observation": {
+    "after_branch": {
+      "cpsr": "0x800003c5",
+      "pc": "0x5051305c",
+      "x0": "0x52000000"
+    },
+    "before_branch": {
+      "cpsr": "0x800003c5",
+      "pc": "0x50511488",
+      "x0": "0x52000000"
+    },
+    "gdb_stop_after": "T05thread:01;",
+    "gdb_stop_before": "T05thread:01;",
+    "instruction_bytes": "f5060014",
+    "scope": "one unchanged kernel B instruction actually single-stepped in QEMU; early CPU body not yet qualified"
+  },
+  "first_exception": {
+    "CNTFRQ": 62500000,
+    "CurrentEL": "0x4",
+    "MMFR0": "0x101122",
+    "exception_observed": true,
+    "fault_address_space": "kernel-virtual",
+    "fault_opcode": "0xf940a900",
+    "fault_pc": "0xfffffff007a06264",
+    "fault_segment": "__TEXT_EXEC",
+    "fault_va": "0xfffffff007a06264",
+    "first_exception": {
+      "cpu": 0,
+      "description": "Data Abort",
+      "number": 4
+    },
+    "qemu_esr_text": "0x25/0x96000005",
+    "qemu_trace_prefix": "Taking exception 4 [Data Abort] on CPU 0\n...from EL1 to EL1\n...with ESR 0x25/0x96000005\n...with FAR 0x150\n...with SPSR 0x600003c4\n...with ELR 0xfffffff007a06264\n...to EL1 PC 0xfffffff00750c000 PSTATE 0x4003c5\n",
+    "far_el1_from_trace": "0x150",
+    "esr_el1_from_trace": "0x96000005",
+    "fault_register_snapshot_captured": false
+  },
+  "fixed_candidate_static_review": {
+    "candidate_sha256": "46eff436250d905e9f3aec59dbcc8c04d594e614e790860236917c7cbfe39f1b",
+    "scope": "Independent read-only fixed-candidate symbols and file bytes; not a new guest memory read.",
+    "fault_site": {
+      "va": "0xfffffff007a06264",
+      "symbol": "_crypto_random_kmem_ctx_size",
+      "symbol_va": "0xfffffff007a06258",
+      "segment": "__TEXT_EXEC",
+      "file_offset": "0xa02264",
+      "instruction_bytes": "00a940f9",
+      "instruction_word": "0xf940a900",
+      "decoded_instruction": "LDR X0, [X8, #0x150]",
+      "x8_at_fault_observed": false,
+      "preceding_global_pointer_load": {
+        "symbol": "_g_crypto_funcs",
+        "cell_va": "0xfffffff0071f9a50",
+        "destination_register": "x8",
+        "runtime_value_not_observed": true
+      }
+    },
+    "panic_callsite": {
+      "return_register": "x7",
+      "observed_return_va": "0xfffffff007b21750",
+      "callsite_va": "0xfffffff007b2174c",
+      "symbol": "_panic_with_thread_kernel_state",
+      "symbol_va": "0xfffffff007b2155c",
+      "file_offset": "0xb1d74c",
+      "instruction_bytes": "15c8ff97",
+      "instruction_word": "0x97ffc815",
+      "decoded_bl_target": "_panic",
+      "decoded_bl_target_va": "0xfffffff007b137a0"
+    },
+    "limit": "The function and callsite attribution do not establish provider initialization or the fault-time base-register value.",
+    "provider_dispatch_precondition": {
+      "reviewed_source_contracts": [
+        {
+          "source": "libkern/crypto/corecrypto_rand.c",
+          "lines": "74-76",
+          "contract": "crypto_random_kmem_ctx_size dispatches through g_crypto_funcs->random_kmem_ctx_size_fn()."
+        },
+        {
+          "source": "register_crypto.c",
+          "lines": "34-47",
+          "contract": "g_crypto_funcs is initialized to NULL; register_crypto_functions assigns it."
+        },
+        {
+          "source": "vm_map_store.c",
+          "lines": "710-725",
+          "contract": "EARLY_BOOT/MIDDLE initialization calls this routine; the source comment requires corecrypto setup beforehand."
+        }
+      ],
+      "provider_dispatch_precondition_identified": true,
+      "provider_unregistered_at_fault_proven": false,
+      "needed_dynamic_confirmation_before_fault": [
+        "x8",
+        "_g_crypto_funcs cell at 0xfffffff0071f9a50",
+        "x30 / LR"
+      ]
+    }
+  },
+  "debugger_snapshot": {
+    "breakpoint_installed": true,
+    "breakpoint_remove_response": "OK",
+    "breakpoint_removed": true,
+    "breakpoint_set_response": "OK",
+    "callers": {
+      "frame_pointer_x29": "0xfffffff10fa1c830",
+      "link_register_x30": "0xfffffff0072f74f4",
+      "panic_caller_x7": "0xfffffff007b21750",
+      "scope": "raw register values; no caller attribution or frame unwinding"
+    },
+    "debugger_entry_observed": true,
+    "error": "one or more bounded memory fields failed or were truncated",
+    "gdb_stop": "T05thread:01;",
+    "gdb_stop_chars": 13,
+    "memory_complete": false,
+    "read_window": {
+      "end_exclusive": "0xfffffff016e00000",
+      "scope": "declared linear RAM upper bound; actual reads must also succeed",
+      "start": "0xfffffff007004000"
+    },
+    "registers": {
+      "cpsr": "0x604003c4",
+      "pc": "0xfffffff0072f5ef4",
+      "sp": "0xfffffff10fa1c690",
+      "x0": "0x3",
+      "x1": "0xfffffff00705156c",
+      "x10": "0x6c3b92",
+      "x11": "0x0",
+      "x12": "0xfffffff007b76f60",
+      "x13": "0xfffffff10fa1ce30",
+      "x14": "0x96000005",
+      "x15": "0x150",
+      "x16": "0x600003c4",
+      "x17": "0xfffffff0070a7532",
+      "x18": "0x0",
+      "x19": "0xfffffff0070976a0",
+      "x2": "0xfffffff0070976a0",
+      "x20": "0x0",
+      "x21": "0xfffffff10fa1c848",
+      "x22": "0xfffffff007b21750",
+      "x23": "0x0",
+      "x24": "0x0",
+      "x25": "0x1",
+      "x26": "0x0",
+      "x27": "0x61f4000",
+      "x28": "0xfffffff0070976a0",
+      "x29": "0xfffffff10fa1c830",
+      "x3": "0xfffffff10fa1c848",
+      "x30": "0xfffffff0072f74f4",
+      "x4": "0x0",
+      "x5": "0x0",
+      "x6": "0x1",
+      "x7": "0xfffffff007b21750",
+      "x8": "0x0",
+      "x9": "0x0"
+    },
+    "registers_captured": true,
+    "requested": true,
+    "status": "partial",
+    "target": {
+      "file_offset": "0x2f1ef4",
+      "instruction_bytes": "ff0306d1",
+      "n_type": "0xf",
+      "section": "__text",
+      "section_ordinal": 16,
+      "segment": "__TEXT_EXEC",
+      "symbol": "_DebuggerTrapWithState",
+      "va": "0xfffffff0072f5ef4"
+    },
+    "verified": false,
+    "instruction_read": {
+      "address": "0xfffffff0072f5ef4",
+      "bytes_read": 4,
+      "data_hex": "ff0306d1",
+      "limit_bytes": 4,
+      "status": "complete"
+    },
+    "bounded_memory": {
+      "message": {
+        "address": "0xfffffff00705156c",
+        "bytes_read": 64,
+        "limit_bytes": 512,
+        "nul_offset": 5,
+        "nul_terminated": true,
+        "status": "complete",
+        "truncated": false,
+        "captured_bytes_sha256": "1610f40e00e9ad665047c976771c03fd06d9267165b8a45d989b994942c0833a",
+        "gdb_memory_requests": 1,
+        "text_utf8": "panic"
+      },
+      "panic_format": {
+        "address": "0xfffffff0070976a0",
+        "bytes_read": 512,
+        "limit_bytes": 512,
+        "nul_terminated": false,
+        "status": "truncated",
+        "truncated": true,
+        "truncation_reason": "byte-limit",
+        "captured_bytes_sha256": "9c0ec1802ef719cdc38768f8f441a6eac1922139e16ab65b9bd63ee120c026b5",
+        "gdb_memory_requests": 8,
+        "text_prefix": "%s at pc 0x%016llx, lr 0x%016llx (saved state: %p%s)\n\t  x0:  0x%016llx x1:  0x%016llx  x2:  0x%016llx  x3:  0x%016llx\n\t  x4:  0x",
+        "published_text_prefix_chars": 128,
+        "complete_text_not_available": true
+      },
+      "stack": {
+        "address": "0xfffffff10fa1c690",
+        "bytes_read": 0,
+        "error": "EntryError: pointer is outside the declared linear RAM window, overflows, or is unaligned",
+        "limit_bytes": 256,
+        "status": "invalid-pointer",
+        "captured_bytes_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "gdb_memory_requests": 0,
+        "outside_declared_read_window": true,
+        "scope": "Observer policy rejected this address before any memory request; guest pointer validity is not established."
+      },
+      "va_list_cell": {
+        "address": "0xfffffff10fa1c848",
+        "bytes_read": 0,
+        "error": "EntryError: pointer is outside the declared linear RAM window, overflows, or is unaligned",
+        "limit_bytes": 8,
+        "status": "invalid-pointer",
+        "captured_bytes_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "gdb_memory_requests": 0,
+        "outside_declared_read_window": true,
+        "scope": "Observer policy rejected this address before any memory request; guest pointer validity is not established."
+      },
+      "va_list_slots": {
+        "bytes_read": 0,
+        "reason": "va_list_cell_incomplete",
+        "status": "not-read",
+        "captured_bytes_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "gdb_memory_requests": 0
+      }
+    },
+    "raw_core_reply": "03000000000000006c150507f0ffffffa0760907f0ffffff48c8a10ff1ffffff0000000000000000000000000000000001000000000000005017b207f0ffffff00000000000000000000000000000000923b6c00000000000000000000000000606fb707f0ffffff30cea10ff1ffffff05000096000000005001000000000000c40300600000000032750a07f0ffffff0000000000000000a0760907f0ffffff000000000000000048c8a10ff1ffffff5017b207f0ffffff000000000000000000000000000000000100000000000000000000000000000000401f0600000000a0760907f0ffffff30c8a10ff1fffffff4742f07f0ffffff90c6a10ff1fffffff45e2f07f0ffffffc4034060",
+    "rsp_core_reply_ascii_sha256": "3274e1b5d1ead00dbf68a4d44483eb9700c2122491728d4ab909bdb4a1513028",
+    "register_state_scope": "Registers belong to the later DebuggerTrapWithState entry, not the earlier Data Abort instruction.",
+    "resumed_after_snapshot": false,
+    "observer_guest_memory_or_register_writes": false
+  },
+  "execution": {
+    "clock_mode": "instruction-1ns",
+    "elapsed_seconds": 1.450781,
+    "exit_code": 0,
+    "icount": "shift=0,align=off,sleep=off",
+    "max_file_bytes": 16777216,
+    "network_devices": [],
+    "reaped": true,
+    "stop_reason": "debugger-snapshot-incomplete",
+    "storage_devices": [],
+    "termination": "SIGTERM",
+    "timeout_seconds": 10.0
+  },
+  "input_recheck": {
+    "changed_paths": [],
+    "unchanged": true
+  },
+  "qualification": {
+    "board_adt_verified": false,
+    "os_boot_verified": false,
+    "qemu_debugger_snapshot_verified": false,
+    "qemu_early_cpu_entry_observed": true,
+    "qemu_kernel_entry_executed": true,
+    "runtime_kernel_slide_verified": false,
+    "tb371fc_kernel_qualified": false,
+    "uefi_allocation_verified": false
+  },
+  "validation": {
+    "existing_focused_tests_passed": 61,
+    "existing_focused_tests_skipped": 0,
+    "independent_clock_tests_passed": 2,
+    "additional_tests_run_for_this_evidence": false,
+    "ci_for_this_change": "not recorded here; consult the exact commit workflow"
+  },
+  "limits": [
+    "run005 is a recorded failure with a partial snapshot, not a complete snapshot, a timeout result, or OS boot.",
+    "SP and x3 are outside the declared observer read window; this policy rejection does not establish that those guest pointers are invalid.",
+    "The format string has no NUL in its captured first 512 bytes; no complete formatted panic message or varargs contents are claimed.",
+    "The later debugger register values must not be substituted for fault-time registers.",
+    "All addresses and register values are exact hex strings; prior reports and evidence remain unchanged.",
+    "No observer read-window expansion, guest patch, frequency or threshold change was made for this result."
+  ]
+}

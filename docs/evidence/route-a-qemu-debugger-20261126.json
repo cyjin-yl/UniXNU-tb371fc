@@ -1,0 +1,354 @@
+{
+  "schema": "route-a-qemu-debugger-public-evidence-v1",
+  "date_local": "2026-11-26",
+  "timezone": "Asia/Shanghai",
+  "attempt": "run004",
+  "source_commit": "d9052126d00732a217f2d1b529193f2793576cda",
+  "previous_evidence": "route-a-qemu-entry-20261126.json",
+  "scope": "Fixed ordinary ARM64 candidate in standard QEMU virt with synthetic firmware inputs; read-only debugger entry snapshot, not TB371FC or OS boot.",
+  "summary_not_original_report": true,
+  "original_report": {
+    "size": 26398,
+    "sha256": "931db1b66f0c30ea58980f470a386e345e3e2be6bfb0582632ee475412b25071"
+  },
+  "replay_check_record": {
+    "size": 878,
+    "sha256": "41c509e5db72feacb961f24114204f6ec3bb7e76d4cdf870cdedd2c234210416"
+  },
+  "input_identities": {
+    "kernel": {
+      "size": 21942456,
+      "sha256": "46eff436250d905e9f3aec59dbcc8c04d594e614e790860236917c7cbfe39f1b"
+    },
+    "loaded_image": {
+      "size": 23035904,
+      "sha256": "3b7fd3784364b4392b2b0fcded0ec0d99dc2075dd149fd32972a1709fce50f5c"
+    },
+    "loader_report": {
+      "size": 38468,
+      "sha256": "300da6b39a2fa06a7cde38043eca046ce27e4be5c96f55a6afa6aff758f7fb98"
+    },
+    "seed": {
+      "sha256": "6a4a031fd89e80230e7cc0097b18ee9719dedf566db9b5fb78e08eb22074745e",
+      "size": 256,
+      "source": "file"
+    }
+  },
+  "generated_input_replay": {
+    "schema": "route-a-frozen-replay-v1",
+    "checked_utc": "2026-11-25T19:06:33.092666+00:00",
+    "runner_exit": 0,
+    "original_report_unchanged": true,
+    "checks": [
+      {
+        "name": "entry.bin",
+        "expected_size": 4344,
+        "expected_sha256": "c3f2bf6eb859cdc75bfcfc9de44a09cfae1bdbd17ab6beb3def60c89f85b2934",
+        "original_unchanged": true,
+        "new_identical": true
+      },
+      {
+        "name": "boot-args.bin",
+        "expected_size": 16384,
+        "expected_sha256": "602758e1e213c356c309e8ff8910cf20787cee50c6e6d4de78b6842180d4bfab",
+        "original_unchanged": true,
+        "new_identical": true
+      },
+      {
+        "name": "synthetic-qemu.adt",
+        "expected_size": 1780,
+        "expected_sha256": "21c6a1795d429cda7c380a5d68dd8d8f33eef493733bc42f97767a8b19edac1b",
+        "original_unchanged": true,
+        "new_identical": true
+      }
+    ],
+    "identical": true,
+    "scope": "Only the three generated input files are byte-identical to run003; observer strategy changed, and runtime determinism is not asserted."
+  },
+  "started_at_utc": "2026-11-25T19:06:20.698777+00:00",
+  "finished_at_utc": "2026-11-25T19:06:32.484877+00:00",
+  "machine": {
+    "name": "virt",
+    "accelerator": "tcg",
+    "cpu": "cortex-a76",
+    "cpus": 1,
+    "gic_version": 3,
+    "qemu_version": "QEMU emulator version 10.0.13 (Debian 1:10.0.13+ds-0+deb13u1)\nCopyright (c) 2003-2025 Fabrice Bellard and the QEMU Project developers",
+    "layout": {
+      "boot_args_pa": "0x52000000",
+      "bootstrap_prefix_start": "0x50000000",
+      "conservative_bootstrap_mapped_end": "0x5fe00000",
+      "device_tree_pa": "0x52001000",
+      "device_tree_va": "0xfffffff009001000",
+      "entry_pa": "0x50511488",
+      "memory_size": 268419072,
+      "physical_base": "0x50004000",
+      "ram_base": "0x40000000",
+      "ram_size": 536870912,
+      "synthetic_fixture": true,
+      "top_of_kernel_data": "0x52004000",
+      "virtual_slide": "0x0"
+    },
+    "adt": {
+      "board_identity": false,
+      "bytes": 1780,
+      "kind": "qemu-virt",
+      "sha256": "21c6a1795d429cda7c380a5d68dd8d8f33eef493733bc42f97767a8b19edac1b",
+      "synthetic": true
+    }
+  },
+  "entry_observation": {
+    "after_branch": {
+      "cpsr": "0x800003c5",
+      "pc": "0x5051305c",
+      "x0": "0x52000000"
+    },
+    "before_branch": {
+      "cpsr": "0x800003c5",
+      "pc": "0x50511488",
+      "x0": "0x52000000"
+    },
+    "gdb_stop_after": "T05thread:01;",
+    "gdb_stop_before": "T05thread:01;",
+    "instruction_bytes": "f5060014",
+    "scope": "one unchanged kernel B instruction actually single-stepped in QEMU; early CPU body not yet qualified"
+  },
+  "debugger_snapshot": {
+    "status": "captured",
+    "verified": true,
+    "registers_captured": true,
+    "debugger_entry_observed": true,
+    "memory_complete": true,
+    "target": {
+      "file_offset": "0x2f1ef4",
+      "instruction_bytes": "ff0306d1",
+      "n_type": "0xf",
+      "section": "__text",
+      "section_ordinal": 16,
+      "segment": "__TEXT_EXEC",
+      "symbol": "_DebuggerTrapWithState",
+      "va": "0xfffffff0072f5ef4"
+    },
+    "instruction_read": {
+      "address": "0xfffffff0072f5ef4",
+      "bytes_read": 4,
+      "data_hex": "ff0306d1",
+      "limit_bytes": 4,
+      "status": "complete"
+    },
+    "gdb_stop": "T05thread:01;",
+    "registers": {
+      "cpsr": "0x600003c4",
+      "pc": "0xfffffff0072f5ef4",
+      "sp": "0xfffffff007d477c0",
+      "x0": "0x3",
+      "x1": "0xfffffff00705156c",
+      "x10": "0x1000",
+      "x11": "0x0",
+      "x12": "0x9",
+      "x13": "0x9",
+      "x14": "0x0",
+      "x15": "0xfffffff0070097de",
+      "x16": "0x0",
+      "x17": "0x0",
+      "x18": "0x0",
+      "x19": "0xfffffff00706240a",
+      "x2": "0xfffffff00706240a",
+      "x20": "0x0",
+      "x21": "0xfffffff007d47978",
+      "x22": "0xfffffff00736cb50",
+      "x23": "0x0",
+      "x24": "0x0",
+      "x25": "0x1",
+      "x26": "0x0",
+      "x27": "0x61f4000",
+      "x28": "0xfffffff00706240a",
+      "x29": "0xfffffff007d47960",
+      "x3": "0xfffffff007d47978",
+      "x30": "0xfffffff0072f74f4",
+      "x4": "0x0",
+      "x5": "0x0",
+      "x6": "0x1",
+      "x7": "0xfffffff00736cb50",
+      "x8": "0x0",
+      "x9": "0x80000002"
+    },
+    "raw_core_reply": "03000000000000006c150507f0ffffff0a240607f0ffffff7879d407f0ffffff00000000000000000000000000000000010000000000000050cb3607f0ffffff0000000000000000020000800000000000100000000000000000000000000000090000000000000009000000000000000000000000000000de970007f0ffffff0000000000000000000000000000000000000000000000000a240607f0ffffff00000000000000007879d407f0ffffff50cb3607f0ffffff000000000000000000000000000000000100000000000000000000000000000000401f06000000000a240607f0ffffff6079d407f0fffffff4742f07f0ffffffc077d407f0fffffff45e2f07f0ffffffc4030060",
+    "rsp_core_reply_ascii_sha256": "ead95f843640ab90ea161286e8a331e1b2212e05bbfe89598a5cbab4d193472a",
+    "read_window": {
+      "end_exclusive": "0xfffffff016e00000",
+      "scope": "declared linear RAM upper bound; actual reads must also succeed",
+      "start": "0xfffffff007004000"
+    },
+    "bounded_memory": {
+      "message": {
+        "address": "0xfffffff00705156c",
+        "bytes_read": 64,
+        "limit_bytes": 512,
+        "nul_offset": 5,
+        "nul_terminated": true,
+        "status": "complete",
+        "text_utf8": "panic",
+        "truncated": false,
+        "captured_bytes_sha256": "1610f40e00e9ad665047c976771c03fd06d9267165b8a45d989b994942c0833a"
+      },
+      "panic_format": {
+        "address": "0xfffffff00706240a",
+        "bytes_read": 64,
+        "limit_bytes": 512,
+        "nul_offset": 32,
+        "nul_terminated": true,
+        "status": "complete",
+        "text_utf8": "%s %s (start: %llu, end: %llu)%s",
+        "truncated": false,
+        "captured_bytes_sha256": "e1e786c54d338580f36b6349f5fb98f0052b63608e945b35a5e0ebd305bff260"
+      },
+      "stack": {
+        "address": "0xfffffff007d477c0",
+        "bytes_read": 256,
+        "limit_bytes": 256,
+        "status": "complete",
+        "captured_bytes_sha256": "65cd24efbed5af5230ba92d36637f9123d0e9007366a0e1e76ecd2dac22314f3"
+      },
+      "va_list_cell": {
+        "address": "0xfffffff007d47978",
+        "bytes_read": 8,
+        "limit_bytes": 8,
+        "status": "complete",
+        "captured_bytes_sha256": "5f38355a6cf105e49c44738b650b678ab89281231027a0c45402c3f720796a73",
+        "data_hex": "9079d407f0ffffff"
+      },
+      "va_list_slots": {
+        "address": "0xfffffff007d47990",
+        "bytes_read": 256,
+        "limit_bytes": 256,
+        "status": "complete",
+        "captured_bytes_sha256": "377244783d5277c831205ddbec34071f4e7dc281e762bb26d5e979902bbc7d55",
+        "data_hex": "28930907f0ffffff107ad407f0ffffff15232b0000000000a0072d0000000000607ad407f0ffffffdc7ad407f0ffffff286b0407f0ffffff000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000004c1d0000000000b0481e0000000000b0481e0000000000312e393834206d73203e3d20312e393230206d73000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+      }
+    },
+    "va_list_cursor": "0xfffffff007d47990",
+    "breakpoint_removed": true,
+    "resumed_after_snapshot": false,
+    "observer_guest_memory_or_register_writes": false
+  },
+  "panic_arguments": {
+    "db_op": 3,
+    "db_op_name": "DBOP_PANIC",
+    "message": "panic",
+    "format": "%s %s (start: %llu, end: %llu)%s",
+    "first_five_raw_slots": [
+      "0xfffffff007099328",
+      "0xfffffff007d47a10",
+      "0x2b2315",
+      "0x2d07a0",
+      "0xfffffff007d47a60"
+    ],
+    "first_string": {
+      "address": "0xfffffff007099328",
+      "text": "preemption disable timeout exceeded:",
+      "candidate_segment": "__TEXT",
+      "candidate_file_offset": "0x95328",
+      "source": "independent static read of the same fixed candidate; not an additional run004 guest read"
+    },
+    "second_string": {
+      "address": "0xfffffff007d47a10",
+      "offset_in_captured_slots": "0x80",
+      "text": "1.984 ms >= 1.920 ms",
+      "nul_terminated": true,
+      "source": "run004 captured va_list_slots bytes"
+    },
+    "fifth_string": {
+      "address": "0xfffffff007d47a60",
+      "offset_in_captured_slots": "0xd0",
+      "text": "",
+      "nul_terminated": true,
+      "source": "run004 captured va_list_slots bytes"
+    },
+    "start_ticks": 2827029,
+    "end_ticks": 2951072,
+    "delta_ticks": 124043,
+    "counter_frequency_hz": 62500000,
+    "elapsed_ms_exact": "1.984688",
+    "printed_comparison": "1.984 ms >= 1.920 ms",
+    "threshold_and_clock_provenance": "Requires separate source and timing-model analysis; this snapshot does not identify a unique underlying cause."
+  },
+  "candidate_callsite_review": {
+    "candidate_sha256": "46eff436250d905e9f3aec59dbcc8c04d594e614e790860236917c7cbfe39f1b",
+    "call_sites": [
+      {
+        "observed_return_register": "x7",
+        "observed_return_va": "0xfffffff00736cb50",
+        "callsite_va": "0xfffffff00736cb4c",
+        "candidate_file_offset": "0x368b4c",
+        "instruction_bytes": "159b1e94",
+        "instruction_word": "0x941e9b15",
+        "owner_symbol": "_kern_timeout_try_panic",
+        "owner_symbol_va": "0xfffffff00736c844",
+        "decoded_bl_target_symbol": "_panic",
+        "decoded_bl_target_va": "0xfffffff007b137a0",
+        "source": "independent read-only fixed-candidate symbol/file-byte review; not an additional run004 guest read"
+      },
+      {
+        "observed_return_register": "x30",
+        "observed_return_va": "0xfffffff0072f74f4",
+        "callsite_va": "0xfffffff0072f74f0",
+        "candidate_file_offset": "0x2f34f0",
+        "instruction_bytes": "81faff97",
+        "instruction_word": "0x97fffa81",
+        "owner_symbol": "_panic_trap_to_debugger",
+        "owner_symbol_va": "0xfffffff0072f70e4",
+        "decoded_bl_target_symbol": "_DebuggerTrapWithState",
+        "decoded_bl_target_va": "0xfffffff0072f5ef4",
+        "source": "independent read-only fixed-candidate symbol/file-byte review; not an additional run004 guest read"
+      }
+    ],
+    "return_address_boundary_note": "x7 is also the next _timer_init symbol boundary; attribution uses the actual BL at x7-4, not the nearest return-address symbol."
+  },
+  "execution": {
+    "elapsed_seconds": 0.98557,
+    "exit_code": 0,
+    "max_file_bytes": 16777216,
+    "network_devices": [],
+    "reaped": true,
+    "stop_reason": "debugger-snapshot",
+    "storage_devices": [],
+    "termination": "SIGTERM",
+    "timeout_seconds": 10.0
+  },
+  "exception": {
+    "CNTFRQ": 62500000,
+    "CurrentEL": "0x4",
+    "MMFR0": "0x101122",
+    "exception_observed": false,
+    "qemu_trace_prefix": ""
+  },
+  "input_recheck": {
+    "changed_paths": [],
+    "unchanged": true
+  },
+  "qualification": {
+    "board_adt_verified": false,
+    "os_boot_verified": false,
+    "qemu_debugger_snapshot_verified": true,
+    "qemu_early_cpu_entry_observed": true,
+    "qemu_kernel_entry_executed": true,
+    "runtime_kernel_slide_verified": false,
+    "tb371fc_kernel_qualified": false,
+    "uefi_allocation_verified": false
+  },
+  "validation": {
+    "focused_tests_passed": 59,
+    "focused_tests_skipped": 0,
+    "independent_new_tests_passed": 26,
+    "ci_for_this_change": "not recorded here; consult the exact commit workflow"
+  },
+  "limits": [
+    "The snapshot stopped before the first DebuggerTrapWithState instruction; no exception was executed in run004.",
+    "A complete bounded snapshot is not successful early CPU initialization, a complete MMU/slide handoff, or OS boot.",
+    "All observed addresses and register values are hex strings; timing counters are exact small integers.",
+    "Caller-site words and the first panic string come from fixed-candidate static review, separately from live guest reads.",
+    "The printed time comparison and captured counters do not establish TCG or any other mechanism as the sole cause.",
+    "No kernel binary, generated boot image, or original private report is distributed with this summary."
+  ]
+}
