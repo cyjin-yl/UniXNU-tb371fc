@@ -73,7 +73,7 @@ python3 scripts/probe_route_a_qemu_entry.py \
 | `sp` 栈窗口 | 最多 256 字节，不回溯栈帧 |
 | `x7`、`x30`、`x29` | 保存原始 caller / LR / FP 值，不自动归因到最近符号 |
 
-Darwin ARM64 的 `va_list` 是 `char*`，变参使用 8 字节栈槽，见 [Apple 官方 ABI 文档](https://developer.apple.com/documentation/xcode/writing-arm64-code-for-apple-platforms#Update-code-that-passes-arguments-to-variadic-functions)。这里的参数是 `va_list*`，因此先读 cursor cell，再读有限参数槽；不会将 guest 的 format string 交给 host `printf`，也不做通用指针追踪。所有非空指针必须落在声明的初始线性映射与 QEMU RAM 的交集中，每个请求最多 64 字节且不跨 4 KiB 边界，地址计算不得溢出 uint64。这个窗口是读取上界，仍需实际 GDB 读取成功，不构成页表验证。
+Darwin ARM64 的 `va_list` 是 `char*`，变参使用 8 字节栈槽，见 [Apple 官方 ABI 文档](https://developer.apple.com/documentation/xcode/writing-arm64-code-for-apple-platforms#Update-code-that-passes-arguments-to-variadic-functions)。这里的参数是 `va_list*`，因此先读 cursor cell，再读有限参数槽；不会将 guest 的 format string 交给 host `printf`，也不做通用指针追踪。所有实际读取的非空指针必须落在声明的初始线性映射与 QEMU RAM 的交集中，每个请求最多 64 字节且不跨 4 KiB 边界，地址计算不得溢出 uint64。这个窗口是读取上界，仍需实际 GDB 读取成功，不构成页表验证。
 
 `x1`／`x2`／`x3` 或变参 cursor 的合法 NULL 明确记为 `null`，不读取；SP 不能为 NULL。未知／越界指针、不可读 cell、非法 cursor、槽空间不足、字符串没有 NUL、超时与断点移除失败分别保留状态。已经取得的寄存器、各段原始字节和错误回复仍保留在 `debugger_snapshot` 中。只有所需字段完整读取或合法为空、断点清理及后续输入／EL／计数器检查均通过，才会得到 `qemu_debugger_snapshot_verified=true` 和 `status=qemu_debugger_snapshot_observed`；任何截断都不能获得这一完整快照标志。此模式的报告地址及寄存器用十六进制字符串表示，以避免高虚拟地址在 JSON 使用方被舍入。
 
