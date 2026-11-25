@@ -1,0 +1,187 @@
+{
+  "schema_version": 1,
+  "record_date": "2026-11-26",
+  "timezone": "Asia/Shanghai",
+  "observed_at_utc": "2026-11-25T18:11:40.014719+00:00",
+  "scope": "host synthetic-map only",
+  "implementation_commit": "975ac4cd493d40e069da3cbc831531e603308bce",
+  "base_commit": "26bd222e8c6a3b3315096cac7e97111488df5301",
+  "status": "host_allocator_contract_verified",
+  "upstream": {
+    "repository": "https://github.com/UniXNU/DarwinBoot",
+    "commit": "3c75734014cdab0acd9541e88057b7606ee7ae08",
+    "files": [
+      {
+        "path": "DarwinBootPkg/Driver/DarwinBoot.c",
+        "size": 36608,
+        "sha256": "f3815791ad63b87b11ee28118ad1f35a7d0c5258ea70b7b76eda68914fa2b8cf",
+        "git_blob": "3b6cafc015e19dc291a0bbfd7fe6af71103360db"
+      },
+      {
+        "path": "DarwinBootPkg/Driver/WindowSize.h",
+        "size": 427,
+        "sha256": "6f78303c54252eae722be7c9b33869e4e8251ee3569736511790170d499b58cb",
+        "git_blob": "055549ac56cff967af312c907103771902db5774"
+      },
+      {
+        "path": "DarwinBootPkg/Driver/Entry.S",
+        "size": 980,
+        "sha256": "44c05d16af1fbe51cfdcf074ff590ec214dbe3e8efdc4b83a9d06f7e49be44bd",
+        "git_blob": "a7a55c2bd768e5cc1f233ee483101f50fce998f8"
+      },
+      {
+        "path": "LICENSE",
+        "size": 2677,
+        "sha256": "513308769e962347c3b987ddac32f5f5c9849acced235e5580ab2c7ebf067900",
+        "git_blob": "4a71558d51ed029463a356c0824417185c106455"
+      }
+    ]
+  },
+  "patch": {
+    "path": "patches/route-a-darwinboot-owned-prefix.patch",
+    "sha256": "f3e170f7c466e81d776f0deae41830e26c624fffa5245a9151940de5951874d8",
+    "patched_source_sha256": "b44437a8fa1d8d3bc7ba60b3458d69306d32c26f989555b5ead2808313258d93"
+  },
+  "driver_sha256": "e8374512a6c2c8a9553ebbfd51f2a072198d8ad527ec171cf7473e54132e5bb8",
+  "raw_report_sha256": "63853b858d9a8b2c762d9c9db20b8b098d48aaaa5e9e8227146031d8f622e24a",
+  "compiler": {
+    "name": "x86_64-linux-gnu-gcc-14",
+    "version": "14.2.0",
+    "sha256": "a23ecab8ff08f09ad8c80602c2c5df7f49e09c25905cb8975902e101bf72635f",
+    "flags": [
+      "-std=c11",
+      "-O2",
+      "-Wall",
+      "-Wextra",
+      "-Werror",
+      "-fPIC",
+      "-shared"
+    ]
+  },
+  "builds": {
+    "fixed": {
+      "AllocateWindow_sha256": "eda64291530ec1210c9787694ffe35b4a5941e6e5cbfc0fcdfb68ee4db8a8b93",
+      "RunEnd_sha256": "8eeffbf7fff4b33d27af82bf9907e1565e63dfc8ab0ae7599808257460065933",
+      "cache_call": "DarwinEnter (ArgsAddress, Address + Kernel.Entry - Kernel.Base, AllocationAddress, AllocationSize, Video[0], Video[2] * Video[4]);",
+      "exit_code": 0,
+      "free_call": "if (AllocationSize != 0) { gBS->FreePages (AllocationAddress, EFI_SIZE_TO_PAGES (AllocationSize)); }",
+      "generated_c_sha256": "14fede52ca467b60369367733bbaa73d1663c54d73c5de87aa11e8594c742cad",
+      "library_sha256": "a9720701b76b584549695b2533767fcb8fec21052a073e3cbda9cfe37d97aa30",
+      "zero_call": "ZeroMem ((VOID *)(UINTN)AllocationAddress, (UINTN)(Address - AllocationAddress + Used));"
+    },
+    "original": {
+      "AllocateWindow_sha256": "5a7731007efe8eb2e5e81272030ad8a4db7887ecd606348c3b7a02ffb7685392",
+      "RunEnd_sha256": "8eeffbf7fff4b33d27af82bf9907e1565e63dfc8ab0ae7599808257460065933",
+      "cache_call": "DarwinEnter (ArgsAddress, Address + Kernel.Entry - Kernel.Base, Address, WindowSize, Video[0], Video[2] * Video[4]);",
+      "exit_code": 0,
+      "free_call": "if (Address != 0) { gBS->FreePages (Address, EFI_SIZE_TO_PAGES (WindowSize)); }",
+      "generated_c_sha256": "aa8178898f82a0310e4cb395b0b6816ed4c9f6aa79eb3793c9ee259581976ed1",
+      "library_sha256": "b1d39df7c91adfa25f9c7959810ad43a58274cf4ae41b914983dcaa238f4eb59",
+      "zero_call": "ZeroMem ((VOID *)(UINTN)Address, (UINTN)Used);"
+    }
+  },
+  "tests": {
+    "command": "ROUTE_A_ALLOCATION_SOURCES=<fixed-public-source-directory> python3 -m unittest discover -s tests -p test_route_a_allocation.py -v",
+    "passed": 12,
+    "failed": 0,
+    "skipped": 0,
+    "page_aligned_prefixes_checked": 512,
+    "scope": "dedicated allocation tests; not the complete Route A suite"
+  },
+  "probe": {
+    "command": "python3 scripts/probe_route_a_allocation.py run --sources <fixed-public-source-directory> --output <new-output-directory>",
+    "synthetic_map_cases": [
+      "contiguous",
+      "unaligned_free_start",
+      "adjacent_descriptors",
+      "too_short",
+      "reserved_gap",
+      "allocator_failure",
+      "retry_other_run",
+      "allocation_at_zero"
+    ],
+    "case_count": 8,
+    "contiguous_case": {
+      "free_start": "0x50000000",
+      "free_bytes": "0x10004000",
+      "original": {
+        "address": 1342193664,
+        "allocation_calls": [
+          {
+            "address": 1342193664,
+            "pages": 65536
+          }
+        ],
+        "attempts": 1,
+        "owned_address": 1342193664,
+        "owned_size": 268435456,
+        "status": 0
+      },
+      "fixed": {
+        "address": 1342193664,
+        "allocation_calls": [
+          {
+            "address": 1342177280,
+            "pages": 65540
+          }
+        ],
+        "attempts": 1,
+        "owned_address": 1342177280,
+        "owned_size": 268451840,
+        "status": 0
+      }
+    },
+    "original_prefix_zero": false,
+    "fixed_prefix_zero": true,
+    "fixed_payload_zero": true,
+    "fixed_guards_intact": true,
+    "cache_and_free_arguments_use_complete_allocation": true,
+    "allocation_at_zero_freed_pages": 65540
+  },
+  "source_derived_intervals": {
+    "advertised": [
+      1342193664,
+      1610629120
+    ],
+    "advertised_tail_not_initially_mapped": [
+      1610612736,
+      1610629120
+    ],
+    "initial_mapping": [
+      1342177280,
+      1610612736
+    ],
+    "required_allocation": [
+      1342177280,
+      1610629120
+    ],
+    "used_end_initially_mapped": true,
+    "zeroed": [
+      1342177280,
+      1365262336
+    ]
+  },
+  "qualification": {
+    "host_allocator_contract_verified": true,
+    "uefi_allocation_verified": false,
+    "cache_maintenance_executed": false,
+    "bootstrap_mapping_executed": false,
+    "kernel_entry_executed": false,
+    "board_adt_verified": false,
+    "os_boot_verified": false,
+    "patched_firmware_compiled": false
+  },
+  "ci": {
+    "workflow": ".github/workflows/source-check.yml",
+    "allocation_source_preparation_added": true,
+    "allocation_test_environment": "ROUTE_A_ALLOCATION_SOURCES",
+    "new_remote_ci_result_recorded": false
+  },
+  "remaining": [
+    "Build the patched full firmware against its actual EDK2 tree.",
+    "Observe actual UEFI descriptors, successful allocation and final memory map.",
+    "Observe cache maintenance and MMU handoff; the advertised tail is not newly mapped by this patch.",
+    "Verify board ADT, providers, real kernel entry and OS boot separately."
+  ],
+  "reproduction": "../ROUTE_A_ALLOCATION_PREFIX.md"
+}
