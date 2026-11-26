@@ -8,6 +8,7 @@ panic entry before table/PRNG publication. Guest instructions are never patched.
 from __future__ import annotations
 
 import argparse
+from contextlib import contextmanager
 import datetime
 import json
 import os
@@ -540,6 +541,61 @@ def finish_launch(process, err, sock, report, trace, serial, strict, image, layo
             raise failure
 
 
+@contextmanager
+def defer_spawn_signals():
+    """Keep a spawned process handle until launch can clean it in finally."""
+    watched = (signal.SIGINT, signal.SIGTERM, signal.SIGHUP)
+    previous, pending = {}, []
+    primary = None
+
+    def remember(number, _frame):
+        if len(pending) < 128:
+            pending.append(number)
+
+    try:
+        for number in watched:
+            # Record first: a signal after installing remember must not leave
+            # an untracked handler behind during restoration.
+            previous[number] = signal.getsignal(number)
+            signal.signal(number, remember)
+        yield
+    except BaseException as error:
+        primary = error
+        raise
+    finally:
+        errors, mask = [], None
+        # Only restoration is masked, after the spawn/assignment body ended.
+        # The forked QEMU never inherits a newly blocked parent signal mask.
+        try:
+            mask = signal.pthread_sigmask(signal.SIG_BLOCK, watched)
+        except BaseException as error:
+            errors.append(error)
+        for number, handler in previous.items():
+            try:
+                signal.signal(number, handler)
+            except BaseException as error:
+                errors.append(error)
+        if mask is not None:
+            try:
+                signal.pthread_sigmask(signal.SIG_SETMASK, mask)
+            except BaseException as error:
+                errors.append(error)
+        if errors:
+            failure = primary if primary is not None else errors[0]
+            for error in errors:
+                if error is not failure:
+                    failure.add_note(f"spawn signal restoration: {type(error).__name__}: {error}")
+            if primary is None:
+                raise failure
+        if primary is None:
+            for number in pending:
+                handler = previous[number]
+                if callable(handler):
+                    handler(number, None)
+                elif handler != signal.SIG_IGN:
+                    raise InterruptedError("runtime interrupted by signal " + str(number))
+
+
 def launch(args, out, journal, report, prepared):
     strict, kernel, image, symbols, defined, layout, callback_offset = prepared
     endpoint = out / "gdb.sock"
@@ -562,9 +618,10 @@ def launch(args, out, journal, report, prepared):
         try:
             err = (out / "qemu.stderr.log").open("xb")
             sock = socket.socket(socket.AF_UNIX)
-            process = subprocess.Popen(argv, stdin=subprocess.DEVNULL, stdout=err, stderr=err,
-                                       start_new_session=True, preexec_fn=limits)
-            report["qemu"]["pid"] = process.pid
+            with defer_spawn_signals():
+                process = subprocess.Popen(argv, stdin=subprocess.DEVNULL, stdout=err, stderr=err,
+                                           start_new_session=True, preexec_fn=limits)
+                report["qemu"]["pid"] = process.pid
             deadline = started + args.timeout
             while True:
                 require(process.poll() is None and time.monotonic() < deadline, "QEMU exited or debugger attachment timed out")

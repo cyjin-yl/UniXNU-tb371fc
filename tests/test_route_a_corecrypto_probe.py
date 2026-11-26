@@ -24,7 +24,7 @@ from route_a_pacga_probe import run as execution
 
 
 CHILD = """
-import os, signal, sys, time
+import json, os, signal, sys, time
 from pathlib import Path
 mode, pid_name, ready_name, release_name = sys.argv[1:]
 descendant = None
@@ -32,11 +32,11 @@ if mode == 'orphan':
     descendant = os.fork()
     if descendant == 0:
         signal.signal(signal.SIGTERM, signal.SIG_IGN)
-        Path(ready_name).write_text('ready')
+        Path(ready_name).write_text(json.dumps({'blocked_signals': sorted(int(n) for n in signal.pthread_sigmask(signal.SIG_BLOCK, []))}))
         time.sleep(30)
         os._exit(0)
 else:
-    Path(ready_name).write_text('ready')
+    Path(ready_name).write_text(json.dumps({'blocked_signals': sorted(int(n) for n in signal.pthread_sigmask(signal.SIG_BLOCK, []))}))
 Path(pid_name).write_text(str(os.getpid()) +
                           ((' ' + str(descendant)) if descendant is not None else ''))
 if mode == 'orphan':
@@ -80,12 +80,12 @@ class ProbeCleanup(unittest.TestCase):
             os.killpg(process.pid, 0)
 
     @contextmanager
-    def fixture(self, mode="live", *, primary=None, fail_teardown=False):
+    def fixture(self, mode="live", *, primary=None, fail_teardown=False, spawn_signal=None):
         native_popen, native_open = subprocess.Popen, Path.open
         with tempfile.TemporaryDirectory(prefix="cc-probe-") as tmp, execution.owned_children():
             out = Path(tmp)
             pid_file, ready_file, release_file = (out / name for name in ("pids", "ready", "release"))
-            processes, streams = [], []
+            processes, streams, child_masks = [], [], []
             # The socket facade owns a real private FD without opening a host
             # socket: only teardown behavior is under test, never transport.
             socket_handle = tempfile.TemporaryFile()
@@ -137,6 +137,20 @@ class ProbeCleanup(unittest.TestCase):
                 process = native_popen([sys.executable, "-c", CHILD, mode, str(pid_file),
                                         str(ready_file), str(release_file)], **kwargs)
                 processes.append(process)
+                if spawn_signal is not None:
+                    deadline = time.monotonic() + 2
+                    while True:
+                        try:
+                            child_masks.append(json.loads(ready_file.read_text())["blocked_signals"])
+                            break
+                        except (FileNotFoundError, json.JSONDecodeError):
+                            pass
+                        if time.monotonic() >= deadline:
+                            raise RuntimeError("owned spawn-window fixture did not become ready")
+                        time.sleep(.005)
+                    # Deliver a real signal while the returned process handle
+                    # is still inside this Popen wrapper, before caller assignment.
+                    os.kill(os.getpid(), spawn_signal)
                 return process
 
             def observed(*_args, **_kwargs):
@@ -170,6 +184,7 @@ class ProbeCleanup(unittest.TestCase):
                         launch=lambda: P.launch(args, out, P.build.Journal(out), report, prepared),
                         report=report, processes=processes, streams=streams, socket=socket_handle,
                         closed=closed, diagnostic=diagnostic,
+                        child_mask=lambda: child_masks[0],
                         pids=lambda: [int(value) for value in pid_file.read_text().split()])
             finally:
                 # The outer subreaper is essential for testing the old defect:
@@ -226,6 +241,24 @@ class ProbeCleanup(unittest.TestCase):
                 self.assertIn("injected " + label + " failure", errors)
             fixture.diagnostic.assert_called_once()
             self.assertEqual(sorted(fixture.closed), ["log", "socket"])
+            self.assertTrue(all(stream.closed for stream in fixture.streams))
+            self.assertTrue(fixture.socket.closed)
+
+    def test_real_signal_before_popen_handle_assignment_cleans_owned_child(self):
+        with self.fixture(spawn_signal=signal.SIGTERM) as fixture:
+            previous = signal.getsignal(signal.SIGTERM)
+            with self.assertRaisesRegex(InterruptedError, "PACGA fixture interrupted by signal 15"):
+                fixture.launch()
+            self.assertIs(signal.getsignal(signal.SIGTERM), previous)
+            self.assertNotIn(int(signal.SIGTERM), fixture.child_mask())
+            self.assertNotIn(int(signal.SIGINT), fixture.child_mask())
+            process = fixture.processes[0]
+            self.assertIsNotNone(process.poll(), "real child remained alive after launch failed")
+            self.assert_absent((process.pid,), process.pid)
+            receipt = fixture.report["qemu"]
+            self.assertEqual(receipt["pid"], process.pid)
+            self.assertTrue(receipt["cleanup"]["direct_child_reaped"])
+            self.assertTrue(receipt["cleanup"]["group_absent"])
             self.assertTrue(all(stream.closed for stream in fixture.streams))
             self.assertTrue(fixture.socket.closed)
 
