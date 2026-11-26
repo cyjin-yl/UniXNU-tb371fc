@@ -56,6 +56,7 @@ import numpy as np
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from route_a_zeta import zeta_dyld_cache as dc
 from arm64_lowering.proof import validate_summary
+from arm64_lowering import pacga
 from arm64_lowering.pipeline import validated_code_directory, verify_code_pages
 
 CSMAGIC_EMBEDDED_SIGNATURE, CSMAGIC_CODEDIRECTORY = 0xfade0cc0, 0xfade0c02
@@ -247,12 +248,15 @@ def main(argv=None):
     parser.add_argument('--page-shift', type=int, choices=(12, 14),
                         help='rebuild every file\'s signature with pages of this shift (12 for a 4 KiB-page kernel)')
     parser.add_argument('--report', required=True, type=Path)
+    parser.add_argument('--pacga-policy', choices=pacga.POLICIES, default='reject')
+    parser.add_argument('--pacga-kernel', type=Path, help='matching linked kernel for the explicit PACGA ABI')
     args = parser.parse_args(argv)
     cache = None
     try:
         summary = json.loads((args.proof / 'summary.json').read_text())
         cache = dc.Cache(args.cache)
-        edits = validate_summary(cache, summary, args.proof)
+        edits = validate_summary(cache, summary, args.proof,
+                                 pacga_policy=args.pacga_policy, pacga_kernel=args.pacga_kernel)
         originals = original_signatures(cache)
         trusted, trust_sources = trust_entries(args.apple_trust_cache)
         seals = fips_seals(cache)
@@ -340,6 +344,8 @@ def main(argv=None):
                   edits=sum(f['edits'] for f in files),
                   files_changed=sum(1 for f in files if f['sha256'] != f['original_sha256']),
                   page_shift=args.page_shift, files=files, apple_trust_sources=trust_sources,
+                  pacga_policy=args.pacga_policy, pacga_runtime=summary['rules']['pacga_runtime'],
+                  pointer_authentication_preserved=False,
                   all_original_code_pages_verified=True, all_output_code_pages_verified=True,
                   target_isa_audited=False, os_boot_verified=False, hardware_tested=False)
     args.report.write_text(json.dumps(report, indent=1) + '\n')

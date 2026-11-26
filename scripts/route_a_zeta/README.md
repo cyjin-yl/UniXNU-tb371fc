@@ -9,9 +9,11 @@ adapted files. No source from the unlicensed Bergamota converter was copied.
 ## Local changes
 
 - The PAuth adapter invokes `arm64_lowering.instructions.lower` with the explicit
-  plain-pointer ABI contract. It rejects PACGA, unsupported loads and other
-  unadmitted forms. Hint-space encodings remain unchanged. No authentication is
-  provided by this compatibility policy.
+  plain-pointer ABI contract. It rejects PACGA by default, unsupported loads and
+  other unadmitted forms. An explicit [QARMA5 / SVC ABI candidate](../../docs/ROUTE_A_PACGA_ABI.md)
+  requires a matching runtime kernel, source SVC namespace census and live
+  exclusive-state admission. Its execution validation is pending. Hint-space
+  encodings remain unchanged. No pointer authentication is provided by this policy.
 - The cache prover produces a `route-a-cache-proof-v1` manifest containing SHA-256,
   UUID and byte size for the complete ordered main/subcache set, the source image
   inventory, hashes of the analysis and lowering source files, decoder versions

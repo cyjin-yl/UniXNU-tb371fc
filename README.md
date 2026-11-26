@@ -43,6 +43,7 @@
 | [路线 A 实现](docs/ROUTE_A.md) | 转换规则、严格检查、真实 27 输入结果和使用方法 |
 | [证据索引](docs/evidence/README.md) | 来源、测试报告、未证明范围与 CI |
 | [普通指针内核补丁](docs/ROUTE_A_PLAIN_AUTH_PATCH.md) | 固定 XNU 基线、补丁与提取 C 测试 |
+| [PACGA 软件 ABI 候选](docs/ROUTE_A_PACGA_ABI.md) | QARMA5、SVC 运行时与严格准入；编译／差分执行尚待验证 |
 | [内核与加载器缺口](docs/ROUTE_A_KERNEL_GAPS.md) | XNU、27 ABI、页大小、信任目录与驱动集成 |
 | [TPRO 审计入口](docs/ROUTE_A_TPRO.md) | 固定真实 dyld 来源的指令清单、静态引用与两类启动能力键检查 |
 | [普通 arm64 内核准备](docs/ROUTE_A_KERNEL_BUILD.md) | XNU 12377 补丁顺序、干净源码树与编译器配置探针 |

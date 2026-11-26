@@ -20,6 +20,8 @@ import subprocess
 import capstone
 import numpy as np
 
+from . import pacga
+
 SCHEMA = "route-a-cache-proof-v1"
 GRADES = ("unwind", "pointer", "landing", "stub", "call", "start", "gap")
 _SCRIPTS = Path(__file__).resolve().parents[1]
@@ -70,10 +72,12 @@ def source_manifest(cache):
     return dict(schema="route-a-cache-input-v1", files=files, images=images)
 
 
-def rules_manifest():
+def rules_manifest(*, pacga_policy="reject", pacga_kernel=None):
     """Reject proofs from a different decoder, CFG algorithm or lowering policy."""
     names = (
         "arm64_lowering/instructions.py", "arm64_lowering/proof.py",
+        "arm64_lowering/pacga.py", "arm64_lowering/runtime/pacga_qarma5.h",
+        "../patches/route-a-pacga-svc-12377.patch",
         "arm64_lowering/closure_receipts.py",
         "route_a_zeta/zeta_userland_pauth.py", "route_a_zeta/zeta_userland_code.py",
         "route_a_zeta/zeta_dyld_cache.py", "route_a_zeta/prove-zeta-dyld-cache.py",
@@ -88,7 +92,8 @@ def rules_manifest():
         except (OSError, subprocess.SubprocessError) as error:
             raise ValueError(f"cannot identify llvm-mc decoder: {error}") from error
         require(bool(llvm_version), "llvm-mc version output is empty")
-    return dict(abi="plain-pointers-v1", pacga_policy="reject",
+    runtime = pacga.runtime_binding(pacga_policy, pacga_kernel)
+    return dict(abi="plain-pointers-v1", pacga_policy=pacga_policy, pacga_runtime=runtime,
                 decoders=dict(capstone=capstone.__version__, capstone_library=list(capstone.cs_version()),
                               numpy=np.__version__, llvm_mc=llvm_version),
                 sources={name: _digest((_SCRIPTS / name).read_bytes()) for name in names})
@@ -128,7 +133,8 @@ def _entries(summary):
     return entries
 
 
-def seal_summary(cache, summary, work_dir, *, partial=False):
+def seal_summary(cache, summary, work_dir, *, partial=False,
+                 pacga_policy="reject", pacga_kernel=None):
     """Attach reproducible bindings to a proof, including intentionally partial reports.
 
     Sealing a report does not approve it. validate_summary performs admission.
@@ -138,7 +144,7 @@ def seal_summary(cache, summary, work_dir, *, partial=False):
     result["complete"] = not bool(partial)
     result["source_manifest"] = source_manifest(cache)
     result["source_manifest_sha256"] = _digest(_canonical(result["source_manifest"]))
-    result["rules"] = rules_manifest()
+    result["rules"] = rules_manifest(pacga_policy=pacga_policy, pacga_kernel=pacga_kernel)
     result["inventory"] = expected_inventory(cache)
     blobs = {}
     for entry in _entries(result):
@@ -150,7 +156,7 @@ def seal_summary(cache, summary, work_dir, *, partial=False):
     return result
 
 
-def _candidate_census(cache, file_index, geometry, entry, edits, kept):
+def _candidate_census(cache, file_index, geometry, entry, edits, kept, pacga_policy="reject"):
     """Account for every non-hint PAuth word, independently of result counts.
 
     A kept word needs an actual hardened jump-table dispatch in the source.
@@ -166,7 +172,7 @@ def _candidate_census(cache, file_index, geometry, entry, edits, kept):
         start, size = region["offset"], region["size"]
         require(start % 4 == 0 and size % 4 == 0 and start + size <= len(data), "invalid inventory code region")
         words = np.frombuffer(data, dtype="<u4", offset=start, count=size // 4)
-        expected.extend(int(start + 4 * index) for index in pauth.candidate_indices(words))
+        expected.extend(int(start + 4 * index) for index in pauth.candidate_indices(words, pacga_policy=pacga_policy))
     supplied = [int(offset) for offset in edits[:, 1]] + [int(offset) for offset in kept[:, 1]]
     require(len(set(supplied)) == len(supplied), "two proof edits/data claims share a word")
     require(len(set(expected)) == len(expected), "overlapping instruction inventory")
@@ -204,7 +210,7 @@ def _candidate_census(cache, file_index, geometry, entry, edits, kept):
         require(struct.unpack_from("<I", data, offset)[0] == word, "kept data word differs from input")
 
 
-def validate_summary(cache, summary, work_dir):
+def validate_summary(cache, summary, work_dir, *, pacga_policy="reject", pacga_kernel=None):
     """Return validated {cache file index: [offset, before, after] uint64 arrays}.
 
     Any unknown, missing, partial, stale or unlowerable result raises ValueError
@@ -219,7 +225,9 @@ def validate_summary(cache, summary, work_dir):
     require(summary.get("source_manifest") == manifest, "proof input file set/content/UUID differs")
     require(summary.get("source_manifest_sha256") == _digest(_canonical(manifest)),
             "proof source manifest digest differs")
-    require(summary.get("rules") == rules_manifest(), "proof lowering/analysis rules differ")
+    require(summary.get("rules") == rules_manifest(
+                pacga_policy=pacga_policy, pacga_kernel=pacga_kernel),
+            "proof lowering/analysis/runtime rules differ")
     inventory = expected_inventory(cache)
     require(summary.get("inventory") == inventory, "proof inventory differs from cache input")
     entries = _entries(summary)
@@ -263,7 +271,7 @@ def validate_summary(cache, summary, work_dir):
         require(kept.dtype == np.dtype("uint64") and kept.ndim == 2 and kept.shape[1] == 3,
                 "invalid kept-data array layout")
         require(_integer(entry.get("edit_count"), "edit count") == len(table), "proof edit count differs")
-        _candidate_census(cache, file_index, geometry, entry, table, kept)
+        _candidate_census(cache, file_index, geometry, entry, table, kept, pacga_policy)
         edit_count += len(table)
         if not len(table):
             require(entry.get("edits_by_evidence", {}) == {}, "empty proof has evidence counts")
@@ -291,7 +299,7 @@ def validate_summary(cache, summary, work_dir):
         unique, inverse = np.unique(originals, return_inverse=True)
         computed = []
         for word in unique:
-            lowered = pauth.lower(int(word))
+            lowered = pauth.lower(int(word), pacga_policy=pacga_policy)
             require(lowered is not None, f"edit has no admitted lowering: {int(word):#x}")
             computed.append(lowered[1])
         require(bool((np.array(computed, dtype=np.uint64)[inverse] == replacements).all()),

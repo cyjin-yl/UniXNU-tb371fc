@@ -41,6 +41,7 @@ from route_a_zeta import zeta_dyld_cache as dc
 from route_a_zeta import zeta_userland_code as code
 from route_a_zeta import zeta_userland_pauth as pauth
 from arm64_lowering.proof import rules_manifest, seal_summary, source_manifest
+from arm64_lowering import pacga
 from arm64_lowering.closure_receipts import receipt_set_digest
 
 GRADES = ('unwind', 'pointer', 'landing', 'stub', 'call', 'start', 'gap')
@@ -49,7 +50,7 @@ STATE = {}
 
 def pac_candidates(words):
     """Indexes of words whose encoding is a non-hint PAC instruction class."""
-    return pauth.candidate_indices(words)
+    return pauth.candidate_indices(words, pacga_policy=STATE.get("pacga_policy", "reject"))
 
 
 def init(cache, ranges, targets, work):
@@ -84,7 +85,15 @@ def prove_code(cache, sections, strong, weak, starts, ordered, label):
     coverage.reached = set()
     _, proven, data_words, tables, anomalies, roots = code.prove_roots(
         insns, data, va_to_off, strong, weak, starts, pointers, ordered, coverage, gaps=True)
+    selected = STATE.get("pacga_policy", "reject")
+    reservation = (pacga.exclusive_analysis(insns, proven, tables) if selected == pacga.ABI
+                   else dict(pacga=set(), escapes=[]))
+    hazards = reservation["pacga"]
     edits, unproven, unlowerable, kept, kept_data = [], [], [], Counter(), []
+    for escape in reservation["escapes"]:
+        offset = va_to_off(int(escape["va"], 16), 4)
+        word = int.from_bytes(data[offset:offset + 4], "little")
+        unlowerable.append(dict(escape, word=hex(word)))
     for section in sections:
         words = np.frombuffer(data, dtype='<u4', count=section['size'] // 4, offset=section['offset'])
         for index in pac_candidates(words):
@@ -92,7 +101,9 @@ def prove_code(cache, sections, strong, weak, starts, ordered, label):
             word = int(words[index])
             if address in proven:
                 try:
-                    lowered = pauth.lower(word)
+                    if address in hazards and pacga.is_pacga(word):
+                        raise ValueError("PACGA spans a live load-exclusive reservation")
+                    lowered = pauth.lower(word, pacga_policy=selected)
                 except ValueError as error:
                     unlowerable.append(dict(va=hex(address), word=hex(word), reason=str(error)))
                     continue
@@ -206,10 +217,14 @@ def main(argv=None):
     parser.add_argument('--cache', required=True, type=Path, help='main cache file (subcaches beside it)')
     parser.add_argument('--work', required=True, type=Path)
     parser.add_argument('--jobs', type=int, default=8)
+    parser.add_argument('--pacga-policy', choices=pacga.POLICIES, default='reject')
+    parser.add_argument('--pacga-kernel', type=Path, help='matching linked kernel for the explicit PACGA ABI')
     parser.add_argument('--only', action='append', help='prove only images whose path ends with this')
     args = parser.parse_args(argv)
     if args.jobs < 1:
         parser.error('--jobs must be positive')
+    if args.pacga_policy == 'reject' and args.pacga_kernel is not None:
+        parser.error('--pacga-kernel requires explicit --pacga-policy')
     args.work.mkdir(parents=True, exist_ok=True)
     if any(args.work.iterdir()):
         parser.error('--work must be empty to bind artifacts to this attempt')
@@ -217,7 +232,9 @@ def main(argv=None):
     stage = 'initial-rules'
     pending_partial = {}
     try:
-        initial_rules = rules_manifest()
+        options = ({} if args.pacga_policy == 'reject' else
+                   dict(pacga_policy=args.pacga_policy, pacga_kernel=args.pacga_kernel))
+        initial_rules = rules_manifest(**options)
         with (args.work / 'initial-rules.json').open('x') as stream:
             json.dump(initial_rules, stream, sort_keys=True)
         stage = 'cache-open'
@@ -266,6 +283,7 @@ def run_attempt(args, cache, initial_rules, pending_partial):
         order = [i for i in order if any(images[i].path.endswith(o) for o in args.only)]
     summary = dict(schema='zeta-dyld-cache-proof-v1', cache=str(args.cache), images={})
     init(cache, ranges, targets, args.work)
+    STATE['pacga_policy'] = args.pacga_policy
     STATE['islands'] = islands
     STATE['input_sha256'] = json_digest(initial_input)
     STATE['rules_sha256'] = json_digest(initial_rules)
@@ -368,7 +386,8 @@ def run_attempt(args, cache, initial_rules, pending_partial):
             totals['edits:' + grade] += count
     summary['totals'] = dict(totals)
     cache.check_opened_generations()
-    summary = seal_summary(cache, summary, args.work, partial=bool(args.only))
+    summary = seal_summary(cache, summary, args.work, partial=bool(args.only),
+                           pacga_policy=args.pacga_policy, pacga_kernel=args.pacga_kernel)
     if summary['rules'] != initial_rules:
         raise ValueError('proof rules changed during this attempt')
     if summary['source_manifest'] != initial_input:

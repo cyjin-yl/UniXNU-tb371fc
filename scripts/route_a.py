@@ -140,6 +140,9 @@ def main(argv=None):
         if name == "rewrite":
             command.add_argument("--output", type=Path, required=True)
             command.add_argument("--plain-pointer-abi", action="store_true", required=True)
+            from arm64_lowering.pacga import POLICIES
+            command.add_argument("--pacga-policy", choices=POLICIES, default="reject")
+            command.add_argument("--pacga-kernel", type=Path)
             command.add_argument("--platform-identifier", type=int)
             command.add_argument("--hardened-runtime", action=argparse.BooleanOptionalAction, default=None)
             command.add_argument("--apple-trust-cache", type=Path, action="append", default=[])
@@ -169,7 +172,8 @@ def main(argv=None):
         data = args.input.read_bytes()
         output, report = rewrite_userland(
             data, plain_pointers=args.plain_pointer_abi,
-            platform_identifier=args.platform_identifier, hardened_runtime=args.hardened_runtime)
+            platform_identifier=args.platform_identifier, hardened_runtime=args.hardened_runtime,
+            pacga_policy=args.pacga_policy, pacga_kernel=args.pacga_kernel)
         add_trust_entry(report, args.apple_trust_cache)
         report.update(target=target, input_name=args.input.name, output_name=args.output.name)
         output_stage.write_bytes(output)
