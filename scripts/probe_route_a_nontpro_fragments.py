@@ -15,6 +15,7 @@ from pathlib import Path
 import re
 import resource
 import shutil
+import signal
 import socket
 import stat
 import struct
@@ -25,6 +26,8 @@ import time
 from audit_route_a_nontpro import (AuditError, Standalone, entry_contract,
                                    file_identity, require, sha256)
 from probe_route_a_qemu_entry import Remote, EntryError
+import probe_route_a_corecrypto as process_tools
+from route_a_pacga_probe import run as execution
 from route_a_nontpro_xnu import bind_syscall38
 from route_a_nontpro_fixture import (
     BOOT_BASE, COMPLETED, COMMPAGE_PA, DYLD_BASE, INPUT_BASE, INPUT_SIZE,
@@ -135,6 +138,60 @@ def compile_fixture(output, tools, report):
     require(0x6340 <= (output / "entry.bin").stat().st_size <= 0x10000, "unexpected fixture extent")
 
 
+def finish_launch(process, connection, log, report, paths, started, primary):
+    """Use the shared owned-session cleanup and retain the observation error."""
+    record, errors = report["qemu"], []
+
+    def attempt(label, action):
+        try:
+            return action()
+        except BaseException as error:
+            errors.append((label, error))
+            return None
+
+    watched = (signal.SIGINT, signal.SIGTERM, signal.SIGHUP)
+    mask = attempt("block-cleanup-signals", lambda: signal.pthread_sigmask(signal.SIG_BLOCK, watched))
+    try:
+        if process is not None:
+            record["cleanup"] = {"group": process.pid, "group_absent": False,
+                                 "direct_child_reaped": False}
+
+            def initial_status():
+                record["exit_before_termination"] = process.poll()
+
+            attempt("initial-child-status", initial_status)
+            # A zero-exit direct child can still have living descendants.
+            cleanup = attempt("group-cleanup", lambda: execution.stop_group(process))
+            if cleanup is not None:
+                record["cleanup"] = cleanup
+
+            def final_status():
+                record.update(exit_code=process.poll(), reaped=process.returncode is not None)
+
+            attempt("final-child-status", final_status)
+        for label, handle in (("socket", connection), ("log", log)):
+            if handle is not None:
+                attempt(label + "-close", handle.close)
+
+        def diagnostics():
+            report["logs"] = {path.name: file_identity(path) for path in paths if path.exists()}
+
+        attempt("log-identities", diagnostics)
+        record["elapsed_seconds"] = round(time.monotonic() - started, 6)
+    finally:
+        if mask is not None:
+            attempt("restore-cleanup-signals", lambda: signal.pthread_sigmask(signal.SIG_SETMASK, mask))
+    record["teardown_errors"] = [{"phase": label, "type": type(error).__name__, "message": str(error)}
+                                 for label, error in errors]
+    if errors:
+        failure = primary if primary is not None else errors[0][1]
+        for label, error in errors:
+            if error is not failure:
+                failure.add_note(f"A01 QEMU teardown {label}: {type(error).__name__}: {error}")
+        if primary is None:
+            raise failure
+
+
 def launch(args, output, source, cases, report):
     endpoint = output / "gdb.sock"
     require(len(os.fsencode(endpoint)) <= 100, "output path exceeds Unix-socket bound")
@@ -157,14 +214,17 @@ def launch(args, output, source, cases, report):
                       "original_pauth_bytes_retained": True, "a77_isa_verified": False,
                       "stop_reason": None}
     started = time.monotonic()
-    connection = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
+    process = connection = log = None
     def limits():
         resource.setrlimit(resource.RLIMIT_FSIZE, (MAX_LOG, MAX_LOG))
-    with stderr.open("wb") as log:
-        process = subprocess.Popen(argv, stdout=log, stderr=log, stdin=subprocess.DEVNULL,
-                                   preexec_fn=limits)
-        report["qemu"]["pid"] = process.pid
+    with execution.owned_children():
         try:
+            log = stderr.open("xb")
+            connection = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
+            with process_tools.defer_spawn_signals():
+                process = subprocess.Popen(argv, stdout=log, stderr=log, stdin=subprocess.DEVNULL,
+                                           start_new_session=True, preexec_fn=limits)
+                report["qemu"]["pid"] = process.pid
             deadline = started + args.timeout
             while True:
                 require(time.monotonic() < deadline, "QEMU attachment deadline expired")
@@ -223,20 +283,11 @@ def launch(args, output, source, cases, report):
                 require(remote.request(f"z1,{address:x},4") == "OK", "hardware breakpoint cleanup rejected")
             require(report["fixture_result_observed"], "fragment results or syscall-model preconditions did not match")
         finally:
-            connection.close()
-            report["qemu"]["termination"] = "already-exited"
-            if process.poll() is None:
-                report["qemu"]["termination"] = "SIGTERM"
-                process.terminate()
-                try:
-                    process.wait(timeout=2)
-                except subprocess.TimeoutExpired:
-                    report["qemu"]["termination"] = "SIGKILL-after-2s"
-                    process.kill()
-                    process.wait(timeout=2)
-            report["qemu"].update(exit_code=process.returncode, reaped=process.poll() is not None,
-                                   elapsed_seconds=round(time.monotonic() - started, 6))
-            report["logs"] = {p.name: file_identity(p) for p in (trace, stderr) if p.exists()}
+            finish_launch(process, connection, log, report, (trace, stderr), started, sys.exc_info()[1])
+    require(report["qemu"]["exit_before_termination"] is None, "QEMU exited before owned cleanup")
+    require(report["qemu"]["cleanup"].get("group_absent") is True and
+            report["qemu"]["cleanup"].get("direct_child_reaped") is True,
+            "QEMU owned process group did not finish cleanup")
     require(process.returncode == 0 and report["qemu"]["reaped"], "QEMU did not cleanly terminate and reap")
 
 
@@ -255,7 +306,7 @@ def run(args):
               "syscall_model_contract": {"svc_immediate": "0x80", "x16_signed": 38, "namespace": "0x0",
                                          "x0_return": "0x2d", "x1_return": "0x0", "carry": 1,
                                          "actual_xnu_dispatch_verified": False}}
-    source, generated, dependencies = None, {}, {}
+    source, generated, dependencies, primary = None, {}, {}, None
     try:
         source = Standalone(args.input)
         report["standalone"] = source.identity
@@ -266,6 +317,8 @@ def run(args):
                         ("audit_route_a_nontpro.py", "route_a_nontpro_fixture.py", "route_a_nontpro_xnu.py",
                          "probe_route_a_nontpro_fragments.py", "probe_route_a_qemu_entry.py",
                          "route-a-nontpro/entry.S", "route-a-nontpro/link.ld")}
+        for path in (Path(process_tools.__file__), Path(execution.__file__)):
+            dependencies[str(path)] = file_identity(path)
         report["source_files"] = list(dependencies.values())
         selected = {}
         report["tools"] = {}
@@ -286,8 +339,10 @@ def run(args):
         report["generated_inputs"] = list(generated.values())
         launch(args, output, source, cases, report)
         report["status"] = "passed"
-    except (AuditError, EntryError, OSError, ValueError, RuntimeError, subprocess.SubprocessError) as error:
-        report["error"] = {"type": type(error).__name__, "message": str(error)}
+    except BaseException as error:
+        primary = error
+        report["error"] = {"type": type(error).__name__, "message": str(error),
+                           "notes": list(getattr(error, "__notes__", []))}
     finally:
         checks = {}
         try:
@@ -298,8 +353,14 @@ def run(args):
                 checks[path] = file_identity(path) == expected
             for name, record in report.get("tools", {}).items():
                 checks["tool:" + name] = invocation_identity(record["invocation"]) == record["identity"]
-        except (OSError, AuditError) as error:
-            checks["recheck_error"] = str(error)
+        except BaseException as error:
+            checks["recheck_error"] = {"type": type(error).__name__, "message": str(error)}
+            if primary is None:
+                primary = error
+                report["error"] = {"type": type(error).__name__, "message": str(error)}
+            else:
+                primary.add_note(f"A01 input recheck: {type(error).__name__}: {error}")
+                report["error"]["notes"] = list(getattr(primary, "__notes__", []))
         report["input_recheck"] = checks
         unchanged = bool(source is not None and checks) and all(v is True for v in checks.values())
         report["inputs_unchanged"] = unchanged
@@ -308,9 +369,17 @@ def run(args):
         if not report["fragment_execution_verified"]:
             report["status"] = "failed"
         report["finished_utc"] = datetime.datetime.now(datetime.timezone.utc).isoformat()
-        with (output / "report.json").open("x") as stream:
-            json.dump(report, stream, indent=2)
-            stream.write("\n")
+        try:
+            with (output / "report.json").open("x") as stream:
+                json.dump(report, stream, indent=2)
+                stream.write("\n")
+        except BaseException as error:
+            if primary is not None:
+                primary.add_note(f"A01 report publication: {type(error).__name__}: {error}")
+                raise primary
+            raise
+    if primary is not None and not isinstance(primary, Exception):
+        raise primary
     print(json.dumps({"report": str(output / "report.json"), "status": report["status"],
                       "fragment_execution_verified": report["fragment_execution_verified"],
                       "a01_verified": False}))
@@ -330,7 +399,16 @@ def main():
     parser.add_argument("--clang", default="clang-19")
     parser.add_argument("--lld", default="ld.lld-19")
     parser.add_argument("--objcopy", default="llvm-objcopy-19")
-    return run(parser.parse_args())
+    args = parser.parse_args()
+    def interrupted(number, _frame):
+        raise InterruptedError("A01 fixture interrupted by signal " + str(number))
+    watched = (signal.SIGINT, signal.SIGTERM, signal.SIGHUP)
+    previous = {number: signal.signal(number, interrupted) for number in watched}
+    try:
+        return run(args)
+    finally:
+        for number, handler in previous.items():
+            signal.signal(number, handler)
 
 
 if __name__ == "__main__":
