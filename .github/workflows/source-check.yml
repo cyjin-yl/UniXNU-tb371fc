@@ -6,7 +6,7 @@ permissions:
   contents: read
 jobs:
   check:
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
@@ -18,12 +18,12 @@ jobs:
       - name: Install Route A analysis dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install --no-install-recommends --yes llvm-18 clang-19
+          sudo apt-get install --no-install-recommends --yes llvm-18 clang-21
           mkdir -p "$RUNNER_TEMP/route-a-llvm-bin"
           ln -s /usr/bin/llvm-mc-18 "$RUNNER_TEMP/route-a-llvm-bin/llvm-mc"
           printf '%s\n' "$RUNNER_TEMP/route-a-llvm-bin" >> "$GITHUB_PATH"
           llvm-mc-18 --version
-          clang-19 --version
+          clang-21 --version
           python3 -m venv "$RUNNER_TEMP/route-a-venv"
           "$RUNNER_TEMP/route-a-venv/bin/python" -m pip install --requirement requirements-route-a.txt
       - name: Verify pinned pager patch application and reversal
@@ -36,7 +36,7 @@ jobs:
           python3 scripts/probe_route_a_allocation.py prepare-sources --output "$RUNNER_TEMP/route-a-allocation-sources"
       - name: Check Route A parsing, lowering, proof gates and extracted pager C
         env:
-          ROUTE_A_FILESET_CLANG: /usr/bin/clang-19
+          ROUTE_A_FILESET_CLANG: /usr/bin/clang-21
         run: |
           ROUTE_A_XNU_PREPARED_DIR="$RUNNER_TEMP/route-a-xnu/tree" \
           ROUTE_A_LOADER_SOURCES="$RUNNER_TEMP/route-a-loader-sources" \
