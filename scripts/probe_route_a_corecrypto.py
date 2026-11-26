@@ -25,6 +25,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 import build_route_a_corecrypto as build
 import probe_route_a_qemu_entry as entry
 from arm64_lowering import macho, pacga
+from route_a_pacga_probe import run as execution
 
 require = build.require
 MODES = ("positive", "negative-post")
@@ -481,6 +482,64 @@ def prepare(args, out, journal, report):
     return strict, kernel, image, symbols, defined, layout, callback_offset
 
 
+def finish_launch(process, err, sock, report, trace, serial, strict, image, layout, started, primary):
+    """Attempt every teardown step without replacing the observation failure."""
+    record, errors = report["qemu"], []
+
+    def attempt(label, function):
+        try:
+            return function()
+        except BaseException as error:
+            errors.append((label, error))
+            return None
+
+    watched = (signal.SIGINT, signal.SIGTERM, signal.SIGHUP)
+    previous_mask = attempt("block-cleanup-signals",
+                            lambda: signal.pthread_sigmask(signal.SIG_BLOCK, watched))
+    try:
+        if process is not None:
+            record["cleanup"] = {"group": process.pid, "group_absent": False,
+                                 "direct_child_reaped": False}
+
+            def initial_status():
+                record["exit_before_termination"] = process.poll()
+
+            attempt("initial-child-status", initial_status)
+            # Always clean the owned session, even when the direct QEMU process
+            # has already exited. Its descendants may still be alive.
+            cleanup = attempt("group-cleanup", lambda: execution.stop_group(process))
+            if cleanup is not None:
+                record["cleanup"] = cleanup
+
+            def final_status():
+                record.update(exit=process.poll(), reaped=process.returncode is not None)
+
+            attempt("final-child-status", final_status)
+        for name, handle in (("socket", sock), ("stderr", err)):
+            if handle is not None:
+                attempt(name + "-close", handle.close)
+
+        def diagnostics():
+            report["exception"] = entry.exception_summary(entry.read_text(trace), entry.read_text(serial),
+                                                            strict, image, layout)
+
+        attempt("exception-summary", diagnostics)
+        record["elapsed_seconds"] = round(time.monotonic() - started, 6)
+    finally:
+        if previous_mask is not None:
+            attempt("restore-cleanup-signals",
+                    lambda: signal.pthread_sigmask(signal.SIG_SETMASK, previous_mask))
+    record["teardown_errors"] = [dict(phase=label, type=type(error).__name__, error=str(error))
+                                 for label, error in errors]
+    if errors:
+        failure = primary if primary is not None else errors[0][1]
+        for label, error in errors:
+            if error is not failure:
+                failure.add_note(f"QEMU teardown {label}: {type(error).__name__}: {error}")
+        if primary is None:
+            raise failure
+
+
 def launch(args, out, journal, report, prepared):
     strict, kernel, image, symbols, defined, layout, callback_offset = prepared
     endpoint = out / "gdb.sock"
@@ -496,10 +555,13 @@ def launch(args, out, journal, report, prepared):
     report["qemu"] = {"argv": argv, "timeout_seconds": args.timeout, "clock_mode": "instruction-1ns",
                       "max_file_bytes": entry.MAX_LOG, "storage_devices": [], "network_devices": []}
     def limits(): resource.setrlimit(resource.RLIMIT_FSIZE, (entry.MAX_LOG, entry.MAX_LOG))
-    process = None
+    journal.protect(Path(execution.__file__))
+    process = err = sock = None
     started = time.monotonic()
-    with (out / "qemu.stderr.log").open("xb") as err, socket.socket(socket.AF_UNIX) as sock:
+    with execution.owned_children():
         try:
+            err = (out / "qemu.stderr.log").open("xb")
+            sock = socket.socket(socket.AF_UNIX)
             process = subprocess.Popen(argv, stdin=subprocess.DEVNULL, stdout=err, stderr=err,
                                        start_new_session=True, preexec_fn=limits)
             report["qemu"]["pid"] = process.pid
@@ -512,17 +574,12 @@ def launch(args, out, journal, report, prepared):
             report["entry"] = entry.observe_entry(remote, layout, symbols)
             observe(remote, strict, kernel, defined, report, args.mode, callback_offset)
         finally:
-            if process is not None:
-                report["qemu"]["exit_before_termination"] = process.poll()
-                if process.poll() is None:
-                    os.killpg(process.pid, signal.SIGTERM)
-                    try: process.wait(timeout=2)
-                    except subprocess.TimeoutExpired:
-                        os.killpg(process.pid, signal.SIGKILL); process.wait(timeout=2)
-                report["qemu"].update(exit=process.returncode, reaped=process.poll() is not None,
-                                       elapsed_seconds=round(time.monotonic() - started, 6))
-            report["exception"] = entry.exception_summary(entry.read_text(trace), entry.read_text(serial), strict, image, layout)
+            finish_launch(process, err, sock, report, trace, serial, strict, image, layout,
+                          started, sys.exc_info()[1])
     require(report["qemu"]["exit_before_termination"] is None and report["qemu"]["reaped"], "QEMU exited unexpectedly")
+    require(report["qemu"]["cleanup"].get("group_absent") is True
+            and report["qemu"]["cleanup"].get("direct_child_reaped") is True,
+            "QEMU owned process group did not finish cleanup")
     require(report["exception"].get("CurrentEL") == 4 and report["exception"].get("CNTFRQ") == 62500000,
             "actual fixture EL/counter differs")
 
@@ -538,7 +595,7 @@ def run(args):
         require(args.mode in MODES and 1 <= args.timeout <= 60, "unsupported mode or timeout")
         for path in (Path(__file__), Path(build.__file__), Path(entry.__file__), Path(entry.loader.__file__),
                      Path(entry.loader.platform_link.__file__), Path(entry.loader.platform_link.toolchain.__file__),
-                     Path(pacga.__file__), Path(macho.__file__), build.ROOT / pacga.HEADER,
+                     Path(pacga.__file__), Path(macho.__file__), Path(execution.__file__), build.ROOT / pacga.HEADER,
                      build.ROOT / pacga.PATCH,
                      entry.loader.CONFIG, entry.SOURCES / "sources.json", Path(sys.executable).resolve()):
             journal.protect(path)
