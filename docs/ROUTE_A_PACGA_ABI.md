@@ -90,15 +90,15 @@ Every other general register, SP, saved PC and CPSR/NZCV is preserved. LR or FP
 changes only when it is explicitly the destination. The saved SVC PC already
 points to the following instruction, so the handler does not increment it.
 
-The real XNU return path needs a separate x18 change: without the preservation
-entitlement, the original `locore.s` clears x18 even when the C saved state is
+The real XNU return path needs a separate x18 change: with the existing
+preservation flag clear, the original `locore.s` clears x18 even when the C saved state is
 correct. The opt-in overlay therefore binds three production source changes.
 `SPILL_REGISTERS` clears the private `arm_saved_state64.reserved` padding at
 every exception entry; only a successfully handled AArch64 EL0t PACGA SVC
 sets the shared tag. In the final return segment, with interrupts masked,
 `locore.s` consumes and clears that tag before branching. A matching tag and
 EL0t mode restore saved x18, including a PACGA destination of x18. Untagged
-returns keep the original entitlement policy. ESR alone cannot authorize this
+returns keep the original policy for the preservation flag. ESR alone cannot authorize this
 path: an asynchronous exception can carry an old synchronous syndrome.
 
 The marker occupies no user register and is not part of the public thread-state
@@ -251,7 +251,7 @@ known answer and every register index. They compare the delivered GPRs, PC, LR,
 SP, NZCV, V0–V31, FPCR and FPSR. The SVC fixture also checks that an ordinary
 immediate returns false from the new handler and reaches its fixture dispatcher.
 The fixture executes the exact reset and return blocks extracted from the
-production patch, including the original entitlement fallback. It no longer
+production patch, including the existing preservation flag check. It no longer
 unconditionally restores x18. Additional calls to that same assembly exercise
 stale ESR, malformed tags, invalid modes, one-time consumption, separate nested
 contexts and the reviewed signal/fork lifecycle. Those lifecycle cases model

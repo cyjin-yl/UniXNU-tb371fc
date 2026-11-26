@@ -803,7 +803,7 @@ class PacgaLinkAdmission(unittest.TestCase):
     def test_v2_binds_both_recipes_configuration_dependencies_and_objects(self):
         failures = (None, "v1", "one-tu", "third-tu", "failed", "unreaped", "wrong-previous", "extra-flags",
                     "wrong-timeout", "bad-bound", "unit-failed", "missing-member", "duplicate-member", "arm64e",
-                    "descriptor", "depfile", "configuration", "assembler", "source-forgery", "header-drift", "producer")
+                    "descriptor", "depfile", "configuration", "assembler", "source-forgery", "header-drift", "producer", "macro-arm64e", "c-assembler")
         for failure in failures:
             with self.subTest(failure=failure), tempfile.TemporaryDirectory() as tmp:
                 fixture = self.fixture(Path(tmp)); stage = fixture.stage; unit = stage["translation_units"]["locore"]
@@ -830,6 +830,10 @@ class PacgaLinkAdmission(unittest.TestCase):
                     path = fixture.output / "locore.macros.txt"
                     raw = path.read_bytes().replace(b"__ARM_KERNEL_PROTECT__ 0", b"__ARM_KERNEL_PROTECT__ 1") if failure == "configuration" else path.read_bytes().replace(b"#define __ASSEMBLER__ 1\n", b"")
                     path.write_bytes(raw); self.rebind(fixture, path)
+                if failure in ("macro-arm64e", "c-assembler"):
+                    path = fixture.output / ("locore.macros.txt" if failure == "macro-arm64e" else "sleh.macros.txt")
+                    path.write_bytes(path.read_bytes() + (b"#define __arm64e__ 1\n" if failure == "macro-arm64e" else b"#define __ASSEMBLER__ 1\n"))
+                    self.rebind(fixture, path)
                 if failure == "source-forgery":
                     path = fixture.output / "source" / B.PACGA_SOURCES[2]
                     path.write_bytes(path.read_bytes() + b"unreviewed change\n"); self.rebind(fixture, path)
@@ -895,26 +899,60 @@ class PacgaLinkAdmission(unittest.TestCase):
                     self.admit(fixture)
                 self.assertEqual(len(changed), 1)
 
+    def change_generation_without_changing_bytes(self, path, mutation):
+        from route_a_pacga_probe import run as execution
+        before = execution.file_identity(path)
+        raw = path.read_bytes()
+        if mutation == "replace":
+            replacement = path.with_name(path.name + ".replacement")
+            replacement.write_bytes(raw); replacement.chmod(before["generation"]["mode"] & 0o7777)
+            os.replace(replacement, path)
+        else:
+            path.write_bytes(raw + b"\n"); path.write_bytes(raw)
+            os.utime(path, ns=(path.stat().st_atime_ns, before["generation"]["mtime_ns"]))
+        after = execution.file_identity(path)
+        self.assertEqual(before["sha256"], after["sha256"])
+        self.assertNotEqual(before["generation"], after["generation"])
+
+    def test_generated_same_bytes_replacement_or_write_restore_is_not_a_new_baseline(self):
+        for name in ("sleh.d", "locore.discovered.d", "locore.dependencies.json", "stage-report.json"):
+            for mutation in ("replace", "restore"):
+                with self.subTest(name=name, mutation=mutation), tempfile.TemporaryDirectory() as tmp:
+                    fixture = self.fixture(Path(tmp)); target = fixture.output / name
+                    trigger = fixture.kb / ".cache/xnu-work" / B.PACGA_SOURCES[0]
+                    original_pin, changed = B.pin, []
+                    def read_then_change(path, digest):
+                        raw = original_pin(path, digest)
+                        if Path(path) == trigger and not changed:
+                            self.change_generation_without_changing_bytes(target, mutation); changed.append(target)
+                        return raw
+                    with patch.object(B, "pin", side_effect=read_then_change), self.assertRaises(B.BuildError):
+                        self.admit(fixture)
+                    self.assertEqual(changed, [target])
+
     def test_current_validation_source_cannot_be_adopted_after_its_pin_check(self):
         from arm64_lowering import pacga
-        with tempfile.TemporaryDirectory() as tmp:
-            root = Path(tmp); fixture = self.fixture(root)
-            consumer = root / "consumer-source"
-            relatives = ("scripts/build_route_a_pacga.py", "scripts/route_a_pacga_probe/run.py",
-                         "scripts/arm64_lowering/pacga.py", pacga.HEADER, pacga.ABI_HEADER, pacga.PATCH)
-            for relative in relatives:
-                path = consumer / relative; path.parent.mkdir(parents=True, exist_ok=True)
-                path.write_bytes((B.ROOT / relative).read_bytes())
-            target = consumer / relatives[0]
-            original_pin, changed = B.pin, []
-            def pin_then_change(path, digest):
-                raw = original_pin(path, digest)
-                if Path(path) == target and not changed:
-                    target.write_bytes(raw + b"\n# changed after fixed identity check\n"); changed.append(path)
-                return raw
-            with patch.object(B, "ROOT", consumer), patch.object(B, "pin", side_effect=pin_then_change), self.assertRaises(B.BuildError):
-                self.admit(fixture)
-            self.assertEqual(len(changed), 1)
+        for mutation in ("content", "replace", "restore"):
+            with self.subTest(mutation=mutation), tempfile.TemporaryDirectory() as tmp:
+                root = Path(tmp); fixture = self.fixture(root)
+                consumer = root / "consumer-source"
+                relatives = ("scripts/build_route_a_pacga.py", "scripts/route_a_pacga_probe/run.py",
+                             "scripts/arm64_lowering/pacga.py", pacga.HEADER, pacga.ABI_HEADER, pacga.PATCH)
+                for relative in relatives:
+                    path = consumer / relative; path.parent.mkdir(parents=True, exist_ok=True)
+                    path.write_bytes((B.ROOT / relative).read_bytes())
+                target = consumer / relatives[0]
+                original_pin, changed = B.pin, []
+                def pin_then_change(path, digest):
+                    raw = original_pin(path, digest)
+                    if Path(path) == target and not changed:
+                        if mutation == "content": target.write_bytes(raw + b"\n# changed after fixed identity check\n")
+                        else: self.change_generation_without_changing_bytes(target, mutation)
+                        changed.append(path)
+                    return raw
+                with patch.object(B, "ROOT", consumer), patch.object(B, "pin", side_effect=pin_then_change), self.assertRaises(B.BuildError):
+                    self.admit(fixture)
+                self.assertEqual(len(changed), 1)
 
     def test_macro_admission_rejects_ambiguous_or_unreviewed_configuration(self):
         good = b"#define CONFIG_ROUTE_A_PACGA_SVC 1\n#define __ASSEMBLER__ 1\n"
@@ -924,6 +962,15 @@ class PacgaLinkAdmission(unittest.TestCase):
                     good + b"#define __ARM_KERNEL_PROTECT__ 0\n#define __ARM_KERNEL_PROTECT__ 0\n",
                     good.replace(b"__ASSEMBLER__ 1", b"__ASSEMBLER__ 0")):
             with self.assertRaises(B.BuildError): B.pacga_configuration(raw, "locore")
+
+        c_config = b"#define CONFIG_ROUTE_A_PACGA_SVC 1\n"
+        self.assertEqual(B.pacga_configuration(c_config, "sleh")["language"], "c")
+        for unit, raw in (("locore", good + b"#define __arm64e__ 1\n"),
+                          ("locore", good + b"#define __arm64e__\n"),
+                          ("sleh", c_config + b"#define __ASSEMBLER__ 1\n"),
+                          ("sleh", c_config + b"#define __ASSEMBLER__\n")):
+            with self.subTest(unit=unit, macros=raw), self.assertRaises(B.BuildError):
+                B.pacga_configuration(raw, unit)
 
     def test_link_filelist_replaces_exactly_bootstrap_sleh_and_locore_in_order(self):
         with tempfile.TemporaryDirectory() as tmp:

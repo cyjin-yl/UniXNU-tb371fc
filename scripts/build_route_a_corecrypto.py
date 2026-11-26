@@ -706,8 +706,11 @@ def pacga_configuration(raw, unit):
             "PACGA configuration does not uniquely enable the selected ABI")
     require(definitions("__ARM_KERNEL_PROTECT__") in ([], [b"0"]),
             "PACGA x18 exception return is not reviewed for ARM_KERNEL_PROTECT")
+    require(not definitions("__arm64e__"), "PACGA configuration selects the arm64e ABI")
     if unit == "locore":
         require(definitions("__ASSEMBLER__") == [b"1"], "PACGA locore configuration is not assembler preprocessing")
+    else:
+        require(not definitions("__ASSEMBLER__"), "PACGA sleh configuration is not C")
     return {"macros_sha256": sha(raw), "route_a_pacga_svc": 1, "arm_kernel_protect": 0,
             "language": "c" if unit == "sleh" else "assembler-with-cpp"}
 
@@ -717,8 +720,12 @@ def admit_pacga_stage(journal, stage_path, kernel_build, original_members):
     from arm64_lowering import pacga
     from route_a_pacga_probe import run as execution
     path = regular(stage_path)
+    stage_generation = execution.file_identity(path)
     stage_identity = journal.protect(path)
-    stage = json.loads(path.read_bytes())
+    stage_bytes = path.read_bytes()
+    require(sha(stage_bytes) == stage_generation["sha256"] == stage_identity["sha256"],
+            "PACGA stage report changed before it was read")
+    stage = json.loads(stage_bytes)
     require(stage.get("schema") == "route-a-pacga-stage-v2" and stage.get("compile_passed") is True
             and type(stage.get("compile_exit_code")) is int and stage["compile_exit_code"] == 0
             and stage.get("abi") == pacga.ABI, "PACGA stage did not successfully compile the selected v2 ABI")
@@ -754,7 +761,11 @@ def admit_pacga_stage(journal, stage_path, kernel_build, original_members):
                                "configuration:" + unit: output / (unit + ".macros.txt")})
         guarded.extend(expected_paths[key + ":" + unit] for key in ("recipe", "object", "configuration"))
         guarded.extend(output / (unit + suffix) for suffix in (".d", ".discovered.d", ".dependencies.json"))
+    guarded_generations = {str(path): stage_generation}
     for item in guarded:
+        original = execution.file_identity(item)
+        require(guarded_generations.setdefault(str(item), original) == original,
+                "PACGA guarded input generation changed before admission")
         journal.protect(item)
     for key, item in expected_paths.items():
         require(frozen[key]["path"] == str(item), "PACGA frozen path differs: " + key)
@@ -898,15 +909,16 @@ def admit_pacga_stage(journal, stage_path, kernel_build, original_members):
     for record in frozen.values():
         journal.protect(record["path"])
     journal.protect(tools["clang"]["invocation"], tool=True)
-    try:
-        execution.verify_files(frozen, hashes=True)
-        execution.verify_tools(tools, hashes=True)
-    except ValueError as error:
-        raise BuildError("PACGA stage identity changed during admission: " + str(error)) from error
     for item in guarded:
         journal.protect(item)
     require(journal.protect(path) == stage_identity and pacga.implementation() == implementation,
             "PACGA report or implementation changed during admission")
+    try:
+        execution.verify_files(frozen, hashes=True)
+        execution.verify_tools(tools, hashes=True)
+        execution.verify_files(guarded_generations, hashes=True)
+    except ValueError as error:
+        raise BuildError("PACGA stage identity changed during admission: " + str(error)) from error
     return {"stage_report": stage_identity, "kernel_build": str(kb), "implementation": implementation,
             "translation_units": admitted, "validation_sources": {key: frozen[key]["sha256"] for key in ("stage", "execution")},
             "dependency_count": len(dependencies), "runtime_boot_verified": False}
