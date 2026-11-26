@@ -6,8 +6,10 @@ architectural vectors, independent of the implementation's edit generator.
 from copy import deepcopy
 import importlib.util
 import json
+import os
 from pathlib import Path
 import struct
+import subprocess
 import sys
 import tempfile
 import unittest
@@ -129,7 +131,52 @@ class CacheProofTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, pattern):
             validate_summary(self.cache, self.summary, self.work)
 
+    def bind_synthetic_own_receipts(self):
+        # Unit-test-only fixture for admission checks. Production never synthesizes
+        # job receipts; the real CLI chain regression exercises their creation.
+        from arm64_lowering.closure_receipts import receipt_set_digest
+        from arm64_lowering.proof import _canonical, _digest
+        import hashlib
+        entries = [(i, addr, path, False, self.summary["images"][path])
+                   for i, (addr, path) in enumerate(self.cache.images)]
+        entries += [(len(entries) + i, int(entry["address"], 16),
+                     "island-" + entry["address"][2:], True, entry)
+                    for i, entry in enumerate(self.summary["islands"])]
+        for i, addr, path, island, entry in entries:
+            stem = path if island else hashlib.sha256(path.encode()).hexdigest()[:16]
+            stem += ".own"
+            name = stem + ".npz"
+            with np.load(self.work / entry["result_file"], allow_pickle=False) as old:
+                arrays = {key: old[key] for key in old.files}
+            np.savez_compressed(self.work / name, **arrays, reached=np.empty(0, dtype=np.uint64))
+            entry.update(result_file=name, reproven_with_calls=False)
+        self.refresh()
+        for filename, data in (("initial-input.json", self.summary["source_manifest"]),
+                               ("initial-rules.json", self.summary["rules"])):
+            (self.work / filename).write_text(json.dumps(data))
+        for i, addr, path, island, _ in entries:
+            entry = (next(e for e in self.summary["islands"] if e["address"] == hex(addr))
+                     if island else self.summary["images"][path])
+            result = dict(entry)
+            if island:
+                del result["address"]
+                del result["size"]
+            name = result["result_file"]
+            identity = dict(index=i, path=path, address=addr, phase="own",
+                            input_sha256=self.summary["source_manifest_sha256"],
+                            rules_sha256=_digest(_canonical(self.summary["rules"])),
+                            called_roots_sha256=None, pid=os.getpid(), start_ns=1)
+            (self.work / name.replace(".npz", ".started.json")).write_text(json.dumps(identity))
+            artifact = dict(name=name, **self.summary["results"][name])
+            (self.work / name.replace(".npz", ".done.json")).write_text(
+                json.dumps(dict(identity, result=result, artifact=artifact)))
+        self.summary["closure"] = dict(converged=True, partial=False, round_count=0,
+                                       rounds_sha256=_digest(_canonical([])),
+                                       final_roots_sha256=_digest(_canonical({})),
+                                       receipt_set_sha256=receipt_set_digest(self.work)[0])
+
     def test_complete_bound_proof_admits_expected_edit(self):
+        self.bind_synthetic_own_receipts()
         result = validate_summary(self.cache, self.summary, self.work)
         self.assertEqual(result[0].tolist(), [[0x1100, BEFORE, AFTER]])
 
@@ -189,6 +236,7 @@ class CacheProofTests(unittest.TestCase):
         self.summary["totals"]["edits"] = 2
         self.summary["totals"]["edits:call"] = 1
         self.refresh()
+        self.bind_synthetic_own_receipts()
         self.assertEqual(len(validate_summary(self.cache, self.summary, self.work)[0]), 2)
 
     def test_unproven_and_unlowerable_cannot_be_hidden_in_counts(self):
@@ -270,35 +318,158 @@ class CacheProofTests(unittest.TestCase):
         self.assertEqual(status, 2)
         self.assertFalse(output.exists())
 
+    def test_same_inode_mutation_and_restore_rejects_publication(self):
+        prover = module('prove-zeta-dyld-cache')
+        original = self.cache_path.read_bytes()
+        initial = self.cache_path.stat()
+        parent_pid = os.getpid()
+        for phase in ('initial_hash', 'worker', 'sealing'):
+            with self.subTest(phase=phase):
+                work = self.work / phase
+                marker = self.work / (phase + '.observed')
+                if phase == 'initial_hash':
+                    owner, method = prover, 'source_manifest'
+                elif phase == 'worker':
+                    owner, method = prover.dc.Image, 'instruction_sections'
+                else:
+                    owner, method = prover, 'seal_summary'
+                real = getattr(owner, method)
+
+                def transient(*args, **kwargs):
+                    if phase == 'worker' and os.getpid() == parent_pid:
+                        return real(*args, **kwargs)
+                    # Vary an unused reserved byte in the synthetic Mach-O header.
+                    # The worker still runs the actual parser and proof algorithm.
+                    offset = 0x1000 + 28
+                    with self.cache_path.open('r+b', buffering=0) as stream:
+                        stream.seek(offset)
+                        stream.write(bytes([original[offset] ^ 1]))
+                        try:
+                            if phase == 'worker':
+                                value = real(*args, **kwargs)
+                        finally:
+                            stream.seek(offset)
+                            stream.write(original[offset:offset + 1])
+                    marker.write_text(str(os.getpid()))
+                    return value if phase == 'worker' else real(*args, **kwargs)
+
+                with patch.dict(sys.modules, {prover.__name__: prover}), patch.object(owner, method, transient):
+                    with self.assertRaisesRegex(ValueError, 'opened cache generation changed'):
+                        prover.main(['--cache', str(self.cache_path), '--work', str(work), '--jobs', '1'])
+                self.assertTrue(marker.is_file())
+                if phase == 'worker':
+                    self.assertNotEqual(int(marker.read_text()), parent_pid)
+                self.assertEqual(self.cache_path.stat().st_ino, initial.st_ino)
+                self.assertEqual(self.cache_path.read_bytes(), original)
+                self.assertFalse((work / 'summary.json').exists())
+
+    def test_driver_closure_through_no_pac_image_and_island(self):
+        data = cache_bytes(images=3)
+        data.extend(bytes(0x1000))
+        struct.pack_into("<QQ", data, 0x28, 0x5000, 0x1000)
+        struct.pack_into("<II", data, 0x10, 0x200, 2)
+        struct.pack_into("<QQQII", data, 0x220, BASE+0x3000, 0x1000, 0x4000, 5, 5)
+        struct.pack_into("<II", data, 0x138, 0x240, 1)
+        struct.pack_into("<QQQQQQII", data, 0x240, BASE+0x3000, 0x1000, 0x4000, 0, 0, 8, 5, 5)
+        # A has a structural stub entry, B is a no-PAC image, C has RETAB.
+        # Real cache parser and child workers traverse A -> B -> island -> C.
+        struct.pack_into("<III", data, 0x1000+104+64, 0x80000408, 0, 4)
+        def branch(pc, target):
+            return 0x14000000 | (((target-pc)//4)&0x03ffffff)
+        for offset, pc, target in [(0x1100, BASE+0x100, BASE+0x1100),
+                                   (0x2100, BASE+0x1100, BASE+0x3000),
+                                   (0x4000, BASE+0x3000, BASE+0x2100)]:
+            struct.pack_into("<I", data, offset, branch(pc,target))
+        path = self.work / "chain-cache"
+        path.write_bytes(data)
+        work = self.work / "chain-proof"
+        run = subprocess.run([sys.executable, str(ROOT / "scripts/route_a_zeta/prove-zeta-dyld-cache.py"),
+                              "--cache", str(path), "--work", str(work), "--jobs", "1"],
+                             capture_output=True, text=True, timeout=45)
+        self.assertEqual(run.returncode, 0, run.stderr)
+        result = json.loads((work / "summary.json").read_text())
+        self.assertEqual(result["closure"]["round_count"], 3)
+        self.assertEqual(result["totals"]["edits"], 1)
+        self.assertEqual(result["totals"]["unproven"], 0)
+        self.assertTrue(result["images"]["/usr/lib/test1.dylib"]["reproven_with_calls"])
+        self.assertTrue(result["islands"][0]["reproven_with_calls"])
+        self.assertTrue(result["images"]["/usr/lib/test2.dylib"]["reproven_with_calls"])
+        for i in range(1,4):
+            receipt = json.loads((work / f"closure-{i:03d}.done.json").read_text())
+            self.assertEqual(len(receipt["jobs"]), 1)
+            self.assertEqual(receipt["jobs"][0]["roots_count"], 1)
+        cache = dc.Cache(path)
+        try:
+            self.assertEqual(validate_summary(cache,result,work)[0].tolist(), [[0x3100,BEFORE,AFTER]])
+            from arm64_lowering.closure_receipts import receipt_set_digest
+            from arm64_lowering.proof import _canonical, _digest
+            def reject_summary(key, value, pattern):
+                forged = deepcopy(result)
+                forged["closure"][key] = value
+                with self.assertRaisesRegex(ValueError, pattern):
+                    validate_summary(cache, forged, work)
+            forged = deepcopy(result)
+            del forged["closure"]
+            with self.assertRaisesRegex(ValueError, "missing complete closure"):
+                validate_summary(cache, forged, work)
+            reject_summary("final_roots_sha256", _digest(_canonical({})), "final roots differ")
+            reject_summary("round_count", 2, "ends before fixed point")
+            reject_summary("round_count", 4, "round transcript differs")
+            receipt = work / "closure-002.done.json"
+            original = receipt.read_bytes()
+            altered = json.loads(original)
+            altered["jobs"][0]["roots_sha256"] = "0" * 64
+            try:
+                receipt.write_text(json.dumps(altered))
+                forged = deepcopy(result)
+                forged["closure"]["receipt_set_sha256"] = receipt_set_digest(work)[0]
+                with self.assertRaisesRegex(ValueError, "round result set differs"):
+                    validate_summary(cache, forged, work)
+            finally:
+                receipt.write_bytes(original)
+            # Intermediate own-root artifact is not listed among the final
+            # summary NPZs, but it is still necessary to justify closure.
+            own = next(p for p in work.glob("*.own.npz")
+                       if p.name not in result["results"])
+            original_npz = own.read_bytes()
+            try:
+                own.write_bytes(original_npz + b"tamper")
+                with self.assertRaisesRegex(ValueError, "closure job artifact digest differs"):
+                    validate_summary(cache, result, work)
+            finally:
+                own.write_bytes(original_npz)
+            # A fabricated extra receipt must fail even with the digest updated.
+            extra = work / "extraneous.done.json"
+            try:
+                extra.write_text("{}")
+                forged = deepcopy(result)
+                forged["closure"]["receipt_set_sha256"] = receipt_set_digest(work)[0]
+                with self.assertRaisesRegex(ValueError, "unexpected closure receipts"):
+                    validate_summary(cache, forged, work)
+            finally:
+                extra.unlink()
+            self.assertEqual(validate_summary(cache,result,work)[0].tolist(), [[0x3100,BEFORE,AFTER]])
+        finally:
+            for member in cache.files:
+                member.data.close()
+                member.handle.close()
+
     def test_prover_only_and_unproven_runs_exit_nonzero(self):
-        class InlinePool:
-            def __init__(self, jobs, initializer, initargs):
-                initializer(*initargs)
-
-            def __enter__(self):
-                return self
-
-            def __exit__(self, *args):
-                return False
-
-            def imap_unordered(self, function, jobs):
-                return map(function, jobs)
-
-        prover = module("prove-zeta-dyld-cache")
+        prover = ROOT / "scripts/route_a_zeta/prove-zeta-dyld-cache.py"
         for only in (False, True):
             with self.subTest(only=only):
-                args = ["--cache", str(self.cache_path), "--work", str(self.work), "--jobs", "1"]
+                work = self.work / ("partial" if only else "full")
+                args = [sys.executable, str(prover), "--cache", str(self.cache_path),
+                        "--work", str(work), "--jobs", "1"]
                 if only:
                     args += ["--only", "test0.dylib"]
-                with patch.object(prover.dc, "Cache", return_value=self.cache), \
-                     patch.object(prover.multiprocessing, "Pool", InlinePool), \
-                     patch.object(prover.multiprocessing, "set_start_method"):
-                    self.assertEqual(prover.main(args), 1)
-                result = json.loads((self.work / "summary.json").read_text())
+                run = subprocess.run(args, capture_output=True, text=True, timeout=45)
+                self.assertEqual(run.returncode, 1, run.stderr)
+                result = json.loads((work / "summary.json").read_text())
                 self.assertEqual(result["complete"], not only)
                 self.assertEqual(result["totals"]["unproven"], 1)
                 with self.assertRaisesRegex(ValueError, "partial proof|unproven or unlowerable"):
-                    validate_summary(self.cache, result, self.work)
+                    validate_summary(self.cache, result, work)
 
 
 class StandaloneSigningTests(unittest.TestCase):
