@@ -21,11 +21,15 @@ the next atom, which may be a table; that start is judged as its own root.
 A tentative walk that runs into a start other than after a call fails.
 """
 import bisect
+from functools import lru_cache
 import re
 import struct
 from sys import intern
 
-from capstone import Cs, CS_ARCH_ARM64, CS_MODE_LITTLE_ENDIAN
+from capstone import (Cs, CsError, CS_ARCH_ARM64, CS_MODE_LITTLE_ENDIAN,
+                      CS_GRP_JUMP, CS_GRP_CALL, CS_GRP_RET, CS_GRP_INT, CS_GRP_IRET,
+                      CS_GRP_PRIVILEGE, CS_GRP_BRANCH_RELATIVE)
+from capstone.arm64 import ARM64_OP_REG
 
 LC_UNIXTHREAD, LC_FUNCTION_STARTS, LC_MAIN, LC_SYMTAB = 0x5, 0x26, 0x80000028, 0x2
 LC_DYLD_CHAINED_FIXUPS = 0x80000034
@@ -37,6 +41,9 @@ CONDITIONAL = ('cbz', 'cbnz', 'tbz', 'tbnz')
 STOPS = ('ret', 'retab', 'retaa', 'eret', 'brk', 'udf', 'hlt')
 INDIRECT = ('br', 'braa', 'braaz', 'brab', 'brabz')
 CALLS = ('bl', 'blr', 'blraa', 'blraaz', 'blrab', 'blrabz')
+# Transaction aborts can restore PC/register state at TSTART. No transaction
+# context is modeled by this CFG walker, even if Capstone knows the mnemonic.
+UNMODELED_FLOW = ('tstart', 'tcommit', 'tcancel', 'ttest')
 TARGET = re.compile(r'#(-?0x[0-9a-f]+|-?[0-9]+)$')
 # The hardened dispatch clang emits for arm64e, newest instruction last.
 # Capstone prints immediates below ten in decimal.
@@ -231,7 +238,10 @@ def materialized(insns, code):
             following = insns[pc + 4]
             prefix = f'{register}, {register}, #'
             if following[0] == 'add' and following[1].startswith(prefix):
-                found.add(int(page, 0) + int(following[1][len(prefix):], 0))
+                immediate = re.fullmatch(r'(0x[0-9a-f]+|[0-9]+)(?:, lsl #(12))?',
+                                         following[1][len(prefix):])
+                if immediate:
+                    found.add(int(page, 0) + (int(immediate[1], 0) << int(immediate[2] or 0)))
     return found
 
 
@@ -300,6 +310,8 @@ def decode(data, sections, oracle=None):
                 explicit = poe2_instruction(word)
                 if explicit:
                     mnemonic, operands = explicit
+            if mnemonic in UNMODELED_FLOW:
+                mnemonic = '.unmodeled-' + mnemonic
             table[address] = (intern(mnemonic), operands)
     if oracle:
         unknown = {}
@@ -311,7 +323,9 @@ def decode(data, sections, oracle=None):
         known = oracle(set(unknown.values()))
         for address, word in unknown.items():
             if word in known:
-                table[address] = known[word]
+                mnemonic, operands = known[word]
+                table[address] = ('.unmodeled-' + mnemonic if mnemonic in UNMODELED_FLOW else mnemonic,
+                                  operands)
     return table
 
 
@@ -321,7 +335,8 @@ LLVM_FEATURES = ('+v9.5a,+sve2,+sve2-aes,+sve2-sha3,+sve2-sm4,+sve2-bitperm,+sve
                  '+the,+d128,+gcs,+ite,+lut,+faminmax,+fp8,+jsconv,+complxnum,+rand,+mte,+ls64,+wfxt,+hbc,+flagm,'
                  '+altnzcv,+pauth,+predres,+sb,+specrestrict,+ssbs,+tme')
 # Anything that can change the flow of control stays undecodable, so a walk never steps over it.
-LLVM_CONTROL = re.compile(r'(b|bl|br|blr|b\..*|bc\..*|cb.*|tbn?z|ret.*|eret.*|bra.*|blra.*|brk|hlt|udf|svc|hvc|smc)')
+LLVM_CONTROL = re.compile(r'(b|bl|br|blr|b\..*|bc\..*|cb.*|tbn?z|ret.*|eret.*|bra.*|blra.*|brk|hlt|udf|svc|hvc|smc|'
+                          r'tstart|tcommit|tcancel|ttest)')
 
 
 def llvm_oracle(words):
@@ -351,8 +366,85 @@ def llvm_oracle(words):
     return known
 
 
+def register_alias(name):
+    """Use one name for each general register, including writes to its W view."""
+    aliases = {'fp': 'x29', 'lr': 'x30', 'wsp': 'sp', 'wzr': 'xzr'}
+    if name in aliases:
+        return aliases[name]
+    if re.fullmatch(r'w(?:[0-9]|[12][0-9]|30)', name):
+        return 'x' + name[1:]
+    return name
+
+
+@lru_cache(maxsize=1)
+def effect_decoder():
+    decoder = Cs(CS_ARCH_ARM64, CS_MODE_LITTLE_ENDIAN)
+    decoder.detail = True
+    return decoder
+
+
+@lru_cache(maxsize=4096)
+def word_writes(word):
+    """Register writes of one straight-line word, or None for unknown effects.
+
+    Cache only address-independent effects, not a decoded branch destination or
+    an instruction object retaining Capstone's native allocation. The bounded
+    cache is per worker. LLVM-only/explicit decoder extensions do not supply
+    register-effect evidence and therefore cannot be crossed by this search.
+    """
+    try:
+        instruction = next(effect_decoder().disasm(struct.pack('<I', word), 0, count=1), None)
+        if instruction is None or instruction.size != 4 or not instruction.id:
+            return None
+        control = {CS_GRP_JUMP, CS_GRP_CALL, CS_GRP_RET, CS_GRP_INT, CS_GRP_IRET,
+                   CS_GRP_PRIVILEGE, CS_GRP_BRANCH_RELATIVE}
+        if control.intersection(instruction.groups) or LLVM_CONTROL.fullmatch(instruction.mnemonic):
+            return None
+        # AArch64 regs_access in the pinned Capstone reports explicit REG/MEM
+        # accesses. An MSR system-register operand is not an ordinary REG;
+        # do not mistake a missing NZCV/PSTATE write for preservation.
+        if instruction.mnemonic in ('msr', 'sys', 'sysl', 'dcps1', 'dcps2', 'dcps3', 'drps'):
+            return None
+        if any(operand.type == ARM64_OP_REG and operand.access not in (1, 2, 3)
+               for operand in instruction.operands):
+            return None
+        _, registers = instruction.regs_access()
+        names = [instruction.reg_name(register) for register in registers]
+        if any(not name for name in names):
+            return None
+        writes = {register_alias(name) for name in names}
+        # Capstone 5.0.6 omits the implicit NZCV write for these operand-free
+        # FlagM instructions (including update_flags, derived from that same
+        # metadata). Their only register result is architectural NZCV.
+        if instruction.update_flags or instruction.mnemonic in ('cfinv', 'axflag', 'xaflag'):
+            writes.add('nzcv')
+        return frozenset(writes)
+    except CsError:
+        return None
+
+
+def preserves_registers(insns, data, va_to_off, at, protected):
+    """One actual four-byte instruction preserves the search's reaching values."""
+    if at not in insns:
+        return False
+    try:
+        offset = va_to_off(at, 4)
+        if offset < 0 or offset + 4 > len(data):
+            return False
+        writes = word_writes(struct.unpack_from('<I', data, offset)[0])
+    except (ValueError, IndexError, struct.error):
+        return False
+    return writes is not None and not protected.intersection(writes)
+
+
 def jump_table(insns, data, va_to_off, pc):
-    """Decode the hardened dispatch ending at pc, or None if it is not one."""
+    """Decode a hardened dispatch with an intact local clamp, or return None.
+
+    Every crossed word must preserve the reaching index, flags, or register
+    bound. This local data-flow check does not by itself prove that every
+    incoming CFG path executes the clamp; callers must not treat it as a
+    general dominance proof.
+    """
     values = []
     for index, (mnemonic, pattern) in enumerate(DISPATCH):
         at = pc - 4 * (len(DISPATCH) - 1 - index)
@@ -364,41 +456,106 @@ def jump_table(insns, data, va_to_off, pc):
     page, low, anchor = values
     # The clamp: cmp x16, #N (or a register holding N) then csel x16, x16, xzr, ls. Kernel code
     # has csneg x16, x16, xzr, ls, the same selection (the negated zero register is zero).
-    limit = None
+    limit = guard_start = None
     for at in range(pc - 24, pc - 24 - 4 * 8, -4):
         found = insns.get(at)
         if not found:
-            break
+            return None
         if found in (('csel', 'x16, x16, xzr, ls'), ('csneg', 'x16, x16, xzr, ls')):
             for before in range(at - 4, at - 4 * 6, -4):
                 compare = insns.get(before)
-                if compare and compare[0] == 'cmp' and compare[1].startswith('x16, '):
-                    operand = compare[1][5:]
-                    if operand.startswith('#'):
-                        limit = int(operand[1:], 0)
-                    else:
+                if not compare:
+                    return None
+                if compare[0] == 'cmp':
+                    immediate = re.fullmatch(r'x16, #(0x[0-9a-f]+|[0-9]+)(?:, lsl #(12))?', compare[1])
+                    register = re.fullmatch(r'x16, (x(?:[0-9]|[12][0-9]|30)|fp|lr|xzr)', compare[1])
+                    if immediate:
+                        limit = int(immediate[1], 0) << int(immediate[2] or 0)
+                        guard_start = before
+                        break
+                    if register:
+                        bound = register_alias(register[1])
+                        if bound == 'xzr':
+                            limit = 0
+                            guard_start = before
+                            break
                         for setter in range(before - 4, before - 4 * 6, -4):
                             move = insns.get(setter)
-                            if move and move[0] == 'mov' and move[1].startswith(operand + ', #'):
-                                limit = int(move[1].split('#')[1], 0)
+                            if not move:
+                                return None
+                            constant = (re.fullmatch(r'([wx](?:[0-9]|[12][0-9]|30)|fp|lr), '
+                                                     r'#(0x[0-9a-f]+|[0-9]+)', move[1])
+                                        if move[0] == 'mov' else None)
+                            if constant and register_alias(constant[1]) == bound:
+                                limit = int(constant[2], 0)
+                                guard_start = setter
+                                if limit >= 1 << (32 if constant[1].startswith('w') else 64):
+                                    return None
                                 break
-                    break
+                            if not preserves_registers(insns, data, va_to_off, setter, {bound}):
+                                return None
+                        break
+                if not preserves_registers(insns, data, va_to_off, before, {'x16', 'nzcv'}):
+                    return None
             break
+        if not preserves_registers(insns, data, va_to_off, at, {'x16'}):
+            return None
     if limit is None:
         return None
     base = page + low
     start = va_to_off(base, 4 * (limit + 1))
     entries = struct.unpack_from(f'<{limit + 1}i', data, start)
-    return dict(dispatch=pc, table=base, entries=limit + 1, anchor=anchor,
+    return dict(dispatch=pc, guard_start=guard_start, table=base, entries=limit + 1, anchor=anchor,
                 targets=sorted({anchor + entry for entry in entries}))
 
 
-def walk(insns, data, va_to_off, roots, code, data_words, strict, boundaries, external=None, external_pending=None):
+def table_entry_context(insns, data, va_to_off, roots=()):
+    """Conservative static entry superset, computed before any visited filtering.
+
+    Every decoded direct branch/call, every materialized code address, and
+    every locally recognized table contributes potential entries, even when
+    its source is not admitted as code or its own clamp can be bypassed.
+    These addresses only disqualify table bounds; they never grant code roots.
+    The caller supplies all declared roots, including weak roots and incoming
+    cross-owner roots, without filtering them through previously proven code.
+    """
+    entries = set(roots)
+    entries.update(materialized(insns, insns))
+    candidates = {}
+    for pc, (mnemonic, operands) in insns.items():
+        if mnemonic in ('b', 'bl') or mnemonic.startswith(('b.', 'bc.')) or mnemonic in CONDITIONAL:
+            target = TARGET.search(operands)
+            if target is None:
+                raise ValueError(f'direct control flow has no decoded target at {pc:#x}')
+            entries.add(int(target[1], 0))
+        if mnemonic == 'br' and operands == 'x16':
+            table = jump_table(insns, data, va_to_off, pc)
+            if table is not None:
+                candidates[pc] = table
+                entries.update(table['targets'])
+    ordered = sorted(entries)
+    rejected = {}
+    for pc, table in candidates.items():
+        at = bisect.bisect_right(ordered, table['guard_start'])
+        if at < len(ordered) and ordered[at] <= pc:
+            rejected[pc] = ordered[at]
+    return dict(candidates=candidates, entries=ordered, rejected=rejected)
+
+
+def walk(insns, data, va_to_off, roots, code, data_words, strict, boundaries, external=None,
+         external_pending=None, table_context=None):
     """Follow control flow; a strict walk returns None instead of stopping at a doubtful word.
 
     external, when given, covers code outside these sections that another proof owns (an image
     calling another directly inside a shared cache); reaching it is recorded in external.reached
     and ends that path without counting against the walk."""
+    roots = tuple(roots)
+    if table_context is None:
+        table_context = table_entry_context(insns, data, va_to_off, set(roots) | set(boundaries))
+    # This also covers a new caller entering a dispatch already present in code.
+    for pc, entry in table_context['rejected'].items():
+        if pc in code:
+            raise ValueError(f'jump-table clamp at {pc:#x} can be bypassed by entry {entry:#x}')
     found_code, tables, anomalies, work = set(), [], [], list(roots)
     while work:
         pc, after_call = work.pop(), False
@@ -429,7 +586,10 @@ def walk(insns, data, va_to_off, roots, code, data_words, strict, boundaries, ex
             elif mnemonic in STOPS:
                 break
             elif mnemonic in INDIRECT:
-                table = jump_table(insns, data, va_to_off, pc) if mnemonic == 'br' else None
+                if pc in table_context['rejected']:
+                    entry = table_context['rejected'][pc]
+                    raise ValueError(f'jump-table clamp at {pc:#x} can be bypassed by entry {entry:#x}')
+                table = table_context['candidates'].get(pc) if mnemonic == 'br' else None
                 if table:
                     tables.append(table)
                     work += table['targets']
@@ -472,14 +632,18 @@ def prove(data, info, sections, va_to_off, oracle=None, gaps=False):
     """Returns (insns, code, table words, tables, anomalies, roots); code maps address to root grade.
 
     Exception landing pads are a root grade between code pointers and bare starts."""
+    from route_a_zeta.zeta_macho_entries import standalone_declared_entries
+
+    guard_entries = standalone_declared_entries(data)
     insns = decode(data, sections, oracle)
     strong, weak, starts = seeds(data, info)
     ordered = [('landing', image_landing_pads(data, info, va_to_off))]
     return prove_roots(insns, data, va_to_off, strong, weak, starts, pointer_targets(data, info), ordered,
-                       gaps=gaps)
+                       gaps=gaps, guard_entries=guard_entries)
 
 
-def prove_roots(insns, data, va_to_off, strong, weak, starts, pointers, ordered=(), external=None, gaps=False):
+def prove_roots(insns, data, va_to_off, strong, weak, starts, pointers, ordered=(), external=None, gaps=False,
+                guard_entries=()):
     """The proof from supplied roots. Strong roots are walked first. Then come code pointers and
     adr/adrp addresses, then each (grade, roots) of ordered in turn (exception landing pads, stub
     entries, calls from other images), then bare starts. Each root after the strong ones is accepted
@@ -488,8 +652,16 @@ def prove_roots(insns, data, va_to_off, strong, weak, starts, pointers, ordered=
     gaps, when set, adds a last grade: code left inside a proven atom after a proven terminator
     (a dead epilogue or error exit nothing branches to), accepted only by the same strict walk,
     which may not run into another atom."""
+    ordered = tuple((grade, tuple(extra)) for grade, extra in ordered)
+    # Declaration-only entries can deny a table bound, but do not become
+    # walk roots or grant code/closure evidence.
+    potential_entries = set(strong) | set(weak) | set(starts) | set(pointers) | set(guard_entries)
+    for _, extra in ordered:
+        potential_entries.update(extra)
+    table_context = table_entry_context(insns, data, va_to_off, potential_entries)
+    del table_context['entries'], potential_entries
     found, tables, anomalies = walk(insns, data, va_to_off, sorted(a for a in strong if a in insns), set(), set(),
-                                    False, starts, external)
+                                    False, starts, external, table_context=table_context)
     code = dict.fromkeys(found, 'unwind')
     del found
     data_words = table_words(tables)
@@ -499,7 +671,8 @@ def prove_roots(insns, data, va_to_off, strong, weak, starts, pointers, ordered=
         tried.add(root)
         # Do not publish cross-image edges until this tentative proof commits.
         pending = set()
-        result = walk(insns, data, va_to_off, [root], code, data_words, True, starts, external, pending)
+        result = walk(insns, data, va_to_off, [root], code, data_words, True, starts, external, pending,
+                      table_context)
         if result is None or any(word in code or word in result[0] for word in table_words(result[1])):
             rejected.append(dict(address=hex(root), grade=grade))
             return False
