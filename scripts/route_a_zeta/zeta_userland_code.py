@@ -632,14 +632,18 @@ def prove(data, info, sections, va_to_off, oracle=None, gaps=False):
     """Returns (insns, code, table words, tables, anomalies, roots); code maps address to root grade.
 
     Exception landing pads are a root grade between code pointers and bare starts."""
+    from route_a_zeta.zeta_macho_entries import standalone_declared_entries
+
+    guard_entries = standalone_declared_entries(data)
     insns = decode(data, sections, oracle)
     strong, weak, starts = seeds(data, info)
     ordered = [('landing', image_landing_pads(data, info, va_to_off))]
     return prove_roots(insns, data, va_to_off, strong, weak, starts, pointer_targets(data, info), ordered,
-                       gaps=gaps)
+                       gaps=gaps, guard_entries=guard_entries)
 
 
-def prove_roots(insns, data, va_to_off, strong, weak, starts, pointers, ordered=(), external=None, gaps=False):
+def prove_roots(insns, data, va_to_off, strong, weak, starts, pointers, ordered=(), external=None, gaps=False,
+                guard_entries=()):
     """The proof from supplied roots. Strong roots are walked first. Then come code pointers and
     adr/adrp addresses, then each (grade, roots) of ordered in turn (exception landing pads, stub
     entries, calls from other images), then bare starts. Each root after the strong ones is accepted
@@ -649,7 +653,9 @@ def prove_roots(insns, data, va_to_off, strong, weak, starts, pointers, ordered=
     (a dead epilogue or error exit nothing branches to), accepted only by the same strict walk,
     which may not run into another atom."""
     ordered = tuple((grade, tuple(extra)) for grade, extra in ordered)
-    potential_entries = set(strong) | set(weak) | set(starts) | set(pointers)
+    # Declaration-only entries can deny a table bound, but do not become
+    # walk roots or grant code/closure evidence.
+    potential_entries = set(strong) | set(weak) | set(starts) | set(pointers) | set(guard_entries)
     for _, extra in ordered:
         potential_entries.update(extra)
     table_context = table_entry_context(insns, data, va_to_off, potential_entries)

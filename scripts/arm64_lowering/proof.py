@@ -77,6 +77,7 @@ def rules_manifest():
         "arm64_lowering/instructions.py", "arm64_lowering/proof.py",
         "arm64_lowering/closure_receipts.py",
         "route_a_zeta/zeta_userland_pauth.py", "route_a_zeta/zeta_userland_code.py",
+        "route_a_zeta/zeta_macho_entries.py",
         "route_a_zeta/zeta_dyld_cache.py", "route_a_zeta/prove-zeta-dyld-cache.py",
         "route_a_zeta/zeta_closure.py",
     )
@@ -219,6 +220,7 @@ def _validate_table_entry_guards(cache, bound, final_roots):
     """
     from route_a_zeta import zeta_dyld_cache as dc
     from route_a_zeta import zeta_userland_code as code
+    from route_a_zeta.zeta_macho_entries import cache_declared_entries
 
     def translator(file_index):
         def translate(address, size):
@@ -274,6 +276,10 @@ def _validate_table_entry_guards(cache, bound, final_roots):
     del pointers
 
     images = {address: path for address, path in cache.images}
+    # Metadata in a non-code image can still name an address owned by another
+    # image or island. Check declarations from the full image inventory.
+    for address, _ in cache.images:
+        check_entries(cache_declared_entries(cache, address))
     for entry, geometry in bound:
         owner = int(geometry["address"], 16)
         file_index = geometry["file"]
