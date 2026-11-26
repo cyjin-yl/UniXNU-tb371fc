@@ -354,8 +354,11 @@ class PacgaTests(unittest.TestCase):
             cache_path.write_bytes(data)
             work = root / "proof"
             driver = module("prove-zeta-dyld-cache")
-            self.assertEqual(driver.main(["--cache", str(cache_path), "--work", str(work), "--jobs", "1",
-                                          "--pacga-policy", pacga.ABI, "--pacga-kernel", str(kernel)]), 0)
+            # ProcessPool serializes real worker functions by module identity.
+            # Keep the dynamically loaded CLI registered for the entire run.
+            with mock.patch.dict(sys.modules, {driver.__name__: driver}):
+                self.assertEqual(driver.main(["--cache", str(cache_path), "--work", str(work), "--jobs", "1",
+                                              "--pacga-policy", pacga.ABI, "--pacga-kernel", str(kernel)]), 0)
             summary = json.loads((work / "summary.json").read_text())
             cache = dc.Cache(cache_path)
             try:
@@ -392,8 +395,11 @@ class PacgaTests(unittest.TestCase):
             cache_path.write_bytes(data)
             work = root / "proof"
             driver = module("prove-zeta-dyld-cache")
-            self.assertEqual(driver.main(["--cache", str(cache_path), "--work", str(work), "--jobs", "1",
-                                          "--pacga-policy", pacga.ABI, "--pacga-kernel", str(kernel)]), 1)
+            # ProcessPool serializes real worker functions by module identity.
+            # Keep the dynamically loaded CLI registered for the entire run.
+            with mock.patch.dict(sys.modules, {driver.__name__: driver}):
+                self.assertEqual(driver.main(["--cache", str(cache_path), "--work", str(work), "--jobs", "1",
+                                              "--pacga-policy", pacga.ABI, "--pacga-kernel", str(kernel)]), 1)
             summary = json.loads((work / "summary.json").read_text())
             blocked = [item for entry in summary["images"].values() for item in entry["unlowerable"]]
             self.assertEqual(len(blocked), 1)
