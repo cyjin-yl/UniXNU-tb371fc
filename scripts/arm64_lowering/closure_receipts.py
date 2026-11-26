@@ -26,6 +26,7 @@ def receipt_set_digest(work):
 
 
 def validate_closure_receipts(cache, summary, work):
+    """Validate the transcript and return final incoming roots by owner address."""
     work = Path(work)
     c = summary.get("closure")
     require(isinstance(c, dict) and c.get("converged") is True and c.get("partial") is False,
@@ -163,3 +164,4 @@ def validate_closure_receipts(cache, summary, work):
             result = dict(result, address=hex(addr), size=geom["size"])
         require(result == final, "closure final result differs")
     require(consumed == actual_files, "unexpected closure receipts")
+    return {addr: tuple(sorted(roots[i])) for i, (addr, _, _, geom, _) in owners.items() if geom}

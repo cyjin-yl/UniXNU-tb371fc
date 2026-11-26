@@ -9,6 +9,7 @@ from __future__ import annotations
 
 from collections import Counter
 from copy import deepcopy
+import bisect
 import hashlib
 import io
 import json
@@ -80,6 +81,7 @@ def rules_manifest(*, pacga_policy="reject", pacga_kernel=None):
         "../patches/route-a-pacga-svc-12377.patch",
         "arm64_lowering/closure_receipts.py",
         "route_a_zeta/zeta_userland_pauth.py", "route_a_zeta/zeta_userland_code.py",
+        "route_a_zeta/zeta_macho_entries.py",
         "route_a_zeta/zeta_dyld_cache.py", "route_a_zeta/prove-zeta-dyld-cache.py",
         "route_a_zeta/zeta_closure.py",
     )
@@ -160,8 +162,9 @@ def _candidate_census(cache, file_index, geometry, entry, edits, kept, pacga_pol
     """Account for every non-hint PAuth word, independently of result counts.
 
     A kept word needs an actual hardened jump-table dispatch in the source.
-    Re-decoding only those small dispatch windows prevents an omitted edit
-    from being relabeled as table data without structural evidence.
+    Re-decoding those small dispatch windows checks local structure. The
+    separate complete-cache entry-superset pass below checks that a claimed
+    clamp is not bypassed by any statically represented entry source.
     """
     from route_a_zeta import zeta_userland_pauth as pauth
     from route_a_zeta import zeta_userland_code as code
@@ -181,6 +184,8 @@ def _candidate_census(cache, file_index, geometry, entry, edits, kept, pacga_pol
     dispatches = entry.get("table_dispatches", [])
     require(isinstance(dispatches, list) and all(type(pc) is int and pc >= 0 for pc in dispatches)
             and len(set(dispatches)) == len(dispatches), "invalid jump-table dispatch list")
+    require(_integer(entry.get("tables", 0), "jump-table count") == len(dispatches),
+            "jump-table count differs from dispatch list")
     if not len(kept):
         return
 
@@ -208,6 +213,99 @@ def _candidate_census(cache, file_index, geometry, entry, edits, kept, pacga_pol
         require(any(start <= address and address + 4 <= end and (address - start) % 4 == 0 for start, end in ranges),
                 "kept PAuth candidate is not in a decoded jump table")
         require(struct.unpack_from("<I", data, offset)[0] == word, "kept data word differs from input")
+
+
+def _validate_table_entry_guards(cache, bound, final_roots):
+    """Recompute potential incoming entries from every executable owner.
+
+    Potential addresses are used only to reject a table bound. In particular,
+    an unadmitted instruction in another owner cannot acquire code-root or
+    accepted-edge evidence merely by decoding as a branch or address producer.
+    This pass is independent of worker visitation order and reads every owner,
+    including owners that have no PAuth-like table words of their own.
+    """
+    from route_a_zeta import zeta_dyld_cache as dc
+    from route_a_zeta import zeta_userland_code as code
+    from route_a_zeta.zeta_macho_entries import cache_declared_entries
+
+    def translator(file_index):
+        def translate(address, size):
+            index, offset, room = cache.locate(address)
+            require(index == file_index and size >= 0 and room >= size,
+                    "jump-table analysis leaves its owner cache mapping")
+            return offset
+        return translate
+
+    # Every declared table can establish code roots or external edges, even
+    # when its data contains no PAuth-shaped words. Collect only its tiny
+    # guarded interval before decoding any complete owner.
+    claims = []
+    for entry, geometry in bound:
+        data = cache.files[geometry["file"]].data
+        translate = translator(geometry["file"])
+        for pc in entry.get("table_dispatches", []):
+            region = next((r for r in geometry["regions"]
+                           if r["address"] <= pc < r["address"] + r["size"]), None)
+            require(region is not None and pc % 4 == 0, "jump-table dispatch is outside image code")
+            begin = max(region["address"], pc - 128)
+            section = dict(addr=begin, offset=translate(begin, pc + 4 - begin), size=pc + 4 - begin)
+            decoded = code.decode(data, [section])
+            table = code.jump_table(decoded, data, translate, pc)
+            require(table is not None, "declared table lacks a valid local clamp/dispatch")
+            claims.append((table["guard_start"] + 1, pc))
+    if not claims:
+        return
+
+    # Query the union of guarded intervals, not a growing set of all cache
+    # entry addresses. This keeps global storage proportional to table claims.
+    spans = []
+    for low, high in sorted(claims):
+        if spans and low <= spans[-1][1] + 1:
+            spans[-1] = (spans[-1][0], max(high, spans[-1][1]))
+        else:
+            spans.append((low, high))
+    starts = [low for low, _ in spans]
+
+    def check_entries(entries):
+        for target in entries:
+            at = bisect.bisect_right(starts, target) - 1
+            require(at < 0 or target > spans[at][1],
+                    f"jump-table clamp has a static-entry bypass at {target:#x}")
+
+    # Rebase targets are already a compact sorted NumPy array. Check and free
+    # them before decoding the largest owner rather than stacking both peaks.
+    pointers = cache.slide_targets()
+    for low, high in spans:
+        at = int(np.searchsorted(pointers, low))
+        require(at == len(pointers) or int(pointers[at]) > high,
+                "jump-table clamp has a rebased-pointer bypass entry")
+    del pointers
+
+    images = {address: path for address, path in cache.images}
+    # Metadata in a non-code image can still name an address owned by another
+    # image or island. Check declarations from the full image inventory.
+    for address, _ in cache.images:
+        check_entries(cache_declared_entries(cache, address))
+    for entry, geometry in bound:
+        owner = int(geometry["address"], 16)
+        file_index = geometry["file"]
+        data = cache.files[file_index].data
+        sections = [dict(addr=r["address"], offset=r["offset"], size=r["size"])
+                    for r in geometry["regions"]]
+        roots = set(final_roots.get(owner, ()))
+        if owner in images:
+            image = dc.Image(cache, owner, images[owner])
+            for declared in image.roots():
+                roots.update(declared)
+            roots.update(image.landing_pads())
+            roots.update(image.stub_entries())
+
+        check_entries(roots)
+        decoded = code.decode(data, sections)
+        context = code.table_entry_context(decoded, data, translator(file_index), roots)
+        check_entries(context["entries"])
+        # No whole-cache potential-entry set or decoded graph survives here.
+        del decoded, context
 
 
 def validate_summary(cache, summary, work_dir, *, pacga_policy="reject", pacga_kernel=None):
@@ -317,5 +415,6 @@ def validate_summary(cache, summary, work_dir, *, pacga_policy="reject", pacga_k
         require(len(np.unique(table[:, 0])) == len(table), "two proof edits share a word")
         result[index] = table
     from arm64_lowering.closure_receipts import validate_closure_receipts
-    validate_closure_receipts(cache, summary, work_dir)
+    final_roots = validate_closure_receipts(cache, summary, work_dir)
+    _validate_table_entry_guards(cache, bound, final_roots)
     return result

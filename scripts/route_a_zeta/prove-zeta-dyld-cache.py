@@ -23,6 +23,7 @@ Results go to --work, one compressed numpy file per image plus a JSON
 summary. Reads the cache only.
 """
 import argparse
+import bisect
 from collections import Counter
 from concurrent.futures import FIRST_COMPLETED, ProcessPoolExecutor, wait
 import hashlib
@@ -40,12 +41,16 @@ from route_a_zeta.zeta_closure import close
 from route_a_zeta import zeta_dyld_cache as dc
 from route_a_zeta import zeta_userland_code as code
 from route_a_zeta import zeta_userland_pauth as pauth
+from route_a_zeta.zeta_macho_entries import cache_declared_entries
 from arm64_lowering.proof import rules_manifest, seal_summary, source_manifest
 from arm64_lowering import pacga
 from arm64_lowering.closure_receipts import receipt_set_digest
 
 GRADES = ('unwind', 'pointer', 'landing', 'stub', 'call', 'start', 'gap')
 STATE = {}
+# At most 32 MB of immutable declaration addresses survive into forked workers.
+# Temporary arrays are built before any owner's decoded instruction graph.
+MAX_DECLARATION_TARGETS = 4_000_000
 
 
 def pac_candidates(words):
@@ -53,11 +58,49 @@ def pac_candidates(words):
     return pauth.candidate_indices(words, pacga_policy=STATE.get("pacga_policy", "reject"))
 
 
-def init(cache, ranges, targets, work):
+def declaration_targets(cache, ranges):
+    """Collect declarations in executable ranges as deny-only uint64 entries.
+
+    Each image's temporary Python set is released before reading the next one.
+    No cache-wide Python set is built. The bounded arrays are sorted/deduplicated
+    before fork; declarations never enter the existing pointer/root classes.
+    """
+    spans = []
+    for low, high in sorted(ranges):
+        if spans and low <= spans[-1][1]:
+            spans[-1] = (spans[-1][0], max(high, spans[-1][1]))
+        else:
+            spans.append((low, high))
+    starts = [low for low, _ in spans]
+
+    def relevant(address):
+        at = bisect.bisect_right(starts, address) - 1
+        return address % 4 == 0 and at >= 0 and address < spans[at][1]
+
+    chunks, count = [], 0
+    for address, _ in cache.images:
+        declared = cache_declared_entries(cache, address)
+        chunk = np.fromiter((target for target in declared if relevant(target)), dtype=np.uint64)
+        del declared
+        count += len(chunk)
+        if count > MAX_DECLARATION_TARGETS:
+            raise ValueError('Mach-O declared executable entries exceed cache address budget')
+        if len(chunk):
+            chunks.append(chunk)
+        del chunk
+    values = np.concatenate(chunks) if chunks else np.zeros(0, dtype=np.uint64)
+    chunks.clear()
+    values = np.unique(values)
+    values.flags.writeable = False
+    return values
+
+
+def init(cache, ranges, targets, work, guard_targets=None):
     STATE['cache'] = cache
     STATE['coverage'] = dc.Coverage(ranges)
     STATE['targets'] = targets
     STATE['work'] = work
+    STATE['guard_targets'] = declaration_targets(cache, ranges) if guard_targets is None else guard_targets
 
 
 def section_va_to_off(cache, file_index):
@@ -76,15 +119,19 @@ def prove_code(cache, sections, strong, weak, starts, ordered, label):
     va_to_off = section_va_to_off(cache, file_index)
     insns = code.decode(data, sections, code.llvm_oracle)
     targets = STATE['targets']
-    pointers = set()
+    guard_targets = STATE['guard_targets']
+    pointers, guard_entries = set(), set()
     for section in sections:
         low, high = np.searchsorted(targets, [section['addr'], section['addr'] + section['size']])
         pointers.update(int(t) for t in targets[low:high] if not int(t) & 3)
+        low, high = np.searchsorted(guard_targets, [section['addr'], section['addr'] + section['size']])
+        guard_entries.update(int(t) for t in guard_targets[low:high])
     # The image's own sections are decoded word for word, so only other code counts as external.
     coverage = STATE['coverage']
     coverage.reached = set()
     _, proven, data_words, tables, anomalies, roots = code.prove_roots(
-        insns, data, va_to_off, strong, weak, starts, pointers, ordered, coverage, gaps=True)
+        insns, data, va_to_off, strong, weak, starts, pointers, ordered, coverage, gaps=True,
+        guard_entries=guard_entries)
     selected = STATE.get("pacga_policy", "reject")
     reservation = (pacga.exclusive_analysis(insns, proven, tables) if selected == pacga.ABI
                    else dict(pacga=set(), escapes=[]))
@@ -276,13 +323,17 @@ def run_attempt(args, cache, initial_rules, pending_partial):
                for start, size, fileoff, _, _, flags, maxprot, _ in cache_file.slid if flags & 8]
     ranges += [(start, end) for start, end, _, _ in islands]
     ranges.sort()
+    # Declaration metadata from every image can name another owner or island.
+    # Parse it before workers start so those entries can veto their local table
+    # claims without acquiring any root/edge evidence.
+    guards = declaration_targets(cache, ranges)
     targets = cache.slide_targets()
     order = sorted(range(len(images)), key=lambda i: -sum(s['size'] for s in images[i].sections
                                                            if s['flags'] & dc.INSTRUCTIONS))
     if args.only:
         order = [i for i in order if any(images[i].path.endswith(o) for o in args.only)]
     summary = dict(schema='zeta-dyld-cache-proof-v1', cache=str(args.cache), images={})
-    init(cache, ranges, targets, args.work)
+    init(cache, ranges, targets, args.work, guards)
     STATE['pacga_policy'] = args.pacga_policy
     STATE['islands'] = islands
     STATE['input_sha256'] = json_digest(initial_input)
