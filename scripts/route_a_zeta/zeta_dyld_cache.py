@@ -11,7 +11,9 @@ fixup-chains.h:
 https://github.com/apple-oss-distributions/dyld/blob/main/include/mach-o/dyld_cache_format.h
 """
 import bisect
+from contextlib import ExitStack
 import mmap
+import os
 from pathlib import Path
 import struct
 
@@ -43,76 +45,105 @@ def bounded(data, offset, size, label):
 class CacheFile:
     def __init__(self, path):
         self.path = Path(path)
-        require(self.path.stat().st_size >= HEADER_IMAGES + 8, f'{self.path.name}: truncated cache header')
-        self.handle = self.path.open('rb')
-        self.data = mmap.mmap(self.handle.fileno(), 0, access=mmap.ACCESS_READ)
-        if not self.data[:16].startswith(b'dyld_v1') or not self.data[:16].rstrip(b'\0').endswith(b'arm64e'):
-            raise ValueError(f'{self.path.name}: not an arm64e dyld cache file')
-        offset, count = struct.unpack_from('<II', self.data, HEADER_MAPPINGS)
-        require(offset >= HEADER_IMAGES + 8 and count > 0, 'unsupported cache header/mapping layout')
-        bounded(self.data, offset, 32 * count, 'mapping table')
-        self.mappings = [struct.unpack_from('<QQQII', self.data, offset + 32 * i) for i in range(count)]
-        self.signature = struct.unpack_from('<QQ', self.data, HEADER_SIGNATURE)
-        bounded(self.data, *self.signature, 'code signature')
-        require(self.signature[0] > 0 and self.signature[1] > 0, 'cache lacks a code signature')
-        occupied = []
-        for address, size, fileoff, maxprot, initprot in self.mappings:
-            bounded(self.data, fileoff, size, 'mapped bytes')
-            require(size > 0 and address + size <= 1 << 64 and fileoff + size <= self.signature[0],
-                    'invalid mapping range')
-            require(initprot & ~maxprot == 0, 'mapping protection exceeds maximum')
-            occupied.append((fileoff, fileoff + size))
-        occupied.sort()
-        require(all(a[1] <= b[0] for a, b in zip(occupied, occupied[1:])), 'overlapping file mappings')
-        slide_offset, slide_count = struct.unpack_from('<II', self.data, HEADER_MAPPING_SLIDE)
-        bounded(self.data, slide_offset, 56 * slide_count, 'mapping/slide table')
-        self.slid = [struct.unpack_from('<QQQQQQII', self.data, slide_offset + 56 * i) for i in range(slide_count)]
-        mappings = set(self.mappings)
-        for address, size, fileoff, info_offset, info_size, flags, maxprot, initprot in self.slid:
-            require((address, size, fileoff, maxprot, initprot) in mappings, 'slide mapping differs from mapping table')
-            bounded(self.data, info_offset, info_size, 'slide info')
+        with ExitStack() as stack:
+            self.handle = self.path.open('rb')
+            stack.callback(self.handle.close)
+            self.opened_generation = self.generation()
+            require(self.opened_generation['size'] >= HEADER_IMAGES + 8,
+                    f'{self.path.name}: truncated cache header')
+            self.data = mmap.mmap(self.handle.fileno(), 0, access=mmap.ACCESS_READ)
+            stack.callback(self.data.close)
+            if not self.data[:16].startswith(b'dyld_v1') or not self.data[:16].rstrip(b'\0').endswith(b'arm64e'):
+                raise ValueError(f'{self.path.name}: not an arm64e dyld cache file')
+            offset, count = struct.unpack_from('<II', self.data, HEADER_MAPPINGS)
+            require(offset >= HEADER_IMAGES + 8 and count > 0, 'unsupported cache header/mapping layout')
+            bounded(self.data, offset, 32 * count, 'mapping table')
+            self.mappings = [struct.unpack_from('<QQQII', self.data, offset + 32 * i) for i in range(count)]
+            self.signature = struct.unpack_from('<QQ', self.data, HEADER_SIGNATURE)
+            bounded(self.data, *self.signature, 'code signature')
+            require(self.signature[0] > 0 and self.signature[1] > 0, 'cache lacks a code signature')
+            occupied = []
+            for address, size, fileoff, maxprot, initprot in self.mappings:
+                bounded(self.data, fileoff, size, 'mapped bytes')
+                require(size > 0 and address + size <= 1 << 64 and fileoff + size <= self.signature[0],
+                        'invalid mapping range')
+                require(initprot & ~maxprot == 0, 'mapping protection exceeds maximum')
+                occupied.append((fileoff, fileoff + size))
+            occupied.sort()
+            require(all(a[1] <= b[0] for a, b in zip(occupied, occupied[1:])), 'overlapping file mappings')
+            slide_offset, slide_count = struct.unpack_from('<II', self.data, HEADER_MAPPING_SLIDE)
+            bounded(self.data, slide_offset, 56 * slide_count, 'mapping/slide table')
+            self.slid = [struct.unpack_from('<QQQQQQII', self.data, slide_offset + 56 * i) for i in range(slide_count)]
+            mappings = set(self.mappings)
+            for address, size, fileoff, info_offset, info_size, flags, maxprot, initprot in self.slid:
+                require((address, size, fileoff, maxprot, initprot) in mappings, 'slide mapping differs from mapping table')
+                bounded(self.data, info_offset, info_size, 'slide info')
+            stack.pop_all()
+
+    def close(self):
+        try:
+            self.data.close()
+        finally:
+            self.handle.close()
+
+
+    def generation(self):
+        st = os.fstat(self.handle.fileno())
+        return dict(dev=st.st_dev, ino=st.st_ino, size=st.st_size,
+                    mtime_ns=st.st_mtime_ns, ctime_ns=st.st_ctime_ns)
 
 
 class Cache:
     def __init__(self, main):
-        main = Path(main)
-        self.files = [CacheFile(main)]
-        header = self.files[0].data
-        offset, count = struct.unpack_from('<II', header, HEADER_SUBCACHES)
-        bounded(header, offset, SUBCACHE_ENTRY * count, 'subcache table')
-        suffixes = set()
-        for index in range(count):
-            entry = offset + SUBCACHE_ENTRY * index
-            raw = header[entry + 24:entry + 56]
-            require(b'\0' in raw, 'unterminated subcache suffix')
-            suffix = raw.split(b'\0', 1)[0].decode('ascii')
-            require(suffix.startswith('.') and '/' not in suffix and '\\' not in suffix and
-                    suffix not in ('.', '..') and suffix not in suffixes, 'invalid/duplicate subcache suffix')
-            suffixes.add(suffix)
-            child = CacheFile(str(main) + suffix)
-            require(bytes(child.data[0x58:0x68]) == bytes(header[entry:entry + 16]), 'subcache UUID mismatch')
-            self.files.append(child)
-        self.regions = sorted((address, size, index, fileoff, maxprot)
-                              for index, cache_file in enumerate(self.files)
-                              for address, size, fileoff, maxprot, _ in cache_file.mappings)
-        self.starts = [region[0] for region in self.regions]
-        require(all(a[0] + a[1] <= b[0] for a, b in zip(self.regions, self.regions[1:])),
-                'overlapping virtual cache mappings')
-        offset, count = struct.unpack_from('<II', header, HEADER_IMAGES)
-        bounded(header, offset, 32 * count, 'image table')
-        self.images = []
-        paths, addresses = set(), set()
-        for index in range(count):
-            address, _, _, path_offset = struct.unpack_from('<QQQI', header, offset + 32 * index)
-            bounded(header, path_offset, 1, 'image path')
-            end = header.find(b'\0', path_offset)
-            require(end > path_offset, 'missing/unterminated image path')
-            path = header[path_offset:end].decode()
-            require(path not in paths and address not in addresses, 'duplicate image path/address')
-            paths.add(path)
-            addresses.add(address)
-            self.locate(address)
-            self.images.append((address, path))
+        with ExitStack() as stack:
+            main = Path(main)
+            self.files = [CacheFile(main)]
+            stack.callback(self.files[0].close)
+            header = self.files[0].data
+            offset, count = struct.unpack_from('<II', header, HEADER_SUBCACHES)
+            bounded(header, offset, SUBCACHE_ENTRY * count, 'subcache table')
+            suffixes = set()
+            for index in range(count):
+                entry = offset + SUBCACHE_ENTRY * index
+                raw = header[entry + 24:entry + 56]
+                require(b'\0' in raw, 'unterminated subcache suffix')
+                suffix = raw.split(b'\0', 1)[0].decode('ascii')
+                require(suffix.startswith('.') and '/' not in suffix and '\\' not in suffix and
+                        suffix not in ('.', '..') and suffix not in suffixes, 'invalid/duplicate subcache suffix')
+                suffixes.add(suffix)
+                child = CacheFile(str(main) + suffix)
+                stack.callback(child.close)
+                require(bytes(child.data[0x58:0x68]) == bytes(header[entry:entry + 16]), 'subcache UUID mismatch')
+                self.files.append(child)
+            self.regions = sorted((address, size, index, fileoff, maxprot)
+                                  for index, cache_file in enumerate(self.files)
+                                  for address, size, fileoff, maxprot, _ in cache_file.mappings)
+            self.starts = [region[0] for region in self.regions]
+            require(all(a[0] + a[1] <= b[0] for a, b in zip(self.regions, self.regions[1:])),
+                    'overlapping virtual cache mappings')
+            offset, count = struct.unpack_from('<II', header, HEADER_IMAGES)
+            bounded(header, offset, 32 * count, 'image table')
+            self.images = []
+            paths, addresses = set(), set()
+            for index in range(count):
+                address, _, _, path_offset = struct.unpack_from('<QQQI', header, offset + 32 * index)
+                bounded(header, path_offset, 1, 'image path')
+                end = header.find(b'\0', path_offset)
+                require(end > path_offset, 'missing/unterminated image path')
+                path = header[path_offset:end].decode()
+                require(path not in paths and address not in addresses, 'duplicate image path/address')
+                paths.add(path)
+                addresses.add(address)
+                self.locate(address)
+                self.images.append((address, path))
+            stack.pop_all()
+
+    def check_opened_generations(self):
+        # This detects observable changes to the open files. The producer must
+        # still provide immutable inputs for the full attempt on its filesystem.
+        for member in self.files:
+            require(member.generation() == member.opened_generation,
+                    f'opened cache generation changed: {member.path.name}')
 
     def locate(self, address):
         """(file index, file offset, bytes left in the mapping) of an unslid address."""

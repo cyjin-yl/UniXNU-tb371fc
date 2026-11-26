@@ -74,8 +74,10 @@ def rules_manifest():
     """Reject proofs from a different decoder, CFG algorithm or lowering policy."""
     names = (
         "arm64_lowering/instructions.py", "arm64_lowering/proof.py",
+        "arm64_lowering/closure_receipts.py",
         "route_a_zeta/zeta_userland_pauth.py", "route_a_zeta/zeta_userland_code.py",
         "route_a_zeta/zeta_dyld_cache.py", "route_a_zeta/prove-zeta-dyld-cache.py",
+        "route_a_zeta/zeta_closure.py",
     )
     llvm = shutil.which("llvm-mc")
     llvm_version = None
@@ -306,4 +308,6 @@ def validate_summary(cache, summary, work_dir):
         table = np.concatenate(parts)
         require(len(np.unique(table[:, 0])) == len(table), "two proof edits share a word")
         result[index] = table
+    from arm64_lowering.closure_receipts import validate_closure_receipts
+    validate_closure_receipts(cache, summary, work_dir)
     return result

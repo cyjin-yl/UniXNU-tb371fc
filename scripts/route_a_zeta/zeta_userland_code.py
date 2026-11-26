@@ -23,6 +23,7 @@ A tentative walk that runs into a start other than after a call fails.
 import bisect
 import re
 import struct
+from sys import intern
 
 from capstone import Cs, CS_ARCH_ARM64, CS_MODE_LITTLE_ENDIAN
 
@@ -273,6 +274,16 @@ def poe2_instruction(word):
     return None
 
 
+def section_instructions(decoder, data, section):
+    # disasm_lite keeps the native instruction array until its iterator ends.
+    # AArch64 instructions have fixed width, so an aligned cut preserves decoding.
+    batch_bytes = 64 * 1024
+    for relative in range(0, section['size'], batch_bytes):
+        start = section['offset'] + relative
+        length = min(batch_bytes, section['size'] - relative)
+        yield from decoder.disasm_lite(data[start:start + length], section['addr'] + relative)
+
+
 def decode(data, sections, oracle=None):
     """{address: (mnemonic, operands)}; a word Capstone cannot decode has a '.'-prefixed mnemonic.
 
@@ -283,13 +294,13 @@ def decode(data, sections, oracle=None):
     table = {}
     for section in sections:
         start = section['offset']
-        for address, size, mnemonic, operands in decoder.disasm_lite(data[start:start + section['size']], section['addr']):
+        for address, size, mnemonic, operands in section_instructions(decoder, data, section):
             if mnemonic.startswith('.') and size == 4:
                 word = struct.unpack_from('<I', data, start + address - section['addr'])[0]
                 explicit = poe2_instruction(word)
                 if explicit:
                     mnemonic, operands = explicit
-            table[address] = (mnemonic, operands)
+            table[address] = (intern(mnemonic), operands)
     if oracle:
         unknown = {}
         for section in sections:
@@ -382,7 +393,7 @@ def jump_table(insns, data, va_to_off, pc):
                 targets=sorted({anchor + entry for entry in entries}))
 
 
-def walk(insns, data, va_to_off, roots, code, data_words, strict, boundaries, external=None):
+def walk(insns, data, va_to_off, roots, code, data_words, strict, boundaries, external=None, external_pending=None):
     """Follow control flow; a strict walk returns None instead of stopping at a doubtful word.
 
     external, when given, covers code outside these sections that another proof owns (an image
@@ -394,7 +405,7 @@ def walk(insns, data, va_to_off, roots, code, data_words, strict, boundaries, ex
         while pc not in code and pc not in found_code:
             found = insns.get(pc)
             if found is None and external is not None and pc in external:
-                external.reached.add(pc)
+                (external.reached if external_pending is None else external_pending).add(pc)
                 break
             if strict and found and found[0] == 'udf' and after_call:
                 break  # the trap clang places after a call to a noreturn function
@@ -480,15 +491,20 @@ def prove_roots(insns, data, va_to_off, strong, weak, starts, pointers, ordered=
     found, tables, anomalies = walk(insns, data, va_to_off, sorted(a for a in strong if a in insns), set(), set(),
                                     False, starts, external)
     code = dict.fromkeys(found, 'unwind')
+    del found
     data_words = table_words(tables)
     tried, rejected = set(), []
 
     def attempt(root, grade):
         tried.add(root)
-        result = walk(insns, data, va_to_off, [root], code, data_words, True, starts, external)
+        # Do not publish cross-image edges until this tentative proof commits.
+        pending = set()
+        result = walk(insns, data, va_to_off, [root], code, data_words, True, starts, external, pending)
         if result is None or any(word in code or word in result[0] for word in table_words(result[1])):
             rejected.append(dict(address=hex(root), grade=grade))
             return False
+        if external is not None:
+            external.reached.update(pending)
         code.update(dict.fromkeys(result[0], grade))
         tables.extend(result[1])
         data_words.update(table_words(result[1]))
