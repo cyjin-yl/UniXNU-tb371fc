@@ -50,9 +50,10 @@ PINS = {
 PACGA_PINS = {
     "source": "4eeb208fb2510bfdc0338d1a1d7d2d702fe9eb65d332eea388720ef6574375d1",
     "recipe": "8c60d7a8f85e060aae2a0c8faee343c5fbaf3be7d188be9847ec642effd29090",
-    # Reviewed producer files at e766bca5, before the formal random-header fix.
+    # Reviewed stage producer adds a bounded compile deadline; the execution
+    # driver remains byte-identical to e766bca5.
     # The new stage must use these exact files; old failed stages stay immutable.
-    "stage_driver": "00413eb769be08086cf79eee8b15eb830c5c3fc22058a25bd22836c1bab63ad4",
+    "stage_driver": "f8d1d55b2bc8f3a29356c80c0c85e4248ad4aa2433c599cae5aacbd1d5c93fa0",
     "execution_driver": "c293a119d134ad7c27a1509e429f53c2d164536800465fc6b37a75de5a502029",
 }
 ADDED_FIELDS = (
@@ -133,6 +134,7 @@ def module(path, name):
 class Journal:
     def __init__(self, out):
         self.out, self.records, self.commands = out, {}, []
+        self.failed = False
         self.environment = {"PATH": os.defpath, "LANG": "C", "LC_ALL": "C", "TZ": "UTC",
                             "SOURCE_DATE_EPOCH": SOURCE_DATE_EPOCH, "ZERO_AR_DATE": "1", "TMPDIR": str(out)}
 
@@ -144,6 +146,16 @@ class Journal:
         return record
 
     def execute(self, argv, label, *, cwd=None, env=None, timeout=60):
+        require(not self.failed, "cannot execute another command after a failed journal command")
+        try:
+            return self._execute(argv, label, cwd=cwd, env=env, timeout=timeout)
+        except BaseException:
+            self.failed = True
+            raise
+
+    def _execute(self, argv, label, *, cwd=None, env=None, timeout=60):
+        from route_a_pacga_probe import run as execution
+        self.protect(Path(execution.__file__))
         self.protect(argv[0], tool=True)
         stdout, stderr = self.out / (label + ".stdout"), self.out / (label + ".stderr")
         environment = dict(self.environment, **(env or {}))
@@ -152,27 +164,87 @@ class Journal:
                   "environment": environment}
         self.commands.append(record)
         save(self.out / "commands.json", self.commands)
-        process = None
-        with stdout.open("xb") as out, stderr.open("xb") as err:
+        process = out = err = None
+        with execution.owned_children():
             try:
+                out = stdout.open("xb")
+                err = stderr.open("xb")
                 process = subprocess.Popen(record["argv"], cwd=cwd or self.out,
                                            env=environment, stdout=out, stderr=err, stdin=subprocess.DEVNULL,
                                            start_new_session=True)
+                record["pid"] = process.pid
+                save(self.out / "commands.json", self.commands)
                 record["exit"] = process.wait(timeout=timeout)
                 require(record["exit"] == 0, f"{label} exited {record['exit']}; inspect retained stderr")
             finally:
-                if process is not None and process.poll() is None:
-                    os.killpg(process.pid, signal.SIGTERM)
-                    try:
-                        process.wait(timeout=2)
-                    except subprocess.TimeoutExpired:
-                        os.killpg(process.pid, signal.SIGKILL)
-                        process.wait(timeout=2)
-                if process is not None:
-                    record.update(exit=process.returncode, reaped=process.poll() is not None)
-                record.update(stdout=loader.identity(stdout), stderr=loader.identity(stderr))
-                save(self.out / "commands.json", self.commands)
+                self._finish_command(execution, process, record, stdout, stderr, (out, err), sys.exc_info()[1])
+        require(record["cleanup"].get("group_absent") is True
+                and record["cleanup"].get("direct_child_reaped") is True,
+                f"{label} did not finish cleanup of its owned process group")
+        require(record.get("group_absent_after_wait") is True,
+                f"{label} exited while its process group was still active")
         return stdout.read_bytes()
+
+    def _finish_command(self, execution, process, record, stdout, stderr, streams, primary):
+        """Always attempt group cleanup; receipt errors must not replace the cause."""
+        errors = []
+
+        def attempt(label, function):
+            try:
+                return function()
+            except BaseException as error:
+                errors.append((label, error))
+                return None
+
+        watched = (signal.SIGINT, signal.SIGTERM, signal.SIGHUP)
+        previous_mask = attempt("block-cleanup-signals",
+                                lambda: signal.pthread_sigmask(signal.SIG_BLOCK, watched))
+        try:
+            if process is not None:
+                record["group_absent_after_wait"] = False
+                record["cleanup"] = {"group": process.pid, "group_absent": False,
+                                     "direct_child_reaped": False}
+
+                def probe_group():
+                    try: os.killpg(process.pid, 0)
+                    except ProcessLookupError: record["group_absent_after_wait"] = True
+
+                attempt("group-probe", probe_group)
+                # A failed probe, a second signal or a failed PID receipt must
+                # still reach bounded cleanup of this command's own session.
+                cleanup = attempt("group-cleanup", lambda: execution.stop_group(process))
+                if cleanup is not None:
+                    record["cleanup"] = cleanup
+
+                def poll_child():
+                    record.update(exit=process.poll(), reaped=process.returncode is not None)
+
+                attempt("direct-child-status", poll_child)
+            for name, stream in zip(("stdout", "stderr"), streams):
+                if stream is not None:
+                    attempt(name + "-close", stream.close)
+            for name, path in (("stdout", stdout), ("stderr", stderr)):
+                identity = attempt(name + "-identity", lambda: loader.identity(path))
+                if identity is not None:
+                    record[name] = identity
+        finally:
+            if previous_mask is not None:
+                # A pending signal may raise here, after group cleanup; retain
+                # it as a secondary error when a primary failure already exists.
+                attempt("restore-cleanup-signals",
+                        lambda: signal.pthread_sigmask(signal.SIG_SETMASK, previous_mask))
+        record["teardown_errors"] = [dict(phase=label, type=type(error).__name__, error=str(error))
+                                     for label, error in errors]
+        attempt("command-receipt", lambda: save(self.out / "commands.json", self.commands))
+        record["teardown_errors"] = [dict(phase=label, type=type(error).__name__, error=str(error))
+                                     for label, error in errors]
+        if errors:
+            failure = primary if primary is not None else errors[0][1]
+            for label, error in errors:
+                if error is not failure:
+                    failure.add_note(f"command teardown {label}: {type(error).__name__}: {error}")
+            if primary is None:
+                raise failure
 
     def recheck(self):
         return loader.platform_link.check_unchanged(list(self.records.values()))
@@ -1107,6 +1179,12 @@ def verify_compile_receipts(report, directory, objects):
                 "invalid command argv")
         require(type(command.get("exit")) is int and command["exit"] == 0 and command.get("reaped") is True,
                 "build stage did not succeed and reap its owned process")
+        cleanup = command.get("cleanup", {})
+        require(isinstance(cleanup, dict) and command.get("group_absent_after_wait") is True
+                and cleanup.get("group_absent") is True and cleanup.get("direct_child_reaped") is True
+                and type(cleanup.get("direct_exit_code")) is int and cleanup["direct_exit_code"] == 0,
+                "build stage did not finish and reap its owned process group")
+        require(command.get("teardown_errors") == [], "build stage has command teardown errors")
         require(isinstance(command.get("cwd"), str) and isinstance(command.get("environment"), dict),
                 "build stage lacks its working directory or environment")
         tool = checked_input(Path(argv[0]))

@@ -20,6 +20,8 @@ from route_a_pacga_probe.run import (dependency_paths, execute, file_identity, o
 
 ROOT = Path(__file__).resolve().parents[1]
 SOURCE = "osfmk/arm64/sleh.c"
+DEFAULT_COMPILE_TIMEOUT = 300
+MAX_COMPILE_TIMEOUT = 900
 
 
 def sha(path):
@@ -35,7 +37,13 @@ def run(arguments, *, cwd):
     return result.stdout
 
 
-def prepare(xnu, recipe_path, output, expected_sleh):
+def validate_compile_timeout(value):
+    pacga.require(type(value) is int and 1 <= value <= MAX_COMPILE_TIMEOUT,
+                  f"compile timeout must be an integer from 1 to {MAX_COMPILE_TIMEOUT} seconds")
+
+
+def prepare(xnu, recipe_path, output, expected_sleh, *, compile_timeout=DEFAULT_COMPILE_TIMEOUT):
+    validate_compile_timeout(compile_timeout)
     xnu, recipe_path, output = xnu.resolve(), recipe_path.resolve(), output.resolve()
     pacga.require(not output.exists(), "PACGA stage output must be new")
     pacga.require(not output.is_relative_to(xnu), "PACGA output must be outside the prepared source tree")
@@ -107,7 +115,7 @@ def prepare(xnu, recipe_path, output, expected_sleh):
         prepared_sleh_sha256=expected_sleh, staged_sleh_sha256=sha(staged),
         helper_sha256=sha(include), patch_sha256=sha(patch), recipe_sha256=sha(recipe_path),
         compiler=compiler["invocation"], tools=dict(clang=compiler), frozen=frozen, commands=[],
-        arguments=arguments, directory=recipe["directory"],
+        arguments=arguments, directory=recipe["directory"], compile_timeout_seconds=compile_timeout,
         previous_object=dict(name=recipe["output"], sha256=sha(old_object)),
         provider_prerequisite="successful source-provider POST and register_and_init_prng at SYSCTL/LAST",
         key_material_recorded=False, compile_passed=False, kernel_linked=False, runtime_boot_verified=False)
@@ -130,7 +138,7 @@ def prepare(xnu, recipe_path, output, expected_sleh):
             # or rewritten. Any generation change makes this build ineligible.
             manifest["frozen"].update({"dependency:" + path: record
                                        for path, record in manifest["header_closure"].items()})
-            execute(arguments, output, "compile", manifest, timeout=300, cwd=recipe["directory"])
+            execute(arguments, output, "compile", manifest, timeout=compile_timeout, cwd=recipe["directory"])
             actual = dependency_paths(dep, recipe["directory"])
             pacga.require(actual == declared,
                           "actual compiler dependencies differ from the declared header closure")
@@ -171,8 +179,15 @@ def main(argv=None):
     parser.add_argument("--recipe", type=Path, required=True)
     parser.add_argument("--expected-sleh-sha256", required=True)
     parser.add_argument("--output", type=Path, required=True)
+    parser.add_argument("--compile-timeout", type=int, default=DEFAULT_COMPILE_TIMEOUT,
+                        help=f"compile-only deadline in seconds (1..{MAX_COMPILE_TIMEOUT}; default {DEFAULT_COMPILE_TIMEOUT})")
     args = parser.parse_args(argv)
-    result = prepare(args.xnu_work, args.recipe, args.output, args.expected_sleh_sha256)
+    try:
+        validate_compile_timeout(args.compile_timeout)
+    except ValueError as error:
+        parser.error(str(error))
+    result = prepare(args.xnu_work, args.recipe, args.output, args.expected_sleh_sha256,
+                     compile_timeout=args.compile_timeout)
     print(json.dumps({key: result[key] for key in
                       ("abi", "compile_passed", "object", "kernel_linked", "runtime_boot_verified")}))
     return 0

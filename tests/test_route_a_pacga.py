@@ -6,6 +6,7 @@ software result with architected PACGA; neither test is a Darwin boot claim.
 """
 from pathlib import Path
 import hashlib
+import io
 import json
 import os
 import shlex
@@ -633,12 +634,57 @@ class PacgaTests(unittest.TestCase):
             with self.subTest(value=value, native=native), self.assertRaises(ValueError):
                 runner.verify_pauth_features({"isar1": value}, native=native)
 
+    def test_stage_compile_timeout_cli_defaults_and_boundary_values_are_forwarded(self):
+        import build_route_a_pacga as stage
+        result = dict(abi=pacga.ABI, compile_passed=True, object={}, kernel_linked=False,
+                      runtime_boot_verified=False)
+        for value, expected in ((None, 300), ("1", 1), ("900", 900)):
+            with self.subTest(value=value), tempfile.TemporaryDirectory() as tmp:
+                root = Path(tmp)
+                output = root / "not-created"
+                argv = ["--xnu-work", str(root / "xnu"), "--recipe", str(root / "recipe.json"),
+                        "--output", str(output), "--expected-sleh-sha256", "0" * 64]
+                if value is not None:
+                    argv += ["--compile-timeout", value]
+                with mock.patch.object(stage, "prepare", return_value=result) as prepare, \
+                        mock.patch.object(sys, "stdout", io.StringIO()):
+                    self.assertEqual(stage.main(argv), 0)
+                prepare.assert_called_once_with(root / "xnu", root / "recipe.json", output,
+                                                "0" * 64, compile_timeout=expected)
+                self.assertFalse(output.exists())
+
+    def test_invalid_stage_timeout_is_rejected_before_output_or_child_creation(self):
+        import build_route_a_pacga as stage
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            output = root / "not-created"
+            argv = ["--xnu-work", str(root / "xnu"), "--recipe", str(root / "recipe.json"),
+                    "--output", str(output), "--expected-sleh-sha256", "0" * 64]
+            with mock.patch.object(stage, "prepare", side_effect=AssertionError("invalid CLI reached prepare")):
+                for value in ("0", "-1", "901", "1.5", "inf", "nan", "abc"):
+                    with self.subTest(cli=value), mock.patch.object(sys, "stderr", io.StringIO()):
+                        with self.assertRaises(SystemExit) as caught:
+                            stage.main(argv + ["--compile-timeout", value])
+                        self.assertEqual(caught.exception.code, 2)
+                        self.assertFalse(output.exists())
+            # API callers receive the same validation before even a git probe.
+            with mock.patch.object(stage, "run", side_effect=AssertionError("invalid API spawned a command")), \
+                    mock.patch.object(stage, "execute", side_effect=AssertionError("invalid API spawned a compiler")):
+                for value in (0, -1, 901, 1.5, True, False, "300", None):
+                    with self.subTest(api=value), self.assertRaisesRegex(ValueError, "compile timeout"):
+                        stage.prepare(root / "xnu", root / "recipe.json", output, "0" * 64,
+                                      compile_timeout=value)
+                    self.assertFalse(output.exists())
+
     def test_stage_postcompile_failures_leave_a_failed_terminal_receipt(self):
         import build_route_a_pacga as stage
         original_write = Path.write_text
         original_tools = stage.verify_tools
-        for failure in (None, "object-header", "dependencies-write", "prepared-source", "tool-recheck", "final-report"):
-            with self.subTest(failure=failure), tempfile.TemporaryDirectory() as tmp:
+        cases = [(None, None), (None, 1), (None, 900)]
+        cases += [(failure, None) for failure in
+                  ("object-header", "dependencies-write", "prepared-source", "tool-recheck", "final-report")]
+        for failure, compile_timeout in cases:
+            with self.subTest(failure=failure, timeout=compile_timeout), tempfile.TemporaryDirectory() as tmp:
                 root = Path(tmp)
                 xnu = root / "xnu"
                 source = xnu / stage.SOURCE
@@ -652,11 +698,14 @@ class PacgaTests(unittest.TestCase):
                 recipe.write_text(json.dumps(dict(file=str(source), directory=str(work), output="sleh.o",
                     arguments=[sys.executable, "-c", str(source), "-o", str(work / "sleh.o")])))
                 output = root / "stage"
+                options = {} if compile_timeout is None else {"compile_timeout": compile_timeout}
+                command_timeouts = {}
 
                 def synthetic_run(arguments, *, cwd):
                     return pacga.XNU_COMMIT + "\n" if "rev-parse" in arguments else ""
 
                 def synthetic_execute(arguments, directory, name, manifest, **_options):
+                    command_timeouts[name] = _options.get("timeout", 60)
                     manifest["commands"].append(dict(name=name, exit_code=0))
                     if name == "compiler-version":
                         return "synthetic compiler publication fixture\n"
@@ -689,16 +738,20 @@ class PacgaTests(unittest.TestCase):
                         mock.patch.object(stage, "verify_tools", controlled_tools), \
                         mock.patch.object(Path, "write_text", controlled_write):
                     if failure is None:
-                        result = stage.prepare(xnu, recipe, output, hashlib.sha256(prepared).hexdigest())
+                        result = stage.prepare(xnu, recipe, output, hashlib.sha256(prepared).hexdigest(), **options)
                         self.assertTrue(result["compile_passed"])
                     else:
                         with self.assertRaises((ValueError, OSError)):
-                            stage.prepare(xnu, recipe, output, hashlib.sha256(prepared).hexdigest())
+                            stage.prepare(xnu, recipe, output, hashlib.sha256(prepared).hexdigest(), **options)
                 report = json.loads((output / "stage-report.json").read_text())
                 self.assertIs(report["compile_passed"], failure is None)
                 self.assertFalse(report["kernel_linked"])
                 self.assertFalse(report["runtime_boot_verified"])
                 self.assertEqual(report["compile_exit_code"], 0)
+                selected_timeout = 300 if compile_timeout is None else compile_timeout
+                self.assertEqual(report["compile_timeout_seconds"], selected_timeout)
+                self.assertEqual(command_timeouts, {"compiler-version": 60, "discover-headers": 300,
+                                                     "compile": selected_timeout})
                 if failure is not None:
                     self.assertIn("error", report)
                     self.assertIn("message", report)
