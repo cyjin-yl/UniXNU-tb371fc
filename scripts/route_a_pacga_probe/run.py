@@ -158,6 +158,35 @@ def function_from_patch(patch, name, kind):
     return added[start:cursor]
 
 
+
+def assembly_from_patch(patch, name):
+    """Extract the reviewed entry/reset or final-return instructions, with context.
+
+    These are the actual new-source hunk bytes, including the old entitlement
+    fallback. The fixture must never replace them with an unconditional restore.
+    """
+    files = {"ENTRY_RESET": "osfmk/arm64/exception_asm.h",
+             "RETURN_GATE": "osfmk/arm64/locore.s"}
+    pacga.require(name in files, "unknown production assembly block")
+    selected = False
+    body = []
+    for line in patch.splitlines():
+        if line.startswith("diff --git "):
+            selected = line == "diff --git a/" + files[name] + " b/" + files[name]
+        elif selected and line[:1] in ("+", " ") and not line.startswith("+++"):
+            body.append(line[1:])
+    source = "\n".join(body)
+    begin, end = ("/* ROUTE_A_PACGA_" + name + suffix + " */" for suffix in ("_BEGIN", "_END"))
+    pacga.require(source.count(begin) == source.count(end) == 1, "ambiguous production assembly markers")
+    first = source.index(begin) + len(begin)
+    last = source.index(end)
+    pacga.require(first < last, "reversed production assembly markers")
+    result = source[first:last].strip() + "\n"
+    pacga.require(".include" not in result and ".incbin" not in result,
+                  "production assembly block has an unbound assembler include")
+    return result
+
+
 def dependency_paths(path, directory):
     text = Path(path).read_text().replace(chr(92) + chr(10), " ")
     pacga.require(":" in text, "compiler dependency output lacks a target")
@@ -240,7 +269,7 @@ def execute(command, output, name, manifest, timeout=60, cwd=None):
     verify_files(manifest["frozen"])
     started = time.monotonic()
     record = dict(name=name, arguments=[str(item) for item in command],
-                  directory=str(cwd or output), status="started")
+                  directory=str(cwd or output), status="started", timeout_seconds=timeout)
     manifest["commands"].append(record)
     (output / "report.json").write_text(json.dumps(manifest, indent=2) + "\n")
     process = None
@@ -291,12 +320,17 @@ def run(args):
     identity = pacga.implementation()
     helper = (ROOT / pacga.HEADER).read_bytes()
     patch = (ROOT / pacga.PATCH).read_bytes()
+    abi_header = (ROOT / pacga.ABI_HEADER).read_bytes()
     pacga.require(sha(helper) == identity["sources"][pacga.HEADER]
-                  and sha(patch) == identity["sources"][pacga.PATCH],
+                  and sha(patch) == identity["sources"][pacga.PATCH]
+                  and sha(abi_header) == identity["sources"][pacga.ABI_HEADER],
                   "production source changed during capture")
     sources = {name: (HERE / name).read_bytes() for name in ("probe.c", "entry.S", "link.ld")}
     sources["pacga_qarma5.h"] = helper
     sources["runtime.patch"] = patch
+    sources["route_a_pacga_abi.h"] = abi_header
+    sources["entry-reset.inc"] = assembly_from_patch(patch.decode(), "ENTRY_RESET").encode()
+    sources["return-gate.inc"] = assembly_from_patch(patch.decode(), "RETURN_GATE").encode()
     sources["handler.inc"] = ("\n\n".join(
         function_from_patch(patch.decode(), name, kind) for name, kind in (
             ("route_a_pacga_register", "uint64_t"), ("route_a_pacga_svc", "bool"))) + "\n").encode()
@@ -307,7 +341,7 @@ def run(args):
     frozen = {name: file_identity(output / name) for name in sources}
     frozen["runner"] = file_identity(__file__)
     manifest = dict(schema="route-a-pacga-probe-report-v1", complete=False,
-                    scope="freestanding QEMU virt fixtures with public test keys",
+                    scope="freestanding QEMU virt fixtures with public keys and extracted XNU entry/return instructions",
                     implementation=identity, source_sha256={name: sha(raw) for name, raw in sources.items()},
                     xnu_boot_verified=False, real_cache_proven=False, device_tested=False,
                     tools=tools, frozen=frozen, commands=[], results={},
@@ -356,7 +390,8 @@ def run(args):
             pacga.require(result["schema"] == "route-a-pacga-el0-probe-v1"
                           and result["cases"] == 1024 and result["native"] is bool(native)
                           and all(result.get(key) is True for key in
-                                  ("paper_vector", "gpr", "pc_lr_sp", "nzcv", "simd", "fpcr_fpsr")),
+                                  ("paper_vector", "gpr", "pc_lr_sp", "nzcv", "simd", "fpcr_fpsr",
+                                    "production_return_gate", "marker_lifecycle")),
                           name + " reported an incomplete register/algorithm result")
             verify_pauth_features(result, native=bool(native))
             if not native:

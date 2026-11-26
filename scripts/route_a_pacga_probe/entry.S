@@ -1,4 +1,13 @@
-/* Standalone EL0/EL1 test fixture, not XNU exception-vector code. */
+/* Standalone EL0/EL1 vectors, with the exact patched XNU entry/return blocks.
+ * These fixture offsets describe arm_saved_state64 without XNU's 8-byte header;
+ * the real locore build uses its separately bound generated assym.s values. */
+#define CONFIG_ROUTE_A_PACGA_SVC 1
+#include "route_a_pacga_abi.h"
+#define SS64_CPSR 264
+#define SS64_X18 144
+#define PSR64_MODE_MASK ROUTE_A_PACGA_MODE_MASK
+/* ac9718fb:osfmk/arm64/machine_machdep.h */
+#define MACHDEP_TPIDR_FLAG_PRESERVE_X18_SHIFT 48
 .section .text.boot, "ax"
 .global _start
 .type _start, %function
@@ -46,6 +55,7 @@ _start:
     str xzr, [x0], #8
     b .Lzero
 .Lready:
+    msr tpidr_el0, xzr
     bl probe_main
     mov x0, #0x99
     bl probe_exit
@@ -99,11 +109,12 @@ probe_sync_vector:
     str x0, [sp, #256]
     mrs x0, spsr_el1
     str w0, [sp, #264]
-    str wzr, [sp, #268]
     mrs x0, far_el1
     str x0, [sp, #272]
     mrs x0, esr_el1
     str x0, [sp, #280]
+    mov x0, sp
+#include "entry-reset.inc"
 
     adr x0, observed_simd
     stp q0, q1, [x0, #0]
@@ -137,6 +148,7 @@ probe_sync_vector:
     msr elr_el1, x9
     ldr w9, [sp, #264]
     msr spsr_el1, x9
+    bl probe_apply_return_gate
     ldp x0, x1, [sp, #0]
     ldp x2, x3, [sp, #16]
     ldp x4, x5, [sp, #32]
@@ -146,7 +158,7 @@ probe_sync_vector:
     ldp x12, x13, [sp, #96]
     ldp x14, x15, [sp, #112]
     ldp x16, x17, [sp, #128]
-    ldp x18, x19, [sp, #144]
+    ldr x19, [sp, #152] /* x18 was restored or cleared by the production gate. */
     ldp x20, x21, [sp, #160]
     ldp x22, x23, [sp, #176]
     ldp x24, x25, [sp, #192]
@@ -155,6 +167,37 @@ probe_sync_vector:
     ldr x30, [sp, #240]
     add sp, sp, #288
     eret
+
+
+/* Called with SP pointing at the captured fixture state and IRQs masked. */
+.type probe_apply_return_gate, %function
+probe_apply_return_gate:
+#include "return-gate.inc"
+Lexception_return_restore_registers:
+    ret
+
+/* C-callable wrappers execute those same instructions for lifecycle negatives.
+ * The production block uses only x1/x2/x18, leaving x9-x11 available here. */
+.global probe_return_gate_test
+.type probe_return_gate_test, %function
+probe_return_gate_test:
+    mov x9, sp
+    mov x10, lr
+    mrs x11, tpidr_el0
+    msr tpidr_el0, x1
+    mov sp, x0
+    bl probe_apply_return_gate
+    mov x0, x18
+    mov sp, x9
+    mov lr, x10
+    msr tpidr_el0, x11
+    ret
+
+.global probe_entry_reset_test
+.type probe_entry_reset_test, %function
+probe_entry_reset_test:
+#include "entry-reset.inc"
+    ret
 
 /* Preserve the EL1 caller, then enter an instruction with all EL0 registers
  * loaded. The test completion SVC returns to probe_return at EL1h. */

@@ -630,156 +630,306 @@ class CoreCryptoReviewRegressions(unittest.TestCase):
 
 
 class PacgaLinkAdmission(unittest.TestCase):
-    """Synthetic stage receipts validate admission; no C compiler is executed."""
-    def test_pacga_patch_replay_requires_exact_two_hunks_and_retained_context(self):
-        source = b"one\ntwo\nthree\nfour\nfive\nsix\n"
-        header = (b"diff --git a/osfmk/arm64/sleh.c b/osfmk/arm64/sleh.c\n"
-                  b"--- a/osfmk/arm64/sleh.c\n+++ b/osfmk/arm64/sleh.c\n")
-        first = b"@@ -2,2 +2,3 @@\n two\n+insert first\n three\n"
-        second = b"@@ -5,2 +6,3 @@\n five\n+insert second\n six\n"
-        patch_bytes = header + first + second
-        expected = b"one\ntwo\ninsert first\nthree\nfour\nfive\ninsert second\nsix\n"
-        self.assertEqual(B.apply_pacga_patch(source, patch_bytes), expected)
-        for failure, bad in (
-                ("different-path", patch_bytes.replace(b"a/osfmk/arm64/sleh.c", b"a/other.c", 1)),
-                ("changed-context", patch_bytes.replace(b" two\n", b" TWO\n", 1)),
-                ("old-count", patch_bytes.replace(b"-2,2", b"-2,3", 1)),
-                ("new-count", patch_bytes.replace(b"+2,3", b"+2,4", 1)),
-                ("new-position", patch_bytes.replace(b"+6,3", b"+5,3", 1)),
-                ("overlap", header + first + second.replace(b"-5,2 +6,3", b"-3,2 +4,3")),
-                ("deletion", patch_bytes.replace(b"+insert first\n", b"-insert first\n", 1)),
-                ("missing-hunk", header + first),
-                ("unterminated-line", patch_bytes[:-1])):
-            with self.subTest(failure=failure), self.assertRaises(B.BuildError):
-                B.apply_pacga_patch(source, bad)
+    """Synthetic receipts exercise admission, never claim compiler or guest execution."""
 
-    def test_pacga_stage_binds_producer_flags_dependencies_and_object(self):
+    def test_pacga_patch_replay_requires_all_three_exact_files_and_contexts(self):
+        originals, expected, parts = {}, {}, []
+        for relative, count in zip(B.PACGA_SOURCES, B.PACGA_HUNKS):
+            name = relative.encode()
+            originals[relative] = b"one\ntwo\nthree\nfour\nfive\nsix\n"
+            part = b"diff --git a/" + name + b" b/" + name + b"\n--- a/" + name + b"\n+++ b/" + name + b"\n"
+            part += b"@@ -2,2 +2,3 @@\n two\n+first\n three\n"
+            expected[relative] = b"one\ntwo\nfirst\nthree\nfour\nfive\nsix\n"
+            if count == 2:
+                part += b"@@ -5,2 +6,3 @@\n five\n+second\n six\n"
+                expected[relative] = b"one\ntwo\nfirst\nthree\nfour\nfive\nsecond\nsix\n"
+            parts.append(part)
+        patch_bytes = b"".join(parts)
+        self.assertEqual(B.apply_pacga_patch(originals, patch_bytes), expected)
+        for bad in (patch_bytes.replace(b"a/osfmk/arm64/locore.s", b"a/other.s", 1),
+                    patch_bytes.replace(b" two\n", b" TWO\n", 1),
+                    patch_bytes.replace(b"-2,2", b"-2,3", 1),
+                    patch_bytes.replace(b"+2,3", b"+2,4", 1),
+                    patch_bytes.replace(b"+6,3", b"+5,3", 1),
+                    patch_bytes.replace(b"-5,2 +6,3", b"-3,2 +4,3", 1),
+                    patch_bytes.replace(b"+first\n", b"-first\n", 1),
+                    b"".join(parts[:2]), parts[1] + parts[0] + parts[2],
+                    patch_bytes + parts[0], patch_bytes[:-1]):
+            with self.subTest(patch=bad[:100]), self.assertRaises(B.BuildError):
+                B.apply_pacga_patch(originals, bad)
+
+    def fixture(self, root):
         from arm64_lowering import pacga
         from route_a_pacga_probe import run as execution
-        for failure in (None, "failed-stage", "wrong-previous", "unreaped", "extra-flags",
-                        "header-drift", "dependency-drift", "arm64e", "descriptor-drift",
-                        "synchronized-source-drift", "late-header-drift"):
-            with self.subTest(failure=failure), tempfile.TemporaryDirectory() as tmp:
-                root = Path(tmp); kb = root / "kernel-build"
-                source = kb / ".cache/xnu-work/osfmk/arm64/sleh.c"
-                # Only the two production patch contexts are real source lines.
-                # This is a receipt fixture, not compilable or bootable XNU.
-                original = [b"/* synthetic unaffected context */\n"] * 949
-                original[153:159] = [b"\n",
-                    b"static void sleh_interrupt_handler_prologue(arm_saved_state_t *, unsigned int type);\n",
-                    b"static void sleh_interrupt_handler_epilogue(void);\n", b"\n",
-                    b"static void handle_svc(arm_saved_state_t *);\n",
-                    b"static void handle_mach_absolute_time_trap(arm_saved_state_t *);\n"]
-                original[941:947] = [b'\t\t\tpanic("Invalid SVC_64 context");\n', b"\t\t}\n", b"\n",
-                                    b"\t\thandle_svc(state);\n", b"\t\tbreak;\n", b"\n"]
-                source.parent.mkdir(parents=True); source.write_bytes(b"".join(original))
-                recipe_path = kb / Path(B.RECIPE_REL).with_name("sleh.o.json")
-                recipe_path.parent.mkdir(parents=True)
-                previous = recipe_path.parent / "sleh.o"; previous.write_bytes(b"retained original object")
-                previous_record = B.loader.identity(previous)
-                tool = execution.tool_identity(sys.executable)
-                recipe = {"file": str(source), "output": "sleh.o", "directory": str(recipe_path.parent),
-                          "arguments": [tool["invocation"], "-c", str(source), "-o", "sleh.o"]}
-                recipe_path.write_text(json.dumps(recipe))
-                output = root / "stage"; output.mkdir()
-                staged = output / "source/osfmk/arm64/sleh.c"
-                staged.parent.mkdir(parents=True)
-                staged.write_bytes(B.apply_pacga_patch(source.read_bytes(), (B.ROOT / pacga.PATCH).read_bytes()))
-                helper = staged.parent / "route_a_pacga_qarma5.h"
-                helper.write_bytes((B.ROOT / pacga.HEADER).read_bytes())
-                patch_path = output / "runtime.patch"; patch_path.write_bytes((B.ROOT / pacga.PATCH).read_bytes())
-                descriptor = pacga.descriptor(); offset = 32 + 152 + 24 + 24
-                segment = struct.pack("<2I16s4Q4I", 0x19, 152, b"", 0, len(descriptor), offset, len(descriptor), 3, 3, 1, 0)
-                segment += struct.pack("<16s16s2Q8I", b"__unixnu_pacga", b"__DATA_CONST", 0, len(descriptor),
-                                       offset, 0, 0, 0, 0, 0, 0, 0)
-                version = struct.pack("<6I", 0x32, 24, 2, 27 << 16, 27 << 16, 0)
-                strings = offset + len(descriptor)
-                symbols = struct.pack("<6I", 2, 24, strings, 0, strings, 1)
-                raw = bytearray(struct.pack("<8I", 0xFEEDFACF, 0x0100000C, 0, 1, 3, 200, 0, 0)
-                                + segment + version + symbols + descriptor + b"\0")
-                if failure == "arm64e": struct.pack_into("<I", raw, 8, 2)
-                if failure == "descriptor-drift": raw[offset] ^= 1
-                obj = output / "sleh.o"; obj.write_bytes(raw)
-                identity = pacga.implementation()
-                arguments = [tool["invocation"], "-I", str(output / "source/osfmk"), "-c", str(staged), "-o", str(obj),
-                             "-march=armv8-a", "-DCONFIG_ROUTE_A_PACGA_SVC=1",
-                             '-DROUTE_A_PACGA_IMPLEMENTATION_SHA256="' + identity["sha256"] + '"',
-                             "-mgeneral-regs-only", "-MD", "-MF", str(output / "sleh.d"),
-                             "-Werror=implicit-function-declaration", "-Werror=incompatible-function-pointer-types", "-Werror=return-type"]
-                discovery = list(arguments)
-                discovery[discovery.index("-MD")] = "-M"
-                discovery[discovery.index("-MF") + 1] = str(output / "discovered.d")
-                discovery[discovery.index("-o") + 1] = str(output / "discovered.stdout")
-                for name in ("discovered.d", "sleh.d"):
-                    (output / name).write_text(str(obj) + ": " + str(staged) + " " + str(helper) + "\n")
-                closure = {str(path): execution.file_identity(path) for path in (staged, helper)}
-                dependencies = output / "dependencies.json"
-                dependencies.write_text(json.dumps({name: record["sha256"] for name, record in closure.items()}))
-                frozen = {key: execution.file_identity(path) for key, path in (
-                    ("source", staged), ("helper", helper), ("patch", patch_path), ("object", obj),
-                    ("recipe", recipe_path), ("stage", B.ROOT / "scripts/build_route_a_pacga.py"),
-                    ("execution", Path(execution.__file__)))}
-                frozen.update({"dependency:" + path: record for path, record in closure.items()})
-                commands = [{"name": name, "arguments": argv, "directory": str(output if name == "compiler-version" else recipe_path.parent),
-                             "status": "finished", "exit_code": 0,
-                             "cleanup": {"group_absent": True, "direct_child_reaped": True}}
-                            for name, argv in (("compiler-version", [tool["invocation"], "--version"]),
-                                               ("discover-headers", discovery), ("compile", arguments))]
-                stage = {"schema": "route-a-pacga-stage-v1", "compile_passed": True, "compile_exit_code": 0,
-                         "abi": pacga.ABI, "implementation": identity, "xnu_commit": pacga.XNU_COMMIT,
-                         "source_file": "osfmk/arm64/sleh.c", "descriptor_hex": descriptor.hex(),
-                         "prepared_sleh_sha256": B.sha(source.read_bytes()), "staged_sleh_sha256": B.sha(staged.read_bytes()),
-                         "helper_sha256": B.sha(helper.read_bytes()), "patch_sha256": B.sha(patch_path.read_bytes()),
-                         "recipe_sha256": B.sha(recipe_path.read_bytes()), "frozen": frozen, "tools": {"clang": tool},
-                         "compiler": tool["invocation"], "arguments": arguments, "commands": commands,
-                         "directory": str(recipe_path.parent), "previous_object": {"name": "sleh.o", "sha256": previous_record["sha256"]},
-                         "object": {"name": "sleh.o", "bytes": len(raw), "sha256": B.sha(raw), "cpu_type": "arm64", "cpu_subtype": 0},
-                         "header_closure": closure, "dependency_count": 2, "dependencies_sha256": B.sha(dependencies.read_bytes())}
-                if failure == "failed-stage": stage["compile_passed"] = False
-                if failure == "wrong-previous": stage["previous_object"]["sha256"] = "0" * 64
-                if failure == "unreaped": commands[-1]["cleanup"]["group_absent"] = False
-                if failure == "extra-flags": arguments.append("-DUNREVIEWED_FLAG=1")
-                if failure == "header-drift": helper.write_bytes(b"changed helper bytes")
-                if failure == "dependency-drift":
-                    (output / "sleh.d").write_text(str(obj) + ": " + str(staged) + "\n")
-                if failure == "synchronized-source-drift":
-                    staged.write_bytes(staged.read_bytes() + b"/* unreviewed translation-unit change */\n")
-                    record = execution.file_identity(staged)
-                    stage["staged_sleh_sha256"] = record["sha256"]
-                    frozen["source"] = frozen["dependency:" + str(staged)] = closure[str(staged)] = record
-                    dependencies.write_text(json.dumps({name: item["sha256"] for name, item in closure.items()}))
-                    stage["dependencies_sha256"] = B.sha(dependencies.read_bytes())
-                report_path = output / "stage-report.json"; report_path.write_text(json.dumps(stage))
-                journal = B.Journal(root)
-                pins = {"source": B.sha(source.read_bytes()), "recipe": B.sha(recipe_path.read_bytes()),
-                        "stage_driver": frozen["stage"]["sha256"], "execution_driver": frozen["execution"]["sha256"]}
-                original_protect, late_changes = journal.protect, []
-                def protect_during_admission(path, **kwargs):
-                    if failure == "late-header-drift" and Path(path) == helper and not late_changes:
-                        helper.write_bytes(b"changed after semantic checks before first journal protection\n")
-                        late_changes.append(str(helper))
-                    return original_protect(path, **kwargs)
-                with patch.dict(B.PACGA_PINS, pins), patch.dict(B.PINS, {"compiler": tool["binary"]["sha256"]}), \
-                        patch.object(journal, "protect", side_effect=protect_during_admission):
-                    if failure is None:
-                        admitted = B.admit_pacga_stage(journal, report_path, kb, [previous_record])
-                        self.assertEqual(admitted["object"], B.loader.identity(obj))
-                        self.assertEqual(admitted["previous_object"], previous_record)
-                        self.assertFalse(admitted["runtime_boot_verified"])
-                        for path in (obj, source, recipe_path, helper, dependencies, report_path):
-                            self.assertIn(str(path), journal.records)
-                    else:
-                        message = "identity changed during admission" if failure == "late-header-drift" else ".*"
-                        with self.assertRaisesRegex(B.BuildError, message):
-                            B.admit_pacga_stage(journal, report_path, kb, [previous_record])
-                if failure == "late-header-drift":
-                    self.assertEqual(late_changes, [str(helper)])
+        kb, output = root / "kernel-build", root / "stage"
+        xnu = kb / ".cache/xnu-work"
+        output.mkdir()
+        patch_bytes = (B.ROOT / pacga.PATCH).read_bytes()
+        originals = {}
+        # Only reviewed patch contexts are real; unaffected lines are synthetic.
+        for section in patch_bytes.split(b"diff --git ")[1:]:
+            header, body = section.split(b"\n", 1)
+            relative = header.split()[0][2:].decode()
+            source = []
+            for match in re.finditer(rb"^@@ -([0-9]+),[0-9]+ \+[0-9]+,[0-9]+ @@\n(.*?)(?=^@@|\Z)", body, re.M | re.S):
+                start = int(match[1]) - 1
+                old = [line[1:] for line in match[2].splitlines(keepends=True) if line.startswith(b" ")]
+                source.extend([b"/* synthetic unaffected context */\n"] * max(0, start + len(old) - len(source)))
+                source[start:start + len(old)] = old
+            originals[relative] = b"".join(source)
+        rebuilt = B.apply_pacga_patch(originals, patch_bytes)
+        for relative, raw in originals.items():
+            source = xnu / relative; source.parent.mkdir(parents=True, exist_ok=True); source.write_bytes(raw)
+            staged = output / "source" / relative; staged.parent.mkdir(parents=True, exist_ok=True); staged.write_bytes(rebuilt[relative])
+        helper = output / "source/osfmk/arm64/route_a_pacga_qarma5.h"
+        abi = helper.with_name("route_a_pacga_abi.h")
+        helper.write_bytes((B.ROOT / pacga.HEADER).read_bytes())
+        abi.write_bytes((B.ROOT / pacga.ABI_HEADER).read_bytes())
+        patch_path = output / "runtime.patch"; patch_path.write_bytes(patch_bytes)
+        assym = kb / B.ASSYM_REL; assym.parent.mkdir(parents=True, exist_ok=True)
+        assym.write_bytes(b"synthetic retained offsets; not an XNU layout\n")
+        genassym = xnu / "osfmk/arm64/genassym.c"; genassym.write_bytes(b"synthetic retained provenance\n")
+        identity, tool = pacga.implementation(), execution.tool_identity(sys.executable)
+        frozen = {key: execution.file_identity(path) for key, path in (
+            ("helper", helper), ("abi_header", abi), ("patch", patch_path), ("assym", assym), ("genassym", genassym),
+            ("stage", B.ROOT / "scripts/build_route_a_pacga.py"), ("execution", Path(execution.__file__)))}
+        for relative in B.PACGA_SOURCES:
+            frozen["source:" + relative] = execution.file_identity(output / "source" / relative)
+            frozen["prepared:" + relative] = execution.file_identity(xnu / relative)
+        stage = {"schema": "route-a-pacga-stage-v2", "compile_passed": True, "compile_exit_code": 0,
+                 "compile_timeout_seconds": 300, "abi": pacga.ABI, "implementation": identity, "xnu_commit": pacga.XNU_COMMIT,
+                 "descriptor_hex": pacga.descriptor().hex(), "prepared_sources": {k: B.sha(v) for k, v in originals.items()},
+                 "staged_sources": {k: B.sha(v) for k, v in rebuilt.items()}, "frozen": frozen, "tools": {"clang": tool},
+                 "translation_units": {}, "commands": []}
+        for key in ("helper", "abi_header", "patch"):
+            stage[key + "_sha256"] = frozen[key]["sha256"]
 
-    def test_link_filelist_substitutes_exactly_bootstrap_and_selected_sleh_in_order(self):
+        def command(name, argv, directory, timeout):
+            return {"name": name, "arguments": argv, "directory": str(directory), "timeout_seconds": timeout,
+                    "status": "finished", "exit_code": 0, "cleanup": {"group_absent": True, "direct_child_reaped": True}}
+        stage["commands"].append(command("compiler-version", [tool["invocation"], "--version"], output, 60))
+        previous_records, recipes = [], {}
+        for unit, relative in zip(("sleh", "locore"), B.PACGA_SOURCES):
+            source, staged, obj = xnu / relative, output / "source" / relative, output / (unit + ".o")
+            recipe_path = kb / Path(B.RECIPE_REL).with_name(unit + ".o.json")
+            previous = recipe_path.parent / (unit + ".o"); previous.write_bytes(("retained " + unit).encode())
+            previous_records.append(B.loader.identity(previous))
+            old_output = "sleh.o" if unit == "sleh" else "/tmp/locore-fixture.s"
+            recipe = {"file": str(source), "output": old_output, "directory": str(recipe_path.parent),
+                      "arguments": [tool["invocation"], *(["-xassembler-with-cpp"] if unit == "locore" else []),
+                                    "-c", str(source), "-o", old_output]}
+            recipe_path.write_text(json.dumps(recipe)); recipes[unit] = recipe_path
+            data = pacga.descriptor() if unit == "sleh" else struct.pack("<I", 0xd503201f)
+            segment_name, section_name = (b"__DATA_CONST", b"__unixnu_pacga") if unit == "sleh" else (b"__TEXT", b"__text")
+            offset = 32 + 152 + 24 + 24
+            segment = struct.pack("<2I16s4Q4I", 0x19, 152, b"", 0, len(data), offset, len(data), 3, 3, 1, 0)
+            segment += struct.pack("<16s16s2Q8I", section_name, segment_name, 0, len(data), offset, 0, 0, 0,
+                                   0 if unit == "sleh" else 0x80000000, 0, 0, 0)
+            version = struct.pack("<6I", 0x32, 24, 2, 27 << 16, 27 << 16, 0)
+            symbols = struct.pack("<6I", 2, 24, offset + len(data), 0, offset + len(data), 1)
+            obj.write_bytes(struct.pack("<8I", 0xFEEDFACF, 0x0100000C, 0, 1, 3, 200, 0, 0)
+                            + segment + version + symbols + data + b"\0")
+            arguments = list(recipe["arguments"])
+            arguments[arguments.index(str(source))] = str(staged)
+            arguments[arguments.index("-o") + 1] = str(obj)
+            arguments[1:1] = ["-I", str(output / "source/osfmk")]
+            arguments += ["-march=armv8-a", "-DCONFIG_ROUTE_A_PACGA_SVC=1",
+                          '-DROUTE_A_PACGA_IMPLEMENTATION_SHA256="' + identity["sha256"] + '"']
+            if unit == "sleh": arguments += ["-mgeneral-regs-only"]
+            arguments += ["-MD", "-MF", str(output / (unit + ".d"))]
+            if unit == "sleh":
+                arguments += ["-Werror=implicit-function-declaration", "-Werror=incompatible-function-pointer-types", "-Werror=return-type"]
+            discovery = list(arguments)
+            discovery[discovery.index("-MD")] = "-M"
+            discovery[discovery.index("-MF") + 1] = str(output / (unit + ".discovered.d"))
+            discovery[discovery.index("-o") + 1] = str(output / (unit + ".discovered.stdout"))
+            config = list(arguments); config.remove("-c"); config.remove("-MD")
+            at = config.index("-MF"); del config[at:at + 2]
+            config[config.index("-o") + 1] = str(output / (unit + ".macros.txt")); config += ["-E", "-dM"]
+            macros = output / (unit + ".macros.txt")
+            macros.write_bytes(b"#define CONFIG_ROUTE_A_PACGA_SVC 1\n#define __ARM_KERNEL_PROTECT__ 0\n"
+                               + (b"#define __ASSEMBLER__ 1\n" if unit == "locore" else b""))
+            paths = [staged, helper, abi] if unit == "sleh" else [staged, abi, output / "source" / B.PACGA_SOURCES[2], assym]
+            closure = {str(path): execution.file_identity(path) for path in paths}
+            for suffix in (".d", ".discovered.d"):
+                (output / (unit + suffix)).write_text(str(obj) + ": " + " ".join(map(str, paths)) + "\n")
+            dependencies = output / (unit + ".dependencies.json")
+            dependencies.write_text(json.dumps({name: record["sha256"] for name, record in closure.items()}))
+            frozen.update({key + ":" + unit: execution.file_identity(path)
+                           for key, path in (("recipe", recipe_path), ("object", obj), ("configuration", macros))})
+            frozen.update({"dependency:" + path: record for path, record in closure.items()})
+            stage["translation_units"][unit] = {
+                "source_file": relative, "recipe_sha256": B.sha(recipe_path.read_bytes()), "compile_exit_code": 0,
+                "arguments": arguments, "directory": recipe["directory"],
+                "previous_object": {"name": unit + ".o", "sha256": previous_records[-1]["sha256"]},
+                "object": {"name": unit + ".o", "bytes": obj.stat().st_size, "sha256": B.sha(obj.read_bytes()),
+                           "cpu_type": "arm64", "cpu_subtype": 0},
+                "configuration": {"macros_sha256": B.sha(macros.read_bytes()), "route_a_pacga_svc": 1,
+                                  "arm_kernel_protect": 0, "language": "c" if unit == "sleh" else "assembler-with-cpp"},
+                "header_closure": closure, "dependency_count": len(closure), "dependencies_sha256": B.sha(dependencies.read_bytes())}
+            stage["commands"].extend(command(unit + suffix, argv, recipe_path.parent, deadline)
+                                     for suffix, argv, deadline in (("-discover-headers", discovery, 300),
+                                                                   ("-config", config, 300), ("-compile", arguments, 300)))
+        pins = {"source": stage["prepared_sources"][B.PACGA_SOURCES[0]],
+                "locore_source": stage["prepared_sources"][B.PACGA_SOURCES[1]],
+                "exception_asm_source": stage["prepared_sources"][B.PACGA_SOURCES[2]],
+                "recipe": B.sha(recipes["sleh"].read_bytes()), "locore_recipe": B.sha(recipes["locore"].read_bytes()),
+                **{key: frozen[key]["sha256"] for key in ("assym", "genassym")},
+                **{key + "_driver": frozen[key]["sha256"] for key in ("stage", "execution")}}
+        return SimpleNamespace(stage=stage, output=output, kb=kb, tool=tool, pins=pins, originals=previous_records,
+                               journal=B.Journal(root), report=output / "stage-report.json", helper=helper, recipes=recipes)
+
+    def admit(self, fixture):
+        fixture.report.write_text(json.dumps(fixture.stage))
+        with patch.dict(B.PACGA_PINS, fixture.pins), patch.dict(B.PINS, {"compiler": fixture.tool["binary"]["sha256"]}):
+            return B.admit_pacga_stage(fixture.journal, fixture.report, fixture.kb, fixture.originals)
+
+    def rebind(self, fixture, path):
+        """An adversarial report may update every self-reported digest."""
+        from route_a_pacga_probe import run as execution
+        stage = fixture.stage; identity = execution.file_identity(path)
+        for key, record in list(stage["frozen"].items()):
+            if record["path"] == str(path): stage["frozen"][key] = identity
+        for relative in B.PACGA_SOURCES:
+            if path == fixture.output / "source" / relative: stage["staged_sources"][relative] = identity["sha256"]
+        for unit, record in stage["translation_units"].items():
+            if str(path) in record["header_closure"]: record["header_closure"][str(path)] = identity
+            dependencies = fixture.output / (unit + ".dependencies.json")
+            dependencies.write_text(json.dumps({name: item["sha256"] for name, item in record["header_closure"].items()}))
+            record["dependencies_sha256"] = B.sha(dependencies.read_bytes())
+            if path == fixture.output / (unit + ".macros.txt"): record["configuration"]["macros_sha256"] = identity["sha256"]
+            if path == fixture.output / (unit + ".o"): record["object"].update(bytes=path.stat().st_size, sha256=identity["sha256"])
+
+    def test_v2_binds_both_recipes_configuration_dependencies_and_objects(self):
+        failures = (None, "v1", "one-tu", "third-tu", "failed", "unreaped", "wrong-previous", "extra-flags",
+                    "wrong-timeout", "bad-bound", "unit-failed", "missing-member", "duplicate-member", "arm64e",
+                    "descriptor", "depfile", "configuration", "assembler", "source-forgery", "header-drift", "producer")
+        for failure in failures:
+            with self.subTest(failure=failure), tempfile.TemporaryDirectory() as tmp:
+                fixture = self.fixture(Path(tmp)); stage = fixture.stage; unit = stage["translation_units"]["locore"]
+                if failure == "v1": stage["schema"] = "route-a-pacga-stage-v1"
+                if failure == "one-tu": del stage["translation_units"]["locore"]
+                if failure == "third-tu": stage["translation_units"]["other"] = copy.deepcopy(unit)
+                if failure == "failed": stage["compile_passed"] = False
+                if failure == "unreaped": stage["commands"][-1]["cleanup"]["group_absent"] = False
+                if failure == "wrong-previous": unit["previous_object"]["sha256"] = "0" * 64
+                if failure == "extra-flags": unit["arguments"].append("-DUNREVIEWED_FLAG=1")
+                if failure == "wrong-timeout": stage["commands"][-1]["timeout_seconds"] = 301
+                if failure == "bad-bound": stage["compile_timeout_seconds"] = True
+                if failure == "unit-failed": unit["compile_exit_code"] = False
+                if failure == "missing-member": fixture.originals.pop()
+                if failure == "duplicate-member": fixture.originals.append(fixture.originals[-1])
+                if failure in ("arm64e", "descriptor"):
+                    path = fixture.output / ("locore.o" if failure == "arm64e" else "sleh.o")
+                    raw = bytearray(path.read_bytes())
+                    if failure == "arm64e": struct.pack_into("<I", raw, 8, 2)
+                    else: raw[32 + 152 + 24 + 24] ^= 1
+                    path.write_bytes(raw); self.rebind(fixture, path)
+                if failure == "depfile": (fixture.output / "locore.d").write_text("locore.o: " + str(fixture.helper) + "\n")
+                if failure in ("configuration", "assembler"):
+                    path = fixture.output / "locore.macros.txt"
+                    raw = path.read_bytes().replace(b"__ARM_KERNEL_PROTECT__ 0", b"__ARM_KERNEL_PROTECT__ 1") if failure == "configuration" else path.read_bytes().replace(b"#define __ASSEMBLER__ 1\n", b"")
+                    path.write_bytes(raw); self.rebind(fixture, path)
+                if failure == "source-forgery":
+                    path = fixture.output / "source" / B.PACGA_SOURCES[2]
+                    path.write_bytes(path.read_bytes() + b"unreviewed change\n"); self.rebind(fixture, path)
+                if failure == "header-drift": fixture.helper.write_bytes(b"changed helper\n")
+                if failure == "producer":
+                    from route_a_pacga_probe import run as execution
+                    producer = fixture.output / "unreviewed-stage.py"; producer.write_bytes(b"unreviewed producer\n")
+                    stage["frozen"]["stage"] = execution.file_identity(producer)
+                if failure is None:
+                    admitted = self.admit(fixture)
+                    self.assertEqual(set(admitted["translation_units"]), {"sleh", "locore"})
+                    self.assertFalse(admitted["runtime_boot_verified"])
+                    for index, name in enumerate(("sleh", "locore")):
+                        self.assertEqual(admitted["translation_units"][name]["object"], B.loader.identity(fixture.output / (name + ".o")))
+                        self.assertEqual(admitted["translation_units"][name]["previous_object"], fixture.originals[index])
+                else:
+                    with self.assertRaises(B.BuildError): self.admit(fixture)
+
+    def test_self_consistent_dependency_reports_cannot_drop_or_shadow_the_exception_overlay(self):
+        from route_a_pacga_probe import run as execution
+        for failure in ("missing-overlay", "original-exception", "shadow-header", "shared-generation"):
+            with self.subTest(failure=failure), tempfile.TemporaryDirectory() as tmp:
+                fixture = self.fixture(Path(tmp)); unit = fixture.stage["translation_units"]["locore"]
+                closure = unit["header_closure"]
+                expected = str(fixture.output / "source" / B.PACGA_SOURCES[2])
+                if failure in ("missing-overlay", "original-exception"):
+                    del closure[expected]
+                    if failure == "original-exception":
+                        original = fixture.kb / ".cache/xnu-work" / B.PACGA_SOURCES[2]
+                        closure[str(original)] = execution.file_identity(original)
+                if failure == "shadow-header":
+                    shadow = fixture.output / "source/osfmk/arm64/unreviewed.h"; shadow.write_bytes(b"shadow\n")
+                    closure[str(shadow)] = execution.file_identity(shadow)
+                if failure == "shared-generation":
+                    abi = str(fixture.output / "source/osfmk/arm64/route_a_pacga_abi.h")
+                    closure[abi] = copy.deepcopy(closure[abi]); closure[abi]["generation"]["inode"] += 1
+                frozen = fixture.stage["frozen"]
+                for key in list(frozen):
+                    if key.startswith("dependency:"): del frozen[key]
+                for item in fixture.stage["translation_units"].values():
+                    frozen.update({"dependency:" + name: record for name, record in item["header_closure"].items()})
+                for suffix in (".d", ".discovered.d"):
+                    (fixture.output / ("locore" + suffix)).write_text("locore.o: " + " ".join(closure) + "\n")
+                publication = fixture.output / "locore.dependencies.json"
+                publication.write_text(json.dumps({name: record["sha256"] for name, record in closure.items()}))
+                unit.update(dependency_count=len(closure), dependencies_sha256=B.sha(publication.read_bytes()))
+                with self.assertRaises(B.BuildError): self.admit(fixture)
+
+    def test_generated_receipts_and_prepared_generations_cannot_change_after_semantic_checks(self):
+        for target in ("locore.d", "locore.discovered.d", "locore.dependencies.json", "locore.macros.txt", "prepared", "helper"):
+            with self.subTest(target=target), tempfile.TemporaryDirectory() as tmp:
+                fixture = self.fixture(Path(tmp))
+                path = (fixture.kb / ".cache/xnu-work" / B.PACGA_SOURCES[1] if target == "prepared" else
+                        fixture.helper if target == "helper" else fixture.output / target)
+                original, visits, changed = fixture.journal.protect, [], []
+                def protect(item, **kwargs):
+                    if Path(item) == path:
+                        visits.append(item)
+                        if len(visits) == (1 if target == "helper" else 2):
+                            path.write_bytes(path.read_bytes() + b"late drift\n"); changed.append(item)
+                    return original(item, **kwargs)
+                with patch.object(fixture.journal, "protect", side_effect=protect), self.assertRaises(B.BuildError):
+                    self.admit(fixture)
+                self.assertEqual(len(changed), 1)
+
+    def test_current_validation_source_cannot_be_adopted_after_its_pin_check(self):
+        from arm64_lowering import pacga
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp); fixture = self.fixture(root)
+            consumer = root / "consumer-source"
+            relatives = ("scripts/build_route_a_pacga.py", "scripts/route_a_pacga_probe/run.py",
+                         "scripts/arm64_lowering/pacga.py", pacga.HEADER, pacga.ABI_HEADER, pacga.PATCH)
+            for relative in relatives:
+                path = consumer / relative; path.parent.mkdir(parents=True, exist_ok=True)
+                path.write_bytes((B.ROOT / relative).read_bytes())
+            target = consumer / relatives[0]
+            original_pin, changed = B.pin, []
+            def pin_then_change(path, digest):
+                raw = original_pin(path, digest)
+                if Path(path) == target and not changed:
+                    target.write_bytes(raw + b"\n# changed after fixed identity check\n"); changed.append(path)
+                return raw
+            with patch.object(B, "ROOT", consumer), patch.object(B, "pin", side_effect=pin_then_change), self.assertRaises(B.BuildError):
+                self.admit(fixture)
+            self.assertEqual(len(changed), 1)
+
+    def test_macro_admission_rejects_ambiguous_or_unreviewed_configuration(self):
+        good = b"#define CONFIG_ROUTE_A_PACGA_SVC 1\n#define __ASSEMBLER__ 1\n"
+        self.assertEqual(B.pacga_configuration(good, "locore")["arm_kernel_protect"], 0)
+        for raw in (good + b"#define CONFIG_ROUTE_A_PACGA_SVC 1\n",
+                    good + b"#define __ARM_KERNEL_PROTECT__ 1\n",
+                    good + b"#define __ARM_KERNEL_PROTECT__ 0\n#define __ARM_KERNEL_PROTECT__ 0\n",
+                    good.replace(b"__ASSEMBLER__ 1", b"__ASSEMBLER__ 0")):
+            with self.assertRaises(B.BuildError): B.pacga_configuration(raw, "locore")
+
+    def test_link_filelist_replaces_exactly_bootstrap_sleh_and_locore_in_order(self):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp); original = root / "original"; original.mkdir()
             records = []
-            for name in ("first.o", "prng_random.o", "sleh.o", "last.o"):
+            for name in ("first.o", "locore.o", "prng_random.o", "sleh.o", "last.o"):
                 path = original / name; path.write_bytes(name.encode()); records.append(B.loader.identity(path))
             baseline = original / "baseline.json"; baseline.write_text("{}")
             original_list = original / "filelist"; original_list.write_text("".join(record["path"] + "\n" for record in records))
@@ -788,16 +938,22 @@ class PacgaLinkAdmission(unittest.TestCase):
             out = root / "fresh"; out.mkdir(); journal = B.Journal(out)
             bootstrap = out / "prng_random.o"; bootstrap.write_bytes(b"new bootstrap")
             archive = out / "provider.a"; archive.write_bytes(b"provider archive")
-            replacement = root / "replacement.o"; replacement.write_bytes(b"admitted PACGA object")
-            overlay = {"object": B.loader.identity(replacement), "previous_object": records[2]}
+            overlay = {"translation_units": {}}
+            for name, index in (("sleh", 3), ("locore", 1)):
+                path = out / (name + ".o"); path.write_bytes(("admitted " + name).encode())
+                overlay["translation_units"][name] = {"object": B.loader.identity(path), "previous_object": records[index]}
             contract = B.write_link_filelist(journal, plan, bootstrap, archive, overlay)
             self.assertEqual((out / "platform.filelist").read_text().splitlines(),
-                             [records[0]["path"], str(bootstrap), str(replacement), records[3]["path"]])
+                             [records[0]["path"], str(out / "locore.o"), str(bootstrap), str(out / "sleh.o"), records[4]["path"]])
             self.assertEqual([(entry["index"], entry["kind"]) for entry in contract["substitutions"]],
-                             [(1, "bootstrap"), (2, "pacga")])
-            self.assertEqual(contract["filelist"], journal.records[str(out / "platform.filelist")])
-            bad = {**overlay, "previous_object": records[0]}
-            with self.assertRaises(B.BuildError): B.write_link_filelist(journal, plan, bootstrap, archive, bad)
+                             [(2, "bootstrap"), (3, "pacga"), (1, "pacga")])
+            for failure in ("missing", "extra", "wrong-previous"):
+                bad = copy.deepcopy(overlay)
+                if failure == "missing": del bad["translation_units"]["locore"]
+                if failure == "extra": bad["translation_units"]["other"] = bad["translation_units"]["sleh"]
+                if failure == "wrong-previous": bad["translation_units"]["locore"]["previous_object"] = records[0]
+                with self.subTest(failure=failure), self.assertRaises(B.BuildError):
+                    B.write_link_filelist(journal, plan, bootstrap, archive, bad)
 
 
 if __name__ == "__main__": unittest.main()
