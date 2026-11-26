@@ -174,3 +174,7 @@ python3 -m unittest discover -s tests -p 'test_route_a_tpro.py' -v
 
 合成测试通过只说明审计器的这些检查工作正常，不说明实际 dyld 的所有硬件
 路径已经不可达，也不说明 iPadOS 已在平板运行。
+
+## 本轮精确入口、完整账本与已编译 syscall 绑定
+
+[2026-11-26 非 TPRO 启动检查](ROUTE_A_NONTPRO_STARTUP.md)新增真实 LC_UNIXTHREAD／函数边界、全部 236 条 TCHANGE 与 932 次跟踪寄存器访问的 119 组账本，并把实际 `SVC #0x80 / X16=+38` 连接到最终内核的 syscall 表、对象重定位和完整 24 字节目标。合成片段执行器已实现，尚未编译／运行；全部组的运行闭合、真实 XNU dispatch、commpage、VM fallback 和缓存交接仍为未验证。原有历史报告和 A01 验收边界保持。
