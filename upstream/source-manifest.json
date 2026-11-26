@@ -1384,8 +1384,8 @@
     },
     {
       "path": "scripts/route_a_corecrypto/consumer_probe.h",
-      "sha256": "67e14cf3b4f39fa14700dbb5669f418fd3800d84575980b8384cc9a5eea69b42",
-      "bytes": 9689,
+      "sha256": "ae9ec5fc32526695c58c2145808297b813979df98ac7834b36fe760bc582b407",
+      "bytes": 10672,
       "component": "route-a-original-corecrypto-glue"
     },
     {

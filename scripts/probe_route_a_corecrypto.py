@@ -101,7 +101,7 @@ def targets(strict, kernel):
     require(source["va"] <= fail < source["va"] + source["size"], "POST failure branch leaves its actual provider function")
     post["failure_branch_va"] = fail
     result["cells"] = {name: storage_span(strict, name, size) for name, size in (
-        ("_g_crypto_funcs", 8), ("_crypto_init", 1), ("_prng_ready", 1), ("_source_corecrypto14_status", 4),
+        ("_g_crypto_funcs", 8), ("_crypto_init", 1), ("_prng_ready", 4), ("_source_corecrypto14_status", 4),
         ("_route_a_crypto_consumer_status", 4), ("_route_a_crypto_consumer_vectors", 4), ("_kpis", 448))}
     return result
 

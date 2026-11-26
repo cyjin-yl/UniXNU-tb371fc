@@ -30,7 +30,7 @@ XNU 启动钩子从 [Apple 固定原始 prng_random.c](https://github.com/apple-
 
 编译会对原 43 个赋值和新增 13 个函数指针分别执行真实 C 类型断言，启用不兼容指针的错误门槛。provider 与 XNU 消费者使用各自真实编译头文件输出 carrier record layouts，比较字段、类型、偏移、大小和对齐；仅规范化固定 namespace 引起的 `cc14_ccsha256_di`、`cc14_ccsha512_di` 两个字段名，任何其他差异都失败。64 个冲突符号由固定 namespace 重命名，归档必须无剩余内核外部符号冲突。
 
-XNU 侧探针在真实 provider 成功返回后调用已发布的 `g_crypto_funcs`：检查所有 56 槽非空，逐个算法执行单次与流式 digest/HMAC、空输入与空密钥、截断输出、正确与错误 tag、越界 tag 拒绝和缓冲区哨兵；另执行长密钥 HMAC-SHA256 和旧 final 回调。期望输出在本机测试中用独立 `hashlib`/`hmac` 重新核验。只有整个消费者检查结束才写成功状态。它补充 provider 原有 POST，不代替 POST，也不提供空回调或假随机上下文大小。
+XNU 侧探针在真实 provider 成功返回后调用已发布的 `g_crypto_funcs`：检查所有 56 槽非空，逐个算法执行单次与流式 digest/HMAC、空输入与空密钥、截断输出、正确与错误 tag、越界 tag 拒绝和缓冲区哨兵；另执行长密钥 HMAC-SHA256 和旧 final 回调。每个新 final 和 final_verify 路径结束后，还检查实际使用的上下文区间全部归零，包括错误内容和空、零长度、过长 tag 的拒绝路径。期望输出在本机测试中用独立 `hashlib`/`hmac` 重新核验。只有整个消费者检查结束才写成功状态。它补充 provider 原有 POST，不代替 POST，也不提供空回调或假随机上下文大小。
 
 ## 构建与二次复现
 
@@ -86,7 +86,7 @@ python3 scripts/probe_route_a_corecrypto.py \
 
 负例从当前正例输入复制出独立文件，只翻转存储 POST HMAC 的一位，并在加载镜像的对应位置作同一位改变；代码字节不变。要求真实 POST 返回非零，继续走到真实 `DebuggerTrapWithState(db_op=3)`，核对 caller 是 provider 中实际 BL panic 的返回地址、格式是有界的 POST 失败文本，并重新核对 table/init/PRNG/consumer status 未发布。停在 POST 返回处看见零状态不足以通过该门槛。
 
-读取仅限固定符号声明的状态单元、448 字节表、实际指令，以及最多两个 512 字节的 file-backed 静态字符串。不会追栈、`va_list` 或任意 guest 指针。所有请求在发送前检查同一 deadline；短包、错误、截断、异常退出、清理失败或输入变更均不能保留成功资格。QEMU 是独立拥有的进程组，所有结束路径终止并回收。
+读取仅限固定符号声明的状态单元、448 字节表、实际指令，以及最多两个 512 字节的 file-backed 静态字符串。`prng_ready` 按固定源的完整 32 位 `int` 读取。不会追栈、`va_list` 或任意 guest 指针。所有请求在发送前检查同一 deadline；门槛所需的读取遇到短包、错误或截断，以及异常退出、清理失败或输入变更，均不能保留成功资格。完整消费者返回后若出现后续 panic，其附加文本读取状态单独保留，不扩大此前 provider 层的资格。QEMU 是独立拥有的进程组，所有结束路径终止并回收。
 
 即使完整 provider 层通过，后续 `bsd_init`、用户态、非 TPRO 合同、SVC/PACGA 运行时和实际板级启动仍需各自证据。指令计时实验不证明真实设备性能。
 

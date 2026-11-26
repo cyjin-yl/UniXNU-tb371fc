@@ -33,6 +33,11 @@ static void ra_probe_guard(const unsigned char *data, size_t start, size_t end)
     for (size_t i = start; i < end; i++) ra_probe_require(data[i] == 0xa5, "buffer guard");
 }
 
+static void ra_probe_cleared(const unsigned char *data, size_t size)
+{
+    for (size_t i = 0; i < size; i++) ra_probe_require(data[i] == 0, "final context cleared");
+}
+
 static void route_a_crypto_consumer_check(void)
 {
     static const struct {
@@ -88,6 +93,7 @@ static void route_a_crypto_consumer_check(void)
         f->digest_update_fn(alg, ctx, size, "bc", 2);
         f->digest_final_fn(alg, ctx, size, out, digest_size);
         ra_probe_require(memcmp(out, expected_digest, digest_size) == 0, "streaming digest vector");
+        ra_probe_cleared(ctx, size);
         ra_probe_guard(ctx, size, sizeof(ctx));
         ra_probe_guard(out, digest_size, sizeof(out));
         memset(out, 0xa5, sizeof(out));
@@ -112,6 +118,7 @@ static void route_a_crypto_consumer_check(void)
         f->hmac_update_fn(alg, ctx, size, message + 7, sizeof(message) - 1 - 7);
         f->hmac_final_generate_fn(alg, ctx, size, out, digest_size);
         ra_probe_require(memcmp(out, expected_hmac, digest_size) == 0, "streaming HMAC vector");
+        ra_probe_cleared(ctx, size);
         ra_probe_guard(ctx, size, sizeof(ctx));
         ra_probe_guard(out, digest_size, sizeof(out));
         memset(out, 0xa5, sizeof(out));
@@ -128,17 +135,30 @@ static void route_a_crypto_consumer_check(void)
         f->hmac_init_fn(alg, ctx, size, "key", 3);
         f->hmac_update_fn(alg, ctx, size, message, sizeof(message) - 1);
         ra_probe_require(f->hmac_final_verify_fn(alg, ctx, size, expected_hmac, 12), "streaming tag verification");
+        ra_probe_cleared(ctx, size);
         f->hmac_init_fn(alg, ctx, size, "key", 3);
         f->hmac_update_fn(alg, ctx, size, message, sizeof(message) - 1);
         expected_hmac[digest_size - 1] ^= 1;
         ra_probe_require(!f->hmac_final_verify_fn(alg, ctx, size, expected_hmac, digest_size), "bad streaming tag rejected");
+        ra_probe_cleared(ctx, size);
         ra_probe_guard(ctx, size, sizeof(ctx));
+        for (unsigned invalid = 0; invalid < 3; invalid++) {
+            f->hmac_init_fn(alg, ctx, size, "key", 3);
+            f->hmac_update_fn(alg, ctx, size, message, sizeof(message) - 1);
+            const void *tag = invalid == 2 ? NULL : expected_hmac;
+            size_t tag_size = invalid == 0 ? 0 : (invalid == 1 ? digest_size + 1 : digest_size);
+            ra_probe_require(!f->hmac_final_verify_fn(alg, ctx, size, tag, tag_size), "invalid streaming tag rejected");
+            ra_probe_cleared(ctx, size);
+            ra_probe_guard(ctx, size, sizeof(ctx));
+        }
         ra_probe_hex(expected_hmac, empty_hmacs[n], digest_size);
         f->hmac_generate_fn(alg, NULL, 0, NULL, 0, out, digest_size);
         ra_probe_require(memcmp(out, expected_hmac, digest_size) == 0, "empty key/data HMAC vector");
         f->hmac_init_fn(alg, ctx, size, NULL, 0);
         f->hmac_update_fn(alg, ctx, size, NULL, 0);
         ra_probe_require(f->hmac_final_verify_fn(alg, ctx, size, expected_hmac, digest_size), "empty streaming HMAC vector");
+        ra_probe_cleared(ctx, size);
+        ra_probe_guard(ctx, size, sizeof(ctx));
         route_a_crypto_consumer_vectors++;
     }
     unsigned char large_key[131], large_tag[32], large_expected[32];
