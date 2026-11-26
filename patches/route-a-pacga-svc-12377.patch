@@ -1,0 +1,107 @@
+diff --git a/osfmk/arm64/sleh.c b/osfmk/arm64/sleh.c
+--- a/osfmk/arm64/sleh.c
++++ b/osfmk/arm64/sleh.c
+@@ -154,6 +154,91 @@
+ 
+ static void sleh_interrupt_handler_prologue(arm_saved_state_t *, unsigned int type);
+ static void sleh_interrupt_handler_epilogue(void);
++
++#if CONFIG_ROUTE_A_PACGA_SVC
++#include <arm64/route_a_pacga_qarma5.h>
++#include <kern/startup.h>
++#include <libkern/crypto/rand.h>
++
++#if __has_feature(ptrauth_calls) || defined(__arm64e__) || HAS_APPLE_PAC || HAS_NATIVE_PAC
++#error Route A PACGA SVC requires the ordinary arm64 kernel ABI
++#endif
++#ifndef ROUTE_A_PACGA_IMPLEMENTATION_SHA256
++#error Route A PACGA SVC requires a source-bound implementation identity
++#endif
++
++/* Public identity only: no key material is exported in this descriptor. */
++__attribute__((used, aligned(1), section("__DATA_CONST,__unixnu_pacga")))
++const char route_a_pacga_abi_v1[] =
++    "UNIXNU-PACGA-SVC-QARMA5-V1\n"
++    "impl-sha256:" ROUTE_A_PACGA_IMPLEMENTATION_SHA256 "\n"
++    "key:boot/read_random\n"
++    "result:hi32/zero32\n";
++
++static SECURITY_READ_ONLY_LATE(struct route_a_pacga_key) route_a_pacga_boot_key;
++SECURITY_READ_ONLY_LATE(uint32_t) route_a_pacga_ready;
++
++__startup_func
++static void
++route_a_pacga_bootstrap(void)
++{
++    /*
++     * The matched runtime must finish source-provider POST and
++     * register_and_init_prng at SYSCTL LAST before EARLY_BOOT.
++     * read_random has no fallback here; an unavailable provider is fatal.
++     * One boot key preserves tags across threads, fork and exec.
++     */
++    if (route_a_pacga_ready != 0) {
++        panic("Route A PACGA initialized twice");
++    }
++    read_random(&route_a_pacga_boot_key, sizeof(route_a_pacga_boot_key));
++    route_a_pacga_ready = 1;
++}
++STARTUP(EARLY_BOOT, STARTUP_RANK_FIRST, route_a_pacga_bootstrap);
++
++static uint64_t
++route_a_pacga_register(const arm_saved_state64_t *state, unsigned reg, bool modifier)
++{
++    if (reg < 29) {
++        return state->x[reg];
++    }
++    if (reg == 29) {
++        return state->fp;
++    }
++    if (reg == 30) {
++        return state->lr;
++    }
++    return modifier ? state->sp : 0; /* Rn==31 is XZR; Rm==31 is SP. */
++}
++
++/* Called only after sleh's user / AArch64 SVC context checks. */
++static bool
++route_a_pacga_svc(arm_saved_state_t *saved, uint64_t esr)
++{
++    if ((esr & ROUTE_A_PACGA_ISS_MASK) != ROUTE_A_PACGA_ISS_TAG) {
++        return false; /* Every other immediate keeps the original dispatcher. */
++    }
++    if (route_a_pacga_ready != 1) {
++        panic("Route A PACGA used before random-key initialization");
++    }
++    arm_saved_state64_t *state = saved_state64(saved);
++    unsigned destination = (unsigned)esr & 31;
++    unsigned source = ((unsigned)esr >> 5) & 31;
++    unsigned modifier = ((unsigned)esr >> 10) & 31;
++    /* Capture both operands before changing any aliased destination. */
++    uint64_t value = route_a_pacga_register(state, source, false);
++    uint64_t diversity = route_a_pacga_register(state, modifier, true);
++    uint64_t signature = route_a_pacga_signature(value, diversity, &route_a_pacga_boot_key);
++    if (destination < 29) {
++        state->x[destination] = signature;
++    } else if (destination == 29) {
++        state->fp = signature;
++    } else if (destination == 30) {
++        state->lr = signature;
++    } /* Rd==31 discards. No PC/SP/CPSR or other register changes. */
++    return true;
++}
++#endif /* CONFIG_ROUTE_A_PACGA_SVC */
+ 
+ static void handle_svc(arm_saved_state_t *);
+ static void handle_mach_absolute_time_trap(arm_saved_state_t *);
+@@ -942,6 +1027,11 @@
+ 			panic("Invalid SVC_64 context");
+ 		}
+ 
++#if CONFIG_ROUTE_A_PACGA_SVC
++		if (route_a_pacga_svc(state, esr)) {
++			break;
++		}
++#endif
+ 		handle_svc(state);
+ 		break;
+ 

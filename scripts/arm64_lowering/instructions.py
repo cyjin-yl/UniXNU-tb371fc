@@ -209,15 +209,19 @@ def lower(word: int, *, plain_pointers: bool = False,
     """Return ``(mnemonic, replacement_word)`` under the requested ABI.
 
     Reject by exception rather than truncating load offsets or inventing a PACGA
-    result. The only currently supported ``pacga_policy`` is ``'reject'``.
+    result. The explicit QARMA5 SVC ABI requires a separately matched runtime.
     Hints retain their bytes, but still require the plain-pointer contract: on
     this target they do not authenticate or normalize signed pointers.
     """
     if not isinstance(plain_pointers, bool):
         raise TypeError("plain_pointers must be a bool")
-    if pacga_policy != "reject":
-        raise ValueError("unsupported pacga_policy; only 'reject' is implemented")
+    from . import pacga
+    pacga.policy(pacga_policy)
     info = describe(word)
+    if pacga_policy == pacga.ABI and pacga.is_pacga(word):
+        if not plain_pointers:
+            raise LoweringError(word, "PACGA", "plain_pointer_abi_not_asserted")
+        return "PACGA", pacga.encode(word)
     if info is None:
         return None
     if not info["supported"]:

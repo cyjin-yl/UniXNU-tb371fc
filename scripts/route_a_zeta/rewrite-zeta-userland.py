@@ -40,6 +40,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from route_a_zeta import zeta_userland_code as code_proof
 from route_a_zeta import zeta_userland_pauth as pauth
 from arm64_lowering.macho import parse_macho
+from arm64_lowering import pacga
 from arm64_lowering.pipeline import validated_code_directory, verify_code_pages
 
 CPU_TYPE_ARM64 = 0x0100000c
@@ -94,8 +95,9 @@ def va_to_off(info):
     return translate
 
 
-def lower(data, info):
+def lower(data, info, *, pacga_policy="reject"):
     """Edits for proven-code PAC instructions; fails on any unproven PAC word."""
+    pacga.policy(pacga_policy)
     sections = instruction_sections(info)
     if not sections:
         # Umbrella and resource-only images: an empty __text, nothing to lower.
@@ -103,6 +105,12 @@ def lower(data, info):
                         edits_by_evidence={}, anomalies={})
     insns, code, tables_data, tables, anomalies, roots = code_proof.prove(
         data, info, sections, va_to_off(info), code_proof.llvm_oracle, gaps=True)
+    reservation = (pacga.exclusive_analysis(insns, code, tables) if pacga_policy == pacga.ABI
+                   else dict(pacga=set(), escapes=[]))
+    require(not reservation["escapes"],
+            "PACGA ABI rejects " + "; ".join(
+                item["reason"] + " at " + item["va"] for item in reservation["escapes"][:8]))
+    hazards = reservation["pacga"]
     dice = set()
     for offset, length, kind in info['dice']:
         dice.update(range(offset & ~3, (offset + length + 3) & ~3, 4))
@@ -116,7 +124,9 @@ def lower(data, info):
                 retained_poe2.append(dict(va=hex(address), fileoff=fileoff,
                                           word=hex(word), mnemonic=mnemonic))
             try:
-                lowered = pauth.lower(word)
+                if address in hazards and pacga.is_pacga(word):
+                    raise ValueError("PACGA spans a live load-exclusive reservation")
+                lowered = pauth.lower(word, pacga_policy=pacga_policy)
             except ValueError as error:
                 if address in code and fileoff not in dice:
                     raise ValueError(f'unlowerable PAC instruction in proven code at {address:#x}: {error}')
@@ -169,7 +179,9 @@ def resign(data, directory):
         data[slot:slot + 32] = hashlib.sha256(page).digest()
 
 
-def rewrite(original, *, platform_identifier=None, hardened_runtime=None):
+def rewrite(original, *, platform_identifier=None, hardened_runtime=None,
+            pacga_policy="reject", pacga_kernel=None):
+    runtime = pacga.runtime_binding(pacga_policy, pacga_kernel)
     require(platform_identifier is None or type(platform_identifier) is int and 0 <= platform_identifier <= 255,
             'platform identifier must be an explicit byte value')
     require(hardened_runtime is None or type(hardened_runtime) is bool, 'invalid hardened runtime override')
@@ -177,7 +189,7 @@ def rewrite(original, *, platform_identifier=None, hardened_runtime=None):
     geometry = parse_macho(original)
     directory = code_directory(original, info)
     original_signature = verify_code_pages(original, geometry.code_signature)
-    edits, proof = lower(original, info)
+    edits, proof = lower(original, info, pacga_policy=pacga_policy)
     data = bytearray(original)
     for edit in edits:
         at = edit['fileoff']
@@ -217,7 +229,8 @@ def rewrite(original, *, platform_identifier=None, hardened_runtime=None):
                   code_slots=directory['code_slots'], original_cdhash=old_hash.hex(), cdhash=new_hash.hex(),
                   chained_fixups_unchanged=True, hardware_tested=False, os_boot_verified=False,
                   original_signature=original_signature, independent_signature=independent_signature,
-                  retained_isa_requirements=retained_isa, target_isa_audited=False)
+                  retained_isa_requirements=retained_isa, target_isa_audited=False,
+                  pacga_policy=pacga_policy, pacga_runtime=runtime)
     return bytes(data), report
 
 
@@ -254,13 +267,16 @@ def main(argv=None):
     parser.add_argument('--apple-trust-cache', required=True, action='append', type=Path,
                         help='IM4P trust cache that lists the original image (repeatable)')
     parser.add_argument('--report', required=True, type=Path)
+    parser.add_argument('--pacga-policy', choices=pacga.POLICIES, default='reject')
+    parser.add_argument('--pacga-kernel', type=Path, help='matching linked kernel for the explicit PACGA ABI')
     parser.add_argument('--platform-identifier', type=int, help='explicit CodeDirectory platform byte override')
     parser.add_argument('--hardened-runtime', action=argparse.BooleanOptionalAction, default=None,
                         help='explicit executable CS_RUNTIME override; default preserves original flags')
     args = parser.parse_args(argv)
     require(not args.output.exists() and not args.report.exists(), 'refusing to overwrite output')
     original = args.input.read_bytes()
-    data, report = rewrite(original, platform_identifier=args.platform_identifier, hardened_runtime=args.hardened_runtime)
+    data, report = rewrite(original, platform_identifier=args.platform_identifier, hardened_runtime=args.hardened_runtime,
+                           pacga_policy=args.pacga_policy, pacga_kernel=args.pacga_kernel)
     entries = {}
     for path in args.apple_trust_cache:
         kind, raw = im4p_payload(path.read_bytes())

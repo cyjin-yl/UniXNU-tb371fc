@@ -185,7 +185,8 @@ def verify_code_pages(data: bytes, signature: dict) -> dict:
 
 def rewrite_userland(data: bytes, *, plain_pointers: bool = False,
                      platform_identifier: int | None = None,
-                     hardened_runtime: bool | None = None) -> tuple[bytes, dict]:
+                     hardened_runtime: bool | None = None,
+                     pacga_policy: str = "reject", pacga_kernel=None) -> tuple[bytes, dict]:
     """Create a staged binary; the loader/kernel plain-pointer contract is external."""
     if not plain_pointers:
         raise MachOError("ordinary-pointer ABI must be explicitly selected")
@@ -204,8 +205,8 @@ def rewrite_userland(data: bytes, *, plain_pointers: bool = False,
     rewriter.parse = lambda blob: parse_macho(blob).to_zeta_info()
     upstream_lower = rewriter.lower
 
-    def checked_lower(blob, info):
-        edits, proof = upstream_lower(blob, info)
+    def checked_lower(blob, info, **options):
+        edits, proof = upstream_lower(blob, info, **options)
         seen = set()
         for edit in edits:
             offset = edit["fileoff"]
@@ -216,7 +217,8 @@ def rewrite_userland(data: bytes, *, plain_pointers: bool = False,
 
     rewriter.lower = checked_lower
     output, report = rewriter.rewrite(
-        data, platform_identifier=platform_identifier, hardened_runtime=hardened_runtime)
+        data, platform_identifier=platform_identifier, hardened_runtime=hardened_runtime,
+        pacga_policy=pacga_policy, pacga_kernel=pacga_kernel)
     if len(output) != len(data):
         raise MachOError("equal-width rewrite changed the file size")
     result_image = parse_macho(output)

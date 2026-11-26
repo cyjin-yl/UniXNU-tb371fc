@@ -33,6 +33,68 @@ jobs:
           ROUTE_A_LOADER_SOURCES="$RUNNER_TEMP/route-a-loader-sources" \
           ROUTE_A_ALLOCATION_SOURCES="$RUNNER_TEMP/route-a-allocation-sources" \
             "$RUNNER_TEMP/route-a-venv/bin/python" scripts/check_route_a.py
+  pacga-fixture:
+    name: Verify ordinary arm64 PACGA fixture
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+      - name: Install fixed compiler family and QEMU fixture dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install --no-install-recommends --yes \
+            build-essential clang-18 lld-18 qemu-system-arm python3-venv
+          python3 -m venv "$RUNNER_TEMP/route-a-pacga-venv"
+          "$RUNNER_TEMP/route-a-pacga-venv/bin/python" -m pip install --requirement requirements-route-a.txt
+      - name: Record tested source and installed tool versions
+        run: |
+          mkdir -p "$RUNNER_TEMP/route-a-pacga-ci"
+          git rev-parse HEAD > "$RUNNER_TEMP/route-a-pacga-ci/checkout.txt"
+          dpkg-query -W -f='${binary:Package} ${Version}\n' \
+            clang-18 lld-18 qemu-system-arm > "$RUNNER_TEMP/route-a-pacga-ci/packages.txt"
+          clang-18 --version
+          ld.lld-18 --version
+          qemu-system-aarch64 --version
+      - name: Exercise PACGA encoding, C semantics, and rejection gates
+        run: |
+          "$RUNNER_TEMP/route-a-pacga-venv/bin/python" -m unittest discover \
+            -s tests -p test_route_a_pacga.py -v 2>&1 \
+            | tee "$RUNNER_TEMP/route-a-pacga-ci/unit-tests.log"
+      - name: Compare native QARMA5 with ordinary cortex-a57 EL0 SVC
+        run: |
+          "$RUNNER_TEMP/route-a-pacga-venv/bin/python" -u scripts/route_a_pacga_probe/run.py \
+            --output "$RUNNER_TEMP/route-a-pacga-ci/probe" \
+            --clang clang-18 --lld ld.lld-18 --qemu qemu-system-aarch64 --timeout 60 \
+            2>&1 | tee "$RUNNER_TEMP/route-a-pacga-ci/probe.log"
+      - name: Report fixture scope and observed guest results
+        if: always()
+        run: |
+          python3 - <<'PY'
+          import json, os
+          from pathlib import Path
+          report = Path(os.environ['RUNNER_TEMP']) / 'route-a-pacga-ci/probe/report.json'
+          data = json.loads(report.read_text()) if report.exists() else {
+              'complete': False, 'status': 'no_probe_report',
+              'xnu_boot_verified': False, 'real_cache_proven': False, 'device_tested': False,
+          }
+          keys = ('complete', 'status', 'scope', 'results', 'error', 'message',
+                  'xnu_boot_verified', 'real_cache_proven', 'device_tested')
+          print('ROUTE_A_PACGA_FIXTURE_REPORT_JSON=' + json.dumps(
+              {key: data[key] for key in keys if key in data}, sort_keys=True))
+          PY
+      - name: Preserve tool identities, fixture sources, ELF files, and failure logs
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: route-a-pacga-fixture
+          if-no-files-found: warn
+          retention-days: 30
+          path: ${{ runner.temp }}/route-a-pacga-ci/
   kernel-preparation:
     name: Prepare ordinary arm64 kernel sources
     runs-on: ubuntu-24.04
