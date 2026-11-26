@@ -673,17 +673,140 @@ def build(args):
     return report
 
 
+def normalize_build_paths(value, directory):
+    """Normalize only this build's output prefix in a recorded command contract."""
+    if isinstance(value, str):
+        prefix = str(directory)
+        if value == prefix:
+            return "<BUILD>"
+        return "<BUILD>/" + value[len(prefix) + 1:] if value.startswith(prefix + "/") else value
+    if isinstance(value, list):
+        return [normalize_build_paths(item, directory) for item in value]
+    if isinstance(value, dict):
+        return {key: normalize_build_paths(item, directory) for key, item in value.items()}
+    return value
+
+
+def normalize_build_argv(argv, directory):
+    """Normalize path operands only in the driver's known joined-path flags."""
+    result = []
+    for arg in argv:
+        for flag in ("-ffile-prefix-map=", "-fdebug-prefix-map=", "-fmacro-prefix-map="):
+            if arg.startswith(flag):
+                source, separator, replacement = arg[len(flag):].partition("=")
+                require(separator, "prefix-map option lacks its replacement")
+                result.append(flag + normalize_build_paths(source, directory) + "=" + replacement)
+                break
+        else:
+            for flag in ("-I", "-fdebug-compilation-dir=", "-Wl,-map,", "-Wl,-oso_prefix,"):
+                if arg.startswith(flag):
+                    result.append(flag + normalize_build_paths(arg[len(flag):], directory))
+                    break
+            else:
+                result.append(normalize_build_paths(arg, directory))
+    return result
+
+
+def verify_compile_receipts(report, directory, objects):
+    """Bind successful stages and every compile to protected inputs and own outputs."""
+    inputs = report.get("inputs", [])
+    require(isinstance(inputs, list) and all(isinstance(item, dict) and isinstance(item.get("path"), str)
+                                           for item in inputs), "missing build input identities")
+    protected = {item["path"]: item for item in inputs}
+    require(len(protected) == len(inputs), "duplicate build input identity")
+    expected = {}
+    for item in objects:
+        relative = Path(item["source"])
+        require(not relative.is_absolute() and ".." not in relative.parts
+                and str(relative) == item["source"], "invalid provider source path")
+        source = directory / ("glue/corecrypto_kext.c" if item["source"] == "corecrypto_kext/corecrypto_kext.c"
+                              else str(Path(SOURCE_ROOT) / relative))
+        output = str(regular(item["object"]["path"]))
+        require(output not in expected, "multiple provider sources name the same object")
+        expected[output] = (source, item["source_sha256"], item["dependencies"])
+    bootstrap = str(regular(report["bootstrap"]["path"]))
+    require(bootstrap not in expected and len(expected) == 529, "bootstrap/provider output sets overlap")
+    source = directory / "glue/prng_random.c"
+    expected[bootstrap] = (source, protected.get(str(source), {}).get("sha256"), report["bootstrap_dependencies"])
+    commands, stages, checked_inputs = {}, [], {}
+    def checked_input(path):
+        key = str(path)
+        if key not in checked_inputs:
+            require(key in protected and Path(key).is_absolute(), "build dependency is not a protected absolute input")
+            actual = (loader.platform_link.tool_identity(path) if protected[key].get("kind") == "tool"
+                      else loader.identity(regular(path)))
+            require(actual == protected[key], "protected build input changed")
+            checked_inputs[key] = actual
+        return checked_inputs[key]
+    require(isinstance(report.get("commands"), list), "missing compile command receipts")
+    for command in report["commands"]:
+        argv = command.get("argv", [])
+        require(isinstance(argv, list) and argv and all(isinstance(arg, str) for arg in argv),
+                "invalid command argv")
+        require(type(command.get("exit")) is int and command["exit"] == 0 and command.get("reaped") is True,
+                "build stage did not succeed and reap its owned process")
+        require(isinstance(command.get("cwd"), str) and isinstance(command.get("environment"), dict),
+                "build stage lacks its working directory or environment")
+        tool = checked_input(Path(argv[0]))
+        require(tool.get("kind") == "tool", "invoked tool has no protected tool identity")
+        contract = {"argv": normalize_build_argv(argv, directory), "cwd": command["cwd"],
+                    "environment": command["environment"], "tool": tool}
+        stages.append(normalize_build_paths(contract, directory))
+        if "-c" not in argv:
+            continue
+        require(tool["sha256"] == PINS["compiler"], "compile tool differs from the fixed compiler")
+        require(argv.count("-c") == 1 and argv.count("-o") == 1
+                and argv.index("-o") + 1 < len(argv) and not any(arg.startswith("@") for arg in argv),
+                "compile needs one explicit source/output operation, without response files")
+        output = regular(argv[argv.index("-o") + 1])
+        require(directory in output.parents and str(output) in expected,
+                "compile output is not a declared object in this build directory")
+        key = str(output.relative_to(directory))
+        require(key not in commands, "duplicate compile output receipt")
+        source, source_sha256, dependencies = expected[str(output)]
+        source = regular(source)
+        source_record = checked_input(source)
+        require(argv.count(str(source)) == 1 and source_record == protected.get(str(source))
+                and source_record["sha256"] == source_sha256,
+                "compile source does not match this build's protected input")
+        require(argv.count("-MF") == 1 and argv.index("-MF") + 1 < len(argv), "compile dependency output is not explicit")
+        dependency_path = regular(dependencies["dependency_file"]["path"])
+        require(directory in dependency_path.parents and argv[argv.index("-MF") + 1] == str(dependency_path)
+                and loader.identity(dependency_path) == dependencies["dependency_file"], "dependency receipt/output identity differs")
+        dependency_text = dependency_path.read_text().replace("\\\n", " ")
+        require(":" in dependency_text, "dependency file lacks its target")
+        target_text, input_text = dependency_text.split(":", 1)
+        require(shlex.split(target_text) == [str(output)], "dependency target is not the declared compile output")
+        words = shlex.split(input_text)
+        require(words and all(Path(word).is_absolute() for word in words)
+                and dependencies["input_count"] == len(words), "dependency input count/path contract differs")
+        dependency_paths = sorted({str(Path(word).resolve()) for word in words})
+        require(str(source) in dependency_paths, "dependency file omits the compiled source")
+        dependency_inputs = [checked_input(Path(path)) for path in dependency_paths]
+        commands[key] = normalize_build_paths(dict(contract, dependencies=dependency_inputs), directory)
+    require(len(commands) == 530 and set(commands) == {str(Path(path).relative_to(directory)) for path in expected},
+            "compile receipts do not cover every provider and bootstrap object exactly once")
+    normalized_inputs = {normalize_build_paths(path, directory): normalize_build_paths(checked_input(Path(path)), directory)
+                         for path in protected}
+    require(len(normalized_inputs) == len(protected), "normalized input paths are ambiguous")
+    return {"compiles": commands, "stages": stages, "protected_inputs": normalized_inputs}
+
+
 def compare_builds(first_path, second_path):
     """Compare two independently executed build receipts and their current bytes."""
     first_path, second_path = regular(first_path), regular(second_path)
     require(first_path.parent != second_path.parent, "reproducibility needs two distinct output directories")
     reports = [json.loads(path.read_text()) for path in (first_path, second_path)]
-    artifacts = []
+    artifacts, compile_contracts = [], []
     for path, report in zip((first_path, second_path), reports):
         require(report.get("schema") == "route-a-corecrypto-build-v1" and report.get("build_verified") is True
                 and report.get("input_recheck", {}).get("unchanged") is True, "build receipt did not pass")
-        require(sum(cmd.get("argv", []).count("-c") for cmd in report["commands"]) == 530,
-                "receipt does not contain 529 provider compiles plus a bootstrap compile")
+        require(report.get("source_revision") == SOURCE_REVISION and report.get("compiled_c_sources") == 529,
+                "build source revision or compiled source count differs")
+        source_archive = report["source_archive"]
+        require(source_archive["sha256"] == PINS["archive"]
+                and loader.identity(regular(source_archive["path"])) == source_archive,
+                "fixed source archive identity differs")
         manifest = report["object_manifest"]
         require(loader.identity(regular(manifest["path"])) == manifest, "object manifest changed")
         objects = [json.loads(line) for line in Path(manifest["path"]).read_text().splitlines()]
@@ -694,7 +817,10 @@ def compare_builds(first_path, second_path):
             artifact = regular(record["path"])
             require(path.parent in artifact.parents and loader.identity(artifact) == record,
                     "build artifact is changed or not in its own independent output directory")
+        compile_contracts.append(verify_compile_receipts(report, path.parent, objects))
         artifacts.append(records)
+    require(compile_contracts[0] == compile_contracts[1],
+            "independent build stages, tools, dependencies or protected inputs differ")
     left_sources = {o["source"]: o["source_sha256"] for o in
                     map(json.loads, Path(reports[0]["object_manifest"]["path"]).read_text().splitlines())}
     right_sources = {o["source"]: o["source_sha256"] for o in

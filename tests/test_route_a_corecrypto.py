@@ -187,4 +187,146 @@ class MachineContracts(unittest.TestCase):
                 self.assertFalse(report["os_boot_verified"])
 
 
+class CoreCryptoReviewRegressions(unittest.TestCase):
+    """Synthetic receipts exercise the verifier; they never claim a real build."""
+    def test_reproduction_requires_independent_successful_compile_receipts(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            compiler = root / "fixture-clang"; compiler.write_bytes(b"fixed compiler fixture\n")
+            compiler_record = B.loader.platform_link.tool_identity(compiler)
+            archive = root / "source.tar.gz"; archive.write_bytes(b"fixed source fixture\n")
+            archive_record = B.loader.identity(archive)
+            header = root / "external.h"; header.write_text("/* original unused header */\n")
+            header_original = header.read_bytes()
+
+            def make_build(name):
+                output = root / name; output.mkdir()
+                glue = output / "glue"; glue.mkdir()
+                source = glue / "prng_random.c"; source.write_text("int bootstrap;\n")
+                bootstrap = output / "bootstrap/prng_random.o"; bootstrap.parent.mkdir()
+                bootstrap.write_bytes(b"bootstrap object fixture")
+                inputs = [compiler_record, B.loader.identity(header), B.loader.identity(source)]
+                commands = []
+                def command(source, obj):
+                    dependency = obj.with_suffix(".d")
+                    dependency.write_text(str(obj) + ": " + str(source) + " " + str(header) + "\n")
+                    return ({"argv": [str(compiler), "-include", str(header), "-c", str(source), "-o", str(obj),
+                                      "-MD", "-MF", str(dependency), "-I" + str(glue),
+                                      "-ffile-prefix-map=" + str(output) + "=route-a-corecrypto",
+                                      "-fdebug-prefix-map=" + str(output / "sources") + "=sources",
+                                      "-fmacro-prefix-map=" + str(output) + "=macros"],
+                             "cwd": str(output), "environment": {"TMPDIR": str(output), "LANG": "C"},
+                             "exit": 0, "reaped": True},
+                            {"dependency_file": B.loader.identity(dependency), "input_count": 2})
+                bootstrap_command, bootstrap_dependencies = command(source, bootstrap)
+                commands.append(bootstrap_command)
+                objects = []
+                for index in range(529):
+                    relative = "corecrypto_kext/corecrypto_kext.c" if index == 0 else f"cc/src/input-{index:03d}.c"
+                    source = glue / "corecrypto_kext.c" if index == 0 else output / B.SOURCE_ROOT / relative
+                    source.parent.mkdir(parents=True, exist_ok=True)
+                    source.write_text(f"int source_{index};\n")
+                    source_record = B.loader.identity(source); inputs.append(source_record)
+                    obj = output / f"objects/input-{index:03d}.o"; obj.parent.mkdir(exist_ok=True)
+                    obj.write_bytes(f"object fixture {index}".encode())
+                    compile_command, dependencies = command(source, obj)
+                    objects.append({"source": relative, "source_sha256": source_record["sha256"],
+                                    "object": B.loader.identity(obj), "dependencies": dependencies})
+                    commands.append(compile_command)
+                commands.append({"argv": [str(compiler), "--fixture-archive", str(output / "archive"),
+                                           "-Wl,-map," + str(output / "platform.map"),
+                                           "-Wl,-oso_prefix," + str(output) + "/"],
+                                 "cwd": str(output), "environment": {"TMPDIR": str(output), "LANG": "C"},
+                                 "exit": 0, "reaped": True})
+                manifest = output / "objects.jsonl"
+                manifest.write_text("".join(json.dumps(item) + "\n" for item in objects))
+                report = {"schema": "route-a-corecrypto-build-v1", "build_verified": True,
+                          "input_recheck": {"unchanged": True}, "source_revision": B.SOURCE_REVISION,
+                          "compiled_c_sources": 529, "source_archive": archive_record,
+                          "deterministic_environment": {"SOURCE_DATE_EPOCH": B.SOURCE_DATE_EPOCH},
+                          "object_manifest": B.loader.identity(manifest), "bootstrap": B.loader.identity(bootstrap),
+                          "bootstrap_dependencies": bootstrap_dependencies, "commands": commands, "inputs": inputs}
+                for key in ("archive", "kernel", "loaded_image"):
+                    artifact = output / key; artifact.write_bytes((key + " fixture").encode())
+                    report[key] = B.loader.identity(artifact)
+                receipt = output / "report.json"; receipt.write_text(json.dumps(report))
+                return receipt, report
+
+            first_path, first = make_build("first")
+            second_path, second = make_build("second")
+            with patch.dict(B.PINS, {"archive": archive_record["sha256"], "compiler": compiler_record["sha256"]}):
+                self.assertTrue(B.compare_builds(first_path, second_path)["verified"])
+                def changed_external_input(report):
+                    header.write_text("/* changed unused header; artifacts are identical */\n")
+                    report["inputs"][1] = B.loader.identity(header)
+                mutations = {
+                    "copied-first-build-commands": lambda r: r.update(commands=copy.deepcopy(first["commands"])),
+                    "failed-compile": lambda r: r["commands"][0].update(exit=1),
+                    "unreaped-compile": lambda r: r["commands"][0].update(reaped=False),
+                    "duplicate-output": lambda r: r["commands"].__setitem__(-2, copy.deepcopy(r["commands"][-3])),
+                    "different-compile-flags": lambda r: r["commands"][0]["argv"].append("-DDIFFERENT_BUILD=1"),
+                    "different-compile-environment": lambda r: r["commands"][0]["environment"].update(LANG="other"),
+                    "different-archive-stage": lambda r: r["commands"][-1]["argv"].append("--changed-option"),
+                    "external-input-drift-with-identical-artifacts": changed_external_input,
+                }
+                for name, mutate in mutations.items():
+                    with self.subTest(name=name):
+                        changed = copy.deepcopy(second); mutate(changed)
+                        second_path.write_text(json.dumps(changed))
+                        with self.assertRaises(B.BuildError): B.compare_builds(first_path, second_path)
+                        header.write_bytes(header_original)
+                second_path.write_text(json.dumps(second))
+                with self.subTest(name="external-paths-contain-output-prefix"):
+                    for receipt, report in ((first_path, first), (second_path, second)):
+                        external = root / "mirror" / str(receipt.parent).lstrip("/") / "external.h"
+                        external.parent.mkdir(parents=True)
+                        external.write_bytes(b"same external file bytes at distinct paths")
+                        changed = copy.deepcopy(report)
+                        changed["inputs"].append(B.loader.identity(external))
+                        changed["commands"][0]["argv"].append("-I" + str(external.parent))
+                        receipt.write_text(json.dumps(changed))
+                    with self.assertRaises(B.BuildError): B.compare_builds(first_path, second_path)
+                first_path.write_text(json.dumps(first))
+                second_path.write_text(json.dumps(second))
+                self.assertTrue(B.compare_builds(first_path, second_path)["verified"])
+
+    def test_prng_ready_reads_the_complete_xnu_int_state(self):
+        strict, original, base = image()
+        kernel = bytearray(1024); kernel[:len(original)] = original
+        struct.pack_into("<I", kernel, 32, 0x9400000c)  # BL ctx_size at offset 80
+        functions = (("_corecrypto_kext_start", 0), ("_vm_map_store_crypto_init", 32),
+                     ("_fipspost_post", 64), ("_crypto_random_kmem_ctx_size", 80), ("_panic", 96),
+                     ("_DebuggerTrapWithState", 112), ("_bsd_init", 128), ("_cc_kext_random_kmem_ctx_size", 144))
+        cells = (("_g_crypto_funcs", 0), ("_crypto_init", 8), ("_prng_ready", 12),
+                 ("_source_corecrypto14_status", 16), ("_route_a_crypto_consumer_status", 20),
+                 ("_route_a_crypto_consumer_vectors", 24), ("_kpis", 256))
+        symbols = [{"name": name, "n_type": 15, "n_desc": 0, "n_sect": 1, "value": base + offset}
+                   for name, offset in functions]
+        symbols.extend({"name": name, "n_type": 15, "n_desc": 0, "n_sect": 2, "value": base + 4096 + offset}
+                       for name, offset in cells)
+        strict["metadata"]["symbols"]["records"] = symbols
+        strict["metadata"]["sections"] = [
+            {"name": "__text", "segment": "__TEXT_EXEC", "addr": base, "offset": 0, "size": 256, "flags": 0x80000000},
+            {"name": "__data", "segment": "__DATA", "addr": base + 4096, "offset": 256, "size": 768, "flags": 0}]
+        strict["segments"] = [
+            {"name": "__TEXT_EXEC", "vmaddr": base, "vmsize": 256, "fileoff": 0, "filesize": 256, "initprot": 5},
+            {"name": "__DATA", "vmaddr": base + 4096, "vmsize": 768, "fileoff": 256, "filesize": 768, "initprot": 3}]
+        declared = P.targets(strict, bytes(kernel))
+        for prng_ready in (0x100, 0x101):
+            with self.subTest(prng_ready=prng_ready):
+                memory = bytearray(768); struct.pack_into("<I", memory, 12, prng_ready)
+                def read(packet):
+                    self.assertTrue(packet.startswith("m"))
+                    address, count = (int(field, 16) for field in packet[1:].split(","))
+                    offset = address - base - 4096
+                    self.assertGreaterEqual(offset, 0)
+                    self.assertLessEqual(offset + count, len(memory))
+                    return memory[offset:offset + count].hex()
+                remote = SimpleNamespace(deadline=time.monotonic() + 5, request=read)
+                observer = P.Observe(remote, strict, bytes(kernel), declared, {})
+                actual = observer.state()["_prng_ready"]
+                self.assertEqual(actual, prng_ready)
+                self.assertNotIn(actual, (0, 1))
+
+
 if __name__ == "__main__": unittest.main()
