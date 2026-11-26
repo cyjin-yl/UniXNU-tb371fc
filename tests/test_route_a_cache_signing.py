@@ -116,7 +116,10 @@ class CacheSigningTests(unittest.TestCase):
         source.write_bytes(original)
         trust.write_bytes(trust_cache(original, kind))
         proof.mkdir()
-        (proof / "summary.json").write_text(json.dumps({"totals": {"edits": int(edited)}}))
+        # This signer-only fixture mocks admission with the default reject
+        # policy; no PACGA runtime is selected by that policy.
+        (proof / "summary.json").write_text(json.dumps(
+            {"totals": {"edits": int(edited)}, "rules": {"pacga_runtime": None}}))
         output, report = root / "output", root / "report.json"
         args = ["--cache", str(source), "--proof", str(proof), "--output", str(output),
                 "--apple-trust-cache", str(trust), "--report", str(report)]

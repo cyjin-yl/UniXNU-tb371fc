@@ -318,7 +318,9 @@ def run(args):
         manifest["qemu"] = execute([qemu, "--version"], output, "qemu-version", manifest).strip()
         manifest["lld"] = execute([lld, "--version"], output, "linker-version", manifest).strip()
         manifest["oracle"] = oracle_cpu(manifest["qemu"])
-        target = ["--target=aarch64-none-elf", "-march=armv8-a", "-mgeneral-regs-only",
+        # Assembly captures/restores the SIMD state being verified. Only C
+        # must avoid generating SIMD instructions that could alter that state.
+        target = ["--target=aarch64-none-elf", "-march=armv8-a",
                   "-ffreestanding", "-fno-builtin", "-fno-stack-protector",
                   "-fno-unwind-tables", "-fno-asynchronous-unwind-tables"]
         compile_with_dependencies([clang, *target, "-c", "entry.S", "-o", "entry.o"],
@@ -330,7 +332,7 @@ def run(args):
             ("svc", 0, "cortex-a57"),
         ):
             compile_with_dependencies(
-                [clang, *target, "-std=c11", "-O2", "-Wall", "-Wextra", "-Werror",
+                [clang, *target, "-mgeneral-regs-only", "-std=c11", "-O2", "-Wall", "-Wextra", "-Werror",
                  "-DPROBE_NATIVE=" + str(native), "-c", "probe.c", "-o", name + ".o"],
                 output, "compile-" + name, manifest)
             (output / (name + ".o")).chmod(0o444)
