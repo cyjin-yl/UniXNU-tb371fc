@@ -24,11 +24,15 @@ import time
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import build_route_a_corecrypto as build
 import probe_route_a_qemu_entry as entry
+from arm64_lowering import macho, pacga
 
 require = build.require
 MODES = ("positive", "negative-post")
 FLAGS = ("runtime_post_verified", "negative_post_rejection_verified", "runtime_provider_verified",
-         "consumer_vectors_verified", "real_consumer_return_verified", "post_consumer_return_verified")
+         "consumer_vectors_verified", "real_consumer_return_verified", "post_consumer_return_verified",
+         "pacga_key_initialization_verified", "pacga_negative_post_unpublished_verified")
+CORE_REGISTERS = {**{f"x{i}": (i, 8) for i in range(31)},
+                  "sp": (31, 8), "pc": (32, 8), "cpsr": (33, 4)}
 
 
 def value(number):
@@ -106,10 +110,64 @@ def targets(strict, kernel):
     return result
 
 
+def select_pacga_runtime(built, strict, kernel_path):
+    """A descriptor-bearing kernel must select its exact admitted overlay."""
+    descriptors = [section for section in strict["metadata"]["sections"]
+                   if section["name"] == "__unixnu_pacga"]
+    selected = built.get("pacga_overlay") is not None
+    require(len(descriptors) == int(selected), "PACGA descriptor and explicit build selection differ")
+    if not selected:
+        require(built.get("pacga_runtime") is None, "unselected build has a PACGA runtime receipt")
+        return None
+    require(isinstance(built["pacga_overlay"], dict), "invalid PACGA overlay receipt")
+    actual = pacga.runtime_kernel(kernel_path)
+    require(built.get("pacga_runtime") == actual
+            and built["pacga_overlay"]["implementation"] == actual["implementation"]
+            and built["pacga_overlay"].get("runtime_boot_verified") is False,
+            "selected PACGA kernel or implementation differs from its build receipt")
+    return actual
+
+
+def spans_overlap(left, right):
+    return left["va"] < right["va"] + right["size"] and right["va"] < left["va"] + left["size"]
+
+
+def pacga_bootstrap_targets(strict, kernel, state_cells=()):
+    returned = call_return(strict, kernel, "_route_a_pacga_bootstrap", "_read_random")
+    call = {**returned, "symbol": "PACGA bootstrap read_random call", "va": returned["va"] - 4,
+            "file_offset": returned["file_offset"] - 4, "size": 4}
+    result = {"call": call, "returned": returned,
+              # Only the address and extent are used. No key bytes are requested.
+              "key_destination": storage_span(strict, "_route_a_pacga_boot_key", 16),
+              "ready": storage_span(strict, "_route_a_pacga_ready", 4)}
+    for span in (result["ready"], *state_cells):
+        require(not spans_overlap(result["key_destination"], span),
+                "PACGA key storage overlaps an observed state cell or table")
+    return result
+
+
 class Remote(entry.Remote):
+    def validate_architecture(self):
+        self.core_layout_validated = False
+        super().validate_architecture()
+        self.core_layout_validated = True
+
     def send(self, command):
         require(time.monotonic() < self.deadline, "provider observation deadline expired before send")
         super().send(command)
+
+    def selected_registers(self, names):
+        require(getattr(self, "core_layout_validated", False), "core register XML was not validated")
+        require(len(names) == len(set(names)) and all(name in CORE_REGISTERS for name in names),
+                "unsupported or duplicate selected core register")
+        registers = {}
+        for name in names:
+            number, size = CORE_REGISTERS[name]
+            reply = self.request(f"p{number:x}")
+            require(len(reply) == size * 2 and re.fullmatch(r"[0-9a-fA-F]+", reply) is not None,
+                    "invalid selected core register reply: " + name)
+            registers[name] = int.from_bytes(bytes.fromhex(reply), "little")
+        return registers
 
 
 class Observe:
@@ -130,36 +188,55 @@ class Observe:
         del self.installed[address]
 
     def read(self, span, label):
+        require(self.permits_memory_read(span["va"], span["size"]),
+                "observation request overlaps protected PACGA key storage")
         record = entry.bounded_memory_read(self.remote, span["va"], span["size"],
                                           (span["va"], span["va"] + span["size"]))
         self.report.setdefault("reads", []).append({"label": label, "declaration": span, **record})
         require(record["status"] == "complete", f"incomplete declared read: {label}")
         return bytes.fromhex(record["data_hex"])
 
+    def permits_memory_read(self, address, size):
+        require(isinstance(address, int) and isinstance(size, int) and size > 0
+                and 0 <= address <= (1 << 64) - size, "invalid observation memory range")
+        key = self.targets.get("pacga", {}).get("key_destination")
+        return key is None or not spans_overlap(key, {"va": address, "size": size})
+
     def state(self):
         return {name: int.from_bytes(self.read(span, name), "little") for name, span in self.targets["cells"].items()
                 if name != "_kpis"}
 
-    def continue_to(self, label):
+    def continue_to(self, label, register_names=()):
         self.paused = False
         stop = self.remote.request("c")
         self.paused = stop.startswith(("T05", "S05"))
-        event = {"label": label, "stop": stop[:4096]}
+        # Stop packets can contain expedited registers. Retain only the signal,
+        # then explicitly request the semantic fields this stop needs.
+        event = {"label": label, "stop": stop[:3], "stop_reply_chars": len(stop),
+                 "register_scope": "selected core registers; no bulk register packet"}
         self.report.setdefault("events", []).append(event)
         require(self.paused and len(stop) <= 4096, "unexpected stop during provider observation")
-        registers = self.remote.core_registers(event)
-        event["registers"] = {name: hex(number) for name, number in registers.items()}
+        registers = self.remote.selected_registers(("pc", "cpsr"))
         require(registers["pc"] in self.installed and registers["cpsr"] & 31 in (4, 5), "unknown breakpoint or wrong EL")
         target = self.installed[registers["pc"]]
         expected = self.kernel[target["file_offset"]:target["file_offset"] + 4]
         actual = self.read({**target, "size": 4}, "stopped instruction")
         require(actual == expected, "stopped instruction differs from identified candidate")
         event["symbol"] = target["symbol"]
+        names = (("x0", "x1", "x2", "x7") if registers["pc"] == self.targets["debugger"]["va"]
+                 else tuple(register_names))
+        registers.update(self.remote.selected_registers(names))
+        event["registers"] = {name: hex(number) for name, number in registers.items()}
         return registers
 
-    def expect(self, target, label):
+    def register(self, name):
+        value = self.remote.selected_registers((name,))[name]
+        self.report["events"][-1].setdefault("call_target_registers", {})[name] = hex(value)
+        return value
+
+    def expect(self, target, label, register_names=()):
         self.breakpoint(target)
-        registers = self.continue_to(label)
+        registers = self.continue_to(label, register_names)
         if registers["pc"] == self.targets["debugger"]["va"]:
             self.capture_panic(registers)
             raise build.BuildError(f"panic before {label}")
@@ -179,6 +256,8 @@ class Observe:
                   and s["vmaddr"] <= address and address + limit <= s["vmaddr"] + s["filesize"]]
         if len(owners) != 1:
             return {"address": hex(address), "status": "not-file-backed", "data_hex": ""}
+        if not self.permits_memory_read(address, limit):
+            return {"address": hex(address), "status": "protected-pacga-key-range", "data_hex": ""}
         return entry.bounded_memory_read(self.remote, address, limit, (sec["addr"], sec["addr"] + sec["size"]), c_string=True)
 
     def capture_panic(self, registers):
@@ -194,7 +273,7 @@ class Observe:
                 self.remove(target)
 
 
-def return_from_entry(strict, kernel, registers, target):
+def return_from_entry(strict, kernel, registers, target, read_register=None):
     """Bind a captured LR to an actual BL/BLR and its still-unmodified operand."""
     address = registers["x30"]
     records = strict["metadata"]["symbols"]["records"]
@@ -210,21 +289,68 @@ def return_from_entry(strict, kernel, registers, target):
     else:
         require(word & 0xfffffc1f == 0xd63f0000, "captured LR is not from BL or BLR")
         register = (word >> 5) & 31
-        require(register < 30 and registers[f"x{register}"] == target["va"], "BLR entry register does not identify the consumer")
+        require(register < 30, "BLR entry register does not identify the consumer")
+        name = f"x{register}"
+        operand = registers.get(name)
+        if operand is None and read_register is not None:
+            operand = read_register(name)
+        require(operand == target["va"], "BLR entry register does not identify the consumer")
     return {"symbol": "return from " + target["symbol"], "va": address, "size": 4,
             "file_offset": function["file_offset"] + offset + 4, "caller": function,
             "call_bytes": kernel[function["file_offset"] + offset:function["file_offset"] + offset + 8].hex()}
+
+
+def observe_pacga_bootstrap(observation, defined, report):
+    if "pacga" not in defined:
+        return
+    target = defined["pacga"]
+    registers = observation.expect(target["call"], "actual PACGA read_random call", ("x0", "x1"))
+    state = observation.state()
+    require(state["_route_a_pacga_ready"] == 0 and state["_prng_ready"] == 1
+            and state["_crypto_init"] == 1 and state["_source_corecrypto14_status"] == 0
+            and state["_g_crypto_funcs"] == defined["cells"]["_kpis"]["va"],
+            "PACGA random-key call precedes complete provider/PRNG publication or repeats initialization")
+    require(registers["x0"] == target["key_destination"]["va"] and registers["x1"] == 16,
+            "PACGA read_random does not target exactly the declared 128-bit boot key")
+    record = {"state_at_random_call": state, "key_destination": target["key_destination"],
+              "random_call_observed": True, "random_return_observed": False,
+              "key_storage_requested": False, "random_return_gprs_requested": False,
+              "bulk_register_packet_requested": False,
+              "register_scope_at_return": ["pc", "cpsr"]}
+    report["pacga_bootstrap"] = record
+    # Do not read any GPR after read_random: caller-saved registers may still
+    # contain key material, independently of the key's declared memory cell.
+    observation.expect(target["returned"], "actual PACGA read_random return")
+    returned_state = observation.state()
+    require(returned_state["_route_a_pacga_ready"] == 0,
+            "PACGA ready was published before the observed read_random return")
+    record.update(random_return_observed=True, state_at_random_return=returned_state)
+
+
+def require_pacga_unpublished(defined, state):
+    if "pacga" in defined:
+        require(state["_route_a_pacga_ready"] == 0, "negative POST already published PACGA readiness")
+
+
+def qualify_pacga_bootstrap(defined, state, report):
+    if "pacga" in defined:
+        require(report.get("pacga_bootstrap", {}).get("random_call_observed") is True
+                and report["pacga_bootstrap"].get("random_return_observed") is True
+                and state["_route_a_pacga_ready"] == 1,
+                "PACGA initialization sequence or later ready publication was not observed")
+        report["pacga_key_initialization_verified"] = True
 
 
 def observe(remote, strict, kernel, defined, report, mode, callback_offset):
     observation = Observe(remote, strict, kernel, defined, report)
     observation.breakpoint(defined["debugger"])
     try:
-        post = observation.expect(defined["post"], "actual POST return")
+        post = observation.expect(defined["post"], "actual POST return", ("x0",))
         report["post_return_w0"] = post["x0"] & 0xffffffff
         if mode == "negative-post":
             require(report["post_return_w0"] != 0, "corrupt HMAC did not fail POST")
             at_return = observation.state(); report["negative_state_at_post_return"] = at_return
+            require_pacga_unpublished(defined, at_return)
             require(all(at_return[k] == 0 for k in ("_g_crypto_funcs", "_crypto_init", "_prng_ready",
                                                    "_route_a_crypto_consumer_status", "_route_a_crypto_consumer_vectors")),
                     "negative POST already published state")
@@ -238,22 +364,27 @@ def observe(remote, strict, kernel, defined, report, mode, callback_offset):
             panic_target = build.symbol_span(strict, kernel, "_panic", 4, executable=True)
             require(branch_target(word, caller - 4) == panic_target["va"], "negative caller did not actually BL panic")
             state = observation.state(); report["negative_state_at_panic"] = state
+            require_pacga_unpublished(defined, state)
             require(all(state[k] == 0 for k in ("_g_crypto_funcs", "_crypto_init", "_prng_ready",
                                                "_route_a_crypto_consumer_status", "_route_a_crypto_consumer_vectors")),
                     "negative POST published table/PRNG before panic")
             require(panic["format"].get("nul_terminated") is True and "POST" in panic["format"].get("text_utf8", ""),
                     "negative panic format is not the bounded POST failure message")
             report["negative_post_rejection_verified"] = True
+            if "pacga" in defined:
+                report["pacga_negative_post_unpublished_verified"] = True
             return
         require(report["post_return_w0"] == 0, "real positive POST did not succeed")
         report["runtime_post_verified"] = True
-        entered = observation.expect(defined["consumer_entry"], "real XNU crypto consumer entry")
-        after_consumer = return_from_entry(strict, kernel, entered, defined["consumer_entry"])
+        observe_pacga_bootstrap(observation, defined, report)
+        entered = observation.expect(defined["consumer_entry"], "real XNU crypto consumer entry", ("x30",))
+        after_consumer = return_from_entry(strict, kernel, entered, defined["consumer_entry"], observation.register)
         report["real_consumer_caller"] = after_consumer
-        returned = observation.expect(defined["consumer_return"], "actual kmem ctx-size return")
+        returned = observation.expect(defined["consumer_return"], "actual kmem ctx-size return", ("x0",))
         state = observation.state(); report["positive_state"] = state
         require(state["_g_crypto_funcs"] == defined["cells"]["_kpis"]["va"] and state["_crypto_init"] == 1
                 and state["_prng_ready"] == 1 and state["_source_corecrypto14_status"] == 0, "provider publication not complete")
+        qualify_pacga_bootstrap(defined, state, report)
         table = observation.read(defined["cells"]["_kpis"], "all published table slots")
         pointers = struct.unpack("<56Q", table)
         require(all(pointers) and pointers[callback_offset // 8] == defined["provider_ctx"]["va"], "table callback identity differs")
@@ -287,6 +418,10 @@ def prepare(args, out, journal, report):
     kernel = Path(built["kernel"]["path"]).read_bytes()
     image = Path(built["loaded_image"]["path"]).read_bytes()
     strict = entry.loader.strict_kernel(kernel)
+    selected_pacga = select_pacga_runtime(built, strict, Path(built["kernel"]["path"]))
+    report["pacga_bootstrap_selected"] = selected_pacga is not None
+    if selected_pacga is not None:
+        report["pacga_runtime_binding"] = selected_pacga
     contract = strict["metadata"]["load_contract"]
     require(len(image) == contract["memory_span"], "loaded image span differs")
     expected = bytearray(len(image))
@@ -317,6 +452,9 @@ def prepare(args, out, journal, report):
     config = json.loads(entry.loader.CONFIG.read_text())
     symbols = entry.loader.check_entry_symbols(strict, config, kernel)
     defined = targets(strict, kernel)
+    if selected_pacga is not None:
+        defined["pacga"] = pacga_bootstrap_targets(strict, kernel, defined["cells"].values())
+        defined["cells"]["_route_a_pacga_ready"] = defined["pacga"]["ready"]
     seed, seed_record = entry.read_seed(args.seed_file); journal.protect(args.seed_file)
     adt = entry.make_adt("cortex-a76", seed)
     boot, layout = entry.make_boot_args(contract, 0x50004000, 0x52000000, adt, "-v serial=3 debug=0x14e")
@@ -393,11 +531,15 @@ def run(args):
     out = build.fresh(args.output); journal = build.Journal(out)
     report = {"schema": "route-a-corecrypto-runtime-v1", "status": "failed", "mode": args.mode,
               **dict.fromkeys(FLAGS, False), "os_boot_verified": False, "tb371fc_kernel_qualified": False,
+              "pacga_bootstrap_selected": False, "pacga_svc_roundtrip_verified": False,
+              "userland_execution_observed": False,
               "started_at_utc": datetime.datetime.now(datetime.timezone.utc).isoformat()}
     try:
         require(args.mode in MODES and 1 <= args.timeout <= 60, "unsupported mode or timeout")
         for path in (Path(__file__), Path(build.__file__), Path(entry.__file__), Path(entry.loader.__file__),
                      Path(entry.loader.platform_link.__file__), Path(entry.loader.platform_link.toolchain.__file__),
+                     Path(pacga.__file__), Path(macho.__file__), build.ROOT / pacga.HEADER,
+                     build.ROOT / pacga.PATCH,
                      entry.loader.CONFIG, entry.SOURCES / "sources.json", Path(sys.executable).resolve()):
             journal.protect(path)
         frozen = out / "driver-source"; frozen.mkdir()
@@ -408,6 +550,9 @@ def run(args):
         launch(args, out, journal, report, prepared)
         require(report["negative_post_rejection_verified"] if args.mode == "negative-post" else report["runtime_provider_verified"],
                 "requested provider runtime gate did not finish")
+        if report["pacga_bootstrap_selected"]:
+            require(report["pacga_negative_post_unpublished_verified"] if args.mode == "negative-post"
+                    else report["pacga_key_initialization_verified"], "requested PACGA bootstrap gate did not finish")
         report["status"] = "negative_post_rejection_observed" if args.mode == "negative-post" else "provider_and_consumer_observed"
     except Exception as exc:
         report.update(status="failed", error=f"{type(exc).__name__}: {exc}", **dict.fromkeys(FLAGS, False))

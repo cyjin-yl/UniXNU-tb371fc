@@ -45,6 +45,16 @@ PINS = {
     "platform_report": "738a7af11b32c08d0a4261611ba69f325d5a29bf424791b18e98879864feff7c",
     "compiler": "85d220e32bd83d75de788c8beab0bea646a4684e1112f7c06266ca71e651bb04",
 }
+# The source is byte-identical to ac9718fb:osfmk/arm64/sleh.c; the
+# retained ordinary-arm64 recipe is independently captured, never regenerated.
+PACGA_PINS = {
+    "source": "4eeb208fb2510bfdc0338d1a1d7d2d702fe9eb65d332eea388720ef6574375d1",
+    "recipe": "8c60d7a8f85e060aae2a0c8faee343c5fbaf3be7d188be9847ec642effd29090",
+    # Reviewed producer files at c9c866ce. A later change to the independent
+    # QEMU fixture does not rewrite or relabel an already captured stage.
+    "stage_driver": "00413eb769be08086cf79eee8b15eb830c5c3fc22058a25bd22836c1bab63ad4",
+    "execution_driver": "2db49aa915190dd827f751222d917ca3dbc971afc375d60c2bd04e749bcc7774",
+}
 ADDED_FIELDS = (
     "ccdigest_final_fn", "digest_ctx_size_fn", "digest_init_fn", "digest_update_fn", "digest_final_fn", "digest_fn",
     "hmac_ctx_size_fn", "hmac_init_fn", "hmac_update_fn", "hmac_final_generate_fn", "hmac_final_verify_fn",
@@ -525,6 +535,348 @@ def load_kernel(journal, sources, directory, compiler, kernel, data, strict, sym
     return report
 
 
+def platform_link_inputs(journal, baseline, baseline_path):
+    """Replay the pinned platform report's one CPU substitution and ordered list."""
+    spec = baseline["commands"][-1]
+    argv = spec["argv"]
+    require(argv.count("-filelist") == 1, "baseline link filelist is ambiguous")
+    path = regular(argv[argv.index("-filelist") + 1])
+    replacement = baseline["kernel_callback"]["filelist_replacement"]
+    require(replacement["replacement_count"] == 1
+            and loader.identity(path) == replacement["platform_filelist"],
+            "platform filelist differs from the pinned callback receipt")
+    original = regular(replacement["original_filelist"]["path"])
+    raw = pin(original, loader.platform_link.FILELIST_SHA256)
+    require(loader.identity(original) == replacement["original_filelist"],
+            "original retained filelist identity differs")
+    lines = raw.decode().splitlines(keepends=True)
+    require(all(line.endswith("\n") and line[:-1] == line[:-1].strip() and line[:-1]
+                for line in lines), "unsupported retained filelist line")
+    index = replacement["line_index"]
+    require(type(index) is int and 0 <= index < len(lines)
+            and lines[index][:-1] == replacement["original_entry"],
+            "pinned CPU replacement index or original entry differs")
+    changed = list(lines)
+    changed[index] = replacement["replacement_entry"] + "\n"
+    require(path.read_bytes() == "".join(changed).encode(),
+            "platform filelist does not reproduce the pinned single CPU replacement")
+    cwd = Path(spec["cwd"])
+    members = []
+    for line in changed:
+        item = Path(line[:-1])
+        item = regular(item if item.is_absolute() else cwd / item)
+        require(str(item) in journal.records, "platform object is absent from the pinned inventory")
+        members.append(journal.protect(item))
+    require(len(members) == loader.platform_link.FILELIST_OBJECT_COUNT
+            and len({item["path"] for item in members}) == len(members),
+            "platform ordered object inventory is incomplete or duplicated")
+    for item in (path, original, baseline_path):
+        journal.protect(item)
+    return {"baseline_report": loader.identity(baseline_path),
+            "baseline_filelist": loader.identity(path), "original_members": members,
+            "cwd": str(cwd), "argv": list(argv)}
+
+
+def apply_pacga_patch(original, patch):
+    """Replay this single-file, two-hunk additions-only patch without fuzz."""
+    lines = patch.splitlines(keepends=True)
+    require(lines[:3] == [b"diff --git a/osfmk/arm64/sleh.c b/osfmk/arm64/sleh.c\n",
+                          b"--- a/osfmk/arm64/sleh.c\n", b"+++ b/osfmk/arm64/sleh.c\n"],
+            "PACGA patch must name only the exact retained sleh source")
+    source = original.splitlines(keepends=True)
+    output, cursor, delta, hunks, index = [], 0, 0, 0, 3
+    while index < len(lines):
+        match = re.fullmatch(rb"@@ -([1-9][0-9]*),([1-9][0-9]*) \+([1-9][0-9]*),([1-9][0-9]*) @@\n", lines[index])
+        require(match is not None, "unsupported PACGA patch hunk header")
+        old_start, old_count, new_start, new_count = map(int, match.groups())
+        start = old_start - 1
+        require(start >= cursor and start + old_count <= len(source)
+                and new_start == old_start + delta and new_count > old_count,
+                "PACGA patch hunk position, overlap or addition count differs")
+        index += 1
+        old, new = [], []
+        while index < len(lines) and not lines[index].startswith(b"@@"):
+            line = lines[index]
+            require(line.endswith(b"\n") and line[:1] in (b" ", b"+"),
+                    "PACGA patch is not an exact additions-only patch")
+            if line[:1] == b" ":
+                old.append(line[1:])
+            new.append(line[1:])
+            index += 1
+        require(len(old) == old_count and len(new) == new_count,
+                "PACGA patch hunk line counts differ")
+        require(source[start:start + old_count] == old, "PACGA patch retained source context differs")
+        output.extend(source[cursor:start])
+        output.extend(new)
+        cursor, delta, hunks = start + old_count, delta + new_count - old_count, hunks + 1
+    require(hunks == 2, "PACGA patch must contain the two reviewed hunks")
+    output.extend(source[cursor:])
+    return b"".join(output)
+
+
+def admit_pacga_stage(journal, stage_path, kernel_build, original_members):
+    """Bind an opt-in, successful ordinary-arm64 stage before any provider build."""
+    from arm64_lowering import pacga
+    from route_a_pacga_probe import run as execution
+    path = regular(stage_path)
+    stage_identity = journal.protect(path)
+    stage = json.loads(path.read_bytes())
+    require(stage.get("schema") == "route-a-pacga-stage-v1" and stage.get("compile_passed") is True
+            and stage.get("compile_exit_code") == 0 and stage.get("abi") == pacga.ABI,
+            "PACGA stage did not successfully compile the selected ABI")
+    implementation = pacga.implementation()
+    require(stage.get("implementation") == implementation and stage.get("xnu_commit") == pacga.XNU_COMMIT
+            and stage.get("source_file") == "osfmk/arm64/sleh.c"
+            and stage.get("descriptor_hex") == pacga.descriptor().hex(),
+            "PACGA stage source/ABI implementation identity differs")
+    frozen, tools = stage["frozen"], stage["tools"]
+    for key, relative in (("helper", pacga.HEADER), ("patch", pacga.PATCH)):
+        require(frozen[key]["sha256"] == stage[key + "_sha256"] == implementation["sources"][relative],
+                "PACGA staged helper/patch bytes differ from their source identity")
+    require(frozen["source"]["sha256"] == stage["staged_sleh_sha256"]
+            and frozen["source"]["path"] == str(path.parent / "source/osfmk/arm64/sleh.c"),
+            "PACGA staged translation unit identity differs")
+    try:
+        execution.verify_tools(tools, hashes=True)
+        execution.verify_files(frozen, hashes=True)
+    except ValueError as error:
+        raise BuildError("PACGA stage identity changed: " + str(error)) from error
+    require(set(tools) == {"clang"} and tools["clang"]["binary"]["sha256"] == PINS["compiler"],
+            "PACGA stage compiler differs from the pinned kernel compiler")
+    for key, relative in (("stage", "scripts/build_route_a_pacga.py"),
+                          ("execution", "scripts/route_a_pacga_probe/run.py")):
+        current = ROOT / relative
+        require(frozen[key]["sha256"] == PACGA_PINS[key + "_driver"],
+                "PACGA stage used an unreviewed producer validation source")
+        journal.protect(current)
+    for relative in (pacga.HEADER, pacga.PATCH, "scripts/arm64_lowering/pacga.py"):
+        journal.protect(ROOT / relative)
+    kb = Path(kernel_build).resolve()
+    source = kb / ".cache/xnu-work/osfmk/arm64/sleh.c"
+    recipe_path = kb / Path(RECIPE_REL).with_name("sleh.o.json")
+    prepared = pin(source, PACGA_PINS["source"])
+    patch_bytes = pin(frozen["patch"]["path"], implementation["sources"][pacga.PATCH])
+    require(regular(frozen["source"]["path"]).read_bytes() == apply_pacga_patch(prepared, patch_bytes),
+            "PACGA staged translation unit does not reproduce the pinned source and exact patch")
+    recipe = json.loads(pin(recipe_path, PACGA_PINS["recipe"]).decode().rstrip().removesuffix(","))
+    require(stage["prepared_sleh_sha256"] == PACGA_PINS["source"]
+            and frozen["recipe"]["path"] == str(recipe_path)
+            and stage["recipe_sha256"] == PACGA_PINS["recipe"]
+            and recipe["file"] == str(source) and recipe["output"] == "sleh.o"
+            and Path(recipe["directory"]).resolve() == recipe_path.parent,
+            "PACGA stage is not based on the pinned retained sleh recipe/source")
+    previous = journal.protect(recipe_path.parent / "sleh.o")
+    require(stage["previous_object"] == {"name": "sleh.o", "sha256": previous["sha256"]}
+            and sum(item == previous for item in original_members) == 1,
+            "PACGA previous object is not the unique pinned platform sleh.o")
+    obj = regular(path.parent / "sleh.o")
+    require(stage["object"] == {"name": "sleh.o", "bytes": obj.stat().st_size,
+                               "sha256": sha(obj.read_bytes()), "cpu_type": "arm64", "cpu_subtype": 0}
+            and frozen["object"]["path"] == str(obj)
+            and frozen["object"]["sha256"] == stage["object"]["sha256"],
+            "PACGA replacement object identity differs")
+    object_bytes = obj.read_bytes()
+    try:
+        metadata = loader.platform_link.macho(object_bytes, 1)
+    except loader.platform_link.LinkError as error:
+        raise BuildError("PACGA object is not an admissible ordinary-arm64 object: " + str(error)) from error
+    descriptors = [section for section in metadata["sections"] if section["name"] == "__unixnu_pacga"]
+    require(len(descriptors) == 1 and descriptors[0]["segment"] == "__DATA_CONST"
+            and not (descriptors[0]["flags"] & 0x80000000)
+            and object_bytes[descriptors[0]["offset"]:descriptors[0]["offset"] + descriptors[0]["size"]]
+            == pacga.descriptor(), "PACGA object lacks the exact retained implementation descriptor")
+    commands = stage["commands"]
+    require([item.get("name") for item in commands] == ["compiler-version", "discover-headers", "compile"],
+            "PACGA stage command sequence differs")
+    for command in commands:
+        require(command.get("status") == "finished" and type(command.get("exit_code")) is int
+                and command["exit_code"] == 0
+                and command.get("cleanup", {}).get("group_absent") is True
+                and command["cleanup"].get("direct_child_reaped") is True
+                and command["arguments"][0] == tools["clang"]["invocation"],
+                "PACGA stage has an unsuccessful or unreaped command")
+    expected_arguments = list(recipe["arguments"])
+    require(expected_arguments.count(str(source)) == 1 and expected_arguments.count("-o") == 1,
+            "pinned PACGA recipe source/output is ambiguous")
+    expected_arguments[expected_arguments.index(str(source))] = str(path.parent / "source/osfmk/arm64/sleh.c")
+    expected_arguments[expected_arguments.index("-o") + 1] = str(obj)
+    expected_arguments += ["-march=armv8-a", "-DCONFIG_ROUTE_A_PACGA_SVC=1",
+                           '-DROUTE_A_PACGA_IMPLEMENTATION_SHA256="' + implementation["sha256"] + '"',
+                           "-mgeneral-regs-only", "-MD", "-MF", str(path.parent / "sleh.d"),
+                           "-Werror=implicit-function-declaration",
+                           "-Werror=incompatible-function-pointer-types", "-Werror=return-type"]
+    expected_arguments[1:1] = ["-I", str(path.parent / "source/osfmk")]
+    discovery = list(expected_arguments)
+    discovery[discovery.index("-MD")] = "-M"
+    discovery[discovery.index("-MF") + 1] = str(path.parent / "discovered.d")
+    discovery[discovery.index("-o") + 1] = str(path.parent / "discovered.stdout")
+    require(stage["arguments"] == expected_arguments
+            and commands[0]["arguments"] == [tools["clang"]["invocation"], "--version"]
+            and commands[1]["arguments"] == discovery
+            and commands[1]["directory"] == recipe["directory"]
+            and stage["compiler"] == tools["clang"]["invocation"],
+            "PACGA compile/discovery argv differs from the pinned recipe and reviewed overlay flags")
+    require(commands[-1]["arguments"] == stage["arguments"]
+            and commands[-1]["directory"] == recipe["directory"] == stage["directory"]
+            and stage["arguments"].count(str(obj)) == 1
+            and stage["arguments"].count(str(path.parent / "source/osfmk/arm64/sleh.c")) == 1,
+            "PACGA compile receipt does not identify its source/output/cwd")
+    closure = stage["header_closure"]
+    declared = execution.dependency_paths(path.parent / "discovered.d", recipe["directory"])
+    actual = execution.dependency_paths(path.parent / "sleh.d", recipe["directory"])
+    require(declared == actual == {Path(item) for item in closure}
+            and stage["dependency_count"] == len(closure)
+            and all(frozen.get("dependency:" + item) == record for item, record in closure.items()),
+            "PACGA actual dependency closure differs")
+    dependencies = path.parent / "dependencies.json"
+    require(sha(dependencies.read_bytes()) == stage["dependencies_sha256"]
+            and json.loads(dependencies.read_bytes()) == {item: record["sha256"] for item, record in closure.items()},
+            "PACGA dependency publication differs")
+    for record in frozen.values():
+        journal.protect(record["path"])
+    journal.protect(tools["clang"]["invocation"], tool=True)
+    for item in (source, recipe_path, obj, dependencies, path.parent / "discovered.d", path.parent / "sleh.d"):
+        journal.protect(item)
+    require(journal.protect(path) == stage_identity, "PACGA stage report changed during admission")
+    # First-time journal protection must not adopt a file changed after the
+    # semantic checks as a new baseline. Recheck the original stage generation.
+    try:
+        execution.verify_files(frozen, hashes=True)
+        execution.verify_tools(tools, hashes=True)
+    except ValueError as error:
+        raise BuildError("PACGA stage identity changed during admission: " + str(error)) from error
+    return {"stage_report": stage_identity, "kernel_build": str(kb), "implementation": implementation,
+            "previous_object": previous, "object": loader.identity(obj),
+            "validation_sources": {key: frozen[key]["sha256"] for key in ("stage", "execution")},
+            "dependency_count": len(closure), "runtime_boot_verified": False}
+
+
+def write_link_filelist(journal, plan, bootstrap, archive, pacga_overlay=None):
+    members = list(plan["original_members"])
+    substitutions = []
+    replacements = [("prng_random.o", journal.protect(bootstrap), None)]
+    if pacga_overlay is not None:
+        replacements.append(("sleh.o", pacga_overlay["object"], pacga_overlay["previous_object"]))
+    for name, replacement, previous in replacements:
+        indices = [index for index, item in enumerate(members) if Path(item["path"]).name == name]
+        require(len(indices) == 1, name + " replacement is not unique")
+        index = indices[0]
+        require(previous is None or members[index] == previous, "PACGA replacement targets a different original object")
+        substitutions.append({"index": index, "kind": "bootstrap" if name == "prng_random.o" else "pacga",
+                              "old": members[index], "new": replacement})
+        members[index] = replacement
+    path = journal.out / "platform.filelist"
+    path.write_text("".join(item["path"] + "\n" for item in members))
+    return {"schema": "route-a-corecrypto-ordered-link-v1", "baseline_report": plan["baseline_report"],
+            "baseline_filelist": plan["baseline_filelist"], "original_members": plan["original_members"],
+            "substitutions": substitutions, "ordered_members": members, "filelist": journal.protect(path),
+            "provider_archive": journal.protect(archive)}
+
+
+def verify_link_contract(report, directory, protected, checked_input):
+    contract = report["link_contract"]
+    require(contract["schema"] == "route-a-corecrypto-ordered-link-v1", "missing ordered link contract")
+    baseline_path = regular(contract["baseline_report"]["path"])
+    require(checked_input(baseline_path) == contract["baseline_report"], "baseline report identity differs")
+    baseline = json.loads(pin(baseline_path, PINS["platform_report"]))
+    inventory = baseline["protected_input_inventory"]
+    require(checked_input(Path(inventory["path"])) == inventory, "pinned platform inventory identity differs")
+    declared = json.loads(pin(inventory["path"], inventory["sha256"]))
+    journal = Journal(directory)
+    for item in declared:
+        record = checked_input(Path(item["path"]))
+        require(all(record[key] == item[key] for key in ("size", "sha256")), "pinned platform input changed")
+        journal.records[record["path"]] = record
+    plan = platform_link_inputs(journal, baseline, baseline_path)
+    require(contract["baseline_filelist"] == plan["baseline_filelist"]
+            and contract["original_members"] == plan["original_members"], "baseline ordered link members differ")
+    overlay = report.get("pacga_overlay")
+    if overlay is not None:
+        selection = admit_pacga_stage(journal, overlay["stage_report"]["path"], overlay["kernel_build"], plan["original_members"])
+        require(selection == overlay, "PACGA admission differs from the build receipt")
+        from arm64_lowering import pacga
+        require(report["pacga_runtime"] == pacga.runtime_kernel(report["kernel"]["path"]),
+                "sealed kernel no longer binds the admitted PACGA runtime")
+    for path, record in journal.records.items():
+        require(checked_input(Path(path)) == record, "link provenance input is not protected by this build")
+    members = list(plan["original_members"])
+    expected = [("bootstrap", "prng_random.o", report["bootstrap"])]
+    if overlay is not None:
+        expected.append(("pacga", "sleh.o", overlay["object"]))
+    substitutions = []
+    for kind, name, replacement in expected:
+        indices = [index for index, item in enumerate(members) if Path(item["path"]).name == name]
+        require(len(indices) == 1, "link substitution is not unique")
+        index = indices[0]
+        require(checked_input(Path(replacement["path"])) == replacement, "replacement object identity differs")
+        substitutions.append({"index": index, "kind": kind, "old": members[index], "new": replacement})
+        members[index] = replacement
+    require(contract["substitutions"] == substitutions and contract["ordered_members"] == members,
+            "generated ordered link members or permitted substitutions differ")
+    path = regular(contract["filelist"]["path"])
+    require(path == directory / "platform.filelist" and checked_input(path) == contract["filelist"]
+            and path.read_bytes() == "".join(item["path"] + "\n" for item in members).encode(),
+            "generated filelist does not match the exact ordered link contract")
+    require(contract["provider_archive"] == report["archive"] == checked_input(Path(report["archive"]["path"])),
+            "provider archive link input differs")
+    commands = [command for command in report["commands"] if "-filelist" in command["argv"]]
+    require(len(commands) == 1, "build lacks one unambiguous kernel link command")
+    argv = commands[0]["argv"]
+    require(argv.count("-filelist") == 1 and argv[argv.index("-filelist") + 1] == str(path)
+            and argv.count(report["archive"]["path"]) == 1
+            and argv.count("-o") == 1 and argv[argv.index("-o") + 1] == contract["unsealed_kernel"]["path"],
+            "kernel link command does not consume the declared list/archive or produce its unsealed kernel")
+    expected_argv = list(plan["argv"])
+    expected_argv[expected_argv.index("-filelist") + 1] = str(path)
+    expected_argv[expected_argv.index("-o") + 1] = contract["unsealed_kernel"]["path"]
+    maps = [index for index, value in enumerate(expected_argv) if value.startswith("-Wl,-map,")]
+    require(len(maps) == 1, "pinned platform link map is ambiguous")
+    expected_argv[maps[0]] = "-Wl,-map," + str(directory / "platform.map")
+    expected_argv += ["-Wl,-oso_prefix," + str(directory) + "/", report["archive"]["path"]]
+    require(argv == expected_argv and commands[0]["cwd"] == plan["cwd"],
+            "kernel link argv differs from the pinned recipe's permitted output substitutions")
+    normalized = normalize_build_paths(contract, directory)
+    # Raw hashes bind the actual file on disk, but paths inside this generated
+    # list vary across output roots. Only this derived list is compared by its
+    # independently reconstructed ordered member identities.
+    normalized["filelist"] = {"path": normalize_build_paths(str(path), directory),
+                              "ordered_members": normalize_build_paths(members, directory)}
+    return normalized
+
+
+def verify_abi_and_seal(report, directory):
+    abi_path = regular(report["abi_receipt"]["path"])
+    require(abi_path == directory / "abi.json" and loader.identity(abi_path) == report["abi_receipt"],
+            "ABI report artifact changed")
+    abi = json.loads(abi_path.read_bytes())
+    require(abi == report["abi"] and abi.get("matches") is True and abi.get("mismatches") == []
+            and set(abi["records"]) == set(ABI_RECORDS), "complete matching ABI receipt is missing")
+    layouts = {}
+    for side in ("provider", "consumer"):
+        path = regular(directory / ("abi-" + side + ".stdout"))
+        record = report["abi_outputs"][side]
+        require(loader.identity(path) == record, "ABI compiler output changed")
+        commands = [command for command in report["commands"] if command.get("stdout") == record]
+        require(len(commands) == 1 and "-fdump-record-layouts-complete" in commands[0]["argv"]
+                and "-fsyntax-only" in commands[0]["argv"], "ABI layout output lacks its compiler invocation")
+        layouts[side] = record_layouts(path.read_text())
+        require(set(layouts[side]) == set(ABI_RECORDS)
+                and all(sha(text.encode()) == abi["records"][name][side] for name, text in layouts[side].items()),
+                "ABI record digests do not match actual compiler layouts")
+    require(layouts["provider"] == layouts["consumer"], "provider and consumer ABI layouts differ")
+    seal_path = regular(report["seal_receipt"]["path"])
+    unsealed = regular(report["link_contract"]["unsealed_kernel"]["path"])
+    require(seal_path == directory / "seal.json" and loader.identity(seal_path) == report["seal_receipt"]
+            and json.loads(seal_path.read_bytes()) == report["seal"]
+            and unsealed == directory / "kernel.unsealed.macho"
+            and loader.identity(unsealed) == report["link_contract"]["unsealed_kernel"],
+            "seal or unsealed link artifact changed")
+    sealed, expected = seal_kernel(unsealed.read_bytes())
+    require(expected == report["seal"] and sealed == Path(report["kernel"]["path"]).read_bytes(),
+            "sealed kernel does not reproduce the fixed static_if and POST HMAC procedure")
+    return {"abi": abi, "seal": expected}
+
+
 def build(args):
     out = fresh(args.output)
     journal = Journal(out)
@@ -548,6 +900,11 @@ def build(args):
         for item in json.loads(Path(inventory["path"]).read_bytes()):
             current = journal.protect(item["path"], tool=item.get("kind") == "tool")
             require(current["sha256"] == item["sha256"] and current["size"] == item["size"], "retained baseline input changed")
+        link_plan = platform_link_inputs(journal, baseline, baseline_path)
+        pacga_overlay = None
+        if getattr(args, "pacga_stage_report", None) is not None:
+            pacga_overlay = admit_pacga_stage(journal, args.pacga_stage_report, kb, link_plan["original_members"])
+            report["pacga_overlay"] = pacga_overlay
         scripts = (Path(__file__), Path(loader.__file__), Path(loader.platform_link.__file__),
                    Path(loader.platform_link.toolchain.__file__))
         for path in (*scripts, loader.CONFIG, Path(sys.executable).resolve()):
@@ -594,6 +951,9 @@ def build(args):
         bootstrap_command = replay_bootstrap(recipe, kb, glue / "prng_random.c", bootstrap_out)
         provider_tu = command + ["-c", str(glue / "corecrypto_kext.c"), "-o", str(out / "abi-provider.o")]
         report["abi"] = abi_check(journal, provider_tu, bootstrap_command, out)
+        report["abi_receipt"] = journal.protect(out / "abi.json")
+        report["abi_outputs"] = {side: loader.identity(out / ("abi-" + side + ".stdout"))
+                                 for side in ("provider", "consumer")}
         report["bootstrap_dependencies"] = journal.compile(bootstrap_command, "bootstrap", cwd=out, timeout=90)
         loader.platform_link.macho((bootstrap_out / "prng_random.o").read_bytes(), 1)
         objects = out / "objects"; objects.mkdir()
@@ -620,13 +980,9 @@ def build(args):
         spec = baseline["commands"][-1]
         argv = list(spec["argv"])
         at = argv.index("-filelist") + 1
-        filelist = regular(argv[at]); journal.protect(filelist)
-        files = filelist.read_text().splitlines()
-        slots = [i for i, value in enumerate(files) if Path(value).name == "prng_random.o"]
-        require(len(slots) == 1, "bootstrap replacement is not unique")
-        files[slots[0]] = str(bootstrap_out / "prng_random.o")
-        new_filelist = out / "platform.filelist"; new_filelist.write_text("\n".join(files) + "\n")
-        argv[at] = str(new_filelist)
+        report["link_contract"] = write_link_filelist(
+            journal, link_plan, bootstrap_out / "prng_random.o", built_archive, pacga_overlay)
+        argv[at] = report["link_contract"]["filelist"]["path"]
         linked = out / "kernel.unsealed.macho"; argv[argv.index("-o") + 1] = str(linked)
         map_args = [i for i, value in enumerate(argv) if value.startswith("-Wl,-map,")]
         require(len(map_args) == 1, "link map output is ambiguous")
@@ -637,9 +993,15 @@ def build(args):
         argv.append(str(built_archive))
         temporary = out / "tmp"; temporary.mkdir()
         environment = dict(baseline["environment"], TMPDIR=str(temporary))
+        require(journal.recheck()["unchanged"], "protected link inputs changed before linking")
         journal.execute(argv, "link", cwd=Path(spec["cwd"]), env=environment, timeout=180)
+        report["link_contract"]["unsealed_kernel"] = journal.protect(linked)
         data, seal = seal_kernel(linked.read_bytes())
         kernel = out / "kernel.macho"; kernel.write_bytes(data); save(out / "seal.json", seal)
+        report["seal_receipt"] = journal.protect(out / "seal.json")
+        if pacga_overlay is not None:
+            from arm64_lowering import pacga
+            report["pacga_runtime"] = pacga.runtime_kernel(kernel)
         strict = loader.strict_kernel(data)
         config = json.loads(loader.CONFIG.read_text())
         symbols = loader.check_entry_symbols(strict, config, data)
@@ -786,10 +1148,16 @@ def verify_compile_receipts(report, directory, objects):
         commands[key] = normalize_build_paths(dict(contract, dependencies=dependency_inputs), directory)
     require(len(commands) == 530 and set(commands) == {str(Path(path).relative_to(directory)) for path in expected},
             "compile receipts do not cover every provider and bootstrap object exactly once")
-    normalized_inputs = {normalize_build_paths(path, directory): normalize_build_paths(checked_input(Path(path)), directory)
-                         for path in protected}
+    link_contract = verify_link_contract(report, directory, protected, checked_input)
+    generated_filelist = report["link_contract"]["filelist"]["path"]
+    normalized_inputs = {}
+    for path in protected:
+        actual = checked_input(Path(path))
+        normalized_inputs[normalize_build_paths(path, directory)] = (
+            {"kind": "derived-ordered-filelist", **link_contract["filelist"]} if path == generated_filelist
+            else normalize_build_paths(actual, directory))
     require(len(normalized_inputs) == len(protected), "normalized input paths are ambiguous")
-    return {"compiles": commands, "stages": stages, "protected_inputs": normalized_inputs}
+    return {"compiles": commands, "stages": stages, "protected_inputs": normalized_inputs, "link_contract": link_contract}
 
 
 def compare_builds(first_path, second_path):
@@ -797,7 +1165,7 @@ def compare_builds(first_path, second_path):
     first_path, second_path = regular(first_path), regular(second_path)
     require(first_path.parent != second_path.parent, "reproducibility needs two distinct output directories")
     reports = [json.loads(path.read_text()) for path in (first_path, second_path)]
-    artifacts, compile_contracts = [], []
+    artifacts, compile_contracts, qualifications = [], [], []
     for path, report in zip((first_path, second_path), reports):
         require(report.get("schema") == "route-a-corecrypto-build-v1" and report.get("build_verified") is True
                 and report.get("input_recheck", {}).get("unchanged") is True, "build receipt did not pass")
@@ -817,8 +1185,10 @@ def compare_builds(first_path, second_path):
             artifact = regular(record["path"])
             require(path.parent in artifact.parents and loader.identity(artifact) == record,
                     "build artifact is changed or not in its own independent output directory")
+        qualifications.append(verify_abi_and_seal(report, path.parent))
         compile_contracts.append(verify_compile_receipts(report, path.parent, objects))
         artifacts.append(records)
+    require(qualifications[0] == qualifications[1], "independent ABI or seal contracts differ")
     require(compile_contracts[0] == compile_contracts[1],
             "independent build stages, tools, dependencies or protected inputs differ")
     left_sources = {o["source"]: o["source_sha256"] for o in
@@ -834,7 +1204,7 @@ def compare_builds(first_path, second_path):
     return {"schema": "route-a-corecrypto-reproduction-v1", "verified": not differences,
             "reports": [loader.identity(first_path), loader.identity(second_path)],
             "checked_artifacts": len(artifacts[0]), "mismatches": differences,
-            "scope": "529 independently compiled provider objects, bootstrap object, deterministic archive, sealed kernel and loaded bytes"}
+            "scope": "529 independently compiled provider objects, bootstrap object, deterministic archive, ordered link inputs, replayed ABI/seal contracts, sealed kernel and loaded bytes"}
 
 
 def main():
@@ -842,12 +1212,14 @@ def main():
     parser.add_argument("--compare-builds", type=Path, nargs=2, metavar=("FIRST_REPORT", "SECOND_REPORT"))
     for option in ("source-archive", "kernel-build", "compiler", "platform-report", "loader-sources", "output"):
         parser.add_argument("--" + option, type=Path)
+    parser.add_argument("--pacga-stage-report", type=Path, help="explicit successful PACGA sleh.o stage; substituted before link and sealing")
     parser.add_argument("--ar", type=Path, default=Path("/usr/bin/llvm-ar"))
     parser.add_argument("--nm", type=Path, default=Path("/usr/bin/llvm-nm"))
     parser.add_argument("--cc", type=Path, default=Path("/usr/bin/cc"))
     args = parser.parse_args()
     if args.compare_builds:
-        require(args.output is not None, "comparison needs a fresh --output directory")
+        require(args.output is not None and args.pacga_stage_report is None,
+                "comparison needs a fresh --output and derives PACGA identity only from its build receipts")
         out = fresh(args.output)
         report = compare_builds(*args.compare_builds); save(out / "report.json", report)
         print(json.dumps(report), flush=True)

@@ -62,7 +62,30 @@ python3 scripts/build_route_a_corecrypto.py \
   --output /private/a02-reproduction-001
 ```
 
-比较器要求不同输出目录、两个通过的完整编译收据、相同源输入和确定性环境，并逐项重读 529 个对象、启动钩子对象、归档、封装内核和加载镜像。它不把复制同一个已有产物记成一次构建。`build_verified` 只覆盖类型、布局、构建和装载，`runtime_provider_verified` 仍为 false。
+比较器要求不同输出目录、两个通过的完整编译收据、相同源输入和确定性环境，并逐项重读 529 个对象、启动钩子对象、归档、封装内核和加载镜像。它核对原平台报告中的 `kernel_callback.filelist_replacement`，从固定原始列表重放唯一的 CPU 对象替换，再验证当前构建允许的 bootstrap / PACGA 对象替换。生成的 `platform.filelist` 原始字节在链接前后受保护；比较不同输出根时，只对这个经过独立重构的列表按有序成员路径和身份规范化，保留实际文件的原始 hash。
+
+ABI 门槛重新读取两侧真实编译器布局输出，核对全部 carrier 和 `abi.json`。封存门槛从本次未封存链接产物重放固定 static-if 改写与 POST HMAC，要求结果逐字节等于本次封存内核。输出中性列表漂移、未执行/未回收的命令、ABI 日志或 seal 收据漂移均不能以相同最终产物取得通过。`build_verified` 只覆盖类型、布局、构建和装载，`runtime_provider_verified` 仍为 false。
+
+## 显式接入 PACGA 对象
+
+`--pacga-stage-report /private/pacga-stage/stage-report.json` 可选地接入已通过真实 `sleh.c` 编译的普通 ARM64 对象。两次 fresh CoreCrypto 构建应选择同一份固定 stage 收据；原始 retained XNU 对象、这个 PACGA 对象及其来源仍属于被绑定的输入，不能据此宣称重新编译了完整 XNU。
+
+接入首先验证 stage 的成功且已回收的编译/依赖发现命令、固定 clang-24、源文件、完整 recipe、helper/patch/ABI、实际头依赖闭合和对象身份。准备后的 `sleh.c` 必须等于固定 XNU `ac9718fb1af618d5ce8678d0dc6e8a58f252216f` 原始文件的 SHA-256；其 `sleh.o.json` 也采用独立记录的固定身份。接入器独立重放固定 PACGA patch 的两个追加 hunk，逐项验证文件名、原始上下文、行号和行数，不允许模糊匹配；实际 stage TU 必须逐字节等于重建结果。只修改 TU 并同步更新自报 hash、依赖收据仍会被拒绝。stage 的生产脚本固定为已审查 `c9c866ce2c8a35b5c448977018b3ac258029b884` 中的两个明确文件 hash，收据不会因后续独立 QEMU fixture 更新而被改写或改称来自新提交。所有实际生产源文件仍须存在并通过内容与 generation 重验。
+
+完成语义检查并登记所有受保护输入后，接入器再次对 stage 原始工具及文件的 hash 和 generation 复核，避免中途发生的变更被登记为新 baseline。链接只替换原列表中恰好一个、且旧对象 hash 与固定平台 inventory 相符的 `sleh.o`。新对象必须包含普通 ARM64 Mach-O 元数据和准确的非代码 PACGA 描述符。随后执行全新链接、static-if 改写和 HMAC 封存，最后对新封存内核再次核对描述符和整文件绑定。现有已封存映像不参与修改。
+
+```sh
+python3 scripts/build_route_a_corecrypto.py \
+  --source-archive /private/corecrypto.tar.gz \
+  --kernel-build /private/retained-kernel-build \
+  --compiler /private/pinned-toolchain/clang-24 \
+  --platform-report /private/pinned-platform/report.json \
+  --loader-sources /private/loader-public-sources \
+  --pacga-stage-report /private/pacga-stage/stage-report.json \
+  --output /private/a02-pacga-build-001
+```
+
+`pacga_runtime` 在这里表示新内核的来源和 ABI 描述符绑定；其 `runtime_boot_verified` 保持 false。真实随机密钥初始化、XNU 中的 SVC 分派和 Darwin 进程执行仍需运行时证据。
 
 ## 实际运行的正负门槛
 
