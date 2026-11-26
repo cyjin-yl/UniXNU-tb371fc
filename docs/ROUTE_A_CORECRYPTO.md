@@ -50,6 +50,8 @@ python3 scripts/build_route_a_corecrypto.py \
 
 输出目录必须是仓库外的新目录。源归档先做摘要、成员路径、链接/特殊文件和解压大小检查；固定 PBX target 必须解析出 529 个唯一 C 源文件。采用真实普通 ARM64/iOS 27 编译选项、`CC_USE_ASM=0`、串行编译，每个对象单独留下源码摘要、实际 argv、依赖文件、stdout/stderr 和对象身份。完整表 ABI 在 529 TU 编译前先检查。
 
+每条命令在独立 session / process group 中运行。控制器在正常返回、超时和中断路径均回收直接子进程及本组被收养的后代，并在收据中记录退出后和清理后的组状态。直接子进程即使返回 0，只要进程组仍存在，这条命令仍判失败；清理成功不把它改称正常完成。失败的 Journal 不再启动下一条命令。二次复现对编译、归档、ABI 和链接等全部命令重新要求组已消失且退出收据一致，不能仅凭直接子进程 `reaped=true` 取得通过。
+
 控制器固定 `SOURCE_DATE_EPOCH`、`ZERO_AR_DATE` 和时区，禁止展开日期时间宏，并用 Clang 的文件/调试前缀映射和固定 compilation directory 消除新目录名称；ld64 的 `oso_prefix` 仅移除本次新输出前缀。归档使用固定源码顺序和确定性模式。框架头的目录链接、实际文件、编译器资源头和每次编译真实消费的依赖均需已声明，结束再核身份。
 
 链接保留平台命令，仅替换本次 `prng_random.o`、加入 provider 归档和独立输出/调试路径。封装只处理两个原有 static-if 测试 key 的 10 个已识别 B/NOP 状态，再计算真实 POST HMAC；它不跳过自检。内核必须通过原普通 ARM64 Mach-O 严格检查；固定 DarwinBoot 原始 C 提取负责再次核对段复制、零填充、边界哨兵和 boot_args ABI。
@@ -70,7 +72,7 @@ ABI 门槛重新读取两侧真实编译器布局输出，核对全部 carrier �
 
 `--pacga-stage-report /private/pacga-stage/stage-report.json` 可选地接入已通过真实 `sleh.c` 编译的普通 ARM64 对象。两次 fresh CoreCrypto 构建应选择同一份固定 stage 收据；原始 retained XNU 对象、这个 PACGA 对象及其来源仍属于被绑定的输入，不能据此宣称重新编译了完整 XNU。
 
-接入首先验证 stage 的成功且已回收的编译/依赖发现命令、固定 clang-24、源文件、完整 recipe、helper/patch/ABI、实际头依赖闭合和对象身份。准备后的 `sleh.c` 必须等于固定 XNU `ac9718fb1af618d5ce8678d0dc6e8a58f252216f` 原始文件的 SHA-256；其 `sleh.o.json` 也采用独立记录的固定身份。接入器独立重放固定 PACGA patch 的两个追加 hunk，逐项验证文件名、原始上下文、行号和行数，不允许模糊匹配；实际 stage TU 必须逐字节等于重建结果。只修改 TU 并同步更新自报 hash、依赖收据仍会被拒绝。stage 的生产脚本固定为已审查 `c9c866ce2c8a35b5c448977018b3ac258029b884` 中的两个明确文件 hash，收据不会因后续独立 QEMU fixture 更新而被改写或改称来自新提交。所有实际生产源文件仍须存在并通过内容与 generation 重验。
+接入首先验证 stage 的成功且已回收的编译/依赖发现命令、固定 clang-24、源文件、完整 recipe、helper/patch/ABI、实际头依赖闭合和对象身份。准备后的 `sleh.c` 必须等于固定 XNU `ac9718fb1af618d5ce8678d0dc6e8a58f252216f` 原始文件的 SHA-256；其 `sleh.o.json` 也采用独立记录的固定身份。接入器独立重放固定 PACGA patch 的两个追加 hunk，逐项验证文件名、原始上下文、行号和行数，不允许模糊匹配；实际 stage TU 必须逐字节等于重建结果。只修改 TU 并同步更新自报 hash、依赖收据仍会被拒绝。两个生产脚本须匹配 `PACGA_PINS` 中的独立文件身份：`build_route_a_pacga.py` 采用新增有界 `--compile-timeout` 的固定生产脚本（默认 300 秒、可选整数 1–900 秒，仅作用于正式编译，报告绑定实际选择），`route_a_pacga_probe/run.py` 采用已合入 `e766bca5` 的执行器。正式 `<sys/random.h>` 声明修复要求 fresh stage 和新的 patch / descriptor 身份；旧失败收据不改写，也不改称来自新提交。所有实际生产源文件仍须存在并通过内容与 generation 重验。
 
 完成语义检查并登记所有受保护输入后，接入器再次对 stage 原始工具及文件的 hash 和 generation 复核，避免中途发生的变更被登记为新 baseline。链接只替换原列表中恰好一个、且旧对象 hash 与固定平台 inventory 相符的 `sleh.o`。新对象必须包含普通 ARM64 Mach-O 元数据和准确的非代码 PACGA 描述符。随后执行全新链接、static-if 改写和 HMAC 封存，最后对新封存内核再次核对描述符和整文件绑定。现有已封存映像不参与修改。
 
@@ -103,7 +105,7 @@ python3 scripts/probe_route_a_corecrypto.py \
   --mode negative-post --output /private/a02-negative-001
 ```
 
-所有 PC 来自实际 candidate 的唯一强 section symbol、可执行段和有界函数体；不接受外部给定地址。先用硬断点加单步验证原 `__start` 分支。之后每次停住保存全部 34 个 AArch64 core register、原始 core reply 与指令字节。
+所有 PC 来自实际 candidate 的唯一强 section symbol、可执行段和有界函数体；不接受外部给定地址。先在密钥生成前用硬断点加单步验证原 `__start` 分支。之后每次观察先按 `p` 请求读取 PC / CPSR，再只读取该语义所需的寄存器；不请求全量 `g` 包，也不保留停止回复附带的寄存器字段。`read_random` 返回观察仅读取 PC / CPSR，不读取密钥材料或可能残留材料的数据寄存器。
 
 正例动态寻找 provider 到 POST 的真实 BL 和紧随的 CBNZ，要求 W0=0。随后停在真实 `vm_map_store_crypto_init` 入口，捕获 LR 并绑定其实际 BL/BLR 调用；继续到该消费者调用 `crypto_random_kmem_ctx_size` 的返回点。此时要求表指针及该槽目标与真实符号相同、全部槽非空、`crypto_init=1`、`prng_ready=1`、bootstrap status=0，以及独立消费者检查完成。继续到整个 `vm_map_store_crypto_init` 返回，再观察真实 `bsd_init` 入口或下一次 panic。
 
@@ -119,4 +121,4 @@ python3 scripts/probe_route_a_corecrypto.py \
 python3 -m unittest discover -s tests -p test_route_a_corecrypto.py -v
 ```
 
-这些测试覆盖独立已知向量、补丁精确重建、唯一插入点、类型布局差异保留、真实 BL/BLR 解码、符号与代码范围、框架链接改向、截止时间前拒发、短读保真和失败撤销资格。fixture 不会启动 QEMU，也不能代替两次真实构建或运行时正负例。
+这些测试覆盖独立已知向量、补丁精确重建、唯一插入点、类型布局差异保留、真实 BL/BLR 解码、符号与代码范围、框架链接改向、截止时间前拒发、短读保真和失败撤销资格。进程回归实际派生子孙进程，分别验证直接子进程退出 0 后遗留工作进程、超时和 SIGTERM 中断，以及回收后拒绝继续执行；遗留工作进程还会忽略 SIGTERM，要求有界 SIGKILL 和 wait 回收。fixture 不会启动 QEMU，也不能代替两次真实构建或运行时正负例。

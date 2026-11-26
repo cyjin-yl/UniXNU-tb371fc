@@ -1,11 +1,14 @@
 """Failure boundaries and independently known vectors; no fixture is a guest boot."""
 import copy
+import errno
 import hashlib
 import hmac
 import importlib.util
 import json
+import os
 from pathlib import Path
 import re
+import signal
 import struct
 import tempfile
 import time
@@ -120,6 +123,18 @@ class SourceContracts(unittest.TestCase):
 
 
 class MachineContracts(unittest.TestCase):
+    def reap_fixture_group(self, group):
+        """Keep even a failing regression from leaving its own fixture process."""
+        if group is None: return
+        try: os.killpg(group, signal.SIGKILL)
+        except ProcessLookupError: pass
+        deadline = time.monotonic() + 2
+        while time.monotonic() < deadline:
+            try: reaped, _ = os.waitpid(-group, os.WNOHANG)
+            except ChildProcessError: break
+            if not reaped: time.sleep(.01)
+        with self.assertRaises(ProcessLookupError): os.killpg(group, 0)
+
     def test_real_owned_subprocess_timeout_is_terminated_and_reaped(self):
         with tempfile.TemporaryDirectory() as tmp:
             journal = B.Journal(Path(tmp))
@@ -127,7 +142,179 @@ class MachineContracts(unittest.TestCase):
                 journal.execute([sys.executable, "-c", "import time; time.sleep(30)"], "timeout", timeout=.03)
             self.assertTrue(journal.commands[0]["reaped"])
             self.assertLess(journal.commands[0]["exit"], 0)
+            self.assertTrue(journal.commands[0]["cleanup"]["group_absent"])
+            self.assertTrue(journal.commands[0]["cleanup"]["direct_child_reaped"])
             self.assertTrue((Path(tmp) / "commands.json").is_file())
+
+    def test_successful_command_records_an_already_absent_group(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            journal = B.Journal(Path(tmp))
+            for label in ("first", "second"):
+                self.assertEqual(journal.execute([sys.executable, "-c", "print('finished')"], label),
+                                 b"finished\n")
+                receipt = journal.commands[-1]
+                self.assertTrue(receipt["group_absent_after_wait"])
+                self.assertTrue(receipt["cleanup"]["group_absent"])
+                self.assertEqual(receipt["cleanup"]["signals"], [])
+                self.assertEqual(receipt["cleanup"]["direct_exit_code"], 0)
+
+    def test_real_forked_worker_is_reaped_on_orphan_timeout_and_signal(self):
+        from route_a_pacga_probe import run as execution
+        child_source = """
+import os, signal, sys, time
+from pathlib import Path
+mode, pid_name, ready_name = sys.argv[1:]
+descendant = os.fork()
+if descendant == 0:
+    if mode == 'orphan':
+        signal.signal(signal.SIGTERM, signal.SIG_IGN)
+    Path(ready_name).write_text('ready')
+    while True:
+        time.sleep(30)
+deadline = time.monotonic() + 2
+while not Path(ready_name).is_file():
+    if time.monotonic() >= deadline:
+        os._exit(2)
+    time.sleep(.005)
+Path(pid_name).write_text(str(os.getpid()) + ' ' + str(descendant))
+if mode == 'orphan':
+    os._exit(0)
+if mode == 'signal':
+    os.kill(os.getppid(), signal.SIGTERM)
+time.sleep(30)
+"""
+        for mode, expected in (("orphan", B.BuildError), ("timeout", subprocess.TimeoutExpired),
+                               ("signal", InterruptedError)):
+            with self.subTest(mode=mode), tempfile.TemporaryDirectory() as tmp:
+                output = Path(tmp)
+                pid_file, ready_file = output / "fixture.pids", output / "fixture.ready"
+                journal = B.Journal(output)
+                # The outer subreaper is also test cleanup for the pre-fix
+                # implementation: a failed assertion must not leave its orphan.
+                with execution.owned_children():
+                    try:
+                        with self.assertRaises(expected):
+                            journal.execute([sys.executable, "-c", child_source, mode,
+                                             str(pid_file), str(ready_file)], mode, timeout=3)
+                        parent, descendant = map(int, pid_file.read_text().split())
+                        receipt = journal.commands[0]
+                        self.assertEqual(receipt["pid"], parent)
+                        self.assertFalse(receipt["group_absent_after_wait"])
+                        self.assertTrue(receipt["cleanup"]["group_absent"])
+                        self.assertTrue(receipt["cleanup"]["direct_child_reaped"])
+                        self.assertIn(descendant, [item["pid"] for item in receipt["cleanup"]["reaped_descendants"]])
+                        if mode == "orphan":
+                            self.assertEqual(receipt["exit"], 0)
+                            self.assertIn("SIGKILL", receipt["cleanup"]["signals"])
+                        with self.assertRaises(ProcessLookupError): os.killpg(parent, 0)
+                        for pid in (parent, descendant):
+                            with self.assertRaises(ProcessLookupError): os.kill(pid, 0)
+                        disk = json.loads((output / "commands.json").read_text())
+                        self.assertEqual(disk[0]["cleanup"], receipt["cleanup"])
+                        with self.assertRaisesRegex(B.BuildError, "after a failed journal command"):
+                            journal.execute([sys.executable, "-c", "pass"], "must-not-start")
+                        self.assertEqual(len(journal.commands), 1)
+                        self.assertFalse((output / "must-not-start.stdout").exists())
+                    finally:
+                        if pid_file.is_file():
+                            self.reap_fixture_group(int(pid_file.read_text().split()[0]))
+
+    def test_group_probe_failure_still_cleans_the_live_owned_process(self):
+        from route_a_pacga_probe import run as execution
+        original_killpg = os.killpg
+        injected = False
+
+        def fail_probe_once(group, sig):
+            nonlocal injected
+            if sig == 0 and not injected:
+                injected = True
+                raise OSError(errno.EIO, "injected group probe failure")
+            return original_killpg(group, sig)
+
+        with tempfile.TemporaryDirectory() as tmp, execution.owned_children():
+            journal = B.Journal(Path(tmp))
+            try:
+                with patch.object(B.os, "killpg", side_effect=fail_probe_once), \
+                        patch.object(execution, "stop_group", wraps=execution.stop_group) as cleanup:
+                    with self.assertRaises(subprocess.TimeoutExpired) as caught:
+                        journal.execute([sys.executable, "-c", "import time; time.sleep(30)"],
+                                        "probe-failure", timeout=.03)
+                cleanup.assert_called_once()
+                self.assertTrue(injected)
+                self.assertTrue(journal.commands[0]["cleanup"]["group_absent"])
+                self.assertIn("group-probe", "\n".join(caught.exception.__notes__))
+                self.assertTrue(journal.failed)
+            finally:
+                self.reap_fixture_group(journal.commands[0].get("pid"))
+
+    def test_pid_or_cleanup_receipt_failure_preserves_the_primary_exception(self):
+        from route_a_pacga_probe import run as execution
+        original_save = B.save
+        for mode in ("timeout-receipt", "pid-receipt"):
+            with self.subTest(mode=mode), tempfile.TemporaryDirectory() as tmp, execution.owned_children():
+                journal = B.Journal(Path(tmp))
+                calls = 0
+
+                def fail_receipt(path, value):
+                    nonlocal calls
+                    calls += 1
+                    if calls >= (2 if mode == "pid-receipt" else 3):
+                        raise OSError(errno.ENOSPC, "injected " + ("PID receipt" if calls == 2 else "cleanup receipt"))
+                    return original_save(path, value)
+
+                expected = OSError if mode == "pid-receipt" else subprocess.TimeoutExpired
+                try:
+                    with patch.object(B, "save", side_effect=fail_receipt):
+                        with self.assertRaises(expected) as caught:
+                            journal.execute([sys.executable, "-c", "import time; time.sleep(30)"],
+                                            mode, timeout=.03)
+                    if mode == "pid-receipt":
+                        self.assertEqual(caught.exception.errno, errno.ENOSPC)
+                        self.assertIn("PID receipt", str(caught.exception))
+                    self.assertIn("cleanup receipt", "\n".join(caught.exception.__notes__))
+                    self.assertTrue(journal.commands[0]["cleanup"]["group_absent"])
+                    self.assertTrue(journal.commands[0]["cleanup"]["direct_child_reaped"])
+                    self.assertTrue(journal.failed)
+                finally:
+                    self.reap_fixture_group(journal.commands[0].get("pid"))
+
+    def test_stream_close_failure_preserves_timeout_and_closes_both_logs(self):
+        from route_a_pacga_probe import run as execution
+        original_open = Path.open
+        closed, streams = [], []
+
+        class FailingClose:
+            def __init__(self, stream, label):
+                self.stream, self.label = stream, label
+                streams.append(stream)
+            def fileno(self): return self.stream.fileno()
+            def close(self):
+                self.stream.close()
+                closed.append(self.label)
+                if self.label == "stdout":
+                    raise OSError(errno.EIO, "injected stdout close failure")
+
+        def wrapped_open(path, mode="r", *args, **kwargs):
+            stream = original_open(path, mode, *args, **kwargs)
+            if mode == "xb" and path.suffix in (".stdout", ".stderr"):
+                return FailingClose(stream, path.suffix[1:])
+            return stream
+
+        with tempfile.TemporaryDirectory() as tmp, execution.owned_children():
+            journal = B.Journal(Path(tmp))
+            try:
+                with patch.object(Path, "open", new=wrapped_open):
+                    with self.assertRaises(subprocess.TimeoutExpired) as caught:
+                        journal.execute([sys.executable, "-c", "import time; time.sleep(30)"],
+                                        "close-failure", timeout=.03)
+                self.assertEqual(closed, ["stdout", "stderr"])
+                self.assertTrue(all(stream.closed for stream in streams))
+                self.assertIn("stdout-close", "\n".join(caught.exception.__notes__))
+                self.assertTrue(journal.commands[0]["cleanup"]["group_absent"])
+                self.assertEqual(journal.commands[0]["teardown_errors"][0]["phase"], "stdout-close")
+                self.assertTrue(journal.failed)
+            finally:
+                self.reap_fixture_group(journal.commands[0].get("pid"))
 
     def test_real_bl_resolution_and_duplicate_or_wrong_target_rejected(self):
         strict, data, base = image()
@@ -319,6 +506,10 @@ class CoreCryptoReviewRegressions(unittest.TestCase):
                                           "-Wl,-oso_prefix," + str(output) + "/", report["archive"]["path"]],
                                  "cwd": str(platform), "environment": {"TMPDIR": str(output), "LANG": "C"},
                                  "exit": 0, "reaped": True})
+                for entry in commands:
+                    entry.update(group_absent_after_wait=True,
+                                 cleanup={"group_absent": True, "direct_child_reaped": True,
+                                          "direct_exit_code": 0}, teardown_errors=[])
                 receipt = output / "report.json"; receipt.write_text(json.dumps(report))
                 return receipt, report
 
@@ -361,6 +552,13 @@ class CoreCryptoReviewRegressions(unittest.TestCase):
                     "copied-first-build-commands": lambda r: r.update(commands=copy.deepcopy(first["commands"])),
                     "failed-compile": lambda r: r["commands"][0].update(exit=1),
                     "unreaped-compile": lambda r: r["commands"][0].update(reaped=False),
+                    "missing-group-cleanup": lambda r: r["commands"][0].pop("cleanup"),
+                    "live-group-after-exit-zero": lambda r: r["commands"][0].update(group_absent_after_wait=False),
+                    "group-still-present-after-cleanup": lambda r: r["commands"][0]["cleanup"].update(group_absent=False),
+                    "cleanup-has-unreaped-direct-child": lambda r: r["commands"][0]["cleanup"].update(direct_child_reaped=False),
+                    "cleanup-disagrees-with-exit-zero": lambda r: r["commands"][0]["cleanup"].update(direct_exit_code=1),
+                    "teardown-error-on-success": lambda r: r["commands"][0]["teardown_errors"].append({"phase": "group-probe", "type": "OSError", "error": "fixture"}),
+                    "archive-has-live-group": lambda r: next(c for c in r["commands"] if "--fixture-archive" in c["argv"])["cleanup"].update(group_absent=False),
                     "duplicate-output": lambda r: r["commands"].__setitem__(1, copy.deepcopy(r["commands"][0])),
                     "different-compile-flags": lambda r: r["commands"][0]["argv"].append("-DDIFFERENT_BUILD=1"),
                     "different-compile-environment": lambda r: r["commands"][0]["environment"].update(LANG="other"),
