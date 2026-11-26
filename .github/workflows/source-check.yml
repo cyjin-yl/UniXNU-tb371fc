@@ -34,6 +34,7 @@ jobs:
           import os
           import shutil
           import subprocess
+          import struct
           import sys
           
           sys.path.insert(0, 'scripts')
@@ -42,40 +43,61 @@ jobs:
           
           libc = ctypes.CDLL(None)
           libc.gnu_get_libc_version.restype = ctypes.c_char_p
+          def load_layout(item):
+              header = struct.unpack('<16sHHIQQQIHHHHHH', os.pread(item.fd, 64, 0))
+              entry, offset, width, count = header[4], header[5], header[9], header[10]
+              if width != 56 or not 0 < count <= 256:
+                  raise RuntimeError('unexpected ELF64 program header geometry')
+              loads = []
+              for index in range(count):
+                  row = struct.unpack('<IIQQQQQQ', os.pread(item.fd, width, offset + index * width))
+                  if row[0] == 1:
+                      loads.append(dict(flags=row[1], offset=row[2], vaddr=row[3], filesz=row[5], memsz=row[6], align=row[7]))
+              item.verify()
+              return dict(entry=entry, phoff=offset, phentsize=width, phnum=count, loads=loads)
+          
           print('LOADER_DIAGNOSTIC_LIBC=' + libc.gnu_get_libc_version().decode(), flush=True)
           program = BoundELF(shutil.which('llvm-mc'), executable=True)
           loader = None
           try:
               loader = BoundELF(program.elf['interpreter'], executable=True)
               print('LOADER_DIAGNOSTIC_IDENTITIES=' + json.dumps(
-                  {'program': program.identity, 'elf': program.elf, 'loader': loader.identity}), flush=True)
-              for held in (False, True):
-                  for auxiliary in (False, True):
-                      env = {'PATH': '/usr/bin:/bin', 'LC_ALL': 'C', 'LANG': 'C', 'NO_COLOR': '1'}
-                      if auxiliary:
-                          env['LD_SHOW_AUXV'] = '1'
-                      argv = [loader.invocation, '--list', program.path]
-                      executable = '/proc/self/fd/' + str(loader.fd) if held else loader.path
-                      child = subprocess.Popen(argv, executable=executable, pass_fds=(program.fd, loader.fd),
-                          stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
-                          start_new_session=True, env=env)
-                      result = {'held_fd': held, 'show_auxiliary': auxiliary, 'argv': argv}
-                      try:
-                          stdout, stderr = _communicate_bounded(child, b'', 30)
-                          result.update(returncode=child.returncode, stdout=stdout.decode('ascii'), stderr=stderr.decode('ascii'))
-                      finally:
-                          result['cleanup'] = _cleanup(child)
-                          for stream in (child.stdin, child.stdout, child.stderr):
-                              if stream is not None and not stream.closed:
-                                  stream.close()
-                          print('LOADER_DIAGNOSTIC_RESULT=' + json.dumps(result, sort_keys=True), flush=True)
-                      cleanup = result['cleanup']
-                      if not (cleanup['direct_child_reaped'] and cleanup['group_absent'] and not cleanup['errors']):
-                          raise RuntimeError('loader diagnostic child did not finish cleanly')
-                      if result.get('returncode') != 0:
-                          raise RuntimeError('loader diagnostic child returned an error')
-                      program.verify()
-                      loader.verify()
+                  {'program': program.identity, 'elf': program.elf, 'program_fd': program.fd,
+                   'program_loads': load_layout(program), 'loader': loader.identity, 'loader_fd': loader.fd,
+                   'loader_loads': load_layout(loader)}), flush=True)
+              modes = [(held, auxiliary, False, False, None) for held in (False, True) for auxiliary in (False, True)]
+              modes += [(True, True, True, False, trace) for trace in (None, "1", "2")]
+              for held, auxiliary, debug_files, fd_argv0, trace in modes:
+                  env = {'PATH': '/usr/bin:/bin', 'LC_ALL': 'C', 'LANG': 'C', 'NO_COLOR': '1'}
+                  if auxiliary:
+                      env['LD_SHOW_AUXV'] = '1'
+                  if debug_files:
+                      env['LD_DEBUG'] = 'files'
+                  if trace is not None:
+                      env['LD_TRACE_LOADED_OBJECTS'] = trace
+                  executable = '/proc/self/fd/' + str(loader.fd) if held else loader.path
+                  argv = [executable if fd_argv0 else loader.invocation, '--list', program.path]
+                  child = subprocess.Popen(argv, executable=executable, pass_fds=(program.fd, loader.fd),
+                      stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+                      start_new_session=True, env=env)
+                  result = {'held_fd': held, 'show_auxiliary': auxiliary, 'debug_files': debug_files,
+                            'trace_objects': trace, 'fd_argv0': fd_argv0, 'argv': argv, 'executable': executable}
+                  try:
+                      stdout, stderr = _communicate_bounded(child, b'', 30)
+                      result.update(returncode=child.returncode, stdout=stdout.decode('ascii'), stderr=stderr.decode('ascii'))
+                  finally:
+                      result['cleanup'] = _cleanup(child)
+                      for stream in (child.stdin, child.stdout, child.stderr):
+                          if stream is not None and not stream.closed:
+                              stream.close()
+                      print('LOADER_DIAGNOSTIC_RESULT=' + json.dumps(result, sort_keys=True), flush=True)
+                  cleanup = result['cleanup']
+                  if not (cleanup['direct_child_reaped'] and cleanup['group_absent'] and not cleanup['errors']):
+                      raise RuntimeError('loader diagnostic child did not finish cleanly')
+                  if result.get('returncode') != 0:
+                      raise RuntimeError('loader diagnostic child returned an error')
+                  program.verify()
+                  loader.verify()
           finally:
               if loader is not None:
                   loader.close()
