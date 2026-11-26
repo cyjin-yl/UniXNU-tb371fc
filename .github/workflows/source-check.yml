@@ -26,6 +26,61 @@ jobs:
           clang-21 --version
           python3 -m venv "$RUNNER_TEMP/route-a-venv"
           "$RUNNER_TEMP/route-a-venv/bin/python" -m pip install --requirement requirements-route-a.txt
+      - name: Record bounded native loader inventory diagnostics
+        run: |
+          python3 - <<'PY'
+          import ctypes
+          import json
+          import os
+          import shutil
+          import subprocess
+          import sys
+          
+          sys.path.insert(0, 'scripts')
+          from route_a_zeta.zeta_elf_tools import BoundELF
+          from route_a_zeta.zeta_llvm_oracle import _cleanup, _communicate_bounded
+          
+          libc = ctypes.CDLL(None)
+          libc.gnu_get_libc_version.restype = ctypes.c_char_p
+          print('LOADER_DIAGNOSTIC_LIBC=' + libc.gnu_get_libc_version().decode(), flush=True)
+          program = BoundELF(shutil.which('llvm-mc'), executable=True)
+          loader = None
+          try:
+              loader = BoundELF(program.elf['interpreter'], executable=True)
+              print('LOADER_DIAGNOSTIC_IDENTITIES=' + json.dumps(
+                  {'program': program.identity, 'elf': program.elf, 'loader': loader.identity}), flush=True)
+              for held in (False, True):
+                  for auxiliary in (False, True):
+                      env = {'PATH': '/usr/bin:/bin', 'LC_ALL': 'C', 'LANG': 'C', 'NO_COLOR': '1'}
+                      if auxiliary:
+                          env['LD_SHOW_AUXV'] = '1'
+                      argv = [loader.invocation, '--list', program.path]
+                      executable = '/proc/self/fd/' + str(loader.fd) if held else loader.path
+                      child = subprocess.Popen(argv, executable=executable, pass_fds=(program.fd, loader.fd),
+                          stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+                          start_new_session=True, env=env)
+                      result = {'held_fd': held, 'show_auxiliary': auxiliary, 'argv': argv}
+                      try:
+                          stdout, stderr = _communicate_bounded(child, b'', 30)
+                          result.update(returncode=child.returncode, stdout=stdout.decode('ascii'), stderr=stderr.decode('ascii'))
+                      finally:
+                          result['cleanup'] = _cleanup(child)
+                          for stream in (child.stdin, child.stdout, child.stderr):
+                              if stream is not None and not stream.closed:
+                                  stream.close()
+                          print('LOADER_DIAGNOSTIC_RESULT=' + json.dumps(result, sort_keys=True), flush=True)
+                      cleanup = result['cleanup']
+                      if not (cleanup['direct_child_reaped'] and cleanup['group_absent'] and not cleanup['errors']):
+                          raise RuntimeError('loader diagnostic child did not finish cleanly')
+                      if result.get('returncode') != 0:
+                          raise RuntimeError('loader diagnostic child returned an error')
+                      program.verify()
+                      loader.verify()
+          finally:
+              if loader is not None:
+                  loader.close()
+              program.close()
+          PY
       - name: Verify pinned pager patch application and reversal
         run: python3 scripts/prepare_route_a_xnu.py --output "$RUNNER_TEMP/route-a-xnu"
       - name: Prepare fixed public DarwinBoot parser and XNU boot argument declarations
