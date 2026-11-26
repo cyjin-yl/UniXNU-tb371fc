@@ -101,3 +101,23 @@ python3 scripts/probe_route_a_nontpro_fragments.py \
 - 有限原始字节片段运行，以及最终候选中的真实用户 SVC／返回合同。
 
 任一门槛未闭合都不把 A01 记为完成。完整 Darwin 用户态启动及板级验收另行记录。
+
+## 七组真实 XNU 预处理的后续证据
+
+[2026-11-27 公开摘要](evidence/route-a-a01-cpp-20261127.json)记录一次已经完成的真实预处理及本次只读复核。原控制器在 UTC 2026-11-26 15:19:37–15:27:21 运行，耗时 **463.772 秒**；119 项输入身份记录、23 条实际命令均完成，命令退出码全为 0。七组为 `kern_crossarch`、`systemcalls`、生成的 `init_sysent`、`mach_loader`、`kern_exec`、`status` 和 `pcb`。每组分别执行依赖分析、预处理正文和宏表输出，另有编译器版本与 resource-dir 两条命令。本次没有重跑实验。
+
+这次只读复核重新计算了原 receipt、plan 及七份正文／七份宏表的 SHA-256，并与既有身份记录相符；原始依赖身份来自收据，没有声称本次又重哈希全部依赖。公开摘要只保留配置、摘要、函数定位、结论及范围。
+
+| 实际展开的内容 | 本次可确认的范围 |
+| --- | --- |
+| `exec_save_path` 与 `exec_copyout_strings` 完整函数 | 首项固定加 `executable_path=` 前缀；argv、envv 分别终止，apple 区由保存的首项与 `ip_endenvv` 起的后续项组成。 |
+| `exec_add_apple_strings` 完整函数 | 所检查分支没有构造两项 `dyld_hw_tpro*` 键；仍明确发布 `security_config`，其值不能假定为零。本配置的 MTE 条件段未进入正文，函数也没有添加 `has_sec_transition`。 |
+| `mach_loader`、exec 的所选调用点 | 保留 dyld thread-state／entry-point 选择，以及复制字符串后设置 SP、在 dynlinker 分支再压入主 Mach header 的操作；这些仍以相应加载和复制成功为条件。 |
+| `status` 与 `pcb` 的完整所选函数 | 线程状态初始化与 entry-point 设置中的已检查 PAC 条件段被裁去；这没有替代最终对象、汇编返回与真实寄存器验证。 |
+| crossarch 与 syscall 表／返回路径 | 展开的 namespace 0 返回 45，生成表保留对应目标；DTrace、MACF、debug syscall rejection 相关配置仍启用，运行时过滤状态没有被省略。 |
+
+七组最终宏表均有 `__arm64__=1`、`XNU_TARGET_OS_IOS=1`、`ARM64_BOARD_CONFIG_BCM2837=1`；所列 PAC、arm64e、MTE、SPTM／monitor 宏未定义。宏表反映每组的最终状态，函数结论来自实际正文，不以“未定义”推导所有条件点或其他编译单元。`NO_MONITOR=1` 也不被当成全内核 PPL 配置的替代证据。
+
+两项 TPRO 键在本次 `kern_exec` 正文中的字面计数为零，只辅助定位完整函数审查；它不证明其他发布点、后续向量修改或所有运行中的进程都没有这些键。先前记录的 dyld 入口会在调整 SP 前保存原 SP 到 X0，属于另一份精确输入观察。本次所选内核调用点不能单独证明最终 SP、header、X0 与该 dyld 输入已经接通。
+
+**A01 仍未完成。** `task`、commpage、pmap／pmap_data 和 `vm_map` 不在七组中；实际配置、对象、最终链接选择与相关写入者仍须绑定。原收据也明确保持“原构建环境已重建”“全部外部预处理输入已绑定”“已链接内核身份已绑定”“真实 dyld 入口”“全部 A01 hazard 闭合”“运行时执行”均为 false。后续验收仍包括实际 apple 向量、commpage 字节、VM fallback、全部 119 组状态传播、cache dyld 交接及真实 XNU SVC／返回；预处理退出 0 不构成这些项目的通过结果。

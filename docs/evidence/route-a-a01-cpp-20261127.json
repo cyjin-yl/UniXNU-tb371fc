@@ -1,0 +1,610 @@
+{
+  "schema": "route-a-a01-seven-recipe-cpp-public-summary-v1",
+  "scope": "Controlled preprocessing of seven real prepared XNU translation units; selected function and call-site review. This is not object compilation or an A01 boot qualification.",
+  "experiment": {
+    "started_utc": "2026-11-26T15:19:37Z",
+    "finished_utc": "2026-11-26T15:27:21Z",
+    "controller_elapsed_seconds": 463.77209593800944,
+    "controller_complete": true,
+    "controller_planned_exit": 0,
+    "controller_recorded_input_identity_count": 119,
+    "commands": 23,
+    "command_exit_codes": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    "command_groups": [
+      "compiler version",
+      "compiler resource directory",
+      "seven dependency analyses",
+      "seven preprocessed bodies",
+      "seven final macro tables"
+    ],
+    "object_compilation": false,
+    "target_execution": false
+  },
+  "provenance": {
+    "xnu_repository": "https://github.com/apple-oss-distributions/xnu",
+    "xnu_baseline_commit": "ac9718fb1af618d5ce8678d0dc6e8a58f252216f",
+    "xnu_version": "12377.121.6",
+    "target_configuration": "DEVELOPMENT_ARM64_BCM2837",
+    "prepared_source_scope": "architecture-darwin26-plain-pager",
+    "prepared_source_files_are_not_assumed_identical_to_public_baseline": true,
+    "compiler": {
+      "version": "clang 24.0.0git",
+      "sha256": "85d220e32bd83d75de788c8beab0bea646a4684e1112f7c06266ca71e651bb04"
+    },
+    "private_artifact_identities": {
+      "plan.json": {
+        "bytes": 322236,
+        "sha256": "01e1d0b7f49e2a1cd0e16826ca47992a76a12b95c14f1e01de7763ed76a1ea8b"
+      },
+      "receipt.json": {
+        "bytes": 4786946,
+        "sha256": "98f0c00eeeed87ad67734925fbbfe70b03155f0b6b4f6dbdd0f2977e5c08891b"
+      }
+    }
+  },
+  "readback": {
+    "receipt_and_plan_sha256_verified": true,
+    "seven_body_and_seven_macro_file_sha256_verified_against_receipt": true,
+    "individual_read_generations_stable": true,
+    "original_dependency_identities_taken_from_retained_receipt": true,
+    "all_original_dependencies_rehashed_during_this_readback": false,
+    "no_experiment_rerun": true,
+    "review_method": "Complete selected function bodies and bounded call-site extracts were read from the retained preprocessor outputs. This is semantic review, not a C verification proof.",
+    "macro_null_means": "No definition in that translation unit's retained final macro table. This alone does not establish every earlier conditional, the linked implementation or a runtime capability.",
+    "function_extent_hash_format": "UTF-8 bytes from the function name through its matched closing brace, preserving whitespace and preprocessor line directives. Only identity and location are published."
+  },
+  "translation_units": [
+    {
+      "label": "00-kern_crossarch",
+      "prepared_source": {
+        "path": "bsd/kern/kern_crossarch.c",
+        "bytes": 1616,
+        "sha256": "07bfe90e3036a36bb0dcfb978dc0f11b218981b7a67d4834ac150b2f5c271a91"
+      },
+      "compiler_recipe": {
+        "basename": "kern_crossarch.o.json",
+        "bytes": 9203,
+        "sha256": "70098082f5b8b8d0b5c69c44281f65c5f30cbd15d4b53607f0425febc99fa990"
+      },
+      "positive_dependency_count": 380,
+      "meta_features_header": {
+        "configuration_group": "bsd/DEVELOPMENT",
+        "bytes": 1511,
+        "sha256": "907ce9206b42e75e6451670797d5264149b941311194677963e4ef9d2e772053"
+      },
+      "preprocessed_body": {
+        "basename": "00-kern_crossarch-body.stdout",
+        "bytes": 1770773,
+        "sha256": "f23195e5a69e604a1ae8111cec287262129c9161219a00d7d2a9eeb4f1eef59f"
+      },
+      "final_macro_table": {
+        "basename": "00-kern_crossarch-macros.stdout",
+        "bytes": 647641,
+        "sha256": "b50a8d630b01404ec8c4dde27a48d254d4b05e86f188ed42f61bba44d5045b14"
+      },
+      "selected_final_macro_values": {
+        "HAS_APPLE_PAC": null,
+        "HAS_NATIVE_PAC": null,
+        "__ARM_KERNEL_PROTECT__": null,
+        "HAS_MTE": null,
+        "HAS_MTE_EMULATION_SHIMS": null,
+        "CONFIG_ROSETTA": null,
+        "__arm64__": "1",
+        "__arm64e__": null,
+        "XNU_TARGET_OS_IOS": "1",
+        "XNU_TARGET_OS_OSX": null,
+        "ARM64_BOARD_CONFIG_BCM2837": "1",
+        "CONFIG_REQUIRES_U32_MUNGING": "1",
+        "CONFIG_DEBUG_SYSCALL_REJECTION": "1",
+        "CONFIG_MACF": "1",
+        "CONFIG_DTRACE": "1",
+        "CONFIG_AUDIT": "0",
+        "XNU_MONITOR": null,
+        "CONFIG_SPTM": null,
+        "NO_MONITOR": "1"
+      },
+      "complete_functions_reviewed": [
+        {
+          "name": "sys_crossarch_trap",
+          "body_line": 48582,
+          "bytes": 190,
+          "sha256": "544edbc5db3bc4c03dcef097beac53e3e3647710d4ab48ef45b39ee81e29fa49"
+        }
+      ]
+    },
+    {
+      "label": "01-systemcalls",
+      "prepared_source": {
+        "path": "bsd/dev/arm/systemcalls.c",
+        "bytes": 17115,
+        "sha256": "7eb44232e6da37c8e6f5d2317ed5cf1d55d02032410b0ddf7007e4ca7b495df4"
+      },
+      "compiler_recipe": {
+        "basename": "systemcalls.o.json",
+        "bytes": 9297,
+        "sha256": "d601a6d6af16b13c199b28475328a8d2f4d89812887f5e828647197afd72c33d"
+      },
+      "positive_dependency_count": 447,
+      "meta_features_header": {
+        "configuration_group": "bsd/DEVELOPMENT",
+        "bytes": 1511,
+        "sha256": "907ce9206b42e75e6451670797d5264149b941311194677963e4ef9d2e772053"
+      },
+      "preprocessed_body": {
+        "basename": "01-systemcalls-body.stdout",
+        "bytes": 2206819,
+        "sha256": "dc6d74a7ad53e9db6152d3707f2626a5dc12ee6ac130f6e03a90d66112f41937"
+      },
+      "final_macro_table": {
+        "basename": "01-systemcalls-macros.stdout",
+        "bytes": 780383,
+        "sha256": "47e73251e48a3347fecaba67d3f448a7c8c6c52e9d5e6a0041bc0d4eaaca0565"
+      },
+      "selected_final_macro_values": {
+        "HAS_APPLE_PAC": null,
+        "HAS_NATIVE_PAC": null,
+        "__ARM_KERNEL_PROTECT__": null,
+        "HAS_MTE": null,
+        "HAS_MTE_EMULATION_SHIMS": null,
+        "CONFIG_ROSETTA": null,
+        "__arm64__": "1",
+        "__arm64e__": null,
+        "XNU_TARGET_OS_IOS": "1",
+        "XNU_TARGET_OS_OSX": null,
+        "ARM64_BOARD_CONFIG_BCM2837": "1",
+        "CONFIG_REQUIRES_U32_MUNGING": "1",
+        "CONFIG_DEBUG_SYSCALL_REJECTION": "1",
+        "CONFIG_MACF": "1",
+        "CONFIG_DTRACE": "1",
+        "CONFIG_AUDIT": "0",
+        "XNU_MONITOR": null,
+        "CONFIG_SPTM": null,
+        "NO_MONITOR": "1"
+      },
+      "complete_functions_reviewed": [
+        {
+          "name": "unix_syscall_return",
+          "body_line": 63313,
+          "bytes": 2306,
+          "sha256": "3afe735f692b1aa02fed6ed55b191d8cb160787aeb889add88a7f33ea3cd0dd5"
+        }
+      ]
+    },
+    {
+      "label": "02-init_sysent",
+      "prepared_source": {
+        "path": "generated/bsd/DEVELOPMENT/init_sysent.c",
+        "bytes": 177209,
+        "sha256": "daf4bd9b4b82fd2f399be37f909e6be96cfc7ff981cae9b1f6a08d46e59b82a8"
+      },
+      "compiler_recipe": {
+        "basename": "init_sysent.o.json",
+        "bytes": 9051,
+        "sha256": "eccd2f848fe494c5a3e6ccf850aa87abc725adbfa162e0c00c0de59e9aff0309"
+      },
+      "positive_dependency_count": 399,
+      "meta_features_header": {
+        "configuration_group": "bsd/DEVELOPMENT",
+        "bytes": 1511,
+        "sha256": "907ce9206b42e75e6451670797d5264149b941311194677963e4ef9d2e772053"
+      },
+      "preprocessed_body": {
+        "basename": "02-init_sysent-body.stdout",
+        "bytes": 1882948,
+        "sha256": "2dbfa15cb1badbd811b8ea553c49c0911dc301c41c33def6c5a6ee085825b89a"
+      },
+      "final_macro_table": {
+        "basename": "02-init_sysent-macros.stdout",
+        "bytes": 673785,
+        "sha256": "90528004e881fe62e49864cad1f739398d8953c154132ee857143ef3a4a5db2d"
+      },
+      "selected_final_macro_values": {
+        "HAS_APPLE_PAC": null,
+        "HAS_NATIVE_PAC": null,
+        "__ARM_KERNEL_PROTECT__": null,
+        "HAS_MTE": null,
+        "HAS_MTE_EMULATION_SHIMS": null,
+        "CONFIG_ROSETTA": null,
+        "__arm64__": "1",
+        "__arm64e__": null,
+        "XNU_TARGET_OS_IOS": "1",
+        "XNU_TARGET_OS_OSX": null,
+        "ARM64_BOARD_CONFIG_BCM2837": "1",
+        "CONFIG_REQUIRES_U32_MUNGING": "1",
+        "CONFIG_DEBUG_SYSCALL_REJECTION": "1",
+        "CONFIG_MACF": "1",
+        "CONFIG_DTRACE": "1",
+        "CONFIG_AUDIT": "0",
+        "XNU_MONITOR": null,
+        "CONFIG_SPTM": null,
+        "NO_MONITOR": "1"
+      },
+      "complete_functions_reviewed": []
+    },
+    {
+      "label": "03-mach_loader",
+      "prepared_source": {
+        "path": "bsd/kern/mach_loader.c",
+        "bytes": 120943,
+        "sha256": "7fa143a0e3ed3b414b56a87279af51ee8a8420365591ec63569530beb62fe679"
+      },
+      "compiler_recipe": {
+        "basename": "mach_loader.o.json",
+        "bytes": 9234,
+        "sha256": "977b22d6776ba18a925d5e96a707d85887b473081d2e43425d62d8d9a9ad9bae"
+      },
+      "positive_dependency_count": 544,
+      "meta_features_header": {
+        "configuration_group": "bsd/DEVELOPMENT",
+        "bytes": 1511,
+        "sha256": "907ce9206b42e75e6451670797d5264149b941311194677963e4ef9d2e772053"
+      },
+      "preprocessed_body": {
+        "basename": "03-mach_loader-body.stdout",
+        "bytes": 2434324,
+        "sha256": "1ab401e800138c2a5507ad3606677b53a6577d6e5e85a6519f077e06522ce55f"
+      },
+      "final_macro_table": {
+        "basename": "03-mach_loader-macros.stdout",
+        "bytes": 868135,
+        "sha256": "a8af9a9e327d700334965f7e521a999a50f9f7bffd81175f6d65e4069f0ca70c"
+      },
+      "selected_final_macro_values": {
+        "HAS_APPLE_PAC": null,
+        "HAS_NATIVE_PAC": null,
+        "__ARM_KERNEL_PROTECT__": null,
+        "HAS_MTE": null,
+        "HAS_MTE_EMULATION_SHIMS": null,
+        "CONFIG_ROSETTA": null,
+        "__arm64__": "1",
+        "__arm64e__": null,
+        "XNU_TARGET_OS_IOS": "1",
+        "XNU_TARGET_OS_OSX": null,
+        "ARM64_BOARD_CONFIG_BCM2837": "1",
+        "CONFIG_REQUIRES_U32_MUNGING": "1",
+        "CONFIG_DEBUG_SYSCALL_REJECTION": "1",
+        "CONFIG_MACF": "1",
+        "CONFIG_DTRACE": "1",
+        "CONFIG_AUDIT": "0",
+        "XNU_MONITOR": null,
+        "CONFIG_SPTM": null,
+        "NO_MONITOR": "1"
+      },
+      "complete_functions_reviewed": []
+    },
+    {
+      "label": "04-kern_exec",
+      "prepared_source": {
+        "path": "bsd/kern/kern_exec.c",
+        "bytes": 321363,
+        "sha256": "bd6670be93ce1f3c39a4a5dd9ba9d666afe33332d3b51d9dba4c0bd6afce6d33"
+      },
+      "compiler_recipe": {
+        "basename": "kern_exec.o.json",
+        "bytes": 9573,
+        "sha256": "5a50b2f09fa45a35cff0a561165abf12a163240df03679973abc5f904fbc8879"
+      },
+      "positive_dependency_count": 607,
+      "meta_features_header": {
+        "configuration_group": "bsd/DEVELOPMENT",
+        "bytes": 1511,
+        "sha256": "907ce9206b42e75e6451670797d5264149b941311194677963e4ef9d2e772053"
+      },
+      "preprocessed_body": {
+        "basename": "04-kern_exec-body.stdout",
+        "bytes": 3159629,
+        "sha256": "bb08d1bad6c25b6c8c2ec03a50c7c952b68c7bf208b6c79180c3481d5d208c71"
+      },
+      "final_macro_table": {
+        "basename": "04-kern_exec-macros.stdout",
+        "bytes": 926957,
+        "sha256": "573aeb67facc1182a8d55cc6779482473ec5df7480274c4772d261d851ee60b5"
+      },
+      "selected_final_macro_values": {
+        "HAS_APPLE_PAC": null,
+        "HAS_NATIVE_PAC": null,
+        "__ARM_KERNEL_PROTECT__": null,
+        "HAS_MTE": null,
+        "HAS_MTE_EMULATION_SHIMS": null,
+        "CONFIG_ROSETTA": null,
+        "__arm64__": "1",
+        "__arm64e__": null,
+        "XNU_TARGET_OS_IOS": "1",
+        "XNU_TARGET_OS_OSX": null,
+        "ARM64_BOARD_CONFIG_BCM2837": "1",
+        "CONFIG_REQUIRES_U32_MUNGING": "1",
+        "CONFIG_DEBUG_SYSCALL_REJECTION": "1",
+        "CONFIG_MACF": "1",
+        "CONFIG_DTRACE": "1",
+        "CONFIG_AUDIT": "0",
+        "XNU_MONITOR": null,
+        "CONFIG_SPTM": null,
+        "NO_MONITOR": "1"
+      },
+      "complete_functions_reviewed": [
+        {
+          "name": "exec_save_path",
+          "body_line": 86186,
+          "bytes": 954,
+          "sha256": "7d1498f746284af3e292463978a54726bc01812f197a0c7d51ff29cacf709f32"
+        },
+        {
+          "name": "exec_copyout_strings",
+          "body_line": 90757,
+          "bytes": 2911,
+          "sha256": "e7e4d312f4faa0afa5364ae26a8d9177cd1a53fb88508c8cc8f2d4f30f2460c3"
+        },
+        {
+          "name": "exec_add_apple_strings",
+          "body_line": 91250,
+          "bytes": 9596,
+          "sha256": "326f84b604ef4e3817f502830ed28d36dba2b465be297d475b8425c173e68f38"
+        }
+      ]
+    },
+    {
+      "label": "05-status",
+      "prepared_source": {
+        "path": "osfmk/arm64/status.c",
+        "bytes": 75225,
+        "sha256": "770eb6df762274e6379e93aed10045f2464f64836df104d405c47a97076484a0"
+      },
+      "compiler_recipe": {
+        "basename": "status.o.json",
+        "bytes": 9728,
+        "sha256": "ac5973d718edc300941ac88b78ea7c7dba22a1884f361603304be495b1919a93"
+      },
+      "positive_dependency_count": 361,
+      "meta_features_header": {
+        "configuration_group": "osfmk/DEVELOPMENT",
+        "bytes": 858,
+        "sha256": "f6aba62a1d13c86b0f5fce569fa722f42545158822208929e438eb17c22db134"
+      },
+      "preprocessed_body": {
+        "basename": "05-status-body.stdout",
+        "bytes": 1848092,
+        "sha256": "ade500dbb747df179bc6053535f90f3832f41b59878e11218eae2e16062a29da"
+      },
+      "final_macro_table": {
+        "basename": "05-status-macros.stdout",
+        "bytes": 685815,
+        "sha256": "1b933cc2bebbb0707686d9231941823ac3477b016f5b6dfe66f0de060ce6e702"
+      },
+      "selected_final_macro_values": {
+        "HAS_APPLE_PAC": null,
+        "HAS_NATIVE_PAC": null,
+        "__ARM_KERNEL_PROTECT__": null,
+        "HAS_MTE": null,
+        "HAS_MTE_EMULATION_SHIMS": null,
+        "CONFIG_ROSETTA": null,
+        "__arm64__": "1",
+        "__arm64e__": null,
+        "XNU_TARGET_OS_IOS": "1",
+        "XNU_TARGET_OS_OSX": null,
+        "ARM64_BOARD_CONFIG_BCM2837": "1",
+        "CONFIG_REQUIRES_U32_MUNGING": "1",
+        "CONFIG_DEBUG_SYSCALL_REJECTION": "1",
+        "CONFIG_MACF": "1",
+        "CONFIG_DTRACE": "1",
+        "CONFIG_AUDIT": null,
+        "XNU_MONITOR": null,
+        "CONFIG_SPTM": null,
+        "NO_MONITOR": "1"
+      },
+      "complete_functions_reviewed": [
+        {
+          "name": "thread_setuserstack",
+          "body_line": 55294,
+          "bytes": 181,
+          "sha256": "62dd364eda881b7ae928097ff118e9189734710d000af51a4d6bb69423400e1d"
+        },
+        {
+          "name": "thread_adjuserstack",
+          "body_line": 55311,
+          "bytes": 217,
+          "sha256": "2def9225c1c53bd39db859880a7dc633cdf8d5a481594d692986b943c1670445"
+        },
+        {
+          "name": "thread_setentrypoint",
+          "body_line": 55332,
+          "bytes": 184,
+          "sha256": "6739359744887694307c0eed09c9d2fd22e273426904f60c638619f39ca808b1"
+        },
+        {
+          "name": "machine_thread_state_initialize",
+          "body_line": 54990,
+          "bytes": 580,
+          "sha256": "ab37138d88c731c30a575a5ac76488249c4e363e386a11b6b645c4d1f81a534c"
+        }
+      ]
+    },
+    {
+      "label": "06-pcb",
+      "prepared_source": {
+        "path": "osfmk/arm64/pcb.c",
+        "bytes": 49739,
+        "sha256": "c613043ca556468a25f51c6711efac6d98250efec64c49cc0839c4dc11d313be"
+      },
+      "compiler_recipe": {
+        "basename": "pcb.o.json",
+        "bytes": 9748,
+        "sha256": "89206d53c2b25f8f1f4ab7f447528f472aae526c11df2a9a12d56b2babe7f108"
+      },
+      "positive_dependency_count": 397,
+      "meta_features_header": {
+        "configuration_group": "osfmk/DEVELOPMENT",
+        "bytes": 858,
+        "sha256": "f6aba62a1d13c86b0f5fce569fa722f42545158822208929e438eb17c22db134"
+      },
+      "preprocessed_body": {
+        "basename": "06-pcb-body.stdout",
+        "bytes": 2010761,
+        "sha256": "fa5af356b703edecc549aed613a4d6d7f323063663ee51118982414558f73e90"
+      },
+      "final_macro_table": {
+        "basename": "06-pcb-macros.stdout",
+        "bytes": 732518,
+        "sha256": "c990042a61bb2630a0c9e6a8156a47806bde62c910bb3e291f540c2857e86ec7"
+      },
+      "selected_final_macro_values": {
+        "HAS_APPLE_PAC": null,
+        "HAS_NATIVE_PAC": null,
+        "__ARM_KERNEL_PROTECT__": null,
+        "HAS_MTE": null,
+        "HAS_MTE_EMULATION_SHIMS": null,
+        "CONFIG_ROSETTA": null,
+        "__arm64__": "1",
+        "__arm64e__": null,
+        "XNU_TARGET_OS_IOS": "1",
+        "XNU_TARGET_OS_OSX": null,
+        "ARM64_BOARD_CONFIG_BCM2837": "1",
+        "CONFIG_REQUIRES_U32_MUNGING": "1",
+        "CONFIG_DEBUG_SYSCALL_REJECTION": "1",
+        "CONFIG_MACF": "1",
+        "CONFIG_DTRACE": "1",
+        "CONFIG_AUDIT": null,
+        "XNU_MONITOR": null,
+        "CONFIG_SPTM": null,
+        "NO_MONITOR": "1"
+      },
+      "complete_functions_reviewed": [
+        {
+          "name": "machine_thread_create",
+          "body_line": 59703,
+          "bytes": 1971,
+          "sha256": "f847a106f2578e0b841398544019747d8d5c898295e2796caaa59dcf67600629"
+        }
+      ]
+    }
+  ],
+  "static_observations": [
+    {
+      "id": "apple-path-prefix-and-vector-layout",
+      "input": "04-kern_exec",
+      "functions": [
+        "exec_save_path",
+        "exec_copyout_strings"
+      ],
+      "facts": [
+        "The expanded exec_save_path writes executable_path= before the copied path and clears the reserved path area first.",
+        "The expanded copyout descriptors terminate argv and envv separately, append the one saved-path item, then append ip_applec-1 items starting at ip_endenvv and terminate the apple vector.",
+        "The pointer width remains conditional on the image's 64-bit-address flag; the reviewed kernel supports both branches."
+      ],
+      "limitation": "This closes the selected source-layout and first-item provenance questions only for a successful execution of these functions with valid image_params. It is not a captured process stack."
+    },
+    {
+      "id": "selected-apple-publisher",
+      "input": "04-kern_exec",
+      "function": "exec_add_apple_strings",
+      "facts": [
+        "The complete expanded function starts ip_applec at one and uses explicit fixed key prefixes in all reviewed additions.",
+        "Neither dyld_hw_tpro nor dyld_hw_tpro_pagers occurs in this entire retained translation-unit body; complete function review also found no branch constructing either key.",
+        "security_config=0x%x remains an explicit publication using task_get_security_config(task). Its value is not proved zero.",
+        "The HAS_MTE/HAS_MTE_EMULATION_SHIMS additions of has_sec_transition and sec_transition_policy are absent from this expanded function."
+      ],
+      "entire_body_literal_occurrences": {
+        "dyld_hw_tpro": 0,
+        "dyld_hw_tpro_pagers": 0
+      },
+      "limitation": "Literal absence is not a global no-writer proof. Other publishers, later stack or vector changes, task security_config inheritance and runtime state remain separate obligations."
+    },
+    {
+      "id": "selected-dyld-entry-and-stack-call-sites",
+      "inputs": [
+        "03-mach_loader",
+        "04-kern_exec",
+        "05-status"
+      ],
+      "facts": [
+        "The selected mach_loader expansion builds pmap_flags from the 64-bit-address condition; its HAS_APPLE_PAC JOP flag branch is absent at the reviewed call site.",
+        "The retained load_dylinker call sites and success assignments select the dynamic linker's thread state and entry point; this is conditional on loader success and input selection.",
+        "After exec_copyout_strings, the selected kern_exec path calls thread_setuserstack. In its dynlinker-or-Rosetta branch it subtracts new_ptr_size from SP and copyoutptr writes the main Mach header there.",
+        "The selected thread_setentrypoint body calls get_user_regs and set_user_saved_state_pc without its HAS_APPLE_PAC interrupt-protection blocks."
+      ],
+      "limitation": "These are selected call-site and function facts. The LC_UNIXTHREAD bytes of the separate dyld input, the chosen file and slide, the final user SP/header layout, X0 at dyld entry, and actual exception return are not newly executed or fully bound by this observation."
+    },
+    {
+      "id": "selected-initial-thread-state",
+      "inputs": [
+        "05-status",
+        "06-pcb"
+      ],
+      "facts": [
+        "The complete expanded machine_thread_create selects 32/64-bit saved-state flavors and calls machine_thread_state_initialize; its HAS_APPLE_PAC ROP/JOP copying block is absent.",
+        "The expanded initializer zeros user saved-state and SIMD state when a context exists and sets the 64-bit default CPSR; its PAC signing block is absent."
+      ],
+      "limitation": "The reviewed bodies do not prove every saved-state writer, the actual caller inputs, object code, linked exception assembly or successful user entry."
+    },
+    {
+      "id": "crossarch-and-enabled-syscall-boundaries",
+      "inputs": [
+        "00-kern_crossarch",
+        "01-systemcalls",
+        "02-init_sysent"
+      ],
+      "facts": [
+        "The complete expanded sys_crossarch_trap returns 22 for a nonzero unsigned namespace and 45 for namespace zero, without a store through the supplied output pointer.",
+        "The retained generated sysent expansion contains the sys_crossarch_trap and munge_w entry with the expected integer-return and four-byte 32-bit argument fields.",
+        "The expanded unix_syscall_return still contains the DTrace hook and calls arm_prepare_syscall_return and thread_exception_return.",
+        "CONFIG_MACF, CONFIG_DTRACE and CONFIG_DEBUG_SYSCALL_REJECTION are defined as 1 in these translation units; CONFIG_AUDIT is 0 in the BSD units."
+      ],
+      "limitation": "The prior independent object/linked-target binding remains separately scoped. This preprocessing observation does not replace that binding or prove syscall filters, live dispatch, return assembly, user buffers or runtime side effects."
+    }
+  ],
+  "prior_evidence": [
+    "route-a-nontpro-static-20261126.json"
+  ],
+  "remaining_obligations": [
+    "Bind the reviewed prepared source, generated headers and actual compile environment to matching object files and the final linked kernel.",
+    "Review and bind task.c/task.h security_config initialization, setters, inheritance and external provider writes; do not assume the published value is zero.",
+    "Review actual selected commpage, pmap, pmap_data and vm_map implementations/configuration and all relevant writers; these translation units are outside the seven observed recipes.",
+    "Establish successful commpage allocation/zeroing, later writes and the actual capability bytes at user entry; ordinary VM-protection fallback remains unverified.",
+    "Bind the selected dyld file, slide, apple vector, main Mach header, SP and register state across real loader and exception-return paths.",
+    "Complete all startup predecessors, MemoryManager/ProtectedStack state propagation, callbacks, indirect entries and all 119 hazard groups.",
+    "Verify standalone-to-shared-cache dyld handoff, later entry contracts, fork and re-exec.",
+    "Execute the finite original-byte fragments and then the actual ordinary-arm64 XNU user-SVC/runtime contract."
+  ],
+  "qualification": {
+    "seven_controlled_recipe_preprocessing_observations_complete": true,
+    "original_build_environment_reconstructed": false,
+    "all_possible_preprocessor_external_inputs_bound": false,
+    "objects_compiled_by_this_observation": false,
+    "linked_kernel_identity_bound": false,
+    "apple_vector_runtime_observed": false,
+    "non_tpro_keys_globally_absent_proven": false,
+    "task_security_config_value_proven": false,
+    "commpage_verified": false,
+    "ordinary_vm_fallback_verified": false,
+    "actual_xnu_dispatch_verified": false,
+    "native_dyld_entry_proven": false,
+    "all_a01_hazards_closed": false,
+    "a01_verified": false,
+    "darwin_process_started": false,
+    "os_boot_verified": false,
+    "tb371fc_verified": false
+  }
+}
