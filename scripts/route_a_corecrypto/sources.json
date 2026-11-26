@@ -1,0 +1,36 @@
+{
+  "schema": "route-a-corecrypto-source-contract-v1",
+  "provider": {
+    "repository": "https://github.com/ONLYA/corecrypto-2023",
+    "commit": "11fba65b12d8830630e248dfa8344caf8b065f26",
+    "archive_sha256": "fd04cb46cb733fdd8e6334702081a33b202ae7645140f59fa55b7d47de7e688f",
+    "scope": "Identified third-party snapshot; not authenticated against an Apple release archive. Supply the source privately. No Apple-derived provider source or binary is stored in this repository."
+  },
+  "bootstrap_original": {
+    "repository": "https://github.com/apple-oss-distributions/xnu",
+    "commit": "ac9718fb1af618d5ce8678d0dc6e8a58f252216f",
+    "path": "osfmk/prng/prng_random.c",
+    "size": 15271,
+    "sha256": "584dc0e00b65096c426697b66c029fb0aefe1769e78905d0eafefeb8203a7153",
+    "url": "https://raw.githubusercontent.com/apple-oss-distributions/xnu/ac9718fb1af618d5ce8678d0dc6e8a58f252216f/osfmk/prng/prng_random.c"
+  },
+  "bootstrap_patch": {
+    "repository": "https://github.com/UniXNU/UniXNU",
+    "commit": "8542980d02b4d2cc5c32ee3542de1760b2562aac",
+    "path": "patches/xnu-12377/source-corecrypto14-bootstrap.patch",
+    "size": 5107,
+    "sha256": "7f678a620312094e5a31fb98659a01ba0e6e6318658e329feb16e4e006f614dd",
+    "url": "https://raw.githubusercontent.com/UniXNU/UniXNU/8542980d02b4d2cc5c32ee3542de1760b2562aac/patches/xnu-12377/source-corecrypto14-bootstrap.patch",
+    "license": "BSD-2-Clause-Patent",
+    "license_path": "LICENSE",
+    "license_sha256": "5b1d3d911103cb0f41641ec0964c5ac1f7e229f57aa072b6ac38bae913a1307b",
+    "reconstructed_sha256": "cc677a1bd2effd70dd55af8d907bfbd37594f0a9a1679e4a55875fec705d9a5f"
+  },
+  "local_changes": [
+    "adapter.h supplies exactly the 13 missing callbacks using the real provider primitives",
+    "consumer_probe.h uses the actual XNU table ABI and published callbacks after provider initialization",
+    "abi_contract.h exposes legacy digest, HMAC, RSA and ChaCha context sizes/alignment for target layout comparison",
+    "namespace.h prefixes the fixed 64 colliding provider symbols",
+    "The controller adds these headers at unique checked sites and preserves POST before registration"
+  ]
+}
