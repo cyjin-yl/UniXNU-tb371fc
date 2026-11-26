@@ -46,6 +46,64 @@ def _group_absent(pid):
     return False
 
 
+@contextmanager
+def _defer_spawn_signals():
+    """Retain the child handle before replaying a launch-time interruption.
+
+    This is the same bounded handler/restoration pattern used by the CoreCrypto
+    probe. Keep it local so the decoder does not import the kernel build stack.
+    """
+    watched = (signal.SIGINT, signal.SIGTERM, signal.SIGHUP)
+    previous, pending = {}, []
+    primary = None
+
+    def remember(number, _frame):
+        if len(pending) < 128:
+            pending.append(number)
+
+    try:
+        for number in watched:
+            # Record before installing: restoration must retain every handler.
+            previous[number] = signal.getsignal(number)
+            signal.signal(number, remember)
+        yield
+    except BaseException as error:
+        primary = error
+        raise
+    finally:
+        errors, mask = [], None
+        # Only restoration is masked after the child handle was assigned. A
+        # successfully forked decoder inherits no newly blocked parent signals.
+        try:
+            mask = signal.pthread_sigmask(signal.SIG_BLOCK, watched)
+        except BaseException as error:
+            errors.append(error)
+        for number, handler in previous.items():
+            try:
+                signal.signal(number, handler)
+            except BaseException as error:
+                errors.append(error)
+        if mask is not None:
+            try:
+                signal.pthread_sigmask(signal.SIG_SETMASK, mask)
+            except BaseException as error:
+                errors.append(error)
+        if errors:
+            failure = primary if primary is not None else errors[0]
+            for error in errors:
+                if error is not failure:
+                    failure.add_note(f"spawn signal restoration: {type(error).__name__}: {error}")
+            if primary is None:
+                raise failure
+        if primary is None:
+            for number in pending:
+                handler = previous[number]
+                if callable(handler):
+                    handler(number, None)
+                elif handler != signal.SIG_IGN:
+                    raise InterruptedError("llvm-mc interrupted by signal " + str(number))
+
+
 def _cleanup(process):
     """Only this newly created process group is signalled; no unbounded wait."""
     errors = []
@@ -355,11 +413,12 @@ class DecoderSession:
                 env["LD_TRACE_LOADED_OBJECTS"] = "1"
             # The FD is held across fork and exec. A rename/PATH change cannot
             # select another executable after the identity checks above.
-            process = subprocess.Popen(argv,
-                executable=f"/proc/self/fd/{executable}", pass_fds=descriptors,
-                stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
-                start_new_session=True,
-                env=env)
+            with _defer_spawn_signals():
+                process = subprocess.Popen(argv,
+                    executable=f"/proc/self/fd/{executable}", pass_fds=descriptors,
+                    stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+                    start_new_session=True,
+                    env=env)
             stdout, stderr = _communicate_bounded(process, input_bytes, timeout)
             require(process.returncode == 0, f"llvm-mc exited with status {process.returncode}")
             require(_group_absent(process.pid), "llvm-mc left processes in its owned group")
