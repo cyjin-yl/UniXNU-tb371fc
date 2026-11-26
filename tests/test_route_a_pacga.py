@@ -14,6 +14,8 @@ import subprocess
 import sys
 import tempfile
 import unittest
+from types import SimpleNamespace
+from unittest import mock
 
 import numpy as np
 
@@ -419,11 +421,11 @@ class PacgaTests(unittest.TestCase):
         for mode in ("timeout", "signal"):
             with self.subTest(mode=mode), tempfile.TemporaryDirectory() as tmp:
                 root = Path(tmp)
-                identity = runner.file_identity(sys.executable)
+                identity = runner.tool_identity(sys.executable)
                 manifest = dict(complete=False, tools=dict(python=identity), frozen={}, commands=[])
                 expected_error = subprocess.TimeoutExpired if mode == "timeout" else InterruptedError
                 with runner.owned_children(), self.assertRaises(expected_error):
-                    runner.execute([identity["path"], "-c", child, mode, str(root / "descendant.pid")],
+                    runner.execute([identity["invocation"], "-c", child, mode, str(root / "descendant.pid")],
                                    root, "controlled-" + mode, manifest, timeout=2)
                 self.assertTrue((root / "descendant.pid").is_file())
                 descendant = int((root / "descendant.pid").read_text())
@@ -438,6 +440,68 @@ class PacgaTests(unittest.TestCase):
                 disk = json.loads((root / "report.json").read_text())
                 self.assertFalse(disk["complete"])
                 self.assertEqual(disk["commands"][0]["cleanup"], receipt["cleanup"])
+
+
+    def test_probe_tools_preserve_multicall_invocation_and_reject_retargeting(self):
+        from route_a_pacga_probe import run as runner
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            real = root / "instrumented-driver"
+            real.write_text('#!/bin/sh\nprintf "%s\\n" "$0"\n')
+            real.chmod(0o755)
+            alias = root / "ld.lld"
+            alias.symlink_to(real.name)
+            identity = runner.tool_identity(alias)
+            self.assertEqual(identity["invocation"], str(alias))
+            self.assertEqual(identity["realpath"], str(real))
+            manifest = dict(complete=False, tools=dict(lld=identity), frozen={}, commands=[])
+            with runner.owned_children():
+                output = runner.execute([identity["invocation"]], root, "multicall", manifest)
+            self.assertEqual(output.strip(), str(alias))
+            other = root / "different-driver"
+            other.write_bytes(real.read_bytes())
+            other.chmod(0o755)
+            alias.unlink()
+            alias.symlink_to(other.name)
+            with self.assertRaisesRegex(ValueError, "invocation changed"):
+                runner.verify_tools(manifest["tools"])
+
+    def test_failed_final_probe_report_cannot_remain_complete(self):
+        from route_a_pacga_probe import run as runner
+        with tempfile.TemporaryDirectory() as tmp:
+            output = Path(tmp) / "new-probe"
+            args = SimpleNamespace(output=output, clang=sys.executable, lld=sys.executable,
+                                   qemu=sys.executable, timeout=1)
+
+            def synthetic_execute(command, directory, name, manifest, **_options):
+                # Only the publication failure path is under test. No compiler,
+                # executable ELF or QEMU is run by this injected environment.
+                if "-o" in command:
+                    (directory / command[command.index("-o") + 1]).write_bytes(b"synthetic fixture")
+                if name.startswith("qemu-"):
+                    native = name == "qemu-native"
+                    result = dict(schema="route-a-pacga-el0-probe-v1", cases=1024, native=native,
+                                  ordinary_fallback=not native, result_fold="0000000000000000")
+                    result.update({field: True for field in
+                                   ("paper_vector", "gpr", "pc_lr_sp", "nzcv", "simd", "fpcr_fpsr")})
+                    return "PACGA-PROBE " + json.dumps(result) + "\n"
+                return "synthetic tool response\n"
+
+            original_write = Path.write_text
+
+            def fail_complete_receipt(path, text, *arguments, **keywords):
+                if path.name == "report.json" and json.loads(text).get("complete") is True:
+                    raise OSError("injected final report write failure")
+                return original_write(path, text, *arguments, **keywords)
+
+            with mock.patch.object(runner, "execute", synthetic_execute), \
+                    mock.patch.object(Path, "write_text", fail_complete_receipt), \
+                    self.assertRaisesRegex(OSError, "injected final report"):
+                runner.run(args)
+            report = json.loads((output / "report.json").read_text())
+            self.assertIs(report["complete"], False)
+            self.assertEqual(report["error"], "OSError")
+            self.assertIn("injected final report", report["message"])
 
 
 if __name__ == "__main__":

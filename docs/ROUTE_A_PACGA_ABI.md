@@ -119,8 +119,13 @@ worktree, the actual `sleh.o.json` recipe and the reviewed prepared `sleh.c`
 digest. It copies only that translation unit into a new overlay, applies the
 patch there, and compiles with ordinary Armv8-A and general registers only.
 It records the original and replacement object digests, compile command,
-dependencies, helper identity and provider prerequisite. Run the command inside
-the isolated CT through the host's `agent-heavy` gate.
+dependencies, helper identity and provider prerequisite. Before compilation,
+a dependency-only `-M` pass declares the complete header closure, including
+resource, SDK and system headers. Each file is hashed and its generation is
+bound before the actual `-MD` compile. Actual dependencies must match that
+declared set, and all identities are checked again afterward. Shared prepared
+headers are never rewritten or chmod-ed. Run the command inside the isolated CT
+through the host's `agent-heavy` gate.
 
 ```sh
 python3 scripts/build_route_a_pacga.py \
@@ -187,7 +192,9 @@ python3 scripts/route_a_pacga_probe/run.py --output /absolute/path/to/new-probe
 
 Run the compiler and QEMU jobs through the required host `agent-heavy` gate and
 the agreed resource window. The probe binds the actual clang, explicitly selected lld and QEMU executable
-hashes and file generations before and after execution. Its staged sources,
+hashes and file generations before and after execution. Invocation names are
+preserved for multicall drivers such as `ld.lld`; the invocation path, resolved
+binary and their generations are checked separately. Its staged sources,
 objects and ELF files are read-only and checked at each invocation and at
 completion. It retains commands, hashes, logs and a complete-or-failed report.
 On Linux it uses one owned process group per command and a local child subreaper

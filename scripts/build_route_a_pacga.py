@@ -16,7 +16,8 @@ import subprocess
 import sys
 
 from arm64_lowering import pacga
-from route_a_pacga_probe.run import execute, file_identity, owned_children, verify_files
+from route_a_pacga_probe.run import (execute, file_identity, owned_children,
+                                     tool_identity, verify_files, verify_tools)
 
 ROOT = Path(__file__).resolve().parents[1]
 SOURCE = "osfmk/arm64/sleh.c"
@@ -33,6 +34,19 @@ def run(arguments, *, cwd):
     if result.returncode:
         raise ValueError(f"command failed ({result.returncode}): {arguments[0]}\n{result.stderr[-12000:]}")
     return result.stdout
+
+
+def dependency_paths(path, directory):
+    text = path.read_text().replace(chr(92) + chr(10), " ")
+    pacga.require(":" in text, "compiler dependency output lacks a target")
+    result = set()
+    for name in shlex.split(text.split(":", 1)[1]):
+        source = Path(name)
+        if not source.is_absolute():
+            source = Path(directory) / source
+        result.add(source.resolve())
+    pacga.require(bool(result), "empty compiler dependency closure")
+    return result
 
 
 def prepare(xnu, recipe_path, output, expected_sleh):
@@ -82,14 +96,14 @@ def prepare(xnu, recipe_path, output, expected_sleh):
     arguments[arguments.index("-o") + 1] = str(obj)
     arguments += ["-march=armv8-a", "-DCONFIG_ROUTE_A_PACGA_SVC=1",
                   '-DROUTE_A_PACGA_IMPLEMENTATION_SHA256="' + identity["sha256"] + '"',
-                  "-mgeneral-regs-only", "-MMD", "-MF", str(dep),
+                  "-mgeneral-regs-only", "-MD", "-MF", str(dep),
                   "-Werror=implicit-function-declaration",
                   "-Werror=incompatible-function-pointer-types", "-Werror=return-type"]
     # Only the new header has a new path; no original header is shadowed.
     arguments[1:1] = ["-I", str(tree / "osfmk")]
     old_object = Path(recipe["directory"]) / recipe["output"]
-    compiler = file_identity(arguments[0])
-    arguments[0] = compiler["path"]
+    pacga.require(Path(arguments[0]).is_absolute(), "recipe compiler invocation must be absolute")
+    compiler = tool_identity(arguments[0])
     for path in (staged, include, patch):
         path.chmod(0o444)
     frozen = {name: file_identity(path) for name, path in
@@ -101,7 +115,7 @@ def prepare(xnu, recipe_path, output, expected_sleh):
         xnu_commit=pacga.XNU_COMMIT, source_file=SOURCE,
         prepared_sleh_sha256=expected_sleh, staged_sleh_sha256=sha(staged),
         helper_sha256=sha(include), patch_sha256=sha(patch), recipe_sha256=sha(recipe_path),
-        compiler=compiler["path"], tools=dict(clang=compiler), frozen=frozen, commands=[],
+        compiler=compiler["invocation"], tools=dict(clang=compiler), frozen=frozen, commands=[],
         arguments=arguments, directory=recipe["directory"],
         previous_object=dict(name=recipe["output"], sha256=sha(old_object)),
         provider_prerequisite="successful source-provider POST and register_and_init_prng at SYSCTL/LAST",
@@ -111,9 +125,25 @@ def prepare(xnu, recipe_path, output, expected_sleh):
         with owned_children():
             manifest["compiler_version"] = execute(
                 [arguments[0], "--version"], output, "compiler-version", manifest).strip()
-            # The real recipe includes relative XNU/generated include paths.
-            # execute accepts its compile working directory explicitly.
+            # Discover the complete closure, including resource/SDK/system
+            # headers, with the exact feature/include options used to compile.
+            discovery = list(arguments)
+            discovery[discovery.index("-MD")] = "-M"
+            discovery[discovery.index("-MF") + 1] = str(output / "discovered.d")
+            discovery[discovery.index("-o") + 1] = str(output / "discovered.stdout")
+            execute(discovery, output, "discover-headers", manifest, timeout=300,
+                    cwd=recipe["directory"])
+            declared = dependency_paths(output / "discovered.d", recipe["directory"])
+            manifest["header_closure"] = {str(path): file_identity(path) for path in sorted(declared)}
+            # Shared prepared headers are only read and bound, never chmod-ed
+            # or rewritten. Any generation change makes this build ineligible.
+            manifest["frozen"].update({"dependency:" + path: record
+                                       for path, record in manifest["header_closure"].items()})
             execute(arguments, output, "compile", manifest, timeout=300, cwd=recipe["directory"])
+            actual = dependency_paths(dep, recipe["directory"])
+            pacga.require(actual == declared,
+                          "actual compiler dependencies differ from the declared header closure")
+            verify_files(manifest["frozen"], hashes=True)
         manifest["compile_exit_code"] = manifest["commands"][-1]["exit_code"]
     except BaseException as error:
         manifest.update(compile_passed=False, error=type(error).__name__, message=str(error))
@@ -126,18 +156,11 @@ def prepare(xnu, recipe_path, output, expected_sleh):
         header = stream.read(16)
     pacga.require(len(header) == 16 and struct.unpack("<4I", header) ==
                   (0xFEEDFACF, 0x0100000C, 0, 1), "overlay is not an ordinary-arm64 Mach-O object")
-    deptext = dep.read_text().replace(chr(92) + chr(10), " ").split(":", 1)[1]
-    headers = {}
-    for name in shlex.split(deptext):
-        path = Path(name)
-        if not path.is_absolute():
-            path = Path(recipe["directory"]) / path
-        path = path.resolve()
-        headers[str(path)] = sha(path)
+    headers = {path: record["sha256"] for path, record in manifest["header_closure"].items()}
     (output / "dependencies.json").write_text(json.dumps(headers, indent=2, sort_keys=True) + "\n")
     pacga.require(pacga.implementation() == identity and sha(source) == expected_sleh,
                   "PACGA implementation/prepared source changed during the build")
-    verify_files(manifest["tools"], hashes=True)
+    verify_tools(manifest["tools"], hashes=True)
     verify_files(manifest["frozen"], hashes=True)
     manifest.update(object=dict(name=obj.name, bytes=obj.stat().st_size, sha256=sha(obj),
                                 cpu_type="arm64", cpu_subtype=0),

@@ -31,8 +31,8 @@ def sha(raw):
     return hashlib.sha256(raw).hexdigest()
 
 
-def generation(path):
-    s = Path(path).stat()
+def generation(path, *, follow_symlinks=True):
+    s = Path(path).stat(follow_symlinks=follow_symlinks)
     return dict(device=s.st_dev, inode=s.st_ino, bytes=s.st_size,
                 mtime_ns=s.st_mtime_ns, ctime_ns=s.st_ctime_ns, mode=s.st_mode)
 
@@ -57,6 +57,24 @@ def verify_files(records, *, hashes=False):
         else:
             pacga.require(generation(record["path"]) == record["generation"],
                           "bound file generation changed: " + record["path"])
+
+
+def tool_identity(invocation):
+    """Preserve a multicall driver's invocation name; hash its resolved binary."""
+    invocation = str(Path(invocation).absolute())
+    realpath = str(Path(invocation).resolve(strict=True))
+    return dict(invocation=invocation, realpath=realpath,
+                invocation_generation=generation(invocation, follow_symlinks=False),
+                binary=file_identity(realpath))
+
+
+def verify_tools(records, *, hashes=False):
+    for name, record in records.items():
+        invocation = record["invocation"]
+        pacga.require(str(Path(invocation).resolve(strict=True)) == record["realpath"]
+                      and generation(invocation, follow_symlinks=False) == record["invocation_generation"],
+                      "bound tool invocation changed: " + invocation)
+        verify_files({name: record["binary"]}, hashes=hashes)
 
 
 @contextmanager
@@ -139,7 +157,7 @@ def function_from_patch(patch, name, kind):
 
 
 def execute(command, output, name, manifest, timeout=60, cwd=None):
-    verify_files(manifest["tools"])
+    verify_tools(manifest["tools"])
     verify_files(manifest["frozen"])
     started = time.monotonic()
     record = dict(name=name, arguments=[str(item) for item in command],
@@ -178,7 +196,7 @@ def execute(command, output, name, manifest, timeout=60, cwd=None):
     pacga.require(record["cleanup"]["group_absent"] is True,
                   name + " left an owned process group; see cleanup receipt")
     pacga.require(record["exit_code"] == 0, name + " failed; see its retained logs")
-    verify_files(manifest["tools"])
+    verify_tools(manifest["tools"])
     verify_files(manifest["frozen"])
     return (output / (name + ".stdout")).read_text()
 
@@ -189,8 +207,8 @@ def run(args):
     selected = {name: shutil.which(value) for name, value in
                 (("clang", args.clang), ("lld", args.lld), ("qemu", args.qemu))}
     pacga.require(all(selected.values()), "compiler, linker or QEMU is unavailable")
-    tools = {name: file_identity(path) for name, path in selected.items()}
-    clang, lld, qemu = (tools[name]["path"] for name in ("clang", "lld", "qemu"))
+    tools = {name: tool_identity(path) for name, path in selected.items()}
+    clang, lld, qemu = (tools[name]["invocation"] for name in ("clang", "lld", "qemu"))
     identity = pacga.implementation()
     helper = (ROOT / pacga.HEADER).read_bytes()
     patch = (ROOT / pacga.PATCH).read_bytes()
@@ -264,13 +282,13 @@ def run(args):
         pacga.require(manifest["results"]["native"]["result_fold"] ==
                       manifest["results"]["svc"]["result_fold"], "oracle and SVC register results differ")
         pacga.require(pacga.implementation() == identity, "production sources changed during probe")
-        verify_files(manifest["tools"], hashes=True)
+        verify_tools(manifest["tools"], hashes=True)
         verify_files(manifest["frozen"], hashes=True)
         manifest["complete"] = True
         report.write_text(json.dumps(manifest, indent=2) + "\n")
         return manifest
     except BaseException as error:
-        manifest.update(error=type(error).__name__, message=str(error))
+        manifest.update(complete=False, error=type(error).__name__, message=str(error))
         try:
             report.write_text(json.dumps(manifest, indent=2) + "\n")
         except OSError as secondary:

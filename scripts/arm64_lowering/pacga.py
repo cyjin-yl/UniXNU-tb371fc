@@ -146,7 +146,9 @@ def exclusive_analysis(insns, proven, tables):
     clear = stores | {"clrex", "svc", "hvc", "smc", "brk", "udf", "hlt"}
     jumps = {table["dispatch"]: table["targets"] for table in tables}
     work = deque((pc + 4, pc) for pc in proven if insns[pc][0] in loads)
-    visited, hazards, escaped = set(), set(), set()
+    # One 1024-bit integer per reached 4-KiB code page avoids another
+    # Python integer/set entry for every instruction in a very large owner.
+    visited, hazards, escaped = {}, set(), set()
 
     def escape(pc, reason, target=None):
         escaped.add((pc, reason, target))
@@ -156,9 +158,12 @@ def exclusive_analysis(insns, proven, tables):
         if pc not in proven:
             escape(source, "leaves proven instruction owner", pc)
             continue
-        if pc in visited:
+        require((pc & 3) == 0, "unaligned proven instruction in PACGA reservation analysis")
+        page, bit = pc >> 12, 1 << ((pc & 0xfff) >> 2)
+        seen = visited.get(page, 0)
+        if seen & bit:
             continue
-        visited.add(pc)
+        visited[page] = seen | bit
         mnemonic, operands = insns[pc]
         if mnemonic == "pacga":
             hazards.add(pc)
