@@ -346,7 +346,7 @@ def run(args):
             stdout = execute(
                 [qemu, "-M", "virt,secure=off,virtualization=off", "-accel", "tcg,thread=single",
                  "-cpu", cpu, "-m", "128M", "-smp", "1", "-display", "none",
-                 "-serial", "stdio", "-monitor", "none", "-no-reboot",
+                 "-serial", "stdio", "-monitor", "none", "-nic", "none", "-no-reboot",
                  "-semihosting-config", "enable=on,target=native", "-kernel", elf],
                 output, "qemu-" + name, manifest, timeout=args.timeout)
             lines = [line.removeprefix("PACGA-PROBE ") for line in stdout.splitlines()
