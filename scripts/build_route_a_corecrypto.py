@@ -50,10 +50,10 @@ PINS = {
 PACGA_PINS = {
     "source": "4eeb208fb2510bfdc0338d1a1d7d2d702fe9eb65d332eea388720ef6574375d1",
     "recipe": "8c60d7a8f85e060aae2a0c8faee343c5fbaf3be7d188be9847ec642effd29090",
-    # Reviewed producer files at c9c866ce. A later change to the independent
-    # QEMU fixture does not rewrite or relabel an already captured stage.
+    # Reviewed producer files at e766bca5, before the formal random-header fix.
+    # The new stage must use these exact files; old failed stages stay immutable.
     "stage_driver": "00413eb769be08086cf79eee8b15eb830c5c3fc22058a25bd22836c1bab63ad4",
-    "execution_driver": "2db49aa915190dd827f751222d917ca3dbc971afc375d60c2bd04e749bcc7774",
+    "execution_driver": "c293a119d134ad7c27a1509e429f53c2d164536800465fc6b37a75de5a502029",
 }
 ADDED_FIELDS = (
     "ccdigest_final_fn", "digest_ctx_size_fn", "digest_init_fn", "digest_update_fn", "digest_final_fn", "digest_fn",

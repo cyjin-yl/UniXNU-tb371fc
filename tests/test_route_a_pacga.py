@@ -295,6 +295,56 @@ class PacgaTests(unittest.TestCase):
             self.assertEqual(result["outside_dispatch_cases"], 4)
             self.assertEqual(ran.stderr, "")
 
+    def test_production_bootstrap_requires_the_kernel_random_declaration(self):
+        # The existing state harness defines its random-provider double before
+        # the extracted functions. This separate compile probe has no such
+        # definition: production includes must expose the public XNU API.
+        # Declaration/gates: ac9718fb:bsd/sys/{random.h,appleapiopts.h}.
+        # These small API fixtures do not represent the complete XNU headers;
+        # build_route_a_pacga.py still compiles the entire real sleh translation unit.
+        compiler = shutil.which("cc") or shutil.which("clang")
+        self.assertIsNotNone(compiler, "the bootstrap declaration test requires a C compiler")
+        includes = "\n".join(line[1:] for line in (ROOT / pacga.PATCH).read_text().splitlines()
+                             if line.startswith("+#include "))
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            headers = {
+                "arm64/route_a_pacga_qarma5.h": (ROOT / pacga.HEADER).read_text(),
+                "kern/startup.h": "/* The extracted function has no STARTUP registration. */\n",
+                "libkern/crypto/rand.h": "/* This API does not declare read_random. */\n",
+                "sys/appleapiopts.h": "#ifndef __APPLE_API_STRICT_CONFORMANCE\n#define __APPLE_API_UNSTABLE\n#endif\n",
+                "sys/random.h": "#include <sys/appleapiopts.h>\n"
+                                "#if defined(KERNEL) && defined(__APPLE_API_UNSTABLE)\n"
+                                "void read_random(void *buffer, u_int numBytes);\n#endif\n",
+            }
+            for name, content in headers.items():
+                path = root / name
+                path.parent.mkdir(parents=True, exist_ok=True)
+                path.write_text(content)
+            prefix = "#include <stdint.h>\n#include <stddef.h>\ntypedef unsigned int u_int;\n"
+            body = "\nstatic struct route_a_pacga_key route_a_pacga_boot_key;\n"
+            body += "static uint32_t route_a_pacga_ready;\nvoid panic(const char *, ...);\n"
+            body += added_function("route_a_pacga_bootstrap", "void")
+            body += "\nvoid declaration_probe(void) { route_a_pacga_bootstrap(); }\n"
+            source = root / "declaration.c"
+            for label, selected, defines, succeeds in (
+                ("formal-kernel-header", includes, ["-DKERNEL=1"], True),
+                ("previous-wrong-header", includes.replace("<sys/random.h>", "<libkern/crypto/rand.h>"),
+                 ["-DKERNEL=1"], False),
+                ("kernel-api-hidden", includes, ["-DKERNEL=1", "-D__APPLE_API_STRICT_CONFORMANCE=1"], False),
+            ):
+                with self.subTest(label=label):
+                    source.write_text(prefix + selected + body)
+                    command = [compiler, "-std=c11", "-Wall", "-Wextra", "-Werror", "-fsyntax-only",
+                               "-I", str(root), *defines, str(source)]
+                    result = subprocess.run(command, capture_output=True, text=True, timeout=60)
+                    if succeeds:
+                        self.assertEqual(result.returncode, 0, result.stderr)
+                    else:
+                        self.assertNotEqual(result.returncode, 0, "undeclared read_random was accepted")
+                        self.assertIn("read_random", result.stderr)
+                        self.assertRegex(result.stderr, "implicit|undeclared")
+
     def test_runtime_identity_is_explicit_and_bound_to_the_entire_linked_file(self):
         with tempfile.TemporaryDirectory() as tmp:
             kernel = Path(tmp) / "synthetic-kernel"
