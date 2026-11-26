@@ -150,6 +150,17 @@ class ELFClosureProtocolTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             llvm.parse_loader_list(text, b"warning: changed search path\n")
 
+    def test_unnamed_mapping_remains_an_unknown_object(self):
+        # Actual glibc 2.43 held-FD list shape: this unnamed main map has a
+        # different address from the named vDSO. Never ignore either position.
+        ordinary = (b"\tlinux-vdso.so.1 (0x7046c231a000)\n"
+                    b"\tlibFixture.so.1 => /lib/libFixture.so.1 (0x7046bac00000)\n"
+                    b"\t/lib64/ld.so (0x7046c231c000)\n")
+        unnamed = b"\t (0x7046c22f9000)\n"
+        for text in (unnamed + ordinary, ordinary + unnamed):
+            with self.subTest(text=text), self.assertRaisesRegex(ValueError, "unknown decoder loader output"):
+                llvm.parse_loader_list(text, b"")
+
     def frozen_decoder(self):
         decoder = object.__new__(llvm.DecoderSession)
         decoder.fd, decoder.directory_fd = 10, 12
@@ -538,6 +549,45 @@ class OracleOwnedProcessTests(unittest.TestCase):
         self.assertEqual(observed[0]["executable"], f"/proc/self/fd/{decoder.fd}")
         self.assertEqual(observed[0]["pass_fds"], (decoder.fd,))
         self.assertNotIn("LD_PRELOAD", observed[0]["env"])
+        self.assertNotIn("LD_TRACE_LOADED_OBJECTS", observed[0]["env"])
+
+    def test_actual_loader_trace_mode_is_limited_to_inventory_children(self):
+        # Use the actual local Python ELF and its dynamic closure; only the
+        # unrelated LLVM version string is synthetic. Both --list children and
+        # the final normal Python execution really run via held loader FDs.
+        original = llvm.subprocess.Popen
+        calls = []
+        def capture(argv, **kwargs):
+            calls.append((argv, kwargs))
+            return original(argv, **kwargs)
+        with patch.object(llvm.shutil, "which", return_value=sys.executable), \
+                patch.object(llvm.DecoderSession, "run", return_value=(VERSION, b"")), \
+                patch.object(llvm.subprocess, "Popen", side_effect=capture):
+            decoder = llvm.DecoderSession()
+        self.addCleanup(decoder.close)
+        self.assertIsNotNone(decoder.loader, "this Linux fixture needs a dynamic Python ELF")
+        self.assertEqual(len(calls), 2)
+        for argv, kwargs in calls:
+            self.assertIn("--list", argv)
+            self.assertEqual(kwargs["env"]["LD_TRACE_LOADED_OBJECTS"], "1")
+            self.assertNotIn("LD_SHOW_AUXV", kwargs["env"])
+            self.assertEqual(kwargs["executable"], f"/proc/self/fd/{decoder.loader.fd}")
+        with patch.object(llvm.subprocess, "Popen", side_effect=capture), \
+                patch.dict(os.environ, {"LD_TRACE_LOADED_OBJECTS": "2", "LD_DEBUG": "files"}):
+            out, err = decoder.run(["-c", "import os; print(os.environ.get('LD_TRACE_LOADED_OBJECTS', 'absent'))"],
+                                   b"", 5)
+        self.assertEqual((out, err), (b"absent\n", b""))
+        self.assertNotIn("LD_TRACE_LOADED_OBJECTS", calls[-1][1]["env"])
+        self.assertNotIn("LD_DEBUG", calls[-1][1]["env"])
+        self.assertEqual(decoder.manifest()["loader_inventory"], "glibc-list-trace-one-v1")
+
+    def test_inventory_flag_cannot_turn_a_normal_command_into_trace_mode(self):
+        decoder = self.decoder()
+        with patch.object(llvm.subprocess, "Popen", side_effect=AssertionError("invalid inventory must not spawn")):
+            with self.assertRaisesRegex(ValueError, "inventory requires its held loader"):
+                decoder._invoke([decoder.invocation, "--version"], decoder.fd, (decoder.fd,), b"", 5,
+                                loader_listing=True)
+        self.assertTrue(decoder.failed)
 
     def test_nonzero_exit_cannot_supply_acceptable_looking_stdout(self):
         decoder = self.decoder()
@@ -620,7 +670,8 @@ class ActualLLVMProtocolTests(unittest.TestCase):
                 self.assertIsNotNone(identity["loader"])
                 self.assertTrue(identity["dependencies"])
                 argv, executable, descriptors = decoder._command([], listing=True)
-                decoder._check_frozen_list(*decoder._invoke(argv, executable, descriptors, b"", 60))
+                decoder._check_frozen_list(*decoder._invoke(argv, executable, descriptors, b"", 60,
+                                                          loader_listing=True))
             result = llvm.disassemble([NOP, RET, INVALID], code.LLVM_FEATURES + ",+route-a-unsupported-fixture")
             self.assertEqual(result[NOP], ("nop", ""))
             self.assertEqual(result[RET][0], "ret")

@@ -171,6 +171,7 @@ class DecoderSession:
             self.record = dict(schema="route-a-llvm-mc-v2", invocation=self.invocation,
                                binary=self.program.identity, version=version,
                                execution="held-fd-library-directory-v1",
+                               loader_inventory="glibc-list-trace-one-v1" if self.loader else None,
                                loader=self.loader.identity if self.loader else None,
                                system_preload=dict(path=str(Path(SYSTEM_PRELOAD_DIRECTORY) / "ld.so.preload"),
                                                    policy="require-absence") if self.loader else None,
@@ -194,7 +195,7 @@ class DecoderSession:
                 and self.loader.elf["interpreter"] is None and not self.loader.elf["needed"],
                 "decoder interpreter is not a self-contained native loader")
         raw = self._invoke([self.loader.invocation, "--list", self.path], self.loader.fd,
-                           (self.fd, self.loader.fd), b"", VERSION_TIMEOUT)
+                           (self.fd, self.loader.fd), b"", VERSION_TIMEOUT, loader_listing=True)
         resolutions, direct = parse_loader_list(*raw)
         require(all(str(Path(path).resolve(strict=True)) == self.loader.path for path in direct),
                 "loader inventory contains an unexpected direct object")
@@ -230,7 +231,8 @@ class DecoderSession:
         # Probe the exact loader/options/main/library FDs used for all later
         # version and disassembly calls. No preload changes symbol lookup order.
         argv, executable, descriptors = self._command([], listing=True)
-        self._check_frozen_list(*self._invoke(argv, executable, descriptors, b"", VERSION_TIMEOUT))
+        self._check_frozen_list(*self._invoke(argv, executable, descriptors, b"", VERSION_TIMEOUT,
+                                              loader_listing=True))
 
     def _bind_system_preload(self):
         # glibc elf/rtld.c reads /etc/ld.so.preload independently of environment
@@ -334,17 +336,30 @@ class DecoderSession:
         argv, executable, descriptors = self._command(arguments)
         return self._invoke(argv, executable, descriptors, input_bytes, timeout)
 
-    def _invoke(self, argv, executable, descriptors, input_bytes, timeout):
+    def _invoke(self, argv, executable, descriptors, input_bytes, timeout, *, loader_listing=False):
         self.verify()
         process = None
         try:
+            env = {"PATH": "/usr/bin:/bin", "LC_ALL": "C", "LANG": "C", "NO_COLOR": "1"}
+            if loader_listing:
+                require(self.loader is not None and executable == self.loader.fd and not input_bytes,
+                        "decoder inventory requires its held loader and empty input")
+                expected = ([self.loader.invocation, "--list", self.path] if self.directory_fd is None
+                            else self._command([], listing=True)[0])
+                require(argv == expected, "decoder inventory command differs from its explicit --list")
+                # glibc 2.43 leaves mode_trace_program uninitialized for --list.
+                # Its environment handler sets this flag to false for value 1;
+                # the following explicit --list then selects the normal list
+                # mode. Unknown objects still fail the unchanged strict parser.
+                # This variable MUST NOT reach version/disassembly invocations.
+                env["LD_TRACE_LOADED_OBJECTS"] = "1"
             # The FD is held across fork and exec. A rename/PATH change cannot
             # select another executable after the identity checks above.
             process = subprocess.Popen(argv,
                 executable=f"/proc/self/fd/{executable}", pass_fds=descriptors,
                 stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
                 start_new_session=True,
-                env={"PATH": "/usr/bin:/bin", "LC_ALL": "C", "LANG": "C", "NO_COLOR": "1"})
+                env=env)
             stdout, stderr = _communicate_bounded(process, input_bytes, timeout)
             require(process.returncode == 0, f"llvm-mc exited with status {process.returncode}")
             require(_group_absent(process.pid), "llvm-mc left processes in its owned group")
