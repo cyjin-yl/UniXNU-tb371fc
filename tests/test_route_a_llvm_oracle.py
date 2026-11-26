@@ -6,10 +6,13 @@ real llvm-mc vector test is required by the CI job that installs LLVM 18.
 from contextlib import nullcontext
 from copy import deepcopy
 import hashlib
+import json
 import multiprocessing
 import os
 from pathlib import Path
+import select
 import shutil
+import signal
 import struct
 import subprocess
 import sys
@@ -613,6 +616,76 @@ class OracleOwnedProcessTests(unittest.TestCase):
         self.assertFalse(llvm._UNREAPED)
         with self.assertRaises(ValueError):
             decoder.verify()
+
+    def test_real_sigint_before_popen_assignment_reaps_child_and_preserves_error(self):
+        # A real signal arrives after fork/exec but before _invoke receives the
+        # process handle. The outer fixture cleanup also makes this test safe
+        # against the old leak, without hiding the pre-cleanup assertions.
+        watched = (signal.SIGINT, signal.SIGTERM, signal.SIGHUP)
+        previous = {number: signal.getsignal(number) for number in watched}
+        previous_mask = signal.pthread_sigmask(signal.SIG_BLOCK, ())
+        baseline_fds = set(os.listdir("/proc/self/fd"))
+        original = llvm.subprocess.Popen
+        primary = KeyboardInterrupt("real LLVM spawn-window SIGINT")
+        children, child_masks = [], []
+        decoder = None
+
+        def interrupt(_number, _frame):
+            raise primary
+
+        def spawn(*args, **kwargs):
+            process = original(*args, **kwargs)
+            children.append(process)
+            ready, _, _ = select.select([process.stdout], [], [], 5)
+            self.assertTrue(ready, "real spawn-window child did not become ready")
+            child_masks.append(set(json.loads(process.stdout.readline(1024))))
+            os.kill(os.getpid(), signal.SIGINT)
+            return process
+
+        try:
+            signal.signal(signal.SIGINT, interrupt)
+            decoder = self.decoder()
+            program = ("import json, signal, time; "
+                       "print(json.dumps(sorted(map(int, signal.pthread_sigmask(signal.SIG_BLOCK, ())))), flush=True); "
+                       "time.sleep(60)")
+            with patch.object(llvm.subprocess, "Popen", side_effect=spawn), \
+                    patch.object(llvm, "_communicate_bounded") as communicate:
+                with self.assertRaises(KeyboardInterrupt) as caught:
+                    decoder.run(["-c", program], b"", 5)
+            self.assertIs(caught.exception, primary)
+            communicate.assert_not_called()
+            self.assertEqual(len(children), 1)
+            child = children[0]
+            self.assertIsNotNone(child.returncode, "real child remained unowned after the signal")
+            self.assertTrue(llvm._group_absent(child.pid))
+            with self.assertRaises(ProcessLookupError):
+                os.kill(child.pid, 0)
+            with self.assertRaises(ChildProcessError):
+                os.waitpid(child.pid, os.WNOHANG)
+            self.assertTrue(all(stream.closed for stream in (child.stdin, child.stdout, child.stderr)))
+            self.assertEqual(child_masks[0] & set(watched), set(previous_mask) & set(watched))
+            self.assertEqual(signal.pthread_sigmask(signal.SIG_BLOCK, ()), previous_mask)
+            self.assertIs(signal.getsignal(signal.SIGINT), interrupt)
+            for number in watched[1:]:
+                self.assertIs(signal.getsignal(number), previous[number])
+            self.assertFalse(llvm._UNREAPED)
+            with self.assertRaisesRegex(ValueError, "spawn-window SIGINT"):
+                decoder.verify()
+            decoder.close()
+            self.assertEqual(set(os.listdir("/proc/self/fd")), baseline_fds)
+        finally:
+            for child in children:
+                try:
+                    os.killpg(child.pid, signal.SIGKILL)
+                except ProcessLookupError:
+                    pass
+                child.wait(timeout=5)
+                for stream in (child.stdin, child.stdout, child.stderr):
+                    stream.close()
+            if decoder is not None:
+                decoder.close()
+            for number, handler in previous.items():
+                signal.signal(number, handler)
 
     def test_oversized_output_is_stopped_before_unbounded_capture(self):
         decoder = self.decoder()
