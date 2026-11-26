@@ -95,3 +95,8 @@ macros.txt SHA-256: 9cfd7adf738270f3e0ee65c8e3c07ff0b690c8bae0c1500d0ab9dfada845
 https://github.com/apple-oss-distributions/xnu/tree/ac9718fb1af618d5ce8678d0dc6e8a58f252216f ，
 不以公开基线行号冒充实际补丁树行号。没有发布原始Apple反汇编或私有启动向量。
 
+## 后续：七组实际预处理的限定进展
+
+[实际 CPP 摘要](evidence/route-a-a01-cpp-20261127.json)与[启动合同增补](ROUTE_A_NONTPRO_STARTUP.md#七组真实-xnu-预处理的后续证据)补充了生成配置下的真实 `kern_exec` 正文：完整读取保存路径、apple 构造与字符串复制函数，确认首项固定前缀和 argv／envv／apple 的终止边界；所检查构造函数没有两个 TPRO 键，仍发布未证明取值的 `security_config`。这是所选成功路径的源码事实，未被推广为所有运行时发布者均无键。
+
+这七组不包含 `task`、commpage、pmap／pmap_data 或 `vm_map`；上文关于这些组件的条件与最终链接／运行时缺口继续有效。新增预处理证据没有改变 A01、commpage、真实用户入口或 OS boot 的未验证状态。
