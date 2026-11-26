@@ -1,0 +1,741 @@
+#!/usr/bin/env python3
+"""Build a fixed private crypto source archive, bridge its KPIs, link and load.
+
+Run heavy stages under the operator's existing resource-admission wrapper.
+The source archive and Apple-derived build products remain outside this repo.
+The retained XNU/platform objects are verified inputs, not a fresh XNU build.
+No QEMU, firmware, device or operating-system success is claimed here.
+"""
+from __future__ import annotations
+
+import argparse
+import datetime
+import hashlib
+import hmac
+import importlib.util
+import json
+import os
+from pathlib import Path
+import re
+import shutil
+import shlex
+import signal
+import struct
+import subprocess
+import sys
+import tarfile
+import time
+import ctypes
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+import probe_route_a_loader as loader
+
+ROOT = Path(__file__).resolve().parents[1]
+GLUE = ROOT / "scripts/route_a_corecrypto"
+SOURCE_REVISION = "11fba65b12d8830630e248dfa8344caf8b065f26"
+SOURCE_ROOT = "corecrypto-2023-" + SOURCE_REVISION
+PINS = {
+    "archive": "fd04cb46cb733fdd8e6334702081a33b202ae7645140f59fa55b7d47de7e688f",
+    "project": "20f83a7541be6afa2d859f157d9a2fd252e68377d66ebb79a4f2158a9ed9d8a9",
+    "provider": "363ec8d29ea5d74f2772fcd5ba93f43695ac520fa90c492f1c70b9ccc3c09e38",
+    "namespace": "607113cfb4d45d47772d5f6ae7f7e0223914afda4b54c9dd77417018dc1999db",
+    "pbxproj": "8fe71e16f45db4ad1964fd748b7bed2a450ea55483fa8faddc2ad85519452ecf",
+    "bootstrap_source": "cc677a1bd2effd70dd55af8d907bfbd37594f0a9a1679e4a55875fec705d9a5f",
+    "bootstrap_recipe": "7b39218dddedd139b2cd70bcc209ea21069768c596a75616eb9e299d86f04027",
+    "platform_report": "738a7af11b32c08d0a4261611ba69f325d5a29bf424791b18e98879864feff7c",
+    "compiler": "85d220e32bd83d75de788c8beab0bea646a4684e1112f7c06266ca71e651bb04",
+}
+ADDED_FIELDS = (
+    "ccdigest_final_fn", "digest_ctx_size_fn", "digest_init_fn", "digest_update_fn", "digest_final_fn", "digest_fn",
+    "hmac_ctx_size_fn", "hmac_init_fn", "hmac_update_fn", "hmac_final_generate_fn", "hmac_final_verify_fn",
+    "hmac_generate_fn", "hmac_verify_fn",
+)
+ABI_RECORDS = (
+    "crypto_functions", "cckprng_funcs", "ccdigest_info", "ccdigest_ctx", "cchmac_ctx",
+    "ccmode_ecb", "ccmode_cbc", "ccmode_ctr", "ccmode_gcm", "ccmode_xts", "ccrng_state",
+    "ccchacha20poly1305_fns",
+    "ccrsa_pub_ctx", "ccrsa_full_ctx", "ccchacha20poly1305_info", "route_a_crypto_sizes",
+)
+RECIPE_REL = "build/xnu/ios-obj/DEVELOPMENT_ARM64_BCM2837/osfmk/DEVELOPMENT/prng_random.o.json"
+ASSYM_REL = "build/xnu/ios-obj/DEVELOPMENT_ARM64_BCM2837/osfmk/DEVELOPMENT/assym.s"
+SOURCE_DATE_EPOCH = "1700000000"
+
+
+class BuildError(RuntimeError):
+    pass
+
+
+def require(condition, message):
+    if not condition:
+        raise BuildError(message)
+
+
+def sha(data):
+    return hashlib.sha256(data).hexdigest()
+
+
+def safe_json(value):
+    if isinstance(value, dict):
+        return {k: safe_json(v) for k, v in value.items()}
+    if isinstance(value, (list, tuple)):
+        return [safe_json(v) for v in value]
+    if isinstance(value, int) and not isinstance(value, bool) and abs(value) >= 1 << 53:
+        return hex(value)
+    return value
+
+
+def save(path, value):
+    Path(path).write_text(json.dumps(safe_json(value), sort_keys=True, indent=2) + "\n")
+
+
+def regular(path):
+    path = Path(path).absolute()
+    require(path.is_file() and not path.is_symlink(), f"not a regular nonsymlink input: {path}")
+    require(not any(c in str(path) for c in "\x00\r\n,"), "unsafe path delimiter")
+    return path.resolve()
+
+
+def pin(path, expected):
+    path = regular(path)
+    data = path.read_bytes()
+    require(sha(data) == expected, f"pinned input differs: {path}")
+    return data
+
+
+def fresh(path):
+    logical = Path(path).absolute()
+    require(not logical.is_symlink(), "output must not be a symlink")
+    path = logical.resolve()
+    require(not path.exists(), f"output already exists: {path}")
+    require(ROOT != path and ROOT not in path.parents, "build outputs must be outside the source repository")
+    require(not any(c in str(path) for c in "\x00\r\n,"), "unsafe output delimiter")
+    path.mkdir(parents=True, exist_ok=False)
+    return path.resolve()
+
+
+def module(path, name):
+    spec = importlib.util.spec_from_file_location(name, path)
+    value = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(value)
+    return value
+
+
+class Journal:
+    def __init__(self, out):
+        self.out, self.records, self.commands = out, {}, []
+        self.environment = {"PATH": os.defpath, "LANG": "C", "LC_ALL": "C", "TZ": "UTC",
+                            "SOURCE_DATE_EPOCH": SOURCE_DATE_EPOCH, "ZERO_AR_DATE": "1", "TMPDIR": str(out)}
+
+    def protect(self, path, *, tool=False):
+        path = Path(path).absolute()
+        record = loader.platform_link.tool_identity(path) if tool else loader.identity(regular(path))
+        prior = self.records.setdefault(record["path"], record)
+        require(prior == record, f"input changed before reuse: {path}")
+        return record
+
+    def execute(self, argv, label, *, cwd=None, env=None, timeout=60):
+        self.protect(argv[0], tool=True)
+        stdout, stderr = self.out / (label + ".stdout"), self.out / (label + ".stderr")
+        environment = dict(self.environment, **(env or {}))
+        environment.update(SOURCE_DATE_EPOCH=SOURCE_DATE_EPOCH, ZERO_AR_DATE="1", TZ="UTC")
+        record = {"argv": list(map(str, argv)), "cwd": str(cwd or self.out), "timeout_seconds": timeout,
+                  "environment": environment}
+        self.commands.append(record)
+        save(self.out / "commands.json", self.commands)
+        process = None
+        with stdout.open("xb") as out, stderr.open("xb") as err:
+            try:
+                process = subprocess.Popen(record["argv"], cwd=cwd or self.out,
+                                           env=environment, stdout=out, stderr=err, stdin=subprocess.DEVNULL,
+                                           start_new_session=True)
+                record["exit"] = process.wait(timeout=timeout)
+                require(record["exit"] == 0, f"{label} exited {record['exit']}; inspect retained stderr")
+            finally:
+                if process is not None and process.poll() is None:
+                    os.killpg(process.pid, signal.SIGTERM)
+                    try:
+                        process.wait(timeout=2)
+                    except subprocess.TimeoutExpired:
+                        os.killpg(process.pid, signal.SIGKILL)
+                        process.wait(timeout=2)
+                if process is not None:
+                    record.update(exit=process.returncode, reaped=process.poll() is not None)
+                record.update(stdout=loader.identity(stdout), stderr=loader.identity(stderr))
+                save(self.out / "commands.json", self.commands)
+        return stdout.read_bytes()
+
+    def recheck(self):
+        return loader.platform_link.check_unchanged(list(self.records.values()))
+
+    def headers(self, roots):
+        """Freeze actual headers and alias bindings, including framework directory links."""
+        visited = set()
+        for root in roots:
+            if not root.is_dir(): continue
+            for directory, names, files in os.walk(root, followlinks=True):
+                resolved = Path(directory).resolve()
+                if resolved in visited:
+                    names[:] = []
+                    continue
+                visited.add(resolved)
+                for name in files:
+                    path = Path(directory) / name
+                    if path.suffix != ".h" or not path.is_file(): continue
+                    target = path.resolve()
+                    self.protect(target)
+                    if path.absolute() != target:
+                        self.protect(path.absolute(), tool=True)
+
+    def compile(self, argv, label, **kwargs):
+        dependencies = self.out / (label + ".d")
+        self.execute([*argv, "-MD", "-MF", str(dependencies)], label, **kwargs)
+        text = dependencies.read_text().replace("\\\n", " ")
+        require(":" in text, "compiler did not record dependencies")
+        paths = [Path(s).resolve() for s in shlex.split(text.split(":", 1)[1])]
+        require(paths, "compiler dependency list is empty")
+        for path in paths:
+            require(str(path) in self.records, f"compiler consumed an undeclared input: {path}")
+            self.protect(path)
+        return {"dependency_file": loader.identity(dependencies), "input_count": len(paths)}
+
+
+def extract_source(archive, output):
+    pin(archive, PINS["archive"])
+    with tarfile.open(archive, "r:gz") as source:
+        members = source.getmembers()
+        names = [m.name.rstrip("/") for m in members]
+        require(len(names) == len(set(names)), "duplicate archive member")
+        require(sum(m.size for m in members) < 1024 ** 3, "source archive size bound")
+        for member in members:
+            path = Path(member.name)
+            require(not path.is_absolute() and ".." not in path.parts and path.parts[0] == SOURCE_ROOT,
+                    "source archive path outside fixed root")
+            require(member.isfile() or member.isdir(), "source archive contains a link or special file")
+        source.extractall(output, members=members, filter="data")
+    return output / SOURCE_ROOT
+
+
+def target_sources(source, pbx):
+    pin(source / "corecrypto.xcodeproj/project.pbxproj", PINS["project"])
+    objects = pbx.load(source / "corecrypto.xcodeproj/project.pbxproj")["objects"]
+    parents = {}
+    for key, value in objects.items():
+        for child in value.get("children", []):
+            require(child not in parents, "PBX child has multiple parents")
+            parents[child] = key
+
+    def resolve(key, seen=()):
+        require(key not in seen and len(seen) < 128, "PBX group cycle")
+        item = objects[key]
+        relative = item.get("path", "")
+        require(not Path(relative).is_absolute() and ".." not in Path(relative).parts, "PBX path escapes source")
+        if item.get("sourceTree") == "SOURCE_ROOT" or key not in parents:
+            result = source / relative
+        else:
+            require(item.get("sourceTree") == "<group>", "unsupported PBX source tree")
+            result = resolve(parents[key], (*seen, key)) / relative
+        return result
+
+    targets = [v for v in objects.values() if v.get("isa") == "PBXNativeTarget" and v.get("name") == "corecrypto_kext"]
+    require(len(targets) == 1, "ambiguous corecrypto target")
+    phases = [objects[k] for k in targets[0]["buildPhases"] if objects[k]["isa"] == "PBXSourcesBuildPhase"]
+    require(len(phases) == 1, "ambiguous source phase")
+    paths = [resolve(objects[k]["fileRef"]) for k in phases[0]["files"]
+             if objects[objects[k]["fileRef"]].get("path", "").endswith(".c")]
+    require(len(paths) == 529 and len(set(paths)) == 529, "fixed target C source count changed")
+    require(all(p.is_file() and p.resolve().is_relative_to(source) for p in paths), "missing target source")
+    return paths
+
+
+def prepare_overlay(provider, bootstrap, directory):
+    """Only add real callback adapters and a post-initialization consumer check."""
+    text = provider.decode()
+    needle = "    register_crypto_functions(&kpis);"
+    require(text.count(needle) == 1, "provider registration insertion is not unique")
+    original_fields = re.findall(r"kpis\.([A-Za-z0-9_]+)\s*=\s*([^;]+);", text)
+    require(len(original_fields) == 43 and len({x[0] for x in original_fields}) == 43, "provider assignments changed")
+    require(not set(ADDED_FIELDS) & {x[0] for x in original_fields}, "adapter would overwrite an existing callback")
+    text = text.replace(needle, "    route_a_complete_crypto_table(&kpis);\n" + needle)
+    include = '#include <libkern/crypto/register_crypto.h>'
+    require(text.count(include) == 1, "provider header insertion is not unique")
+    text = text.replace(include, include + '\n#include "adapter.h"')
+    assertions = []
+    for field, expression in original_fields:
+        require("\n" not in expression and re.fullmatch(r"[&A-Za-z_][A-Za-z_0-9]*(?:\(\))?", expression),
+                "unreviewed provider initializer expression")
+        assertions.append('_Static_assert(__builtin_types_compatible_p(__typeof__(((struct crypto_functions *)0)->'
+                          + field + '), __typeof__(1 ? (' + expression + ') : (' + expression + '))), "type ' + field + '");')
+    text += "\n" + "\n".join(assertions) + "\n"
+    (directory / "corecrypto_kext.c").write_text(text)
+    original = bootstrap.decode()
+    marker = '\t\tpanic("source corecrypto initialization failed: %d", source_corecrypto14_status);\n\t}\n}'
+    require(original.count(marker) == 1, "bootstrap success insertion is not unique")
+    updated = original.replace(marker, marker[:-1] + "\troute_a_crypto_consumer_check();\n}")
+    updated = '#include "consumer_probe.h"\n' + updated
+    (directory / "prng_random.c").write_text(updated)
+    return {"original_provider_fields": [x[0] for x in original_fields], "added_fields": list(ADDED_FIELDS),
+            "assignment_types_asserted": 56, "post_and_registration_order_preserved": True}
+
+
+def apply_bootstrap_append(original, patch):
+    """Interpret the fixed one-file append patch with exact context, no fuzz."""
+    lines = patch.decode().splitlines(keepends=True)
+    require(lines[:4] == ["diff --git a/osfmk/prng/prng_random.c b/osfmk/prng/prng_random.c\n",
+                         "index 504b3fa..310719a 100644\n", "--- a/osfmk/prng/prng_random.c\n",
+                         "+++ b/osfmk/prng/prng_random.c\n"], "bootstrap patch file/header changed")
+    match = re.fullmatch(r"@@ -(\d+),(\d+) \+(\d+),(\d+) @@[^\n]*\n", lines[4])
+    require(match is not None, "bootstrap patch needs exactly one explicit hunk")
+    old_at, old_count, new_at, new_count = map(int, match.groups())
+    require(old_at == new_at and all(line[:1] in (" ", "+") for line in lines[5:]),
+            "bootstrap patch is no longer append-only")
+    context = [line[1:] for line in lines[5:] if line.startswith(" ")]
+    added = [line[1:] for line in lines[5:] if line.startswith("+")]
+    source = original.decode().splitlines(keepends=True)
+    require(len(context) == old_count and len(context) + len(added) == new_count
+            and source[old_at - 1:] == context and lines[5:5 + old_count] == [" " + line for line in context],
+            "bootstrap patch context/count does not exactly end the original file")
+    return original + "".join(added).encode()
+
+
+def reconstruct_bootstrap(journal, kernel_build):
+    record = json.loads((GLUE / "sources.json").read_text())
+    original, patch = record["bootstrap_original"], record["bootstrap_patch"]
+    output = journal.out / "bootstrap-source"; output.mkdir()
+    raw = journal.execute(["/usr/bin/git", "-C", str(kernel_build / "refer/xnu"), "show",
+                           original["commit"] + ":" + original["path"]], "bootstrap-original", timeout=20)
+    require(len(raw) == original["size"] and sha(raw) == original["sha256"], "original XNU bootstrap source differs")
+    original_path = output / "prng_random.original.c"; original_path.write_bytes(raw); journal.protect(original_path)
+    patch_raw = pin(kernel_build / patch["path"], patch["sha256"])
+    journal.protect(kernel_build / patch["path"])
+    require(len(patch_raw) == patch["size"], "bootstrap patch byte count differs")
+    patch_path = output / "source-corecrypto14-bootstrap.patch"; patch_path.write_bytes(patch_raw); journal.protect(patch_path)
+    license_raw = pin(kernel_build / patch["license_path"], patch["license_sha256"])
+    journal.protect(kernel_build / patch["license_path"])
+    (output / "UPSTREAM-LICENSE").write_bytes(license_raw)
+    reconstructed = apply_bootstrap_append(raw, patch_raw)
+    require(sha(reconstructed) == patch["reconstructed_sha256"] == PINS["bootstrap_source"], "reconstructed bootstrap differs")
+    prepared = kernel_build / ".cache/xnu-work/osfmk/prng/prng_random.c"
+    require(pin(prepared, PINS["bootstrap_source"]) == reconstructed, "declared prepared source does not match reconstruction")
+    journal.protect(prepared)
+    (output / "prng_random.reconstructed.c").write_bytes(reconstructed)
+    return reconstructed, {"original": original, "patch": patch,
+                           "reconstructed": loader.identity(output / "prng_random.reconstructed.c"),
+                           "prepared_witness": loader.identity(prepared),
+                           "method": "git show exact original, apply exact pinned append hunk in memory, compare SHA and prepared witness"}
+
+
+def provider_command(compiler, kernel_build, source, output):
+    include = output / "include/corecrypto"
+    include.mkdir(parents=True)
+    for header in sorted(source.glob("*/corecrypto/*.h")):
+        destination = include / header.name
+        require(not destination.exists(), f"duplicate exported header: {header.name}")
+        destination.symlink_to(header)
+    framework = kernel_build / ".cache/fakeroot/System/Library/Frameworks/Kernel.framework/Versions/A"
+    argv = [str(compiler), "--no-default-config", "--target=arm64-apple-ios27.0", "-mcpu=generic",
+            "-isysroot", str(kernel_build / ".cache/fakeroot"), "-mkernel", "-ffreestanding", "-fno-builtin",
+            "-fno-stack-check", "-std=gnu99", "-fblocks", "-O2", "-fno-vectorize", "-fno-slp-vectorize",
+            "-mno-implicit-float", "-DKERNEL=1", "-DKERNEL_PRIVATE=1", "-DBUILDKERNEL=1", "-DCC_USE_ASM=0",
+            "-DNDEBUG=1", "-DCC_DISABLE_RSAKEYGEN=1", "-Wno-deprecated-declarations",
+            "-Wno-incompatible-library-redeclaration", "-Werror=incompatible-function-pointer-types",
+            "-Werror=incompatible-pointer-types", "-Werror=date-time", "-I" + str(include.parent), "-I" + str(output / "glue"),
+            "-I" + str(framework / "PrivateHeaders"), "-I" + str(framework / "Headers"),
+            "-include", str(output / "glue/namespace.h"), "-ffile-prefix-map=" + str(source) + "=corecrypto-2023",
+            "-ffile-prefix-map=" + str(output) + "=route-a-corecrypto",
+            "-fdebug-compilation-dir=route-a-corecrypto"]
+    for folder in sorted({p.parent for p in source.rglob("*.h") if "test" not in str(p.relative_to(source)).lower()}):
+        argv.append("-I" + str(folder))
+    return argv
+
+
+def replay_bootstrap(record, kernel_build, source, output):
+    """The complete recipe is pinned before this narrow output/path rewrite."""
+    require(record["file"] == str(kernel_build / ".cache/xnu-work/osfmk/prng/prng_random.c"), "wrong bootstrap source")
+    require(record["output"] == "prng_random.o", "wrong bootstrap output")
+    argv, changed = [], {"source": 0, "output": 0}
+    original = record["arguments"]
+    require(all(isinstance(s, str) and not s.startswith("@") for s in original), "response file in C recipe")
+    i = 0
+    while i < len(original):
+        arg = original[i]
+        if arg == record["file"]:
+            argv.append(str(source)); changed["source"] += 1
+        elif arg == "-o":
+            require(original[i + 1] == "prng_random.o", "unexpected C output")
+            argv.extend([arg, str(output / "prng_random.o")]); changed["output"] += 1; i += 1
+        elif arg in ("-MJ", "-MF", "-MT", "-MQ"):
+            raise BuildError("retained bootstrap recipe gained an output side channel")
+        elif arg == "-I":
+            value = Path(original[i + 1]); value = value if value.is_absolute() else Path(record["directory"]) / value
+            argv.extend([arg, str(value.resolve())]); i += 1
+        else:
+            argv.append(arg)
+        i += 1
+    require(changed == {"source": 1, "output": 1}, "bootstrap source/output count")
+    argv[1:1] = ["--no-default-config", "-DXNU_SOURCE_CORECRYPTO14=1", "-I" + str(source.parent),
+                  "-ffile-prefix-map=" + str(source.parent) + "=route-a-corecrypto/glue",
+                  "-fdebug-compilation-dir=route-a-corecrypto",
+                  "-Werror=incompatible-function-pointer-types", "-Werror=incompatible-pointer-types", "-Werror=date-time"]
+    require("-c" in argv and "-mcpu=generic" in argv, "bootstrap target recipe changed")
+    return argv
+
+
+def record_layouts(text):
+    result = {}
+    for block in text.split("*** Dumping AST Record Layout"):
+        lines = block.strip().splitlines()
+        if not lines:
+            continue
+        match = re.fullmatch(r"\s*0 \| struct (\w+)", lines[0])
+        if match and match[1] in ABI_RECORDS:
+            require(match[1] not in result, "duplicate ABI record")
+            canonical = "\n".join(line.strip() for line in lines) + "\n"
+            canonical = re.sub(r"\bcc14_(ccsha(?:256|512)_di)\b", r"\1", canonical)
+            result[match[1]] = canonical
+    return result
+
+
+def abi_check(journal, provider_argv, bootstrap_argv, directory):
+    layouts = {}
+    for label, command in (("provider", provider_argv), ("consumer", bootstrap_argv)):
+        command = list(map(str, command))
+        at = command.index("-o"); del command[at:at + 2]
+        command.remove("-c")
+        command += ["-Xclang", "-fdump-record-layouts-complete", "-fsyntax-only"]
+        raw = journal.execute(command, "abi-" + label, cwd=directory)
+        layouts[label] = record_layouts(raw.decode())
+        for name, text in layouts[label].items():
+            (directory / (label + "." + name)).write_text(text)
+    require(set(layouts["provider"]) == set(ABI_RECORDS) == set(layouts["consumer"]), "missing ABI carrier layout")
+    mismatches = [name for name in ABI_RECORDS if layouts["provider"][name] != layouts["consumer"][name]]
+    report = {"matches": not mismatches, "mismatches": mismatches, "records": {
+        name: {side: sha(layouts[side][name].encode()) for side in layouts} for name in ABI_RECORDS},
+        "normalization": "only the two cc14_ccsha{256,512}_di field-name aliases; no type/offset suppression"}
+    save(directory / "abi.json", report)
+    require(not mismatches, "provider/consumer ABI carrier layout differs: " + ", ".join(mismatches))
+    return report
+
+
+def symbol_span(strict, data, name, length, *, executable=False):
+    found = [s for s in strict["metadata"]["symbols"]["records"] if s["name"] == name]
+    require(len(found) == 1, f"ambiguous or missing symbol: {name}")
+    symbol = found[0]
+    require(symbol["n_type"] in (0xe, 0xf) and not symbol["n_desc"] & 0x80
+            and 1 <= symbol["n_sect"] <= len(strict["metadata"]["sections"]) and 0 < length <= 65536,
+            "symbol is not a strong section definition")
+    sec = strict["metadata"]["sections"][symbol["n_sect"] - 1]
+    va = symbol["value"]
+    require(sec["addr"] <= va and va + length <= sec["addr"] + sec["size"], "symbol extent leaves section")
+    owners = [s for s in strict["segments"] if s["vmaddr"] <= va and va + length <= s["vmaddr"] + s["filesize"]]
+    require(len(owners) == 1, "symbol extent is not file backed")
+    if executable:
+        require(owners[0]["name"] == sec["segment"] and owners[0]["initprot"] & 4
+                and sec["flags"] & 0x80000000 and sec["flags"] & 0xff == 0 and va % 4 == 0,
+                "symbol is not aligned pure executable code")
+    offset = owners[0]["fileoff"] + va - owners[0]["vmaddr"]
+    return {"symbol": name, "va": va, "file_offset": offset, "size": length,
+            "section": sec["name"], "segment": sec["segment"], "sha256": sha(data[offset:offset + length])}
+
+
+def function_span(strict, data, name, *, bound=65536):
+    """Use real symbols and section bounds, not a caller-supplied address root."""
+    head = symbol_span(strict, data, name, 4, executable=True)
+    following = [s["value"] for s in strict["metadata"]["symbols"]["records"]
+                 if s["n_type"] in (0xe, 0xf) and s["value"] > head["va"]]
+    section, = [s for s in strict["metadata"]["sections"]
+                if s["name"] == head["section"] and s["segment"] == head["segment"]]
+    end = min([section["addr"] + section["size"], *following])
+    require(0 < end - head["va"] <= bound and (end - head["va"]) % 4 == 0,
+            f"function extent exceeds the diagnostic bound: {name}")
+    return symbol_span(strict, data, name, end - head["va"], executable=True)
+
+
+def seal_kernel(raw):
+    """Apply only the two fixed test-key flips, then the ordinary POST HMAC."""
+    strict = loader.strict_kernel(raw)
+    sections = strict["metadata"]["sections"]
+    code, = [s for s in sections if s["name"] == "__text" and s["segment"] in ("__TEXT", "__TEXT_EXEC")]
+    integrity, = [s for s in sections if s["name"] == "__fips_hmacs"]
+    require(integrity["size"] == 32, "POST HMAC must be exactly 32 bytes")
+    require(code["addr"] - strict["metadata"]["load_contract"]["virtual_base"] == code["offset"],
+            "POST header-relative mapping changed")
+    require(integrity["offset"] + 32 <= code["offset"] or code["offset"] + code["size"] <= integrity["offset"],
+            "HMAC overlaps hashed text")
+    symbol_span(strict, raw, "_source_corecrypto14_bootstrap", 4, executable=True)
+    symbol_span(strict, raw, "_static_if_tests_setup", 4, executable=True)
+    names = ("_static_if_test_key_true_to_false_jump_key", "_static_if_test_key_false_to_true_jump_key")
+    mask = 0x7ffffffffff
+    keys = {symbol_span(strict, raw, name, 4)["va"] & mask for name in names}
+    entries, = [s for s in sections if s["name"] == "__static_if" and s["segment"] in ("__DATA_CONST", "__BOOTDATA")]
+    require(entries["size"] % 16 == 0, "invalid static_if table size")
+    data, sites = bytearray(raw), []
+    for relative in range(0, entries["size"], 16):
+        delta, target, link = struct.unpack_from("<iiQ", raw, entries["offset"] + relative)
+        if (link & mask & ~3) not in keys:
+            continue
+        va = entries["addr"] + relative + delta
+        require(code["addr"] <= va and va + 4 <= code["addr"] + code["size"] and va % 4 == 0 and target % 4 == 0,
+                "static_if target outside bounded instruction region")
+        require(-(1 << 27) <= target < 1 << 27 and code["addr"] <= va + target
+                and va + target + 4 <= code["addr"] + code["size"], "static_if branch displacement leaves hashed code")
+        require(all(site["va"] != hex(va) for site in sites), "duplicate static_if patch site")
+        offset = code["offset"] + va - code["addr"]
+        branch = 0x14000000 | ((target >> 2) & 0x3ffffff)
+        old, new = (branch, 0xd503201f) if link & 1 else (0xd503201f, branch)
+        actual, = struct.unpack_from("<I", raw, offset)
+        require(actual == old, "static_if input is not the original emitted instruction")
+        struct.pack_into("<I", data, offset, new)
+        sites.append({"va": hex(va), "file_offset": hex(offset), "before": hex(old), "after": hex(new)})
+    require(len(sites) == 10, "fixed static_if test-key site count changed")
+    mac = hmac.digest(b"\0", data[code["offset"]:code["offset"] + code["size"]], "sha256")
+    data[integrity["offset"]:integrity["offset"] + 32] = mac
+    return bytes(data), {"input_sha256": sha(raw), "kernel_sha256": sha(data), "static_if_sites": sites,
+                         "hmac_file_offset": hex(integrity["offset"]), "hmac_sha256": mac.hex(),
+                         "code_file_offset": hex(code["offset"]), "code_bytes": code["size"],
+                         "runtime_post_executed": False}
+
+
+def load_kernel(journal, sources, directory, compiler, kernel, data, strict, symbols, assym):
+    """Keep the original DarwinBoot extraction and ctypes ABI, with owned subprocess cleanup."""
+    directory.mkdir()
+    body, excerpts = loader.make_harness(sources)
+    path = directory / "loader-probe.c"; path.write_text(body); journal.protect(path)
+    for relative, record in sources.items():
+        destination = directory / "sources" / relative
+        destination.parent.mkdir(parents=True, exist_ok=True); destination.write_bytes(record["bytes"])
+    library = directory / "loader-probe.so"
+    journal.execute([str(compiler), "-std=c11", "-O2", "-Wall", "-Wextra", "-Werror",
+                     "-shared", "-fPIC", str(path), "-o", str(library)], "host-loader", timeout=60)
+    require(sys.byteorder == "little" and ctypes.sizeof(ctypes.c_void_p) == 8, "loader host must be little endian LP64")
+    lib = ctypes.CDLL(str(library))
+    lib.probe_parse.argtypes = [ctypes.c_void_p, ctypes.c_size_t, ctypes.POINTER(loader.CKernel)]
+    lib.probe_parse.restype = ctypes.c_int
+    lib.probe_load.argtypes = [ctypes.c_void_p, ctypes.c_size_t, ctypes.c_void_p, ctypes.c_size_t, ctypes.POINTER(loader.CKernel)]
+    lib.probe_load.restype = ctypes.c_int
+    for name in ("probe_loader_abi", "probe_xnu_abi"):
+        getattr(lib, name).argtypes = [ctypes.c_uint, ctypes.c_uint]; getattr(lib, name).restype = ctypes.c_size_t
+    lib.probe_video_abi.argtypes = [ctypes.c_uint, ctypes.c_uint, ctypes.c_uint]; lib.probe_video_abi.restype = ctypes.c_size_t
+    report = {"schema": "route-a-corecrypto-loader-v1", "kernel": loader.identity(kernel),
+              "production_extractions": excerpts, "entry_symbols": symbols,
+              "load_contract": strict["metadata"]["load_contract"],
+              "byte_load": loader.verify_load(lib, data, strict, directory / "kernel.load.bin"),
+              "boot_args_abi": loader.check_abi(lib, assym),
+              "scope": "unchanged pinned DarwinBoot host extraction; no firmware or guest instruction execution"}
+    save(directory / "report.json", report)
+    return report
+
+
+def build(args):
+    out = fresh(args.output)
+    journal = Journal(out)
+    report = {"schema": "route-a-corecrypto-build-v1", "status": "failed", "build_verified": False,
+              "runtime_provider_verified": False, "os_boot_verified": False, "tb371fc_kernel_qualified": False,
+              "started_at_utc": datetime.datetime.now(datetime.timezone.utc).isoformat(),
+              "scope": "source provider and original glue against retained, identified XNU/platform objects"}
+    try:
+        kb = Path(args.kernel_build).resolve()
+        compiler = Path(args.compiler).absolute()
+        require(loader.platform_link.tool_identity(compiler)["sha256"] == PINS["compiler"], "compiler byte identity changed")
+        archive = regular(args.source_archive)
+        baseline_path = regular(args.platform_report)
+        baseline = json.loads(pin(baseline_path, PINS["platform_report"]))
+        journal.protect(archive); journal.protect(baseline_path)
+        candidate = journal.protect(baseline["candidate"]["path"])
+        require(all(candidate[key] == baseline["candidate"][key] for key in ("size", "sha256")), "baseline candidate changed")
+        inventory = baseline["protected_input_inventory"]
+        pin(inventory["path"], inventory["sha256"])
+        journal.protect(inventory["path"])
+        for item in json.loads(Path(inventory["path"]).read_bytes()):
+            current = journal.protect(item["path"], tool=item.get("kind") == "tool")
+            require(current["sha256"] == item["sha256"] and current["size"] == item["size"], "retained baseline input changed")
+        scripts = (Path(__file__), Path(loader.__file__), Path(loader.platform_link.__file__),
+                   Path(loader.platform_link.toolchain.__file__))
+        for path in (*scripts, loader.CONFIG, Path(sys.executable).resolve()):
+            journal.protect(path)
+        for path in GLUE.iterdir():
+            if path.is_file(): journal.protect(path)
+        frozen = out / "driver-source"; frozen.mkdir()
+        for path in (*scripts, loader.CONFIG):
+            shutil.copy2(path, frozen / path.name)
+        pbx_path = kb / "scripts/pbxproj.py"; pin(pbx_path, PINS["pbxproj"]); journal.protect(pbx_path)
+        source = extract_source(archive, out)
+        source_paths = target_sources(source, module(pbx_path, "pinned_corecrypto_pbx"))
+        for path in source.rglob("*"):
+            if path.is_file(): journal.protect(path)
+        # Freeze declared SDK/source headers before compilation, including resolved
+        # framework symlinks. System host C headers are identified separately in scope.
+        header_roots = (kb / ".cache/fakeroot", kb / ".cache/xnu-work", kb / "build/xnu/ios-obj")
+        journal.headers(header_roots)
+        resource_dir = journal.execute([str(compiler), "--no-default-config", "-print-resource-dir"],
+                                       "compiler-resource-dir").decode().strip()
+        resource = regular(Path(resource_dir) / "include/stddef.h").parent
+        journal.headers((resource,))
+        journal.protect(kb / "build/xnu/ios-obj/san/kasan-denylist-arm64")
+        glue = out / "glue"; shutil.copytree(GLUE, glue)
+        pin(glue / "namespace.h", PINS["namespace"])
+        provider = pin(source / "corecrypto_kext/corecrypto_kext.c", PINS["provider"])
+        bootstrap, report["bootstrap_reconstruction"] = reconstruct_bootstrap(journal, kb)
+        report["bridge"] = prepare_overlay(provider, bootstrap, glue)
+        for path in glue.iterdir():
+            if path.is_file(): journal.protect(path)
+        command = provider_command(compiler, kb, source, out)
+        for flag in command:
+            if flag.startswith("-I"):
+                directory = Path(flag[2:])
+                if directory.is_dir():
+                    for path in directory.glob("*.h"):
+                        if path.is_file():
+                            journal.protect(path.resolve())
+                            if path.absolute() != path.resolve(): journal.protect(path.absolute(), tool=True)
+        recipe_path = kb / RECIPE_REL
+        recipe = json.loads(pin(recipe_path, PINS["bootstrap_recipe"]).decode().strip().rstrip(","))
+        journal.protect(recipe_path)
+        bootstrap_out = out / "bootstrap"; bootstrap_out.mkdir()
+        bootstrap_command = replay_bootstrap(recipe, kb, glue / "prng_random.c", bootstrap_out)
+        provider_tu = command + ["-c", str(glue / "corecrypto_kext.c"), "-o", str(out / "abi-provider.o")]
+        report["abi"] = abi_check(journal, provider_tu, bootstrap_command, out)
+        report["bootstrap_dependencies"] = journal.compile(bootstrap_command, "bootstrap", cwd=out, timeout=90)
+        loader.platform_link.macho((bootstrap_out / "prng_random.o").read_bytes(), 1)
+        objects = out / "objects"; objects.mkdir()
+        entries = []
+        with (out / "objects.jsonl").open("x", buffering=1) as receipt:
+            for index, path in enumerate(source_paths):
+                relative = str(path.relative_to(source))
+                obj = objects / (sha(relative.encode())[:16] + "-" + path.stem + ".o")
+                actual = glue / "corecrypto_kext.c" if relative == "corecrypto_kext/corecrypto_kext.c" else path
+                dependencies = journal.compile(command + ["-c", str(actual), "-o", str(obj)], f"object-{index:03d}", timeout=60)
+                loader.platform_link.macho(obj.read_bytes(), 1)
+                entry = {"source": relative, "source_sha256": sha(actual.read_bytes()), "object": loader.identity(obj),
+                         "dependencies": dependencies}
+                entries.append(entry); receipt.write(json.dumps(entry) + "\n")
+                if index % 50 == 0: print(f"provider C sources: {index + 1}/529", flush=True)
+        built_archive = out / "libcorecrypto_kernel_noasm.a"
+        journal.execute([str(args.ar), "rcsD", str(built_archive), *[e["object"]["path"] for e in entries]], "archive")
+        raw_names = journal.execute([str(args.nm), "--extern-only", "--defined-only", str(built_archive)], "archive-names").decode()
+        defined = {line.split()[-1] for line in raw_names.splitlines() if len(line.split()) == 3}
+        original_names = {s["name"] for s in loader.strict_kernel(Path(baseline["candidate"]["path"]).read_bytes())["metadata"]["symbols"]["defined_external"]}
+        require(not defined & original_names, "provider archive still collides with kernel definitions")
+        namespace = re.findall(r"^#define (\w+) (\w+)$", (glue / "namespace.h").read_text(), re.M)
+        require(len(namespace) == 64 and all("_" + new in defined and "_" + old not in defined for old, new in namespace), "namespace export contract differs")
+        spec = baseline["commands"][-1]
+        argv = list(spec["argv"])
+        at = argv.index("-filelist") + 1
+        filelist = regular(argv[at]); journal.protect(filelist)
+        files = filelist.read_text().splitlines()
+        slots = [i for i, value in enumerate(files) if Path(value).name == "prng_random.o"]
+        require(len(slots) == 1, "bootstrap replacement is not unique")
+        files[slots[0]] = str(bootstrap_out / "prng_random.o")
+        new_filelist = out / "platform.filelist"; new_filelist.write_text("\n".join(files) + "\n")
+        argv[at] = str(new_filelist)
+        linked = out / "kernel.unsealed.macho"; argv[argv.index("-o") + 1] = str(linked)
+        map_args = [i for i, value in enumerate(argv) if value.startswith("-Wl,-map,")]
+        require(len(map_args) == 1, "link map output is ambiguous")
+        argv[map_args[0]] = "-Wl,-map," + str(out / "platform.map")
+        # ld64 debug-map object paths are metadata too. Strip only this new
+        # output prefix; retained input object paths stay exactly as declared.
+        argv.append("-Wl,-oso_prefix," + str(out) + "/")
+        argv.append(str(built_archive))
+        temporary = out / "tmp"; temporary.mkdir()
+        environment = dict(baseline["environment"], TMPDIR=str(temporary))
+        journal.execute(argv, "link", cwd=Path(spec["cwd"]), env=environment, timeout=180)
+        data, seal = seal_kernel(linked.read_bytes())
+        kernel = out / "kernel.macho"; kernel.write_bytes(data); save(out / "seal.json", seal)
+        strict = loader.strict_kernel(data)
+        config = json.loads(loader.CONFIG.read_text())
+        symbols = loader.check_entry_symbols(strict, config, data)
+        assym = kb / ASSYM_REL; loader.verify_bytes(assym.read_bytes(), config["prepared_xnu"]["assym"], "assym")
+        journal.protect(assym)
+        sources = loader.public_sources(config, Path(args.loader_sources))
+        for item in sources.values(): journal.protect(item["path"])
+        host = out / "loader"
+        journal.protect(args.cc, tool=True)
+        load_kernel(journal, sources, host, Path(args.cc), kernel, data, strict, symbols, assym.read_text())
+        report.update(status="provider_built_linked_loaded", build_verified=True, source_revision=SOURCE_REVISION,
+                      source_archive=loader.identity(archive), compiled_c_sources=len(entries),
+                      namespace=namespace, archive=loader.identity(built_archive), kernel=loader.identity(kernel),
+                      loaded_image=loader.identity(host / "kernel.load.bin"), loader_report=loader.identity(host / "report.json"),
+                      seal=seal, bootstrap=loader.identity(bootstrap_out / "prng_random.o"),
+                      object_manifest=loader.identity(out / "objects.jsonl"),
+                      deterministic_environment={"SOURCE_DATE_EPOCH": SOURCE_DATE_EPOCH, "ZERO_AR_DATE": "1", "TZ": "UTC",
+                                                 "compiler_paths": "fixed source/debug prefix maps and compilation directory",
+                                                 "linker_paths": "oso_prefix removes only this fresh output directory"},
+                      qualification_scope="build/type/layout/load only; actual POST and table consumers require runtime probe")
+    except Exception as exc:
+        report.update(status="failed", build_verified=False, error=f"{type(exc).__name__}: {exc}")
+    finally:
+        report["inputs"] = list(journal.records.values())
+        report["input_recheck"] = journal.recheck()
+        if not report["input_recheck"]["unchanged"]:
+            report.update(status="failed", build_verified=False, error="declared inputs changed during build")
+        report["commands"] = journal.commands
+        report["finished_at_utc"] = datetime.datetime.now(datetime.timezone.utc).isoformat()
+        save(out / "report.json", report)
+    return report
+
+
+def compare_builds(first_path, second_path):
+    """Compare two independently executed build receipts and their current bytes."""
+    first_path, second_path = regular(first_path), regular(second_path)
+    require(first_path.parent != second_path.parent, "reproducibility needs two distinct output directories")
+    reports = [json.loads(path.read_text()) for path in (first_path, second_path)]
+    artifacts = []
+    for path, report in zip((first_path, second_path), reports):
+        require(report.get("schema") == "route-a-corecrypto-build-v1" and report.get("build_verified") is True
+                and report.get("input_recheck", {}).get("unchanged") is True, "build receipt did not pass")
+        require(sum(cmd.get("argv", []).count("-c") for cmd in report["commands"]) == 530,
+                "receipt does not contain 529 provider compiles plus a bootstrap compile")
+        manifest = report["object_manifest"]
+        require(loader.identity(regular(manifest["path"])) == manifest, "object manifest changed")
+        objects = [json.loads(line) for line in Path(manifest["path"]).read_text().splitlines()]
+        require(len(objects) == 529 and len({o["source"] for o in objects}) == 529, "incomplete object manifest")
+        records = {"provider:" + item["source"]: item["object"] for item in objects}
+        records.update({key: report[key] for key in ("archive", "bootstrap", "kernel", "loaded_image")})
+        for record in records.values():
+            artifact = regular(record["path"])
+            require(path.parent in artifact.parents and loader.identity(artifact) == record,
+                    "build artifact is changed or not in its own independent output directory")
+        artifacts.append(records)
+    left_sources = {o["source"]: o["source_sha256"] for o in
+                    map(json.loads, Path(reports[0]["object_manifest"]["path"]).read_text().splitlines())}
+    right_sources = {o["source"]: o["source_sha256"] for o in
+                     map(json.loads, Path(reports[1]["object_manifest"]["path"]).read_text().splitlines())}
+    require(left_sources == right_sources and reports[0]["source_archive"]["sha256"] == reports[1]["source_archive"]["sha256"]
+            and reports[0]["deterministic_environment"] == reports[1]["deterministic_environment"],
+            "reproduction source or deterministic environment differs")
+    require(artifacts[0].keys() == artifacts[1].keys(), "build artifact sets differ")
+    differences = [key for key in artifacts[0] if any(artifacts[0][key][field] != artifacts[1][key][field]
+                                                    for field in ("size", "sha256"))]
+    return {"schema": "route-a-corecrypto-reproduction-v1", "verified": not differences,
+            "reports": [loader.identity(first_path), loader.identity(second_path)],
+            "checked_artifacts": len(artifacts[0]), "mismatches": differences,
+            "scope": "529 independently compiled provider objects, bootstrap object, deterministic archive, sealed kernel and loaded bytes"}
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--compare-builds", type=Path, nargs=2, metavar=("FIRST_REPORT", "SECOND_REPORT"))
+    for option in ("source-archive", "kernel-build", "compiler", "platform-report", "loader-sources", "output"):
+        parser.add_argument("--" + option, type=Path)
+    parser.add_argument("--ar", type=Path, default=Path("/usr/bin/llvm-ar"))
+    parser.add_argument("--nm", type=Path, default=Path("/usr/bin/llvm-nm"))
+    parser.add_argument("--cc", type=Path, default=Path("/usr/bin/cc"))
+    args = parser.parse_args()
+    if args.compare_builds:
+        require(args.output is not None, "comparison needs a fresh --output directory")
+        out = fresh(args.output)
+        report = compare_builds(*args.compare_builds); save(out / "report.json", report)
+        print(json.dumps(report), flush=True)
+        return 0 if report["verified"] else 2
+    require(all(getattr(args, name.replace("-", "_")) is not None for name in
+                ("source-archive", "kernel-build", "compiler", "platform-report", "loader-sources", "output")),
+            "build requires all six explicit input/output options")
+    def interrupted(number, frame):
+        raise BuildError(f"build interrupted by signal {number}")
+    for number in (signal.SIGTERM, signal.SIGINT): signal.signal(number, interrupted)
+    report = build(args)
+    print(json.dumps({k: report[k] for k in ("status", "build_verified")}), flush=True)
+    return 0 if report["build_verified"] else 2
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())
