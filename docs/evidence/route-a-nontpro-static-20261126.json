@@ -1,0 +1,318 @@
+{
+  "schema": "route-a-nontpro-static-evidence-v1",
+  "recorded_date": "2026-11-26",
+  "source_base": "e1e1229e8465834842f513169393543da49c0417",
+  "scope": "exact-input standalone hazard ledger and selected compiled XNU syscall-38 binding; A01 remains open",
+  "validated_source_files": {
+    "scripts/audit_route_a_nontpro.py": {
+      "name": "audit_route_a_nontpro.py",
+      "size": 21039,
+      "sha256": "abfb02a2c4cbabb469801f5f7514ef3f911a7928f19143ce26f3d66c6c1aa100"
+    },
+    "scripts/route_a_nontpro_xnu.py": {
+      "name": "route_a_nontpro_xnu.py",
+      "size": 18793,
+      "sha256": "f9f5a4ffead48e43b77490bac9f6f1a317308931c4c59a935b8532f1ee9ded7a"
+    },
+    "scripts/route_a_nontpro_fixture.py": {
+      "name": "route_a_nontpro_fixture.py",
+      "size": 10382,
+      "sha256": "5c638f79796c215f8b974c3171c15028926bd43f3486e83d0c95288393726cd6"
+    },
+    "scripts/probe_route_a_nontpro_fragments.py": {
+      "name": "probe_route_a_nontpro_fragments.py",
+      "size": 18453,
+      "sha256": "cf9ea85dc3fe423f894cd31cf3075d800b29cb05d72905e12144040a2665894a"
+    },
+    "scripts/route-a-nontpro/entry.S": {
+      "name": "entry.S",
+      "size": 3866,
+      "sha256": "84e7456c09aac01f2fa44983e2dabe9dd86a4adefe82befb818773b2d82ec839"
+    },
+    "scripts/route-a-nontpro/link.ld": {
+      "name": "link.ld",
+      "size": 123,
+      "sha256": "afa7970dacdb3c18e117e76a3ac9ff98dbdc790b594bd08411813f2a9df9d789"
+    },
+    "tests/test_route_a_nontpro.py": {
+      "name": "test_route_a_nontpro.py",
+      "size": 22693,
+      "sha256": "d6799d5a08cd33f42db2c128e3ad7b9508ce57e4412e0e6aa31490b1f0440024"
+    }
+  },
+  "standalone": {
+    "name": "dyld",
+    "size": 1447088,
+    "sha256": "ab9887ed96c9c08ad68d4c6a5c27e8289fb0c9e55ec3e134547292a1ec579608"
+  },
+  "code_pages": {
+    "code_pages_verified": 347,
+    "code_page_shift": 12,
+    "code_directory_version": "0x20400",
+    "effective_code_limit": 1417744,
+    "cdhash": "aa7847c769647402eab56e9a03ea4a746918a2ca",
+    "cms_or_apple_trust_verified": false
+  },
+  "entry": {
+    "lc_unixthread_pc": "0x5a90",
+    "initial_sp_preserved_in_x0": true,
+    "start_branch": "0x3be0",
+    "syscall": {
+      "svc_immediate": "0x80",
+      "x16_raw": "0x26",
+      "x16_signed": 38,
+      "namespace_x0": "0x0",
+      "actual_xnu_dispatch_verified": false
+    },
+    "standalone_global_store": {
+      "address": "0xc8220",
+      "coordinate": [
+        "__DATA_DIRTY",
+        "__common",
+        32
+      ]
+    },
+    "cached_entry_bytes_equal": false,
+    "cache_handoff_verified": false,
+    "alternate_predecessors_closed": false,
+    "fragments": {
+      "entry": {
+        "start": "0x5a90",
+        "end": "0x5aa4",
+        "sha256": "cbf1655d44bf155c7ff1d6b704ad8596d9792116fd96905a6607164a078e3522"
+      },
+      "apple_vector": {
+        "start": "0x6e38",
+        "end": "0x6e78",
+        "sha256": "0adb182a52afb065e9bf783cea14a2dc479e4b378c1eacd1405728ab23057ea8"
+      },
+      "apple_lookup": {
+        "start": "0x6e78",
+        "end": "0x6f20",
+        "sha256": "2c70b90f21a792aa097f0e186de9f8b44d68b9070d25b797bcdc7d4c065365a0"
+      },
+      "memory_manager_constructor": {
+        "start": "0x713c",
+        "end": "0x7208",
+        "sha256": "5b5ff1d3acc76f5376beec745a7b2ef370cf9617dea3c57ba93f5a7691656219"
+      },
+      "default_tpro_stack": {
+        "start": "0x21264",
+        "end": "0x212f0",
+        "sha256": "93cd58dc4e10f24e483d8fed5de03c75ad64f58353923d2c1b47c7aff50c1528"
+      },
+      "protected_stack_constructor": {
+        "start": "0x3cb2c",
+        "end": "0x3cb68",
+        "sha256": "f607cbc8636cdcdac013f7cda0eb4f2602aa9453cee79b8c0c7cbac83c3e052b"
+      },
+      "crossarch_wrapper": {
+        "start": "0xa99c",
+        "end": "0xa9d0",
+        "sha256": "8ec7f497c6b92b8122106cf58133365625d6722b2800e656035977214db909b6"
+      },
+      "crossarch_stub": {
+        "start": "0xa9d0",
+        "end": "0xa9dc",
+        "sha256": "0a93fea11555ed8a905577afd8e8cb1c16f7159d619bee2b0438e622ed0395c8"
+      }
+    }
+  },
+  "ledger": {
+    "tchange_count": 236,
+    "tchange_counts": {
+      "tchangeb": 120,
+      "tchangef": 116
+    },
+    "tracked_register_count": 932,
+    "function_group_count": 119,
+    "hazards_by_kind": {
+      "mrs": 652,
+      "msr": 280,
+      "tchangeb": 120,
+      "tchangef": 116
+    },
+    "tracked_registers": {
+      "s3_3_c4_c0_3": 304,
+      "s3_6_c15_c1_5": 628
+    },
+    "groups_by_family": {
+      "readonly_callback": 31,
+      "startup": 1,
+      "memory_manager_initialization": 2,
+      "api_or_runtime_state": 42,
+      "memory_manager_readonly_block": 42,
+      "private_cache_mapping": 1
+    },
+    "direct_incoming_edges": 158,
+    "enumeration_complete_for_candidate_ranges": true,
+    "all_groups_open": true,
+    "all_sites_dispatch_verified": false,
+    "indirect_incoming_edges_complete": false,
+    "state_writers_complete": false,
+    "callee_contracts_complete": false
+  },
+  "syscall38_binding": {
+    "kernel": {
+      "name": "mach.platform-link-probe.unstripped.noctf",
+      "size": 21942456,
+      "sha256": "46eff436250d905e9f3aec59dbcc8c04d594e614e790860236917c7cbfe39f1b"
+    },
+    "objects": {
+      "init_sysent": {
+        "name": "init_sysent.o",
+        "size": 76064,
+        "sha256": "48bd8cfdd431f878a9c70423fa20a86d1b00f970681bee91a84c2e72b6f93719"
+      },
+      "kern_crossarch": {
+        "name": "kern_crossarch.o",
+        "size": 39040,
+        "sha256": "402159e7f4aef562444db689534ade7545bff46625f962b003ade2ec0627da44"
+      },
+      "systemcalls": {
+        "name": "systemcalls.o",
+        "size": 62800,
+        "sha256": "35b762f64f2a7a957ed04ba3538f07f942818aebc6aff943f0d9834e79d5839b"
+      }
+    },
+    "link_filelist": {
+      "name": "platform-link.filelist",
+      "size": 129047,
+      "sha256": "6e565b3eba9c98f875a6da2dbd7762e175e75a97f8d79ec7041e854a9eda1d24"
+    },
+    "compiled_sysent_count": 558,
+    "compiled_sysent_stride": 24,
+    "table": {
+      "address": "0xfffffff0071cf550",
+      "raw_hex": "88628007f0ffffffd8ea5407f0ffffff0100000001000400",
+      "function": "0xfffffff007806288",
+      "munger": "0xfffffff00754ead8",
+      "return_type": 1,
+      "argument_count": 1,
+      "argument_bytes32": 4
+    },
+    "function": {
+      "symbol": "_sys_crossarch_trap",
+      "address": "0xfffffff007806288",
+      "bytes": 24,
+      "sha256": "91e655e45640718bb0c93580c552954fae543808d9820903b5288da9c0adcc0e",
+      "namespace_zero_return": 45,
+      "other_namespace_return": 22,
+      "contains_memory_store": false
+    },
+    "syscall38_static_target_verified": true,
+    "explicit_debug_syscall_rejection_define": "1",
+    "dispatch_conditions": [
+      "64-bit direct positive-X16 syscall",
+      "normal process/thread syscall filter permits the call",
+      "no debugger/DTrace table replacement",
+      "valid user and saved-state buffers"
+    ],
+    "actual_xnu_dispatch_verified": false,
+    "error_return_machine_path_verified": false,
+    "runtime_filter_state_verified": false
+  },
+  "validation": {
+    "execution": "host agent-heavy foreground wrapper; SSH into independent CT checkout; no QEMU or compilation",
+    "address_space_limit_bytes": 100663296,
+    "ct_timeout_seconds": 60,
+    "test_selection": [
+      "XnuBindingTests",
+      "LinkedMappingTests",
+      "ToolIdentityTests",
+      "LedgerTests"
+    ],
+    "tests": 13,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "elapsed_seconds": 22.978499655000633,
+    "maxrss_kib": 32684,
+    "within_50mib": true,
+    "prior_test_runs": [
+      {
+        "name": "a01-tests-001",
+        "tests": 17,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "scope": "initial static ledger, fixture input and SVC decoder tests"
+      },
+      {
+        "name": "a01-validation-002",
+        "tests": 7,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "scope": "selected XNU object/recipe and bounded-read tests; original kernel static binding"
+      }
+    ],
+    "unique_tests_observed_across_runs": 29,
+    "full_current_suite_executed_in_one_run": false
+  },
+  "private_artifact_identities": {
+    "report.json": {
+      "size": 2483,
+      "sha256": "19f5f7ba024044f784fab0c70c91a64634e26776262b87fcb6200d1acf1e97d5"
+    },
+    "syscall38-binding.json": {
+      "size": 27898,
+      "sha256": "ca76c3a99fcf9726f356990d60106a016ec2bf60a0e74d560298ab0d53a45077"
+    },
+    "unittest.log": {
+      "size": 2315,
+      "sha256": "6219d6791b6baba41f652c79c1f546a952b46666a512b693fc98583ac42be1db"
+    },
+    "standalone-ledger.json": {
+      "size": 443731,
+      "sha256": "9cc97feb55ca65fcb1ddc4338e26c972dc075972680a2f6decf71b6366f907f8"
+    }
+  },
+  "post_validation_changes": {
+    "reason": "independent review requested segment-level file extent validation including zero-section segments, and executable permissions in the generic selected linked-symbol reader",
+    "files": {
+      "scripts/route_a_nontpro_xnu.py": {
+        "size": 18981,
+        "sha256": "a518f931914f788e319988330a06581d94890d6794e05f7e085c9655ff173699"
+      },
+      "tests/test_route_a_nontpro.py": {
+        "size": 24202,
+        "sha256": "190e88c57d9ede92f013050fe670fde11a98f40300258e5612cafb140c1471be"
+      }
+    },
+    "new_tests_not_executed": [
+      "LinkedMappingTests.test_zero_section_linked_segment_cannot_exceed_its_virtual_extent",
+      "LinkedMappingTests.test_pure_instructions_in_nonexecutable_segment_are_not_a_function_target"
+    ],
+    "current_test_count": 31,
+    "planned_validation": "a01-validation-004",
+    "admission_exit_code": 75,
+    "ct_driver_started": false,
+    "tests_executed": 0,
+    "latest_source_revalidated": false
+  },
+  "fixture": {
+    "implemented": true,
+    "compiled": false,
+    "qemu_executed": false,
+    "cases": 20,
+    "scope": "original arm64e dyld fragments on synthetic QEMU EL0; synthetic vectors/commpage and explicitly modeled syscall response",
+    "actual_xnu_dispatch_verified": false,
+    "ordinary_arm64_translation_verified": false
+  },
+  "open_obligations": [
+    "complete kernel-to-user apple-vector publication, provenance and absence of all TPRO capability keys",
+    "all startup predecessors and state writes, including MemoryManager and ProtectedStack propagation",
+    "commpage publication at user entry and the ordinary VM-protection fallback",
+    "all indirect incoming edges and callees for every recorded hazard group",
+    "standalone-to-shared-cache dyld handoff and later entry contracts",
+    "execution of original-byte finite fragments, followed by actual XNU user-SVC integration"
+  ],
+  "a01_verified": false,
+  "fragment_execution_verified": false,
+  "actual_xnu_dispatch_verified": false,
+  "runtime_dispatch_verified": false,
+  "darwin_process_started": false,
+  "os_boot_verified": false,
+  "tb371fc_verified": false
+}

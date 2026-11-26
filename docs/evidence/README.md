@@ -2,6 +2,12 @@
 
 本目录保存可公开、可追溯的结果摘要。系统二进制和原始私有日志不在仓库分发。文件名日期是该次记录日期，不代表之后所有改动都已重新执行相同测试。
 
+## 非 TPRO 入口账本与已编译 syscall 绑定：2026-11-26
+
+[公开摘要](route-a-nontpro-static-20261126.json)记录固定原始 dyld 的完整候选清单：236 条 TCHANGE、932 次跟踪寄存器访问、119 个真实函数区间。最终候选的 syscall 38 实际表项、编译对象重定位和完整目标函数已逐字节绑定，namespace 0 返回 ENOTSUP；真实 XNU SVC／过滤器／返回路径仍未执行。
+
+完整账本验证的 13 项定向回归通过、零跳过，实际分析峰值 RSS 32,684 KiB。后续 linked-segment 两项边界变体因资源准入退出 75 尚未运行，已验证版本与后续变化的源码摘要分别记录。全部路径组保持 open，片段 QEMU 尚未编译／运行，A01／Darwin／OS／板级资格 false。实现和命令见[非 TPRO 启动检查](../ROUTE_A_NONTPRO_STARTUP.md)。
+
 ## 固定指令计时与不完整快照：2026-11-26
 
 [run005 公开证据](route-a-qemu-instruction-clock-20261126.json)记录 `instruction-1ns` 模式下的真实失败：入口单步通过，首异常为 Data Abort，ELR `0xfffffff007a06264`、FAR `0x150`、ESR `0x96000005`。随后 debugger 入口的 34 个 core 寄存器仍完整，但 `x3`／SP 超出原允许窗口、panic format 在 512 字节内没有 NUL，因此快照为 `partial`，完整资格 false，诊断器退出 2。QEMU 被主机正常停止并回收的退出码 0 不改变该失败结果。
