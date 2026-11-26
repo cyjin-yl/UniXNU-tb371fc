@@ -40,6 +40,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from route_a_zeta.zeta_closure import close
 from route_a_zeta import zeta_dyld_cache as dc
 from route_a_zeta import zeta_userland_code as code
+from route_a_zeta import zeta_llvm_oracle as llvm
 from route_a_zeta import zeta_userland_pauth as pauth
 from route_a_zeta.zeta_macho_entries import cache_declared_entries
 from arm64_lowering.proof import rules_manifest, seal_summary, source_manifest
@@ -184,10 +185,37 @@ def json_digest(value):
 
 def publish_record(path, record):
     temporary = path.with_suffix('.tmp')
-    with temporary.open('x') as stream:
-        json.dump(record, stream, sort_keys=True)
-        stream.write('\n')
-    temporary.replace(path)
+    created = None
+    try:
+        stream = temporary.open('x')
+        try:
+            opened = os.fstat(stream.fileno())
+            created = (opened.st_dev, opened.st_ino)
+            json.dump(record, stream, sort_keys=True)
+            stream.write('\n')
+        except BaseException:
+            # Buffered close can fail too; retain the first write error.
+            try:
+                stream.close()
+            except BaseException:
+                pass
+            raise
+        else:
+            stream.close()
+        temporary.replace(path)
+    except BaseException:
+        # A failed write/close/rename must not poison the outer receipt retry
+        # with EEXIST. This attempt has a private, single-writer work directory.
+        # Best-effort inode checking preserves pre-existing paths and observed
+        # replacements; cleanup failure must also preserve the primary error.
+        if created is not None:
+            try:
+                current = temporary.lstat()
+                if (current.st_dev, current.st_ino) == created:
+                    temporary.unlink()
+            except OSError:
+                pass
+        raise
 
 
 def publish_partial(path, record):
@@ -279,15 +307,18 @@ def main(argv=None):
     stage = 'initial-rules'
     pending_partial = {}
     try:
-        options = ({} if args.pacga_policy == 'reject' else
-                   dict(pacga_policy=args.pacga_policy, pacga_kernel=args.pacga_kernel))
-        initial_rules = rules_manifest(**options)
-        with (args.work / 'initial-rules.json').open('x') as stream:
-            json.dump(initial_rules, stream, sort_keys=True)
-        stage = 'cache-open'
-        cache = dc.Cache(args.cache)
-        stage = 'attempt'
-        return run_attempt(args, cache, initial_rules, pending_partial)
+        # Hold the identified binary across the complete attempt. Every fork
+        # inherits this FD, including later cross-image closure rounds.
+        with llvm.session():
+            options = ({} if args.pacga_policy == 'reject' else
+                       dict(pacga_policy=args.pacga_policy, pacga_kernel=args.pacga_kernel))
+            initial_rules = rules_manifest(**options)
+            with (args.work / 'initial-rules.json').open('x') as stream:
+                json.dump(initial_rules, stream, sort_keys=True)
+            stage = 'cache-open'
+            cache = dc.Cache(args.cache)
+            stage = 'attempt'
+            return run_attempt(args, cache, initial_rules, pending_partial)
     except BaseException as error:
         partial = args.work / 'partial.json'
         # Preserve more precise worker or closure failure evidence.
@@ -306,6 +337,7 @@ def main(argv=None):
 
 
 def run_attempt(args, cache, initial_rules, pending_partial):
+    llvm.bind_initial_rules(initial_rules['decoders']['llvm_mc'])
     partial = args.work / 'partial.json'
     completed_phases = {}
     cache.check_opened_generations()
@@ -436,19 +468,33 @@ def run_attempt(args, cache, initial_rules, pending_partial):
         for grade, count in entry['edits_by_evidence'].items():
             totals['edits:' + grade] += count
     summary['totals'] = dict(totals)
-    cache.check_opened_generations()
-    summary = seal_summary(cache, summary, args.work, partial=bool(args.only),
-                           pacga_policy=args.pacga_policy, pacga_kernel=args.pacga_kernel)
-    if summary['rules'] != initial_rules:
-        raise ValueError('proof rules changed during this attempt')
-    if summary['source_manifest'] != initial_input:
-        raise ValueError('proof input bytes or inventory changed during this attempt')
-    pending_summary = args.work / 'summary.tmp'
-    pending_summary.write_text(json.dumps(summary, indent=1) + '\n')
-    # seal_summary has finished its last mmap read. Only the final rename
-    # publishes a consumable summary.
-    cache.check_opened_generations()
-    pending_summary.replace(args.work / 'summary.json')
+    # Keep completed analysis diagnostics if final identity or publication
+    # fails. A late partial receipt never substitutes for a sealed summary.
+    try:
+        cache.check_opened_generations()
+        summary = seal_summary(cache, summary, args.work, partial=bool(args.only),
+                               pacga_policy=args.pacga_policy, pacga_kernel=args.pacga_kernel)
+        if summary['rules'] != initial_rules:
+            raise ValueError('proof rules changed during this attempt')
+        if summary['source_manifest'] != initial_input:
+            raise ValueError('proof input bytes or inventory changed during this attempt')
+        pending_summary = args.work / 'summary.tmp'
+        pending_summary.write_text(json.dumps(summary, indent=1) + '\n')
+        # seal_summary has finished its last mmap read. Only the final rename
+        # publishes a consumable summary.
+        cache.check_opened_generations()
+        llvm.bind_initial_rules(initial_rules['decoders']['llvm_mc'])
+        pending_summary.replace(args.work / 'summary.json')
+    except BaseException as error:
+        record = dict(schema='zeta-proof-partial-v1', phase='sealing',
+                      error=type(error).__name__, error_message=str(error)[:2048],
+                      complete=False, completed_phases=completed_phases,
+                      closure_round_count=len(rounds), totals=dict(totals),
+                      input_sha256=json_digest(initial_input),
+                      rules_sha256=json_digest(initial_rules))
+        pending_partial.update(record)
+        publish_partial(partial, record)
+        raise
     print(json.dumps(summary['totals'], indent=1))
     return 1 if args.only or totals['unproven'] or totals['unlowerable'] else 0
 

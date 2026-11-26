@@ -30,6 +30,7 @@ from capstone import (Cs, CsError, CS_ARCH_ARM64, CS_MODE_LITTLE_ENDIAN,
                       CS_GRP_JUMP, CS_GRP_CALL, CS_GRP_RET, CS_GRP_INT, CS_GRP_IRET,
                       CS_GRP_PRIVILEGE, CS_GRP_BRANCH_RELATIVE)
 from capstone.arm64 import ARM64_OP_REG
+from route_a_zeta import zeta_llvm_oracle as llvm
 
 LC_UNIXTHREAD, LC_FUNCTION_STARTS, LC_MAIN, LC_SYMTAB = 0x5, 0x26, 0x80000028, 0x2
 LC_DYLD_CHAINED_FIXUPS = 0x80000034
@@ -343,26 +344,14 @@ def llvm_oracle(words):
     """Straight-line instructions among words Capstone cannot decode: Apple AMX words
     (0x00201000-0x00201fff, which do not branch) and whatever llvm-mc decodes with every A-profile
     feature (SME2, newer SVE) unless it is a branch, return, trap or exception."""
-    import subprocess
     known = {word: ('amx', f'{(word >> 5) & 0x7f}, {word & 0x1f}') for word in words
              if word & AMX_MASK == AMX_BASE}
     rest = sorted(word for word in words if word not in known)
     if not rest:
         return known
-    text = ''.join(f'0x{w & 0xff:02x} 0x{(w >> 8) & 0xff:02x} 0x{(w >> 16) & 0xff:02x} 0x{w >> 24:02x}\n'
-                   for w in rest)
-    result = subprocess.run(['llvm-mc', '--disassemble', '-triple=aarch64', f'-mattr={LLVM_FEATURES}'],
-                            input=text, capture_output=True, text=True, check=False)
-    invalid = {int(m.group(1)) for m in re.finditer(r'<stdin>:(\d+):\d+: warning: invalid instruction encoding',
-                                                   result.stderr)}
-    lines = iter(line.strip() for line in result.stdout.splitlines()
-                 if line.startswith('\t') and not line.lstrip().startswith('.'))
-    for number, word in enumerate(rest, 1):
-        if number in invalid:
-            continue
-        mnemonic, _, operands = next(lines).partition('\t')
+    for word, (mnemonic, operands) in llvm.disassemble(rest, LLVM_FEATURES).items():
         if not LLVM_CONTROL.fullmatch(mnemonic):
-            known[word] = (mnemonic, operands.strip())
+            known[word] = (mnemonic, operands)
     return known
 
 

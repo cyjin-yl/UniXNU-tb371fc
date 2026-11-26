@@ -14,14 +14,13 @@ import hashlib
 import io
 import json
 from pathlib import Path
-import shutil
 import struct
-import subprocess
 
 import capstone
 import numpy as np
 
 from . import pacga
+from route_a_zeta import zeta_llvm_oracle as llvm
 
 SCHEMA = "route-a-cache-proof-v1"
 GRADES = ("unwind", "pointer", "landing", "stub", "call", "start", "gap")
@@ -81,23 +80,17 @@ def rules_manifest(*, pacga_policy="reject", pacga_kernel=None):
         "../patches/route-a-pacga-svc-12377.patch",
         "arm64_lowering/closure_receipts.py",
         "route_a_zeta/zeta_userland_pauth.py", "route_a_zeta/zeta_userland_code.py",
+        "route_a_zeta/zeta_llvm_oracle.py",
+        "route_a_zeta/zeta_elf_tools.py",
         "route_a_zeta/zeta_macho_entries.py",
         "route_a_zeta/zeta_dyld_cache.py", "route_a_zeta/prove-zeta-dyld-cache.py",
         "route_a_zeta/zeta_closure.py",
     )
-    llvm = shutil.which("llvm-mc")
-    llvm_version = None
-    if llvm:
-        try:
-            llvm_version = subprocess.run([llvm, "--version"], check=True, capture_output=True,
-                                          text=True, timeout=5).stdout.strip()
-        except (OSError, subprocess.SubprocessError) as error:
-            raise ValueError(f"cannot identify llvm-mc decoder: {error}") from error
-        require(bool(llvm_version), "llvm-mc version output is empty")
+    llvm_identity = llvm.decoder_manifest()
     runtime = pacga.runtime_binding(pacga_policy, pacga_kernel)
     return dict(abi="plain-pointers-v1", pacga_policy=pacga_policy, pacga_runtime=runtime,
                 decoders=dict(capstone=capstone.__version__, capstone_library=list(capstone.cs_version()),
-                              numpy=np.__version__, llvm_mc=llvm_version),
+                              numpy=np.__version__, llvm_mc=llvm_identity),
                 sources={name: _digest((_SCRIPTS / name).read_bytes()) for name in names})
 
 
@@ -309,6 +302,15 @@ def _validate_table_entry_guards(cache, bound, final_roots):
 
 
 def validate_summary(cache, summary, work_dir, *, pacga_policy="reject", pacga_kernel=None):
+    """Admit a complete proof while owning one identified decoder session."""
+    with llvm.session() as decoder:
+        result = _validate_summary(cache, summary, work_dir,
+                                   pacga_policy=pacga_policy, pacga_kernel=pacga_kernel)
+        decoder.verify()
+        return result
+
+
+def _validate_summary(cache, summary, work_dir, *, pacga_policy="reject", pacga_kernel=None):
     """Return validated {cache file index: [offset, before, after] uint64 arrays}.
 
     Any unknown, missing, partial, stale or unlowerable result raises ValueError

@@ -6,7 +6,7 @@ permissions:
   contents: read
 jobs:
   check:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
@@ -17,6 +17,12 @@ jobs:
         run: python3 scripts/check_catalog.py
       - name: Install Route A analysis dependencies
         run: |
+          sudo apt-get update
+          sudo apt-get install --no-install-recommends --yes llvm-18
+          mkdir -p "$RUNNER_TEMP/route-a-llvm-bin"
+          ln -s /usr/bin/llvm-mc-18 "$RUNNER_TEMP/route-a-llvm-bin/llvm-mc"
+          printf '%s\n' "$RUNNER_TEMP/route-a-llvm-bin" >> "$GITHUB_PATH"
+          llvm-mc-18 --version
           python3 -m venv "$RUNNER_TEMP/route-a-venv"
           "$RUNNER_TEMP/route-a-venv/bin/python" -m pip install --requirement requirements-route-a.txt
       - name: Verify pinned pager patch application and reversal
