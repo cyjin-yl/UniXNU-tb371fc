@@ -167,6 +167,7 @@ int main(void) {
     registers[31] = original.state.sp = UINT64_C(0x123456789ABCDEF3);
     original.state.pc = UINT64_C(0x1020304050607084);
     original.state.cpsr = UINT32_C(0xA0000000);
+    original.state.reserved = 0; /* Actual SPILL_REGISTERS entry reset. */
     unsigned cases = 0;
     for (unsigned n = 0; n < 32; ++n) {
         for (unsigned m = 0; m < 32; ++m) {
@@ -175,6 +176,7 @@ int main(void) {
             for (unsigned d = 0; d < 32; ++d) {
                 arm_saved_state_t state = original, expected = original;
                 if (d != 31) memcpy((uint8_t *)&expected.state + 8 * d, &result, 8);
+                expected.state.reserved = ROUTE_A_PACGA_RETURN_TAG;
                 uint64_t esr = UINT64_C(0x56008000) | d | ((uint64_t)n << 5) | ((uint64_t)m << 10);
                 if (!route_a_pacga_svc(&state, esr) ||
                     memcmp(&state, &expected, sizeof(state))) {
@@ -189,6 +191,20 @@ int main(void) {
         arm_saved_state_t state = original;
         if (route_a_pacga_svc(&state, UINT64_C(0x56000000) | outside[i]) ||
             memcmp(&state, &original, sizeof(state))) return 8;
+    }
+    const uint32_t invalid_modes[] = {1, 4, 5, 0x10, 0x1f};
+    for (unsigned i = 0; i < sizeof(invalid_modes)/sizeof(invalid_modes[0]); ++i) {
+        arm_saved_state_t state = original;
+        state.state.cpsr |= invalid_modes[i];
+        arm_saved_state_t before = state;
+        if (route_a_pacga_svc(&state, UINT64_C(0x56008000)) ||
+            memcmp(&state, &before, sizeof(state))) return 9;
+    }
+    const uint32_t invalid_ec[] = {0, 0x11, 0x20, 0x24, 0x3f};
+    for (unsigned i = 0; i < sizeof(invalid_ec)/sizeof(invalid_ec[0]); ++i) {
+        arm_saved_state_t state = original;
+        if (route_a_pacga_svc(&state, ((uint64_t)invalid_ec[i] << 26) | 0x8000) ||
+            memcmp(&state, &original, sizeof(state))) return 10;
     }
     printf("{\"register_cases\":%u,\"paper_vector\":true,\"key_failures\":true,"
            "\"outside_dispatch_cases\":4,\"undefined_behavior_sanitizer\":true}\n", cases);
@@ -277,7 +293,8 @@ class PacgaTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as tmp:
             source = Path(tmp) / "probe.c"
             executable = Path(tmp) / "probe"
-            code = "#include " + json.dumps(str(ROOT / pacga.HEADER)) + "\n" + HOST_PREAMBLE
+            code = ("#include " + json.dumps(str(ROOT / pacga.HEADER)) + "\n"
+                    + "#include " + json.dumps(str(ROOT / pacga.ABI_HEADER)) + "\n" + HOST_PREAMBLE)
             code += "\n".join(added_function(name, kind) for name, kind in (
                 ("route_a_pacga_bootstrap", "void"),
                 ("route_a_pacga_register", "uint64_t"),
@@ -311,6 +328,7 @@ class PacgaTests(unittest.TestCase):
             root = Path(tmp)
             headers = {
                 "arm64/route_a_pacga_qarma5.h": (ROOT / pacga.HEADER).read_text(),
+                "arm64/route_a_pacga_abi.h": (ROOT / pacga.ABI_HEADER).read_text(),
                 "kern/startup.h": "/* The extracted function has no STARTUP registration. */\n",
                 "libkern/crypto/rand.h": "/* This API does not declare read_random. */\n",
                 "sys/appleapiopts.h": "#ifndef __APPLE_API_STRICT_CONFORMANCE\n#define __APPLE_API_UNSTABLE\n#endif\n",
@@ -546,6 +564,7 @@ class PacgaTests(unittest.TestCase):
                     native = name == "qemu-native"
                     result = dict(schema="route-a-pacga-el0-probe-v1", cases=1024, native=native,
                                   ordinary_fallback=not native, result_fold="0000000000000000",
+                                  production_return_gate=True, marker_lifecycle=True,
                                   isar1="0000000001000000" if native else "0000000000000000")
                     result.update({field: True for field in
                                    ("paper_vector", "gpr", "pc_lr_sp", "nzcv", "simd", "fpcr_fpsr")})
@@ -636,21 +655,25 @@ class PacgaTests(unittest.TestCase):
 
     def test_stage_compile_timeout_cli_defaults_and_boundary_values_are_forwarded(self):
         import build_route_a_pacga as stage
-        result = dict(abi=pacga.ABI, compile_passed=True, object={}, kernel_linked=False,
-                      runtime_boot_verified=False)
+        result = dict(abi=pacga.ABI, compile_passed=True,
+                      translation_units={unit: {"object": {}} for unit in ("sleh", "locore")},
+                      kernel_linked=False, runtime_boot_verified=False)
         for value, expected in ((None, 300), ("1", 1), ("900", 900)):
             with self.subTest(value=value), tempfile.TemporaryDirectory() as tmp:
                 root = Path(tmp)
                 output = root / "not-created"
-                argv = ["--xnu-work", str(root / "xnu"), "--recipe", str(root / "recipe.json"),
-                        "--output", str(output), "--expected-sleh-sha256", "0" * 64]
+                argv = ["--xnu-work", str(root / "xnu"), "--recipe", str(root / "sleh.json"),
+                        "--locore-recipe", str(root / "locore.json"), "--output", str(output),
+                        "--expected-sleh-sha256", "0" * 64, "--expected-locore-sha256", "1" * 64,
+                        "--expected-exception-asm-sha256", "2" * 64]
                 if value is not None:
                     argv += ["--compile-timeout", value]
                 with mock.patch.object(stage, "prepare", return_value=result) as prepare, \
                         mock.patch.object(sys, "stdout", io.StringIO()):
                     self.assertEqual(stage.main(argv), 0)
-                prepare.assert_called_once_with(root / "xnu", root / "recipe.json", output,
-                                                "0" * 64, compile_timeout=expected)
+                prepare.assert_called_once_with(root / "xnu", root / "sleh.json", output, "0" * 64,
+                    locore_recipe=root / "locore.json", expected_locore="1" * 64,
+                    expected_exception_asm="2" * 64, compile_timeout=expected)
                 self.assertFalse(output.exists())
 
     def test_invalid_stage_timeout_is_rejected_before_output_or_child_creation(self):
@@ -658,8 +681,10 @@ class PacgaTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
             output = root / "not-created"
-            argv = ["--xnu-work", str(root / "xnu"), "--recipe", str(root / "recipe.json"),
-                    "--output", str(output), "--expected-sleh-sha256", "0" * 64]
+            argv = ["--xnu-work", str(root / "xnu"), "--recipe", str(root / "sleh.json"),
+                    "--locore-recipe", str(root / "locore.json"), "--output", str(output),
+                    "--expected-sleh-sha256", "0" * 64, "--expected-locore-sha256", "1" * 64,
+                    "--expected-exception-asm-sha256", "2" * 64]
             with mock.patch.object(stage, "prepare", side_effect=AssertionError("invalid CLI reached prepare")):
                 for value in ("0", "-1", "901", "1.5", "inf", "nan", "abc"):
                     with self.subTest(cli=value), mock.patch.object(sys, "stderr", io.StringIO()):
@@ -667,62 +692,99 @@ class PacgaTests(unittest.TestCase):
                             stage.main(argv + ["--compile-timeout", value])
                         self.assertEqual(caught.exception.code, 2)
                         self.assertFalse(output.exists())
-            # API callers receive the same validation before even a git probe.
             with mock.patch.object(stage, "run", side_effect=AssertionError("invalid API spawned a command")), \
                     mock.patch.object(stage, "execute", side_effect=AssertionError("invalid API spawned a compiler")):
                 for value in (0, -1, 901, 1.5, True, False, "300", None):
                     with self.subTest(api=value), self.assertRaisesRegex(ValueError, "compile timeout"):
-                        stage.prepare(root / "xnu", root / "recipe.json", output, "0" * 64,
-                                      compile_timeout=value)
+                        stage.prepare(root / "xnu", root / "sleh.json", output, "0" * 64,
+                            locore_recipe=root / "locore.json", expected_locore="1" * 64,
+                            expected_exception_asm="2" * 64, compile_timeout=value)
                     self.assertFalse(output.exists())
 
     def test_stage_postcompile_failures_leave_a_failed_terminal_receipt(self):
         import build_route_a_pacga as stage
-        original_write = Path.write_text
-        original_tools = stage.verify_tools
+        original_write, original_tools = Path.write_text, stage.verify_tools
         cases = [(None, None), (None, 1), (None, 900)]
         cases += [(failure, None) for failure in
-                  ("object-header", "dependencies-write", "prepared-source", "tool-recheck", "final-report")]
+                  ("locore-compile", "object-header", "dependencies-write", "prepared-source",
+                   "shared-dependency", "configuration", "tool-recheck", "final-report")]
         for failure, compile_timeout in cases:
             with self.subTest(failure=failure, timeout=compile_timeout), tempfile.TemporaryDirectory() as tmp:
                 root = Path(tmp)
-                xnu = root / "xnu"
-                source = xnu / stage.SOURCE
-                source.parent.mkdir(parents=True)
-                prepared = b"/* publication-path fixture, not a kernel source build */\n"
-                source.write_bytes(prepared)
-                work = root / "build"
+                xnu, work, output = root / "xnu", root / "build", root / "stage"
                 work.mkdir()
-                (work / "sleh.o").write_bytes(b"original object identity")
-                recipe = work / "sleh.o.json"
-                recipe.write_text(json.dumps(dict(file=str(source), directory=str(work), output="sleh.o",
-                    arguments=[sys.executable, "-c", str(source), "-o", str(work / "sleh.o")])))
-                output = root / "stage"
-                options = {} if compile_timeout is None else {"compile_timeout": compile_timeout}
+                prepared = {}
+                for relative in stage.SOURCES:
+                    source = xnu / relative
+                    source.parent.mkdir(parents=True, exist_ok=True)
+                    # This fixture tests publication/error boundaries only.
+                    # Production assembly execution has separate extracted-gate tests.
+                    source.write_text("/* synthetic publication source: " + relative + " */\n")
+                    prepared[relative] = hashlib.sha256(source.read_bytes()).hexdigest()
+                (xnu / "osfmk/arm64/genassym.c").write_text("/* provenance fixture */\n")
+                assym = work / "assym.s"
+                assym.write_text("#define SS64_CPSR 272\n#define SS64_X18 152\n")
+                resource = work / "shared-resource.h"
+                resource.write_text("/* original resource generation */\n")
+                recipes = {}
+                for unit, relative in stage.UNITS.items():
+                    previous = work / (unit + ".o")
+                    previous.write_bytes(b"retained platform " + unit.encode())
+                    temporary = str(work / "temporary-locore.s") if unit == "locore" else unit + ".o"
+                    arguments = [sys.executable]
+                    if unit == "locore":
+                        arguments.append("-xassembler-with-cpp")
+                    arguments += ["-c", str(xnu / relative), "-o", temporary]
+                    recipe = work / (unit + ".o.json")
+                    recipe.write_text(json.dumps(dict(file=str(xnu / relative), directory=str(work),
+                                                       output=temporary, arguments=arguments)) + ",\n")
+                    recipes[unit] = recipe
+                options = dict(locore_recipe=recipes["locore"], expected_locore=prepared[stage.LOCORE],
+                               expected_exception_asm=prepared[stage.EXCEPTION_ASM])
+                if compile_timeout is not None:
+                    options["compile_timeout"] = compile_timeout
                 command_timeouts = {}
 
                 def synthetic_run(arguments, *, cwd):
                     return pacga.XNU_COMMIT + "\n" if "rev-parse" in arguments else ""
 
-                def synthetic_execute(arguments, directory, name, manifest, **_options):
-                    command_timeouts[name] = _options.get("timeout", 60)
-                    manifest["commands"].append(dict(name=name, exit_code=0))
+                def synthetic_execute(arguments, directory, name, manifest, **kw):
+                    command_timeouts[name] = kw.get("timeout", 60)
+                    manifest["commands"].append(dict(name=name, exit_code=0,
+                                                      timeout_seconds=kw.get("timeout", 60)))
                     if name == "compiler-version":
                         return "synthetic compiler publication fixture\n"
-                    dependencies = [directory / "source" / stage.SOURCE,
-                                    directory / "source/osfmk/arm64/route_a_pacga_qarma5.h"]
+                    unit = name.split("-", 1)[0]
+                    if name.endswith("-config"):
+                        macros = "#define CONFIG_ROUTE_A_PACGA_SVC 1\n"
+                        macros += "#define __ARM_KERNEL_PROTECT__ " + (
+                            "1" if failure == "configuration" and unit == "locore" else "0") + "\n"
+                        if unit == "locore":
+                            macros += "#define __ASSEMBLER__ 1\n"
+                        Path(arguments[arguments.index("-o") + 1]).write_text(macros)
+                        return ""
+                    dependencies = [directory / "source" / stage.UNITS[unit],
+                                    directory / "source/osfmk/arm64/route_a_pacga_abi.h", resource]
+                    dependencies += ([directory / "source/osfmk/arm64/route_a_pacga_qarma5.h"]
+                                     if unit == "sleh" else [directory / "source" / stage.EXCEPTION_ASM, assym])
+                    if failure == "shared-dependency" and name == "locore-discover-headers":
+                        resource.write_text("/* substituted resource generation */\n")
                     Path(arguments[arguments.index("-MF") + 1]).write_text(
-                        "sleh.o: " + shlex.join(str(path) for path in dependencies) + "\n")
-                    if name == "compile":
+                        unit + ".o: " + shlex.join(str(path) for path in dependencies) + "\n")
+                    if name.endswith("-compile"):
+                        if failure == "locore-compile" and unit == "locore":
+                            manifest["commands"][-1]["exit_code"] = 1
+                            raise ValueError("injected locore compile failure")
                         header = struct.pack("<4I", 0xFEEDFACF, 0x0100000C, 0, 1)
                         Path(arguments[arguments.index("-o") + 1]).write_bytes(
-                            b"invalid object!\n" if failure == "object-header" else header + b"fixture")
-                        if failure == "prepared-source":
-                            source.write_bytes(b"changed original source")
+                            b"invalid object!\n" if failure == "object-header" and unit == "locore"
+                            else header + b"fixture")
+                        if failure == "prepared-source" and unit == "locore":
+                            (xnu / stage.LOCORE).write_bytes(b"changed prepared source")
                     return ""
 
                 def controlled_write(path, text, *arguments, **keywords):
-                    if failure == "dependencies-write" and path.name == "dependencies.json":
+                    if failure == "dependencies-write" and path.name == "locore.dependencies.json":
                         raise OSError("injected dependencies publication failure")
                     if failure == "final-report" and path.name == "stage-report.json" and json.loads(text).get("compile_passed"):
                         raise OSError("injected final stage report failure")
@@ -738,23 +800,130 @@ class PacgaTests(unittest.TestCase):
                         mock.patch.object(stage, "verify_tools", controlled_tools), \
                         mock.patch.object(Path, "write_text", controlled_write):
                     if failure is None:
-                        result = stage.prepare(xnu, recipe, output, hashlib.sha256(prepared).hexdigest(), **options)
+                        result = stage.prepare(xnu, recipes["sleh"], output, prepared[stage.SOURCE], **options)
                         self.assertTrue(result["compile_passed"])
                     else:
                         with self.assertRaises((ValueError, OSError)):
-                            stage.prepare(xnu, recipe, output, hashlib.sha256(prepared).hexdigest(), **options)
+                            stage.prepare(xnu, recipes["sleh"], output, prepared[stage.SOURCE], **options)
                 report = json.loads((output / "stage-report.json").read_text())
+                self.assertEqual(report["schema"], "route-a-pacga-stage-v2")
                 self.assertIs(report["compile_passed"], failure is None)
                 self.assertFalse(report["kernel_linked"])
                 self.assertFalse(report["runtime_boot_verified"])
-                self.assertEqual(report["compile_exit_code"], 0)
+                self.assertEqual(set(report["translation_units"]), {"sleh", "locore"})
+                self.assertIn("object", report["translation_units"]["sleh"])
                 selected_timeout = 300 if compile_timeout is None else compile_timeout
                 self.assertEqual(report["compile_timeout_seconds"], selected_timeout)
-                self.assertEqual(command_timeouts, {"compiler-version": 60, "discover-headers": 300,
-                                                     "compile": selected_timeout})
-                if failure is not None:
+                self.assertEqual(command_timeouts["sleh-compile"], selected_timeout)
+                if "locore-compile" in command_timeouts:
+                    self.assertEqual(command_timeouts["locore-compile"], selected_timeout)
+                if failure is None:
+                    self.assertEqual(report["compile_exit_code"], 0)
+                    self.assertEqual(command_timeouts, {
+                        "compiler-version": 60, "sleh-discover-headers": 300, "sleh-config": 300,
+                        "sleh-compile": selected_timeout, "locore-discover-headers": 300,
+                        "locore-config": 300, "locore-compile": selected_timeout})
+                    self.assertEqual(report["translation_units"]["locore"]["previous_object"]["name"], "locore.o")
+                else:
                     self.assertIn("error", report)
                     self.assertIn("message", report)
+                if failure in ("locore-compile", "configuration", "shared-dependency"):
+                    self.assertNotIn("object", report["translation_units"]["locore"])
+
+    def test_stage_recipe_binds_compact_assembly_and_uses_the_retained_object(self):
+        import build_route_a_pacga as stage
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            source = root / "locore.s"
+            source.write_text("/* retained assembly recipe fixture */\n")
+            (root / "locore.o").write_bytes(b"original platform object")
+            path = root / "locore.o.json"
+            recipe = dict(file=str(source), directory=str(root), output="/tmp/locore-temporary.s",
+                          arguments=[sys.executable, "-xassembler-with-cpp", str(source),
+                                     "-o", "/tmp/locore-temporary.s", "-c"])
+            path.write_text(json.dumps(recipe) + ",\n")
+            parsed, identity, previous = stage.recipe_for(path, source, "locore")
+            self.assertEqual(parsed, recipe)
+            self.assertEqual(previous, root / "locore.o")
+            self.assertEqual(identity["sha256"], stage.sha(path))
+            recipe["arguments"][1] = "-xassembler"
+            path.write_text(json.dumps(recipe))
+            with self.assertRaisesRegex(ValueError, "assembler-with-cpp"):
+                stage.recipe_for(path, source, "locore")
+
+    def test_actual_cpp_configuration_and_required_overlay_dependencies_fail_closed(self):
+        import build_route_a_pacga as stage
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            macros = root / "macros.txt"
+            base = "#define CONFIG_ROUTE_A_PACGA_SVC 1\n"
+            for suffix, unit, accepts in (
+                ("", "sleh", True), ("#define __ARM_KERNEL_PROTECT__ 0\n", "sleh", True),
+                ("#define __ASSEMBLER__ 1\n", "locore", True),
+                ("#define __ARM_KERNEL_PROTECT__ 1\n", "sleh", False),
+                ("#define __ARM_KERNEL_PROTECT__ (1)\n", "sleh", False),
+                ("#define CONFIG_ROUTE_A_PACGA_SVC 0\n", "sleh", False),
+                ("#define __ASSEMBLER__ 1\n", "sleh", False),
+                ("", "locore", False), ("#define __arm64e__ 1\n", "sleh", False),
+            ):
+                with self.subTest(suffix=suffix, unit=unit):
+                    macros.write_text(base + suffix)
+                    if accepts:
+                        self.assertEqual(stage.read_configuration(macros, unit)["arm_kernel_protect"], 0)
+                    else:
+                        with self.assertRaises(ValueError):
+                            stage.read_configuration(macros, unit)
+            tree, xnu, assym = root / "overlay/source", root / "xnu", root / "assym.s"
+            source = tree / stage.LOCORE
+            required = {source, tree / stage.EXCEPTION_ASM,
+                        tree / "osfmk/arm64/route_a_pacga_abi.h", assym}
+            stage.validate_closure(required, source, tree, xnu, "locore", assym)
+            for bad in (required - {assym}, required - {tree / stage.EXCEPTION_ASM},
+                        required | {xnu / stage.EXCEPTION_ASM}, required | {tree / "osfmk/arm64/proc_reg.h"}):
+                with self.assertRaises(ValueError):
+                    stage.validate_closure(bad, source, tree, xnu, "locore", assym)
+
+    def test_production_assembly_extraction_includes_the_original_fallback_and_reset(self):
+        from route_a_pacga_probe import run as runner
+        patch = (ROOT / pacga.PATCH).read_text()
+        reset = runner.assembly_from_patch(patch, "ENTRY_RESET")
+        gate = runner.assembly_from_patch(patch, "RETURN_GATE")
+        self.assertIn("wzr, [x0, SS64_CPSR + ROUTE_A_PACGA_CPSR_BYTES]", reset)
+        self.assertIn("wzr, [sp, SS64_CPSR + ROUTE_A_PACGA_CPSR_BYTES]", gate)
+        self.assertIn("MACHDEP_TPIDR_FLAG_PRESERVE_X18_SHIFT", gate)
+        self.assertIn("ldr\t\tx18, [sp, SS64_X18]", gate)
+        self.assertNotIn("SS64_ESR", gate)
+        for name in ("ENTRY_RESET", "RETURN_GATE"):
+            broken = patch.replace("ROUTE_A_PACGA_" + name + "_BEGIN", "REMOVED", 1)
+            with self.assertRaisesRegex(ValueError, "markers"):
+                runner.assembly_from_patch(broken, name)
+
+    def test_production_kernel_protect_and_private_layout_guards_are_effective(self):
+        compiler = shutil.which("cc") or shutil.which("clang")
+        self.assertIsNotNone(compiler)
+        added = "\n".join(line[1:] for line in (ROOT / pacga.PATCH).read_text().splitlines()
+                          if line.startswith("+") and not line.startswith("+++"))
+        first = added.index("_Static_assert(sizeof(((arm_saved_state64_t *)0)->cpsr)")
+        last = added.index("/* Public identity only:", first)
+        assertions = added[first:last]
+        prefix = ('#include <stddef.h>\n#include <stdint.h>\n#include "' + str(ROOT / pacga.ABI_HEADER) + '"\n'
+                  '#define PSR64_MODE_MASK 0x1f\n#define ESR_EC_SVC_64 0x15\n#define ESR_EC_SHIFT 26\n')
+        structure = ("typedef struct { uint64_t x[29], fp, lr, sp, pc; "
+                     "uint32_t cpsr, reserved; uint64_t far, esr; } arm_saved_state64_t;\n")
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp) / "guards.c"
+            for label, body, defines, accepts in (
+                ("supported", structure, ["-DCONFIG_ROUTE_A_PACGA_SVC=1"], True),
+                ("protected-rejected", structure, ["-DCONFIG_ROUTE_A_PACGA_SVC=1", "-D__ARM_KERNEL_PROTECT__=1"], False),
+                ("disabled-unchanged", structure, ["-DCONFIG_ROUTE_A_PACGA_SVC=0", "-D__ARM_KERNEL_PROTECT__=1"], True),
+                ("wrong-padding-width", structure.replace("cpsr, reserved", "cpsr; uint16_t reserved"), [], False),
+                ("wrong-padding-position", structure.replace("cpsr, reserved", "cpsr, inserted, reserved"), [], False),
+            ):
+                with self.subTest(label=label):
+                    path.write_text(prefix + body + assertions)
+                    result = subprocess.run([compiler, "-std=c11", "-Werror", "-fsyntax-only",
+                                             *defines, str(path)], capture_output=True, text=True, timeout=60)
+                    self.assertEqual(result.returncode == 0, accepts, result.stderr)
 
 
 if __name__ == "__main__":

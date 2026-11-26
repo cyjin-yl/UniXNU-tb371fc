@@ -20,6 +20,7 @@ SVC_WORD = 0xD4100001
 ROOT = Path(__file__).resolve().parents[2]
 HEADER = "scripts/arm64_lowering/runtime/pacga_qarma5.h"
 PATCH = "patches/route-a-pacga-svc-12377.patch"
+ABI_HEADER = "scripts/arm64_lowering/runtime/route_a_pacga_abi.h"
 XNU_COMMIT = "ac9718fb1af618d5ce8678d0dc6e8a58f252216f"
 
 
@@ -62,6 +63,9 @@ def contract():
                 key_scope="one random kernel boot key shared by tasks and threads",
                 key_source="read_random after provider POST and register_and_init_prng",
                 key_startup="EARLY_BOOT/FIRST after source-provider SYSCTL/LAST",
+                exception_return=dict(marker="arm_saved_state64.reserved",
+                    entry_reset="every SPILL_REGISTERS", consume="once on final AArch64 EL0t return",
+                    x18="restore completed saved value", arm_kernel_protect=False),
                 pointer_authentication_preserved=False,
                 apple_signature_values_preserved=False,
                 exclusive_reservation="reject PACGA with a live reservation and any unsupported live-state escape",
@@ -70,7 +74,7 @@ def contract():
 
 def implementation():
     sources = {name: hashlib.sha256((ROOT / name).read_bytes()).hexdigest()
-               for name in (HEADER, PATCH)}
+               for name in (HEADER, PATCH, ABI_HEADER)}
     value = dict(contract=contract(), xnu_commit=XNU_COMMIT, sources=sources)
     raw = json.dumps(value, sort_keys=True, separators=(",", ":")).encode()
     return dict(value, sha256=hashlib.sha256(raw).hexdigest())
@@ -80,7 +84,8 @@ def descriptor():
     """Exact public, non-secret descriptor retained in the linked kernel."""
     return ("UNIXNU-PACGA-SVC-QARMA5-V1\n"
             "impl-sha256:" + implementation()["sha256"] + "\n"
-            "key:boot/read_random\nresult:hi32/zero32\n").encode() + b"\0"
+            "key:boot/read_random\nresult:hi32/zero32\n"
+            "return:handled-marker/x18/non-protect\n").encode() + b"\0"
 
 
 def _generation(fd):

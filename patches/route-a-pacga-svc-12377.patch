@@ -1,13 +1,15 @@
 diff --git a/osfmk/arm64/sleh.c b/osfmk/arm64/sleh.c
 --- a/osfmk/arm64/sleh.c
 +++ b/osfmk/arm64/sleh.c
-@@ -154,6 +154,91 @@
+@@ -154,6 +154,115 @@
  
  static void sleh_interrupt_handler_prologue(arm_saved_state_t *, unsigned int type);
  static void sleh_interrupt_handler_epilogue(void);
 +
 +#if CONFIG_ROUTE_A_PACGA_SVC
 +#include <arm64/route_a_pacga_qarma5.h>
++#include <arm64/route_a_pacga_abi.h>
++#include <stddef.h>
 +#include <kern/startup.h>
 +#include <sys/random.h>
 +
@@ -18,13 +20,27 @@ diff --git a/osfmk/arm64/sleh.c b/osfmk/arm64/sleh.c
 +#error Route A PACGA SVC requires a source-bound implementation identity
 +#endif
 +
++/* The assembly slot is derived from generated SS64_CPSR, never a raw address. */
++_Static_assert(sizeof(((arm_saved_state64_t *)0)->cpsr) == ROUTE_A_PACGA_CPSR_BYTES,
++    "Route A PACGA CPSR width changed");
++_Static_assert(sizeof(((arm_saved_state64_t *)0)->reserved) == ROUTE_A_PACGA_RESERVED_BYTES,
++    "Route A PACGA reserved width changed");
++_Static_assert(offsetof(arm_saved_state64_t, reserved) ==
++    offsetof(arm_saved_state64_t, cpsr) + ROUTE_A_PACGA_CPSR_BYTES,
++    "Route A PACGA reserved field no longer follows CPSR");
++_Static_assert(PSR64_MODE_MASK == ROUTE_A_PACGA_MODE_MASK &&
++    ESR_EC_SVC_64 == ROUTE_A_PACGA_SVC64_EC &&
++    ESR_EC_SHIFT == ROUTE_A_PACGA_EC_SHIFT,
++    "Route A PACGA exception classification changed");
++
 +/* Public identity only: no key material is exported in this descriptor. */
 +__attribute__((used, aligned(1), section("__DATA_CONST,__unixnu_pacga")))
 +const char route_a_pacga_abi_v1[] =
 +    "UNIXNU-PACGA-SVC-QARMA5-V1\n"
 +    "impl-sha256:" ROUTE_A_PACGA_IMPLEMENTATION_SHA256 "\n"
 +    "key:boot/read_random\n"
-+    "result:hi32/zero32\n";
++    "result:hi32/zero32\n"
++    "return:handled-marker/x18/non-protect\n";
 +
 +static SECURITY_READ_ONLY_LATE(struct route_a_pacga_key) route_a_pacga_boot_key;
 +SECURITY_READ_ONLY_LATE(uint32_t) route_a_pacga_ready;
@@ -66,13 +82,15 @@ diff --git a/osfmk/arm64/sleh.c b/osfmk/arm64/sleh.c
 +static bool
 +route_a_pacga_svc(arm_saved_state_t *saved, uint64_t esr)
 +{
-+    if ((esr & ROUTE_A_PACGA_ISS_MASK) != ROUTE_A_PACGA_ISS_TAG) {
-+        return false; /* Every other immediate keeps the original dispatcher. */
++    arm_saved_state64_t *state = saved_state64(saved);
++    if (((esr >> ROUTE_A_PACGA_EC_SHIFT) & ROUTE_A_PACGA_EC_MASK) != ROUTE_A_PACGA_SVC64_EC ||
++        (state->cpsr & ROUTE_A_PACGA_MODE_MASK) != 0 ||
++        (esr & ROUTE_A_PACGA_ISS_MASK) != ROUTE_A_PACGA_ISS_TAG) {
++        return false; /* Every other context/immediate keeps its original dispatcher. */
 +    }
 +    if (route_a_pacga_ready != 1) {
 +        panic("Route A PACGA used before random-key initialization");
 +    }
-+    arm_saved_state64_t *state = saved_state64(saved);
 +    unsigned destination = (unsigned)esr & 31;
 +    unsigned source = ((unsigned)esr >> 5) & 31;
 +    unsigned modifier = ((unsigned)esr >> 10) & 31;
@@ -87,13 +105,19 @@ diff --git a/osfmk/arm64/sleh.c b/osfmk/arm64/sleh.c
 +    } else if (destination == 30) {
 +        state->lr = signature;
 +    } /* Rd==31 discards. No PC/SP/CPSR or other register changes. */
++    /*
++     * SPILL_REGISTERS cleared this private padding on entry. Publish only after
++     * handling this SVC. The final EL0t return consumes it once, including after
++     * an AST or scheduler continuation; it is not derived from a possibly stale ESR.
++     */
++    state->reserved = ROUTE_A_PACGA_RETURN_TAG;
 +    return true;
 +}
 +#endif /* CONFIG_ROUTE_A_PACGA_SVC */
  
  static void handle_svc(arm_saved_state_t *);
  static void handle_mach_absolute_time_trap(arm_saved_state_t *);
-@@ -942,6 +1027,11 @@
+@@ -942,6 +1051,11 @@
  			panic("Invalid SVC_64 context");
  		}
  
@@ -105,3 +129,64 @@ diff --git a/osfmk/arm64/sleh.c b/osfmk/arm64/sleh.c
  		handle_svc(state);
  		break;
  
+diff --git a/osfmk/arm64/locore.s b/osfmk/arm64/locore.s
+--- a/osfmk/arm64/locore.s
++++ b/osfmk/arm64/locore.s
+@@ -1921,12 +1921,31 @@
+ 	 * as those are another use case, one where x18 must be preserved.
+ 	 */
+ 
++	/* ROUTE_A_PACGA_RETURN_GATE_BEGIN */
++#if CONFIG_ROUTE_A_PACGA_SVC
++	/*
++	 * Only this context's successfully handled PACGA may bypass x18 policy.
++	 * Consume the private marker before any branch. IRQs are already masked.
++	 * Every new exception entry clears the slot, including IRQ/FIQ with stale ESR.
++	 */
++	ldr		w1, [sp, SS64_CPSR + ROUTE_A_PACGA_CPSR_BYTES]
++	str		wzr, [sp, SS64_CPSR + ROUTE_A_PACGA_CPSR_BYTES]
++	movz	w2, #(ROUTE_A_PACGA_RETURN_TAG & 0xffff)
++	movk	w2, #(ROUTE_A_PACGA_RETURN_TAG >> 16), lsl #16
++	cmp		w1, w2
++	b.ne	Lroute_a_pacga_original_x18
++	ldr		w1, [sp, SS64_CPSR]
++	tst		w1, #PSR64_MODE_MASK
++	b.eq	exception_return_unint_tpidr_x3_restore_x18
++Lroute_a_pacga_original_x18:
++#endif /* CONFIG_ROUTE_A_PACGA_SVC */
+ 	mov		x18, #0
+ 	mrs		x1, TPIDR_EL0
+ 	tbz		x1, MACHDEP_TPIDR_FLAG_PRESERVE_X18_SHIFT, Lexception_return_restore_registers
+ 
+ exception_return_unint_tpidr_x3_restore_x18:
+ 	ldr		x18, [sp, SS64_X18]
++	/* ROUTE_A_PACGA_RETURN_GATE_END */
+ 
+ #else /* !__ARM_KERNEL_PROTECT__ */
+ 	/*
+diff --git a/osfmk/arm64/exception_asm.h b/osfmk/arm64/exception_asm.h
+--- a/osfmk/arm64/exception_asm.h
++++ b/osfmk/arm64/exception_asm.h
+@@ -29,6 +29,10 @@
+ #include <arm64/pac_asm.h>
+ #include <pexpert/arm64/board_config.h>
+ #include "assym.s"
++
++#if CONFIG_ROUTE_A_PACGA_SVC
++#include <arm64/route_a_pacga_abi.h>
++#endif
+ 
+ 
+ #if XNU_MONITOR
+@@ -168,6 +172,11 @@
+ #define FLEH_DISPATCH64_OPTION_NONE 0
+ 
+ .macro SPILL_REGISTERS	mode options_register=
++	/* ROUTE_A_PACGA_ENTRY_RESET_BEGIN */
++#if CONFIG_ROUTE_A_PACGA_SVC
++	str		wzr, [x0, SS64_CPSR + ROUTE_A_PACGA_CPSR_BYTES]
++#endif /* CONFIG_ROUTE_A_PACGA_SVC */
++	/* ROUTE_A_PACGA_ENTRY_RESET_END */
+ 	/* Spill remaining GPRs */
+ 	.if \mode != KERNEL_MODE
+ 	stp		x2, x3, [x0, SS64_X2]

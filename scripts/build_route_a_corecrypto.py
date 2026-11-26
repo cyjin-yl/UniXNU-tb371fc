@@ -45,16 +45,21 @@ PINS = {
     "platform_report": "738a7af11b32c08d0a4261611ba69f325d5a29bf424791b18e98879864feff7c",
     "compiler": "85d220e32bd83d75de788c8beab0bea646a4684e1112f7c06266ca71e651bb04",
 }
-# The source is byte-identical to ac9718fb:osfmk/arm64/sleh.c; the
-# retained ordinary-arm64 recipe is independently captured, never regenerated.
+# The retained sleh source equals ac9718fb; locore includes the separately
+# captured preparation instrumentation. These source/recipe identities are
+# captured from the real prepared tree, never substituted with upstream bytes.
 PACGA_PINS = {
     "source": "4eeb208fb2510bfdc0338d1a1d7d2d702fe9eb65d332eea388720ef6574375d1",
     "recipe": "8c60d7a8f85e060aae2a0c8faee343c5fbaf3be7d188be9847ec642effd29090",
-    # Reviewed stage producer adds a bounded compile deadline; the execution
-    # driver remains byte-identical to e766bca5.
-    # The new stage must use these exact files; old failed stages stay immutable.
-    "stage_driver": "f8d1d55b2bc8f3a29356c80c0c85e4248ad4aa2433c599cae5aacbd1d5c93fa0",
-    "execution_driver": "c293a119d134ad7c27a1509e429f53c2d164536800465fc6b37a75de5a502029",
+    "locore_source": "e18b09d48981bdaec5dbdf43e47f223d953e5b65727e7ba199570b7a10cd6124",
+    "exception_asm_source": "6175d244c81c112d05df65f0d4a1ee5f8f4a622ceb2f9e6fbcc5239e9e9a918e",
+    "locore_recipe": "87c6a74ca6c0cc168e97dba1a86e3ecf61d57add27858fb3ffcb474a6b0c47cd",
+    "assym": "b29e64676013a588acc16d0d0829701fac15ff93b1bd2accb2c6157724854636",
+    "genassym": "4d44c588f045d21d0209647c4d366629896c34263c6545d2d4872962e132d27e",
+    # Bind the reviewed producer and execution sources independently of each
+    # report. New validation requires a fresh stage; old attempts stay immutable.
+    "stage_driver": "c4c495340cce5f88f952f72851c3cc238bae78df34b286bf82a751a1e43d98bd",
+    "execution_driver": "20848591b62d63274a7bfd09014e9c7f3be001d6bd067385668b825f2fc953ad",
 }
 ADDED_FIELDS = (
     "ccdigest_final_fn", "digest_ctx_size_fn", "digest_init_fn", "digest_update_fn", "digest_final_fn", "digest_fn",
@@ -649,178 +654,274 @@ def platform_link_inputs(journal, baseline, baseline_path):
             "cwd": str(cwd), "argv": list(argv)}
 
 
-def apply_pacga_patch(original, patch):
-    """Replay this single-file, two-hunk additions-only patch without fuzz."""
-    lines = patch.splitlines(keepends=True)
-    require(lines[:3] == [b"diff --git a/osfmk/arm64/sleh.c b/osfmk/arm64/sleh.c\n",
-                          b"--- a/osfmk/arm64/sleh.c\n", b"+++ b/osfmk/arm64/sleh.c\n"],
-            "PACGA patch must name only the exact retained sleh source")
-    source = original.splitlines(keepends=True)
-    output, cursor, delta, hunks, index = [], 0, 0, 0, 3
-    while index < len(lines):
-        match = re.fullmatch(rb"@@ -([1-9][0-9]*),([1-9][0-9]*) \+([1-9][0-9]*),([1-9][0-9]*) @@\n", lines[index])
-        require(match is not None, "unsupported PACGA patch hunk header")
-        old_start, old_count, new_start, new_count = map(int, match.groups())
-        start = old_start - 1
-        require(start >= cursor and start + old_count <= len(source)
-                and new_start == old_start + delta and new_count > old_count,
-                "PACGA patch hunk position, overlap or addition count differs")
-        index += 1
-        old, new = [], []
-        while index < len(lines) and not lines[index].startswith(b"@@"):
-            line = lines[index]
-            require(line.endswith(b"\n") and line[:1] in (b" ", b"+"),
-                    "PACGA patch is not an exact additions-only patch")
-            if line[:1] == b" ":
-                old.append(line[1:])
-            new.append(line[1:])
+PACGA_SOURCES = ("osfmk/arm64/sleh.c", "osfmk/arm64/locore.s", "osfmk/arm64/exception_asm.h")
+PACGA_HUNKS = (2, 1, 2)
+
+
+def apply_pacga_patch(originals, patch):
+    """Replay the three reviewed additions-only diffs, with no fuzz or offsets."""
+    require(set(originals) == set(PACGA_SOURCES), "PACGA retained source set differs")
+    lines, index, result = patch.splitlines(keepends=True), 0, {}
+    for relative, hunk_count in zip(PACGA_SOURCES, PACGA_HUNKS):
+        name = relative.encode()
+        header = [b"diff --git a/" + name + b" b/" + name + b"\n",
+                  b"--- a/" + name + b"\n", b"+++ b/" + name + b"\n"]
+        require(lines[index:index + 3] == header, "PACGA patch file set or order differs")
+        source, output, cursor, delta, hunks = originals[relative].splitlines(keepends=True), [], 0, 0, 0
+        index += 3
+        while index < len(lines) and not lines[index].startswith(b"diff --git "):
+            match = re.fullmatch(rb"@@ -([1-9][0-9]*),([1-9][0-9]*) \+([1-9][0-9]*),([1-9][0-9]*) @@\n", lines[index])
+            require(match is not None, "unsupported PACGA patch hunk header")
+            old_start, old_count, new_start, new_count = map(int, match.groups())
+            start = old_start - 1
+            require(start >= cursor and start + old_count <= len(source)
+                    and new_start == old_start + delta and new_count > old_count,
+                    "PACGA patch hunk position, overlap or addition count differs")
             index += 1
-        require(len(old) == old_count and len(new) == new_count,
-                "PACGA patch hunk line counts differ")
-        require(source[start:start + old_count] == old, "PACGA patch retained source context differs")
-        output.extend(source[cursor:start])
-        output.extend(new)
-        cursor, delta, hunks = start + old_count, delta + new_count - old_count, hunks + 1
-    require(hunks == 2, "PACGA patch must contain the two reviewed hunks")
-    output.extend(source[cursor:])
-    return b"".join(output)
+            old, new = [], []
+            while index < len(lines) and not lines[index].startswith((b"@@", b"diff --git ")):
+                line = lines[index]
+                require(line.endswith(b"\n") and line[:1] in (b" ", b"+"),
+                        "PACGA patch is not an exact additions-only patch")
+                if line[:1] == b" ":
+                    old.append(line[1:])
+                new.append(line[1:])
+                index += 1
+            require(len(old) == old_count and len(new) == new_count, "PACGA patch hunk line counts differ")
+            require(source[start:start + old_count] == old, "PACGA patch retained source context differs")
+            output.extend(source[cursor:start]); output.extend(new)
+            cursor, delta, hunks = start + old_count, delta + new_count - old_count, hunks + 1
+        require(hunks == hunk_count, "PACGA patch reviewed hunk count differs")
+        output.extend(source[cursor:])
+        result[relative] = b"".join(output)
+    require(index == len(lines), "PACGA patch contains additional files")
+    return result
+
+
+def pacga_configuration(raw, unit):
+    """Read the actual preprocessor output independently of the stage producer."""
+    def definitions(name):
+        return re.findall(rb"^#define[ \t]+" + name.encode() + rb"(?:[ \t]+([^\r\n]*))?$", raw, re.M)
+    require(definitions("CONFIG_ROUTE_A_PACGA_SVC") == [b"1"],
+            "PACGA configuration does not uniquely enable the selected ABI")
+    require(definitions("__ARM_KERNEL_PROTECT__") in ([], [b"0"]),
+            "PACGA x18 exception return is not reviewed for ARM_KERNEL_PROTECT")
+    require(not definitions("__arm64e__"), "PACGA configuration selects the arm64e ABI")
+    if unit == "locore":
+        require(definitions("__ASSEMBLER__") == [b"1"], "PACGA locore configuration is not assembler preprocessing")
+    else:
+        require(not definitions("__ASSEMBLER__"), "PACGA sleh configuration is not C")
+    return {"macros_sha256": sha(raw), "route_a_pacga_svc": 1, "arm_kernel_protect": 0,
+            "language": "c" if unit == "sleh" else "assembler-with-cpp"}
 
 
 def admit_pacga_stage(journal, stage_path, kernel_build, original_members):
-    """Bind an opt-in, successful ordinary-arm64 stage before any provider build."""
+    """Independently bind both ordinary-arm64 objects before any provider build."""
     from arm64_lowering import pacga
     from route_a_pacga_probe import run as execution
     path = regular(stage_path)
+    stage_generation = execution.file_identity(path)
     stage_identity = journal.protect(path)
-    stage = json.loads(path.read_bytes())
-    require(stage.get("schema") == "route-a-pacga-stage-v1" and stage.get("compile_passed") is True
-            and stage.get("compile_exit_code") == 0 and stage.get("abi") == pacga.ABI,
-            "PACGA stage did not successfully compile the selected ABI")
+    stage_bytes = path.read_bytes()
+    require(sha(stage_bytes) == stage_generation["sha256"] == stage_identity["sha256"],
+            "PACGA stage report changed before it was read")
+    stage = json.loads(stage_bytes)
+    require(stage.get("schema") == "route-a-pacga-stage-v2" and stage.get("compile_passed") is True
+            and type(stage.get("compile_exit_code")) is int and stage["compile_exit_code"] == 0
+            and stage.get("abi") == pacga.ABI, "PACGA stage did not successfully compile the selected v2 ABI")
+    units = stage["translation_units"]
+    require(set(units) == {"sleh", "locore"}, "PACGA stage requires exactly both translation units")
+    timeout = stage["compile_timeout_seconds"]
+    require(type(timeout) is int and 1 <= timeout <= 900, "PACGA compile timeout differs from the reviewed bounds")
     implementation = pacga.implementation()
     require(stage.get("implementation") == implementation and stage.get("xnu_commit") == pacga.XNU_COMMIT
-            and stage.get("source_file") == "osfmk/arm64/sleh.c"
-            and stage.get("descriptor_hex") == pacga.descriptor().hex(),
-            "PACGA stage source/ABI implementation identity differs")
+            and stage.get("descriptor_hex") == pacga.descriptor().hex(), "PACGA stage source/ABI implementation identity differs")
     frozen, tools = stage["frozen"], stage["tools"]
-    for key, relative in (("helper", pacga.HEADER), ("patch", pacga.PATCH)):
+    require(set(tools) == {"clang"} and tools["clang"]["binary"]["sha256"] == PINS["compiler"],
+            "PACGA stage compiler differs from the pinned kernel compiler")
+    kb, output = Path(kernel_build).resolve(), path.parent
+    xnu = kb / ".cache/xnu-work"
+    prepared_pins = dict(zip(PACGA_SOURCES, (PACGA_PINS["source"], PACGA_PINS["locore_source"],
+                                           PACGA_PINS["exception_asm_source"])))
+    require(stage["prepared_sources"] == prepared_pins, "PACGA prepared source identities differ")
+    expected_paths = {"helper": output / "source/osfmk/arm64/route_a_pacga_qarma5.h",
+                      "abi_header": output / "source/osfmk/arm64/route_a_pacga_abi.h",
+                      "patch": output / "runtime.patch"}
+    expected_paths.update({"source:" + name: output / "source" / name for name in PACGA_SOURCES})
+    expected_paths.update({"prepared:" + name: xnu / name for name in PACGA_SOURCES})
+    expected_paths.update(assym=kb / ASSYM_REL, genassym=xnu / "osfmk/arm64/genassym.c")
+    # Protect generated semantic inputs before reading them. A later first-time
+    # protection must never adopt changed dependency/configuration receipts.
+    guarded = [path, *(xnu / name for name in PACGA_SOURCES), kb / ASSYM_REL]
+    guarded.extend(ROOT / name for name in ("scripts/build_route_a_pacga.py", "scripts/route_a_pacga_probe/run.py",
+                                            "scripts/arm64_lowering/pacga.py", pacga.HEADER, pacga.ABI_HEADER, pacga.PATCH))
+    for unit in ("sleh", "locore"):
+        expected_paths.update({"recipe:" + unit: kb / Path(RECIPE_REL).with_name(unit + ".o.json"),
+                               "object:" + unit: output / (unit + ".o"),
+                               "configuration:" + unit: output / (unit + ".macros.txt")})
+        guarded.extend(expected_paths[key + ":" + unit] for key in ("recipe", "object", "configuration"))
+        guarded.extend(output / (unit + suffix) for suffix in (".d", ".discovered.d", ".dependencies.json"))
+    guarded_generations = {str(path): stage_generation}
+    for item in guarded:
+        original = execution.file_identity(item)
+        require(guarded_generations.setdefault(str(item), original) == original,
+                "PACGA guarded input generation changed before admission")
+        journal.protect(item)
+    for key, item in expected_paths.items():
+        require(frozen[key]["path"] == str(item), "PACGA frozen path differs: " + key)
+    for key, relative in (("helper", pacga.HEADER), ("abi_header", pacga.ABI_HEADER), ("patch", pacga.PATCH)):
         require(frozen[key]["sha256"] == stage[key + "_sha256"] == implementation["sources"][relative],
-                "PACGA staged helper/patch bytes differ from their source identity")
-    require(frozen["source"]["sha256"] == stage["staged_sleh_sha256"]
-            and frozen["source"]["path"] == str(path.parent / "source/osfmk/arm64/sleh.c"),
-            "PACGA staged translation unit identity differs")
+                "PACGA staged helper/ABI/patch differs from its implementation identity")
+    for key, relative in (("stage", "scripts/build_route_a_pacga.py"), ("execution", "scripts/route_a_pacga_probe/run.py")):
+        require(frozen[key]["sha256"] == PACGA_PINS[key + "_driver"], "PACGA stage used an unreviewed producer validation source")
+        pin(ROOT / relative, PACGA_PINS[key + "_driver"])
+        journal.protect(ROOT / relative)
+    for relative in (pacga.HEADER, pacga.ABI_HEADER, pacga.PATCH, "scripts/arm64_lowering/pacga.py"):
+        journal.protect(ROOT / relative)
     try:
         execution.verify_tools(tools, hashes=True)
         execution.verify_files(frozen, hashes=True)
     except ValueError as error:
         raise BuildError("PACGA stage identity changed: " + str(error)) from error
-    require(set(tools) == {"clang"} and tools["clang"]["binary"]["sha256"] == PINS["compiler"],
-            "PACGA stage compiler differs from the pinned kernel compiler")
-    for key, relative in (("stage", "scripts/build_route_a_pacga.py"),
-                          ("execution", "scripts/route_a_pacga_probe/run.py")):
-        current = ROOT / relative
-        require(frozen[key]["sha256"] == PACGA_PINS[key + "_driver"],
-                "PACGA stage used an unreviewed producer validation source")
-        journal.protect(current)
-    for relative in (pacga.HEADER, pacga.PATCH, "scripts/arm64_lowering/pacga.py"):
-        journal.protect(ROOT / relative)
-    kb = Path(kernel_build).resolve()
-    source = kb / ".cache/xnu-work/osfmk/arm64/sleh.c"
-    recipe_path = kb / Path(RECIPE_REL).with_name("sleh.o.json")
-    prepared = pin(source, PACGA_PINS["source"])
-    patch_bytes = pin(frozen["patch"]["path"], implementation["sources"][pacga.PATCH])
-    require(regular(frozen["source"]["path"]).read_bytes() == apply_pacga_patch(prepared, patch_bytes),
-            "PACGA staged translation unit does not reproduce the pinned source and exact patch")
-    recipe = json.loads(pin(recipe_path, PACGA_PINS["recipe"]).decode().rstrip().removesuffix(","))
-    require(stage["prepared_sleh_sha256"] == PACGA_PINS["source"]
-            and frozen["recipe"]["path"] == str(recipe_path)
-            and stage["recipe_sha256"] == PACGA_PINS["recipe"]
-            and recipe["file"] == str(source) and recipe["output"] == "sleh.o"
-            and Path(recipe["directory"]).resolve() == recipe_path.parent,
-            "PACGA stage is not based on the pinned retained sleh recipe/source")
-    previous = journal.protect(recipe_path.parent / "sleh.o")
-    require(stage["previous_object"] == {"name": "sleh.o", "sha256": previous["sha256"]}
-            and sum(item == previous for item in original_members) == 1,
-            "PACGA previous object is not the unique pinned platform sleh.o")
-    obj = regular(path.parent / "sleh.o")
-    require(stage["object"] == {"name": "sleh.o", "bytes": obj.stat().st_size,
-                               "sha256": sha(obj.read_bytes()), "cpu_type": "arm64", "cpu_subtype": 0}
-            and frozen["object"]["path"] == str(obj)
-            and frozen["object"]["sha256"] == stage["object"]["sha256"],
-            "PACGA replacement object identity differs")
-    object_bytes = obj.read_bytes()
-    try:
-        metadata = loader.platform_link.macho(object_bytes, 1)
-    except loader.platform_link.LinkError as error:
-        raise BuildError("PACGA object is not an admissible ordinary-arm64 object: " + str(error)) from error
-    descriptors = [section for section in metadata["sections"] if section["name"] == "__unixnu_pacga"]
-    require(len(descriptors) == 1 and descriptors[0]["segment"] == "__DATA_CONST"
-            and not (descriptors[0]["flags"] & 0x80000000)
-            and object_bytes[descriptors[0]["offset"]:descriptors[0]["offset"] + descriptors[0]["size"]]
-            == pacga.descriptor(), "PACGA object lacks the exact retained implementation descriptor")
+    originals = {name: pin(xnu / name, digest) for name, digest in prepared_pins.items()}
+    rebuilt = apply_pacga_patch(originals, pin(expected_paths["patch"], implementation["sources"][pacga.PATCH]))
+    require(stage["staged_sources"] == {name: sha(raw) for name, raw in rebuilt.items()},
+            "PACGA staged source identities do not reproduce the reviewed patch")
+    for name, raw in rebuilt.items():
+        require(pin(expected_paths["source:" + name], sha(raw)) == raw
+                and frozen["source:" + name]["sha256"] == sha(raw),
+                "PACGA staged source does not reproduce the pinned source and exact patch")
+    for name, digest in prepared_pins.items():
+        require(frozen["prepared:" + name]["sha256"] == digest, "PACGA prepared source generation identity differs")
+    for key in ("assym", "genassym"):
+        pin(expected_paths[key], PACGA_PINS[key])
+        require(frozen[key]["sha256"] == PACGA_PINS[key], "PACGA retained assembly provenance differs")
     commands = stage["commands"]
-    require([item.get("name") for item in commands] == ["compiler-version", "discover-headers", "compile"],
-            "PACGA stage command sequence differs")
+    names = ["compiler-version", *[unit + suffix for unit in ("sleh", "locore")
+                                   for suffix in ("-discover-headers", "-config", "-compile")]]
+    require([item.get("name") for item in commands] == names, "PACGA stage command sequence differs")
     for command in commands:
         require(command.get("status") == "finished" and type(command.get("exit_code")) is int
-                and command["exit_code"] == 0
-                and command.get("cleanup", {}).get("group_absent") is True
-                and command["cleanup"].get("direct_child_reaped") is True
-                and command["arguments"][0] == tools["clang"]["invocation"],
+                and command["exit_code"] == 0 and command.get("cleanup", {}).get("group_absent") is True
+                and command["cleanup"].get("direct_child_reaped") is True,
                 "PACGA stage has an unsuccessful or unreaped command")
-    expected_arguments = list(recipe["arguments"])
-    require(expected_arguments.count(str(source)) == 1 and expected_arguments.count("-o") == 1,
-            "pinned PACGA recipe source/output is ambiguous")
-    expected_arguments[expected_arguments.index(str(source))] = str(path.parent / "source/osfmk/arm64/sleh.c")
-    expected_arguments[expected_arguments.index("-o") + 1] = str(obj)
-    expected_arguments += ["-march=armv8-a", "-DCONFIG_ROUTE_A_PACGA_SVC=1",
-                           '-DROUTE_A_PACGA_IMPLEMENTATION_SHA256="' + implementation["sha256"] + '"',
-                           "-mgeneral-regs-only", "-MD", "-MF", str(path.parent / "sleh.d"),
-                           "-Werror=implicit-function-declaration",
-                           "-Werror=incompatible-function-pointer-types", "-Werror=return-type"]
-    expected_arguments[1:1] = ["-I", str(path.parent / "source/osfmk")]
-    discovery = list(expected_arguments)
-    discovery[discovery.index("-MD")] = "-M"
-    discovery[discovery.index("-MF") + 1] = str(path.parent / "discovered.d")
-    discovery[discovery.index("-o") + 1] = str(path.parent / "discovered.stdout")
-    require(stage["arguments"] == expected_arguments
-            and commands[0]["arguments"] == [tools["clang"]["invocation"], "--version"]
-            and commands[1]["arguments"] == discovery
-            and commands[1]["directory"] == recipe["directory"]
-            and stage["compiler"] == tools["clang"]["invocation"],
-            "PACGA compile/discovery argv differs from the pinned recipe and reviewed overlay flags")
-    require(commands[-1]["arguments"] == stage["arguments"]
-            and commands[-1]["directory"] == recipe["directory"] == stage["directory"]
-            and stage["arguments"].count(str(obj)) == 1
-            and stage["arguments"].count(str(path.parent / "source/osfmk/arm64/sleh.c")) == 1,
-            "PACGA compile receipt does not identify its source/output/cwd")
-    closure = stage["header_closure"]
-    declared = execution.dependency_paths(path.parent / "discovered.d", recipe["directory"])
-    actual = execution.dependency_paths(path.parent / "sleh.d", recipe["directory"])
-    require(declared == actual == {Path(item) for item in closure}
-            and stage["dependency_count"] == len(closure)
-            and all(frozen.get("dependency:" + item) == record for item, record in closure.items()),
-            "PACGA actual dependency closure differs")
-    dependencies = path.parent / "dependencies.json"
-    require(sha(dependencies.read_bytes()) == stage["dependencies_sha256"]
-            and json.loads(dependencies.read_bytes()) == {item: record["sha256"] for item, record in closure.items()},
-            "PACGA dependency publication differs")
+    require(commands[0]["arguments"] == [tools["clang"]["invocation"], "--version"]
+            and commands[0]["directory"] == str(output) and commands[0].get("timeout_seconds") == 60,
+            "PACGA compiler version receipt differs")
+    dependencies, admitted = {}, {}
+    overlay_paths = {item for key, item in expected_paths.items()
+                     if key.startswith("source:") or key in ("helper", "abi_header")}
+    for position, unit in enumerate(("sleh", "locore")):
+        record, relative = units[unit], PACGA_SOURCES[position]
+        require(type(record.get("compile_exit_code")) is int and record["compile_exit_code"] == 0,
+                "PACGA translation unit lacks a successful compile exit")
+        source, staged = xnu / relative, expected_paths["source:" + relative]
+        recipe_path = expected_paths["recipe:" + unit]
+        recipe_pin = PACGA_PINS["recipe" if unit == "sleh" else "locore_recipe"]
+        recipe = json.loads(pin(recipe_path, recipe_pin).decode().rstrip().removesuffix(","))
+        require(record["source_file"] == relative and record["recipe_sha256"] == frozen["recipe:" + unit]["sha256"] == recipe_pin
+                and recipe["file"] == str(source) and Path(recipe["directory"]).resolve() == recipe_path.parent,
+                "PACGA translation unit is not based on the pinned retained recipe/source")
+        arguments = list(recipe["arguments"])
+        require(arguments.count(str(source)) == 1 and arguments.count("-o") == 1 and arguments.count("-c") == 1
+                and arguments[0] == tools["clang"]["invocation"]
+                and arguments[arguments.index("-o") + 1] == recipe["output"],
+                "pinned PACGA recipe compiler/source/output is ambiguous")
+        if unit == "locore":
+            language = [value[2:] for value in arguments if value.startswith("-x") and value != "-x"]
+            language += [arguments[i + 1] for i, value in enumerate(arguments[:-1]) if value == "-x"]
+            require(language == ["assembler-with-cpp"], "PACGA locore recipe lacks the fixed assembly language")
+        # The retained locore recipe records a temporary .s output. Its previous
+        # link member is still the unique locore.o beside that fixed recipe.
+        name = unit + ".o"
+        previous = journal.protect(recipe_path.parent / name)
+        require(record["previous_object"] == {"name": name, "sha256": previous["sha256"]}
+                and sum(item == previous for item in original_members) == 1
+                and sum(Path(item["path"]).name == name for item in original_members) == 1,
+                "PACGA previous object is not the unique pinned platform " + name)
+        obj = expected_paths["object:" + unit]
+        raw = regular(obj).read_bytes()
+        require(record["object"] == {"name": name, "bytes": len(raw), "sha256": sha(raw), "cpu_type": "arm64", "cpu_subtype": 0}
+                and frozen["object:" + unit]["sha256"] == sha(raw), "PACGA replacement object identity differs")
+        try:
+            metadata = loader.platform_link.macho(raw, 1)
+        except loader.platform_link.LinkError as error:
+            raise BuildError("PACGA object is not an admissible ordinary-arm64 object: " + str(error)) from error
+        descriptors = [section for section in metadata["sections"] if section["name"] == "__unixnu_pacga"]
+        if unit == "sleh":
+            require(len(descriptors) == 1 and descriptors[0]["segment"] == "__DATA_CONST"
+                    and not (descriptors[0]["flags"] & 0x80000000)
+                    and raw[descriptors[0]["offset"]:descriptors[0]["offset"] + descriptors[0]["size"]] == pacga.descriptor(),
+                    "PACGA sleh object lacks the exact retained implementation descriptor")
+        else:
+            require(not descriptors, "PACGA locore object duplicates the implementation descriptor")
+        arguments[arguments.index(str(source))] = str(staged)
+        arguments[arguments.index("-o") + 1] = str(obj)
+        arguments[1:1] = ["-I", str(output / "source/osfmk")]
+        arguments += ["-march=armv8-a", "-DCONFIG_ROUTE_A_PACGA_SVC=1",
+                      '-DROUTE_A_PACGA_IMPLEMENTATION_SHA256="' + implementation["sha256"] + '"']
+        if unit == "sleh":
+            arguments += ["-mgeneral-regs-only"]
+        arguments += ["-MD", "-MF", str(output / (unit + ".d"))]
+        if unit == "sleh":
+            arguments += ["-Werror=implicit-function-declaration", "-Werror=incompatible-function-pointer-types", "-Werror=return-type"]
+        discovery = list(arguments)
+        discovery[discovery.index("-MD")] = "-M"
+        discovery[discovery.index("-MF") + 1] = str(output / (unit + ".discovered.d"))
+        discovery[discovery.index("-o") + 1] = str(output / (unit + ".discovered.stdout"))
+        configuration = list(arguments)
+        configuration.remove("-c"); configuration.remove("-MD")
+        at = configuration.index("-MF"); del configuration[at:at + 2]
+        configuration[configuration.index("-o") + 1] = str(output / (unit + ".macros.txt"))
+        configuration += ["-E", "-dM"]
+        require(record["arguments"] == arguments and record["directory"] == recipe["directory"],
+                "PACGA compile argv differs from the pinned recipe and reviewed overlay flags")
+        for command, expected, deadline in zip(commands[1 + 3 * position:4 + 3 * position],
+                                                (discovery, configuration, arguments), (300, 300, timeout)):
+            require(command["arguments"] == expected and command["directory"] == recipe["directory"]
+                    and type(command.get("timeout_seconds")) is int and command["timeout_seconds"] == deadline,
+                    "PACGA discovery/configuration/compile receipt differs")
+        macros = expected_paths["configuration:" + unit].read_bytes()
+        require(record["configuration"] == pacga_configuration(macros, unit)
+                and frozen["configuration:" + unit]["sha256"] == sha(macros), "PACGA configuration publication differs")
+        closure = record["header_closure"]
+        declared = execution.dependency_paths(output / (unit + ".discovered.d"), recipe["directory"])
+        actual = execution.dependency_paths(output / (unit + ".d"), recipe["directory"])
+        require(declared == actual == {Path(item) for item in closure}
+                and record["dependency_count"] == len(closure) and staged in declared,
+                "PACGA actual dependency closure differs")
+        required = ({staged, expected_paths["helper"], expected_paths["abi_header"]} if unit == "sleh" else
+                    {staged, expected_paths["source:" + PACGA_SOURCES[2]], expected_paths["abi_header"], kb / ASSYM_REL})
+        require(required <= declared and (xnu / PACGA_SOURCES[2]) not in declared
+                and all(not item.is_relative_to(output / "source") or item in overlay_paths for item in declared),
+                "PACGA dependencies omit the reviewed overlay or contain an unreviewed shadow header")
+        for item, identity in closure.items():
+            require(identity["path"] == item and frozen.get("dependency:" + item) == identity
+                    and dependencies.setdefault(item, identity) == identity, "PACGA shared dependency generation differs")
+        publication = output / (unit + ".dependencies.json")
+        raw = publication.read_bytes()
+        require(sha(raw) == record["dependencies_sha256"]
+                and json.loads(raw) == {item: identity["sha256"] for item, identity in closure.items()},
+                "PACGA dependency publication differs")
+        admitted[unit] = {"previous_object": previous, "object": journal.protect(obj)}
+    require(set(frozen) == set(expected_paths) | {"stage", "execution"} | {"dependency:" + item for item in dependencies},
+            "PACGA frozen input inventory differs")
     for record in frozen.values():
         journal.protect(record["path"])
     journal.protect(tools["clang"]["invocation"], tool=True)
-    for item in (source, recipe_path, obj, dependencies, path.parent / "discovered.d", path.parent / "sleh.d"):
+    for item in guarded:
         journal.protect(item)
-    require(journal.protect(path) == stage_identity, "PACGA stage report changed during admission")
-    # First-time journal protection must not adopt a file changed after the
-    # semantic checks as a new baseline. Recheck the original stage generation.
+    require(journal.protect(path) == stage_identity and pacga.implementation() == implementation,
+            "PACGA report or implementation changed during admission")
     try:
         execution.verify_files(frozen, hashes=True)
         execution.verify_tools(tools, hashes=True)
+        execution.verify_files(guarded_generations, hashes=True)
     except ValueError as error:
         raise BuildError("PACGA stage identity changed during admission: " + str(error)) from error
     return {"stage_report": stage_identity, "kernel_build": str(kb), "implementation": implementation,
-            "previous_object": previous, "object": loader.identity(obj),
-            "validation_sources": {key: frozen[key]["sha256"] for key in ("stage", "execution")},
-            "dependency_count": len(closure), "runtime_boot_verified": False}
+            "translation_units": admitted, "validation_sources": {key: frozen[key]["sha256"] for key in ("stage", "execution")},
+            "dependency_count": len(dependencies), "runtime_boot_verified": False}
 
 
 def write_link_filelist(journal, plan, bootstrap, archive, pacga_overlay=None):
@@ -828,7 +929,10 @@ def write_link_filelist(journal, plan, bootstrap, archive, pacga_overlay=None):
     substitutions = []
     replacements = [("prng_random.o", journal.protect(bootstrap), None)]
     if pacga_overlay is not None:
-        replacements.append(("sleh.o", pacga_overlay["object"], pacga_overlay["previous_object"]))
+        units = pacga_overlay["translation_units"]
+        require(set(units) == {"sleh", "locore"}, "PACGA link substitution requires exactly both translation units")
+        replacements.extend((name + ".o", units[name]["object"], units[name]["previous_object"])
+                            for name in ("sleh", "locore"))
     for name, replacement, previous in replacements:
         indices = [index for index, item in enumerate(members) if Path(item["path"]).name == name]
         require(len(indices) == 1, name + " replacement is not unique")
@@ -874,7 +978,8 @@ def verify_link_contract(report, directory, protected, checked_input):
     members = list(plan["original_members"])
     expected = [("bootstrap", "prng_random.o", report["bootstrap"])]
     if overlay is not None:
-        expected.append(("pacga", "sleh.o", overlay["object"]))
+        expected.extend(("pacga", name + ".o", overlay["translation_units"][name]["object"])
+                        for name in ("sleh", "locore"))
     substitutions = []
     for kind, name, replacement in expected:
         indices = [index for index, item in enumerate(members) if Path(item["path"]).name == name]

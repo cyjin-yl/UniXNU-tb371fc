@@ -90,6 +90,41 @@ Every other general register, SP, saved PC and CPSR/NZCV is preserved. LR or FP
 changes only when it is explicitly the destination. The saved SVC PC already
 points to the following instruction, so the handler does not increment it.
 
+The real XNU return path needs a separate x18 change: with the existing
+preservation flag clear, the original `locore.s` clears x18 even when the C saved state is
+correct. The opt-in overlay therefore binds three production source changes.
+`SPILL_REGISTERS` clears the private `arm_saved_state64.reserved` padding at
+every exception entry; only a successfully handled AArch64 EL0t PACGA SVC
+sets the shared tag. In the final return segment, with interrupts masked,
+`locore.s` consumes and clears that tag before branching. A matching tag and
+EL0t mode restore saved x18, including a PACGA destination of x18. Untagged
+returns keep the original policy for the preservation flag. ESR alone cannot authorize this
+path: an asynchronous exception can carry an old synchronous syndrome.
+
+The marker occupies no user register and is not part of the public thread-state
+interface. Its assembly offset is generated `SS64_CPSR + 4`; C assertions check
+the actual CPSR/reserved widths and adjacency. The stage binds the existing
+`assym.s`, its prepared `genassym.c` provenance, and the actual header closure;
+it does not regenerate or modify them. This option rejects
+`__ARM_KERNEL_PROTECT__`: that configuration clobbers x18 before saving the
+user context and again while unmapping the kernel, so a late restore cannot
+supply its missing input.
+
+The marker denotes one handled exception entry's final user return, including
+an AST or scheduler continuation. This is a scoped use of reserved padding,
+not a claim that the field is never copied. In the pinned
+[status conversion and initialization code](https://github.com/apple-oss-distributions/xnu/blob/ac9718fb1af618d5ce8678d0dc6e8a58f252216f/osfmk/arm64/status.c),
+public get/set operations copy named registers and fresh contexts are zeroed;
+`machine_thread_dup` does copy the entire saved state. The normal
+[fork path](https://github.com/apple-oss-distributions/xnu/blob/ac9718fb1af618d5ce8678d0dc6e8a58f252216f/bsd/kern/kern_fork.c)
+copies the current fork thread after its fresh ordinary-SVC entry has cleared
+the marker. Arbitrary-source corpse copies do not establish a runnable return.
+[Signal delivery and sigreturn](https://github.com/apple-oss-distributions/xnu/blob/ac9718fb1af618d5ce8678d0dc6e8a58f252216f/bsd/dev/arm/unix_signal.c)
+use those named-register interfaces. A signal AST may rewrite PC/SP/arguments
+in the same PCB while preserving this entry's marker; the final return consumes
+it. A later sigreturn is a new SVC entry and cannot import that private marker
+from a user signal frame. Nested EL1 exceptions use their own stack contexts.
+
 An exception may clear the local exclusive monitor. The new proof policy
 therefore rejects PACGA reachable inside a live load-exclusive/store-exclusive
 region. The check follows both conditional edges and proven jump-table targets;
@@ -115,32 +150,48 @@ the portable helper is [pacga_qarma5.h](../scripts/arm64_lowering/runtime/pacga_
 The existing kernel preparer and default link remain unchanged.
 
 [build_route_a_pacga.py](../scripts/build_route_a_pacga.py) requires a fixed XNU
-worktree, the actual `sleh.o.json` recipe and the reviewed prepared `sleh.c`
-digest. It copies only that translation unit into a new overlay, applies the
-patch there, and compiles with ordinary Armv8-A and general registers only.
-It records the original and replacement object digests, compile command,
-dependencies, helper identity and provider prerequisite. Before compilation,
-a dependency-only `-M` pass declares the complete header closure, including
-resource, SDK and system headers. Each file is hashed and its generation is
-bound before the actual `-MD` compile. Actual dependencies must match that
-declared set, and all identities are checked again afterward. Shared prepared
-headers are never rewritten or chmod-ed. Run the command inside the isolated CT
-through the host's `agent-heavy` gate.
+worktree, both retained `sleh.o.json` and `locore.o.json` recipes, and the reviewed
+prepared digests of `sleh.c`, `locore.s`, and `exception_asm.h`. It stages those
+three files and the two runtime headers in a fresh overlay. The original
+prepared tree stays bound as input. Both translation units are required for a
+successful `route-a-pacga-stage-v2` receipt; a C-only v1 receipt is ineligible.
+
+Each unit has its own dependency-only pass, actual CPP macro receipt, and
+ordinary-Armv8-A object compile. The C unit uses general registers only.
+Macro receipts must show the option enabled and kernel protection disabled;
+the assembly unit must really use `assembler-with-cpp`. The original locore
+compile database names a temporary preprocessor output. The producer binds
+those original bytes, explicitly emits the new `locore.o`, and identifies the
+old platform member as the retained build directory's `locore.o`.
+
+Before either compile, the complete discovered closure is frozen, including
+resource, SDK, system, generated-offset and overlay headers. Each actual
+dependency set must match its declaration. Shared headers cannot acquire a
+different generation between the two units. The assembly closure must include
+the patched entry header, the common ABI header and the bound `assym.s`; an
+original entry header or an extra shadow header rejects the stage. Both object
+identities, complete commands and per-compile deadlines are retained. Any
+failure leaves the aggregate receipt ineligible even if the first object built.
+Run the command inside the isolated CT through the host's `agent-heavy` gate.
 
 ```sh
 python3 scripts/build_route_a_pacga.py \
   --xnu-work /absolute/path/to/prepared-xnu \
   --recipe /absolute/path/to/sleh.o.json \
-  --expected-sleh-sha256 REVIEWED_PREPARED_SHA256 \
+  --locore-recipe /absolute/path/to/locore.o.json \
+  --expected-sleh-sha256 REVIEWED_PREPARED_SLEH_SHA256 \
+  --expected-locore-sha256 REVIEWED_PREPARED_LOCORE_SHA256 \
+  --expected-exception-asm-sha256 REVIEWED_PREPARED_EXCEPTION_ASM_SHA256 \
   --output /absolute/path/to/new-pacga-stage
 ```
 
-The resulting object must be explicitly included in the reviewed kernel link
-alongside the working random provider. Only `sleh.o` and the new helper are in
-this overlay; the stage does not silently change another component.
+CoreCrypto admission independently replays all three patched files, validates
+both fixed recipes and their complete command/dependency receipts, and
+substitutes exactly one retained `sleh.o` and one retained `locore.o`. Both
+objects must enter the fresh link together, before sealing the kernel.
 
 The linked kernel retains a non-secret `__DATA_CONST,__unixnu_pacga` descriptor.
-It binds the exact helper, patch and ABI contract. The validator checks its
+It binds the exact helper, common ABI header, three-file patch and ABI contract. The validator checks its
 geometry, ordinary-arm64 architecture and identity, and hashes the entire
 linked kernel. The same binding appears in proof rules and the conversion
 report. The descriptor relies on a trusted build producer; it is not a signature
@@ -175,12 +226,12 @@ previous wrong header and a configuration that hides the kernel API.
 
 Changing this production include changes the implementation descriptor hash.
 Create a fresh stage from the corrected source and keep the failed stage intact.
-CoreCrypto stage admission pins the reviewed stage driver and the execution
-helper at `e766bca55f840707a14cebc90c2bb04b7cc36050`; this update does not relabel
-an existing object or change the pinned prepared XNU source and compiler recipe.
+CoreCrypto stage admission pins the revised stage driver and execution helper
+independently. The v2 x18 closure requires a fresh two-object stage; an older
+object, descriptor or receipt is never relabeled as its result.
 
-The committed tests are synthetic and operate on the actual new C and Python
-code. They cover the published full-block known answer and PACGA truncation,
+The committed tests are synthetic and operate on the actual new C, Python,
+and extracted production entry/return instructions. They cover the published full-block known answer and PACGA truncation,
 all 32,768 register combinations, aliasing, XZR versus SP, Rd31 discard,
 preservation of the whole saved state, readiness/failure behavior, ordinary SVC
 fallback, reserved-namespace rejection, exclusive-window rejection, and the
@@ -199,8 +250,14 @@ Both fixtures use 1,024 public deterministic vectors, including the paper's
 known answer and every register index. They compare the delivered GPRs, PC, LR,
 SP, NZCV, V0–V31, FPCR and FPSR. The SVC fixture also checks that an ordinary
 immediate returns false from the new handler and reaches its fixture dispatcher.
-The ELF startup and exception vectors are test infrastructure; they do not
-substitute for an XNU runtime test. Public test keys are never used by the
+The fixture executes the exact reset and return blocks extracted from the
+production patch, including the existing preservation flag check. It no longer
+unconditionally restores x18. Additional calls to that same assembly exercise
+stale ESR, malformed tags, invalid modes, one-time consumption, separate nested
+contexts and the reviewed signal/fork lifecycle. Those lifecycle cases model
+state transitions; they do not run XNU's scheduler or signal subsystem. The ELF
+startup and exception vectors remain test infrastructure and do not substitute
+for compiling the complete real `locore.s` or for an XNU runtime test. Public test keys are never used by the
 production initializer.
 
 ```sh
@@ -218,11 +275,11 @@ completion. It retains commands, hashes, logs and a complete-or-failed report.
 On Linux it uses one owned process group per command and a local child subreaper
 to terminate and reap descendants after completion, timeout, SIGINT, SIGTERM or
 SIGHUP; cleanup results are recorded. SIGKILL and host loss cannot run a finalizer
-and do not produce a completed report. The real `sleh.o` stage shares this
+and do not produce a completed report. The real two-object stage shares this
 bounded compiler execution helper. Neither tool creates a persistent VM.
 
 Execution status for this implementation candidate is **pending**. The host
-tests, a real `sleh.c` translation-unit compile, the QEMU probe, a linked
+tests, a real atomic `sleh.c`/`locore.s` compile, the QEMU probe, a linked
 candidate with the provider/key startup order verified, fresh full-cache proof,
 and a Darwin process execution are distinct gates. Until their execution reports
 are available, this page does not mark them as passed and does not claim TB371FC

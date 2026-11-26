@@ -70,11 +70,15 @@ ABI 门槛重新读取两侧真实编译器布局输出，核对全部 carrier �
 
 ## 显式接入 PACGA 对象
 
-`--pacga-stage-report /private/pacga-stage/stage-report.json` 可选地接入已通过真实 `sleh.c` 编译的普通 ARM64 对象。两次 fresh CoreCrypto 构建应选择同一份固定 stage 收据；原始 retained XNU 对象、这个 PACGA 对象及其来源仍属于被绑定的输入，不能据此宣称重新编译了完整 XNU。
+`--pacga-stage-report /private/pacga-stage/stage-report.json` 可选地原子接入已通过真实 `sleh.c` 和 `locore.s` 编译的两个普通 ARM64 对象。接入器仅接受 `route-a-pacga-stage-v2`，必须恰好包含 `sleh`、`locore` 两个翻译单元；旧 v1、缺一项或额外对象均失败。两次 fresh CoreCrypto 构建应选择同一份固定 stage 收据。这两个对象是独立 stage 的输入，不计入本次 529 个 provider TU 和一个 bootstrap TU 的编译收据，也不表示重新编译了完整 XNU。
 
-接入首先验证 stage 的成功且已回收的编译/依赖发现命令、固定 clang-24、源文件、完整 recipe、helper/patch/ABI、实际头依赖闭合和对象身份。准备后的 `sleh.c` 必须等于固定 XNU `ac9718fb1af618d5ce8678d0dc6e8a58f252216f` 原始文件的 SHA-256；其 `sleh.o.json` 也采用独立记录的固定身份。接入器独立重放固定 PACGA patch 的两个追加 hunk，逐项验证文件名、原始上下文、行号和行数，不允许模糊匹配；实际 stage TU 必须逐字节等于重建结果。只修改 TU 并同步更新自报 hash、依赖收据仍会被拒绝。两个生产脚本须匹配 `PACGA_PINS` 中的独立文件身份：`build_route_a_pacga.py` 采用新增有界 `--compile-timeout` 的固定生产脚本（默认 300 秒、可选整数 1–900 秒，仅作用于正式编译，报告绑定实际选择），`route_a_pacga_probe/run.py` 采用已合入 `e766bca5` 的执行器。正式 `<sys/random.h>` 声明修复要求 fresh stage 和新的 patch / descriptor 身份；旧失败收据不改写，也不改称来自新提交。所有实际生产源文件仍须存在并通过内容与 generation 重验。
+接入器独立重放固定补丁，要求 `sleh.c`、`locore.s`、`exception_asm.h` 三个文件及其顺序完全相同，分别为 2、1、2 个追加 hunk。每个 hunk 核对原始上下文、行号与行数，实际 staged 文件须逐字节等于重建结果。准备后的 `sleh.c` 等于固定 XNU 原始文件；`locore.s` 含此前准备阶段的 instrumentation，必须使用实际捕获的 prepared hash，不能替换成 Apple 原始文件 hash。准备源、两个 retained recipe、`assym.s` 和生成它的 `genassym.c` 均采用独立固定身份；后者只是来源绑定，本 stage 不重新生成 `assym.s`。同步修改 TU、自报 hash 和依赖报告仍无法通过补丁重放。
 
-完成语义检查并登记所有受保护输入后，接入器再次对 stage 原始工具及文件的 hash 和 generation 复核，避免中途发生的变更被登记为新 baseline。链接只替换原列表中恰好一个、且旧对象 hash 与固定平台 inventory 相符的 `sleh.o`。新对象必须包含普通 ARM64 Mach-O 元数据和准确的非代码 PACGA 描述符。随后执行全新链接、static-if 改写和 HMAC 封存，最后对新封存内核再次核对描述符和整文件绑定。现有已封存映像不参与修改。
+两个编译 argv 分别从固定 recipe 重建，只允许已审查的 staged source、输出和选项变化。真实 `locore.o.json` 含 `-xassembler-with-cpp`、`-c`，其 `output` 是临时 `.s` 路径；接入器保留语言与编译选项，将新输出设为独立的 `locore.o`，并始终把 recipe 目录下的旧 `locore.o` 作为待替换链接成员。完整七条命令的顺序、argv、工作目录、成功退出和组回收收据均复核；两个正式编译期限必须等于报告选择的整数 1–900 秒，依赖发现和配置展开各为 300 秒。两个生产脚本都须匹配 `PACGA_PINS` 中的独立文件身份，不能只更新报告里的 hash。旧失败尝试保持其原始身份。
+
+配置门槛直接读取两个实际宏展开文件，要求 `CONFIG_ROUTE_A_PACGA_SVC=1`，`__ARM_KERNEL_PROTECT__` 未定义或等于 0，且 locore 必须实际以 assembler-with-cpp 预处理。两个 TU 均拒绝任何 `__arm64e__` 定义，C 的 sleh 也不得定义 `__ASSEMBLER__`，空值定义同样失败。发现与正式编译的依赖集合必须逐项相同；locore 必须消费 staged `exception_asm.h`、共享 ABI header 和固定 `assym.s`，不得回落到原异常头或额外的 shadow header。共享依赖的 generation 必须一致。接入器在语义读取前绑定 generated depfile、宏展开和依赖 JSON，结束时重读；原始源、实际生产源、工具及所有冻结文件的 hash 和 generation 也再次核验，防止中途变更被采纳为新 baseline。
+
+链接只允许新增 provider 归档、原 bootstrap 替换，以及原列表中各恰好一次的 `sleh.o` 和 `locore.o` 替换，保持其他成员和顺序。两个旧对象必须与固定平台 inventory 相符；新对象均须通过普通 ARM64 Mach-O 检查，准确的非代码 PACGA 描述符只由 sleh 对象携带。随后执行全新链接、static-if 改写和 HMAC 封存，对新封存内核再次核对描述符和整文件绑定。现有已封存映像不参与修改。
 
 ```sh
 python3 scripts/build_route_a_corecrypto.py \

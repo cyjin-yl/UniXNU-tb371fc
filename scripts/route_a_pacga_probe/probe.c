@@ -6,6 +6,7 @@
 #include <stddef.h>
 #include <stdbool.h>
 #include "pacga_qarma5.h"
+#include "route_a_pacga_abi.h"
 
 #ifndef PROBE_NATIVE
 #error Select native-PACGA oracle or ordinary-arm64 SVC fixture
@@ -16,10 +17,12 @@ typedef struct {
     uint32_t cpsr, reserved;
     uint64_t far, esr;
 } arm_saved_state64_t;
-typedef struct { arm_saved_state64_t state; } arm_saved_state_t;
+typedef struct { arm_saved_state64_t state; } __attribute__((aligned(16))) arm_saved_state_t;
 _Static_assert(sizeof(arm_saved_state64_t) == 288, "saved state size");
 _Static_assert(offsetof(arm_saved_state64_t, sp) == 248, "saved SP offset");
 _Static_assert(offsetof(arm_saved_state64_t, cpsr) == 264, "saved CPSR offset");
+_Static_assert(offsetof(arm_saved_state64_t, reserved) ==
+    offsetof(arm_saved_state64_t, cpsr) + ROUTE_A_PACGA_CPSR_BYTES, "private marker offset");
 static arm_saved_state64_t *saved_state64(arm_saved_state_t *state) { return &state->state; }
 
 static struct route_a_pacga_key route_a_pacga_boot_key;
@@ -34,6 +37,8 @@ static uint32_t selected_word;
 extern uint32_t probe_user_slot[];
 extern void probe_return(void);
 extern void run_user_case(const arm_saved_state_t *);
+extern uint64_t probe_return_gate_test(arm_saved_state_t *, uint64_t);
+extern void probe_entry_reset_test(arm_saved_state_t *);
 
 void *memcpy(void *destination, const void *source, size_t length) {
     unsigned char *d = destination;
@@ -113,7 +118,8 @@ void probe_sync(arm_saved_state_t *state) {
         fallback = 2;
     } else if (!accepted) fail(0x105);
     if (s->pc != before.state.pc || s->sp != before.state.sp ||
-        s->cpsr != before.state.cpsr) fail(0x106);
+        s->cpsr != before.state.cpsr ||
+        s->reserved != (accepted ? ROUTE_A_PACGA_RETURN_TAG : 0)) fail(0x106);
     phase = 1;
 }
 
@@ -155,10 +161,88 @@ static void check_result(const arm_saved_state_t *input) {
         observed.state.fp != expected.state.fp || observed.state.lr != expected.state.lr ||
         observed.state.sp != input->state.sp ||
         observed.state.pc != input->state.pc + 8 ||
-        observed.state.cpsr != input->state.cpsr) fail(0x202);
+        observed.state.cpsr != input->state.cpsr || observed.state.reserved != 0) fail(0x202);
     if (different(initial_simd, observed_simd, sizeof(initial_simd)) ||
         initial_fpcr != observed_fpcr || initial_fpsr != observed_fpsr) fail(0x203);
 }
+
+static void expect_gate(arm_saved_state_t *state, uint64_t tpidr, uint64_t expected_x18, unsigned step) {
+    arm_saved_state_t expected_state = *state;
+    expected_state.state.reserved = 0;
+    if (probe_return_gate_test(state, tpidr) != expected_x18 ||
+        different(state, &expected_state, sizeof(*state))) fail(0x400 + step);
+}
+static void expect_entry_reset(arm_saved_state_t *state, unsigned step) {
+    arm_saved_state_t expected_state = *state;
+    expected_state.state.reserved = 0;
+    probe_entry_reset_test(state);
+    if (different(state, &expected_state, sizeof(*state))) fail(0x500 + step);
+}
+static void check_marker_lifecycle(void) {
+    arm_saved_state_t outer = {0}, nested, child;
+    struct { uint64_t x[29], fp, lr, sp, pc; uint32_t cpsr; } signal_frame = {0};
+    outer.state.x[18] = UINT64_C(0x9123456789abcdef);
+    outer.state.x[1] = UINT64_C(0xfb623599da6e8127);
+    outer.state.x[2] = UINT64_C(0x477d469dec0b8762);
+    route_a_pacga_boot_key.lo = UINT64_C(0xec2802d4e0a488e9);
+    route_a_pacga_boot_key.hi = UINT64_C(0x84be85ce9804e94b);
+    outer.state.pc = 0x10004;
+    outer.state.sp = 0x20000;
+    outer.state.esr = UINT64_C(0x56008000);
+    outer.state.reserved = ROUTE_A_PACGA_RETURN_TAG;
+    expect_entry_reset(&outer, 1);
+    /* A stale PACGA ESR on an asynchronous entry cannot create a marker. */
+    expect_gate(&outer, 0, 0, 1);
+    outer.state.reserved = ROUTE_A_PACGA_RETURN_TAG ^ 1U;
+    expect_gate(&outer, 0, 0, 2);
+    outer.state.reserved = ROUTE_A_PACGA_RETURN_TAG;
+    outer.state.cpsr = 5; /* EL1h */
+    expect_gate(&outer, 0, 0, 3);
+    outer.state.reserved = ROUTE_A_PACGA_RETURN_TAG;
+    outer.state.cpsr = 0x10; /* AArch32 EL0 */
+    expect_gate(&outer, 0, 0, 4);
+    outer.state.cpsr = 0;
+    expect_gate(&outer, UINT64_C(1) << 48, outer.state.x[18], 5);
+
+    /* Execute the real handler, including its private success publication. */
+    uint64_t signature = route_a_pacga_signature(outer.state.x[1], outer.state.x[2],
+                                                &route_a_pacga_boot_key);
+    if (!route_a_pacga_svc(&outer, UINT64_C(0x56008000) | 18U | (1U << 5) | (2U << 10)) ||
+        outer.state.x[18] != signature || outer.state.reserved != ROUTE_A_PACGA_RETURN_TAG) fail(0x406);
+    nested = outer;
+    nested.state.cpsr = 5;
+    expect_entry_reset(&nested, 2); /* Actual EL1 vectors use a separate context. */
+    expect_gate(&nested, 0, 0, 7);
+    if (outer.state.reserved != ROUTE_A_PACGA_RETURN_TAG) fail(0x407);
+
+    /* Model the reviewed AST lifecycle, not a claim of executing XNU signals:
+     * sendsig copies named user registers, then rewrites PC/SP/x0-x5 in the
+     * same PCB. Its internal padding is not exported or imported by get/set.
+     * The completed PACGA value remains in the captured user signal state. */
+    for (unsigned index = 0; index < 29; ++index) signal_frame.x[index] = outer.state.x[index];
+    signal_frame.fp = outer.state.fp; signal_frame.lr = outer.state.lr;
+    signal_frame.sp = outer.state.sp; signal_frame.pc = outer.state.pc;
+    signal_frame.cpsr = outer.state.cpsr;
+    outer.state.pc = 0x30000;
+    outer.state.sp = 0x40000;
+    outer.state.x[0] = 12;
+    expect_gate(&outer, 0, signature, 8);
+    if (signal_frame.x[18] != signature) fail(0x408);
+    expect_gate(&outer, 0, 0, 9); /* The marker cannot be consumed twice. */
+
+    /* sigreturn/fork are fresh ordinary SVC entries. Reset before any state
+     * transfer, then copy only the already-cleared current fork state. */
+    outer.state.reserved = ROUTE_A_PACGA_RETURN_TAG;
+    expect_entry_reset(&outer, 3);
+    for (unsigned index = 0; index < 29; ++index) outer.state.x[index] = signal_frame.x[index];
+    outer.state.fp = signal_frame.fp; outer.state.lr = signal_frame.lr;
+    outer.state.sp = signal_frame.sp; outer.state.pc = signal_frame.pc;
+    outer.state.cpsr = signal_frame.cpsr;
+    child = outer;
+    expect_gate(&outer, 0, 0, 10);
+    expect_gate(&child, 0, 0, 11);
+}
+
 void probe_main(void) {
     uint64_t isar1;
     __asm__ volatile("mrs %0, id_aa64isar1_el1" : "=r"(isar1));
@@ -167,6 +251,7 @@ void probe_main(void) {
         if (((isar1 >> 24) & 15) != 1 || ((isar1 >> 28) & 15) != 0) fail(0x301);
     } else if (isar1 & UINT64_C(0xff000ff0)) fail(0x302);
     route_a_pacga_ready = 1; /* Public fixture key, not production startup. */
+    check_marker_lifecycle();
     uint64_t folded = 0;
     for (case_index = 0; case_index < 1024; ++case_index) {
         arm_saved_state_t input;
@@ -212,6 +297,7 @@ void probe_main(void) {
         arm_saved_state_t input;
         prepare_vectors(&input, case_index);
         expected = input;
+        expected.state.x[18] = 0; /* Original XNU policy without entitlement. */
         phase = 0; fallback = 1;
         select_word(0xd4001001); /* Ordinary SVC #0x80. */
         run_user_case(&input);
@@ -221,6 +307,7 @@ void probe_main(void) {
     puts_serial("PACGA-PROBE {\"schema\":\"route-a-pacga-el0-probe-v1\","
                 "\"cases\":1024,\"paper_vector\":true,\"gpr\":true,"
                 "\"pc_lr_sp\":true,\"nzcv\":true,\"simd\":true,\"fpcr_fpsr\":true,"
+                "\"production_return_gate\":true,\"marker_lifecycle\":true,"
                 "\"native\":");
     puts_serial(PROBE_NATIVE ? "true" : "false");
     puts_serial(",\"ordinary_fallback\":");
