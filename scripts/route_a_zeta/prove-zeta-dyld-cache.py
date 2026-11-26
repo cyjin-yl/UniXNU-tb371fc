@@ -132,6 +132,15 @@ def publish_record(path, record):
     temporary.replace(path)
 
 
+def publish_partial(path, record):
+    """Keep a receipt I/O failure from replacing the proof's primary error."""
+    try:
+        publish_record(path, record)
+    except OSError as receipt_error:
+        print(f"partial receipt write failed during {record['phase']}: {receipt_error}",
+              file=sys.stderr)
+
+
 def prove_image(job):
     """Prove one image, save its arrays, and return its summary and the external code it reached."""
     index, called = job
@@ -206,6 +215,7 @@ def main(argv=None):
         parser.error('--work must be empty to bind artifacts to this attempt')
     cache = None
     stage = 'initial-rules'
+    pending_partial = {}
     try:
         initial_rules = rules_manifest()
         with (args.work / 'initial-rules.json').open('x') as stream:
@@ -213,17 +223,15 @@ def main(argv=None):
         stage = 'cache-open'
         cache = dc.Cache(args.cache)
         stage = 'attempt'
-        return run_attempt(args, cache, initial_rules)
+        return run_attempt(args, cache, initial_rules, pending_partial)
     except BaseException as error:
         partial = args.work / 'partial.json'
         # Preserve more precise worker or closure failure evidence.
         if not partial.exists() and not (args.work / 'summary.json').exists():
-            try:
-                publish_record(partial, dict(schema='zeta-proof-partial-v1',
-                               phase=stage, error=type(error).__name__, complete=False))
-            except OSError as receipt_error:
-                # Report the evidence-write failure without masking the original.
-                print(f'partial receipt write failed: {receipt_error}', file=sys.stderr)
+            record = pending_partial or dict(schema='zeta-proof-partial-v1',
+                                             phase=stage, error=type(error).__name__,
+                                             complete=False)
+            publish_partial(partial, record)
         raise
     finally:
         STATE.clear()
@@ -233,7 +241,7 @@ def main(argv=None):
                 member.handle.close()
 
 
-def run_attempt(args, cache, initial_rules):
+def run_attempt(args, cache, initial_rules, pending_partial):
     partial = args.work / 'partial.json'
     completed_phases = {}
     cache.check_opened_generations()
@@ -302,9 +310,8 @@ def run_attempt(args, cache, initial_rules):
                               completed_phases=completed_phases,
                               artifacts_observed=sorted(p.name for p in args.work.glob('*.npz')),
                               complete=False)
-                temp = partial.with_suffix('.tmp')
-                temp.write_text(json.dumps(record) + '\n')
-                temp.replace(partial)
+                pending_partial.update(record)
+                publish_partial(partial, record)
                 raise
         completed_phases[label] = sorted(acknowledged)
         return results, reached
@@ -334,8 +341,12 @@ def run_attempt(args, cache, initial_rules):
         closure = close(ownership, reached, batch, partial=bool(args.only))
     except BaseException as error:
         if not partial.exists():
-            publish_record(partial, dict(schema='zeta-proof-partial-v1', phase='closure',
-                          error=type(error).__name__, complete=False, completed_phases=completed_phases))
+            record = pending_partial or dict(
+                schema='zeta-proof-partial-v1', phase='closure',
+                error=type(error).__name__, complete=False,
+                completed_phases=completed_phases)
+            pending_partial.update(record)
+            publish_partial(partial, record)
         raise
     summary['closure'] = dict(converged=True, partial=bool(args.only),
                              round_count=len(rounds), rounds_sha256=json_digest(rounds),

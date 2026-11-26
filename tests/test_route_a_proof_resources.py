@@ -1,5 +1,9 @@
 """Resource ownership and partial receipts for the actual proof driver."""
 from pathlib import Path
+from concurrent.futures import Future
+from contextlib import redirect_stderr
+import errno
+import io
 import struct
 import tempfile
 import unittest
@@ -111,6 +115,87 @@ class ResourceTests(unittest.TestCase):
                 self.assertEqual(driver.STATE,{})
                 if phase=='precise':
                     self.assertEqual(partial['missing'],[4])
+
+    def check_partial_write_failure(self, phase, transient):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            cache = root / 'cache'
+            cache.write_bytes(cache_bytes())
+            work = root / 'work'
+            driver = module('prove-zeta-dyld-cache')
+            original = ValueError('sentinel primary proof failure')
+            real_publish = driver.publish_record
+            partial_calls = []
+
+            class InlinePool:
+                def __init__(self, **kwargs):
+                    pass
+
+                def __enter__(self):
+                    return self
+
+                def __exit__(self, *args):
+                    return False
+
+                def submit(self, fn, job):
+                    future = Future()
+                    if phase == 'worker' or (phase == 'closure-worker' and job[1]):
+                        future.set_exception(original)
+                    else:
+                        try:
+                            future.set_result(fn(job))
+                        except BaseException as error:
+                            future.set_exception(error)
+                    return future
+
+            def publish(path, record):
+                if path.name == 'partial.json':
+                    partial_calls.append(dict(record))
+                    if not transient or len(partial_calls) == 1:
+                        raise OSError(errno.ENOSPC, 'injected receipt write failure')
+                return real_publish(path, record)
+
+            def fail_closure(ownership, reached, prove_batch, **kwargs):
+                if phase == 'closure-worker':
+                    return prove_batch([(0, (BASE + 0x100,))])
+                raise original
+
+            stderr = io.StringIO()
+            with patch.object(driver, 'ProcessPoolExecutor', InlinePool), \
+                 patch.object(driver, 'publish_record', publish), \
+                 patch.object(driver, 'close', side_effect=fail_closure), \
+                 redirect_stderr(stderr):
+                with self.assertRaises(ValueError) as caught:
+                    driver.main(['--cache', str(cache), '--work', str(work), '--jobs', '1'])
+            self.assertIs(caught.exception, original)
+            expected_calls = 3 if phase == 'closure-worker' and not transient else 2
+            self.assertEqual(len(partial_calls), expected_calls)
+            self.assertTrue(all(record == partial_calls[0] for record in partial_calls))
+            expected_phase = {'worker': 'own roots', 'closure': 'closure',
+                              'closure-worker': 'closure-001'}[phase]
+            self.assertEqual(partial_calls[0]['phase'], expected_phase)
+            self.assertEqual(partial_calls[0]['error'], 'ValueError')
+            if phase in ('worker', 'closure-worker'):
+                self.assertEqual(partial_calls[0]['missing'], [0])
+                self.assertEqual(partial_calls[0]['acknowledged'], [])
+            if transient:
+                self.assertEqual(json.loads((work / 'partial.json').read_text()), partial_calls[0])
+            else:
+                self.assertFalse((work / 'partial.json').exists())
+            self.assertIn('partial receipt write failed during ' + expected_phase, stderr.getvalue())
+            self.assertFalse((work / 'summary.json').exists())
+            self.assertEqual(driver.STATE, {})
+
+    def test_transient_partial_write_failure_preserves_primary_and_exact_phase(self):
+        for phase in ('worker', 'closure', 'closure-worker'):
+            with self.subTest(phase=phase):
+                self.check_partial_write_failure(phase, transient=True)
+
+    def test_persistent_partial_write_failure_preserves_primary(self):
+        for phase in ('worker', 'closure', 'closure-worker'):
+            with self.subTest(phase=phase):
+                self.check_partial_write_failure(phase, transient=False)
+
 
 if __name__=='__main__':
     unittest.main(verbosity=2)
