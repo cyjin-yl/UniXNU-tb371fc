@@ -27,6 +27,12 @@ adapted files. No source from the unlicensed Bergamota converter was copied.
   hardened dispatch in the source. Omitted or duplicate candidates are rejected.
 - `--only` and runs with unproven/unlowerable instructions return status 1 while
   retaining their diagnostic output. Such reports cannot authorize a rewrite.
+- Failed attempts retain bounded exception text in their private `partial.json`.
+  Worker failures identify the requested image/island, phase, and full root-set
+  digest with a small sample; closure failures identify missing owners or invalid
+  edges with bounded samples. Waiting failures do not blame an unrelated owner.
+  These diagnostics never authorize a rewrite or reuse of an old NPZ. Keep raw
+  private reports outside the public repository; publish only reviewed summaries.
 - The cache reader validates header/table bounds, subcache suffixes and UUIDs,
   mapping ownership, image load commands, and version-5 slide-chain page bounds.
   Other cache header/slide layouts need separate support; they are rejected.

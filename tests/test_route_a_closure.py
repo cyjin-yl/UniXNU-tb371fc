@@ -1,7 +1,7 @@
 
 import json, pathlib, sys, unittest
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parents[1] / "scripts"))
-from route_a_zeta.zeta_closure import close
+from route_a_zeta.zeta_closure import ClosureError, close
 from capstone import Cs, CS_ARCH_ARM64, CS_MODE_LITTLE_ENDIAN
 import struct
 from route_a_zeta import zeta_userland_code as code
@@ -59,4 +59,31 @@ class Tests(unittest.TestCase):
     def test_cycle_terminates(self):
         r=close(ranges,{0:{B},1:set(),2:set(),3:set()},lambda jobs:{k:({A} if k==1 else {B}) for k,_ in jobs})
         self.assertEqual(len(r['rounds']),2)
+    def test_closure_failure_identifies_bad_target_and_result_owner(self):
+        with self.assertRaises(ClosureError) as caught:
+            close(ranges,{0:{B+1},1:set(),2:set(),3:set()},lambda jobs:{})
+        self.assertEqual(str(caught.exception),'edge outside aligned executable ownership')
+        self.assertEqual(caught.exception.context,dict(target=B+1,round=1))
+        with self.assertRaises(ClosureError) as caught:
+            close(ranges,{0:{B},1:set(),2:set(),3:set()},lambda jobs:{99:set()})
+        self.assertEqual(caught.exception.context,
+                         dict(round=1,missing_owners=dict(count=1,sample=[1]),
+                              unexpected_owners=dict(count=1,sample=[99])))
+
+    def test_nonmonotone_failure_identifies_removed_edges(self):
+        with self.assertRaises(ClosureError) as caught:
+            close(ranges,{0:{B},1:{C},2:set(),3:set()},
+                  lambda jobs:{k:set() for k,_ in jobs})
+        self.assertEqual(caught.exception.context,
+                         dict(owner=1,round=1,removed_edges=dict(count=1,sample=[C])))
+
+    def test_missing_owner_context_counts_all_but_bounds_samples(self):
+        many=[(A+4*k,A+4*k+4,k) for k in range(32)]
+        with self.assertRaises(ClosureError) as caught:
+            close(many,{0:set()},lambda jobs:{})
+        self.assertEqual(caught.exception.context['missing_owners'],
+                         dict(count=31,sample=list(range(1,9))))
+        self.assertEqual(caught.exception.context['unexpected_owners'],
+                         dict(count=0,sample=[]))
+
 if __name__=='__main__': unittest.main(verbosity=2)

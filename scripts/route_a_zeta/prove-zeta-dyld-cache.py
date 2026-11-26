@@ -37,7 +37,7 @@ import time
 import numpy as np
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
-from route_a_zeta.zeta_closure import close
+from route_a_zeta.zeta_closure import ClosureError, close
 from route_a_zeta import zeta_dyld_cache as dc
 from route_a_zeta import zeta_userland_code as code
 from route_a_zeta import zeta_llvm_oracle as llvm
@@ -52,6 +52,9 @@ STATE = {}
 # At most 32 MB of immutable declaration addresses survive into forked workers.
 # Temporary arrays are built before any owner's decoded instruction graph.
 MAX_DECLARATION_TARGETS = 4_000_000
+MAX_ERROR_MESSAGE = 2048
+MAX_OWNER_PATH = 1024
+MAX_ROOT_SAMPLE = 8
 
 
 def pac_candidates(words):
@@ -227,6 +230,39 @@ def publish_partial(path, record):
               file=sys.stderr)
 
 
+def error_diagnostic(error):
+    """Bound private failure text without replacing an exception that cannot render."""
+    unavailable = False
+    try:
+        message = str(error)
+    except BaseException:
+        message = '<exception text unavailable>'
+        unavailable = True
+    result = dict(error=type(error).__name__, error_message=message[:MAX_ERROR_MESSAGE],
+                  error_message_truncated=len(message) > MAX_ERROR_MESSAGE,
+                  error_message_unavailable=unavailable)
+    if isinstance(error, ClosureError):
+        result['closure_context'] = error.context
+    return result
+
+
+def failed_job_context(cache, islands, job, operation):
+    index, called = job
+    island = index >= len(cache.images)
+    if island:
+        address = islands[index - len(cache.images)][0]
+        path = f'island-{address:x}'
+    else:
+        address, path = cache.images[index]
+    return dict(index=index, path=path[:MAX_OWNER_PATH],
+                path_truncated=len(path) > MAX_OWNER_PATH,
+                path_sha256=hashlib.sha256(path.encode('utf-8', 'surrogatepass')).hexdigest(),
+                address=address, island=island, phase='calls' if called else 'own',
+                called_roots_count=len(called),
+                called_roots_sha256=json_digest(called) if called else None,
+                called_roots_sample=list(called[:MAX_ROOT_SAMPLE]), operation=operation)
+
+
 def prove_image(job):
     """Prove one image, save its arrays, and return its summary and the external code it reached."""
     index, called = job
@@ -324,8 +360,8 @@ def main(argv=None):
         # Preserve more precise worker or closure failure evidence.
         if not partial.exists() and not (args.work / 'summary.json').exists():
             record = pending_partial or dict(schema='zeta-proof-partial-v1',
-                                             phase=stage, error=type(error).__name__,
-                                             complete=False)
+                                             phase=stage, complete=False,
+                                             **error_diagnostic(error))
             publish_partial(partial, record)
         raise
     finally:
@@ -377,21 +413,28 @@ def run_attempt(args, cache, initial_rules, pending_partial):
         acknowledged = set()
         pending = {}
         backlog = iter(jobs)
+        active_job = None
+        operation = 'submit'
         # A fork takes its own copy of STATE while retaining exactly the mappings
         # from which the parent computed the ranges and slide targets.
         with ProcessPoolExecutor(max_workers=args.jobs, mp_context=multiprocessing.get_context('fork')) as pool:
             def submit_next():
-                job = next(backlog, None)
-                if job is not None:
-                    pending[pool.submit(prove_image, job)] = job[0]
+                nonlocal active_job, operation
+                active_job = next(backlog, None)
+                operation = 'submit'
+                if active_job is not None:
+                    pending[pool.submit(prove_image, active_job)] = active_job
+                    active_job = None
 
             try:
                 for _ in range(min(len(jobs), args.jobs)):
                     submit_next()
                 while pending:
+                    active_job, operation = None, 'wait'
                     ready, _ = wait(pending, return_when=FIRST_COMPLETED)
                     for future in ready:
-                        requested = pending.pop(future)
+                        active_job, operation = pending.pop(future), 'result'
+                        requested = active_job[0]
                         index, result, found = future.result()
                         if index != requested or index in acknowledged:
                             raise ValueError(f'unexpected result {index} for job {requested}')
@@ -401,12 +444,15 @@ def run_attempt(args, cache, initial_rules, pending_partial):
                         count = len(acknowledged)
                         if count % 200 == 0 or count == len(jobs):
                             print(f'{label}: {count}/{len(jobs)}', file=sys.stderr, flush=True)
+                        active_job = None
                     for _ in ready:
                         submit_next()
             except BaseException as error:
                 record = dict(schema='zeta-proof-partial-v1', phase=label,
-                              error=type(error).__name__, expected=expected,
-                              acknowledged=sorted(acknowledged),
+                              expected=expected, **error_diagnostic(error),
+                              failed_job=(failed_job_context(cache, islands, active_job, operation)
+                                          if active_job is not None else None),
+                              operation=operation, acknowledged=sorted(acknowledged),
                               missing=[i for i in expected if i not in acknowledged],
                               completed_phases=completed_phases,
                               artifacts_observed=sorted(p.name for p in args.work.glob('*.npz')),
@@ -444,7 +490,7 @@ def run_attempt(args, cache, initial_rules, pending_partial):
         if not partial.exists():
             record = pending_partial or dict(
                 schema='zeta-proof-partial-v1', phase='closure',
-                error=type(error).__name__, complete=False,
+                complete=False, **error_diagnostic(error),
                 completed_phases=completed_phases)
             pending_partial.update(record)
             publish_partial(partial, record)
@@ -487,8 +533,8 @@ def run_attempt(args, cache, initial_rules, pending_partial):
         pending_summary.replace(args.work / 'summary.json')
     except BaseException as error:
         record = dict(schema='zeta-proof-partial-v1', phase='sealing',
-                      error=type(error).__name__, error_message=str(error)[:2048],
-                      complete=False, completed_phases=completed_phases,
+                      **error_diagnostic(error), complete=False,
+                      completed_phases=completed_phases,
                       closure_round_count=len(rounds), totals=dict(totals),
                       input_sha256=json_digest(initial_input),
                       rules_sha256=json_digest(initial_rules))
