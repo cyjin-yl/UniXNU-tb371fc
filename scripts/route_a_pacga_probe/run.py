@@ -13,6 +13,8 @@ import ctypes
 import hashlib
 import json
 import os
+import re
+import shlex
 from pathlib import Path
 import shutil
 import signal
@@ -156,6 +158,83 @@ def function_from_patch(patch, name, kind):
     return added[start:cursor]
 
 
+def dependency_paths(path, directory):
+    text = Path(path).read_text().replace(chr(92) + chr(10), " ")
+    pacga.require(":" in text, "compiler dependency output lacks a target")
+    result = set()
+    for name in shlex.split(text.split(":", 1)[1]):
+        source = Path(name)
+        if not source.is_absolute():
+            source = Path(directory) / source
+        result.add(source.resolve())
+    pacga.require(bool(result), "empty compiler dependency closure")
+    return result
+
+
+def compile_with_dependencies(command, output, name, manifest, *, timeout=60, cwd=None):
+    """Bind resource/system headers before the compile and verify its actual closure."""
+    directory = Path(cwd or output)
+    arguments = [str(item) for item in command]
+    pacga.require(arguments.count("-c") == 1 and arguments.count("-o") == 1,
+                  "dependency-bound compile requires one source/output command")
+    pacga.require(not any(item in ("-M", "-MM", "-MD", "-MMD") or item.startswith("-MF")
+                         for item in arguments), "compile already has dependency options")
+    compilations = manifest.setdefault("compilations", {})
+    pacga.require(name not in compilations, "compile receipt name is not unique")
+    dep = output / (name + ".d")
+    discovered = output / (name + "-discovered.d")
+    pacga.require(not dep.exists() and not discovered.exists(), "dependency output already exists")
+    arguments += ["-MD", "-MF", str(dep)]
+    discovery = list(arguments)
+    discovery[discovery.index("-MD")] = "-M"
+    discovery[discovery.index("-MF") + 1] = str(discovered)
+    discovery[discovery.index("-o") + 1] = str(output / (name + "-discovered.stdout"))
+    execute(discovery, output, name + "-discover-headers", manifest, timeout=timeout, cwd=directory)
+    declared = dependency_paths(discovered, directory)
+    records = {str(path): file_identity(path) for path in sorted(declared)}
+    for path, record in records.items():
+        previous = manifest["frozen"].setdefault("dependency:" + path, record)
+        pacga.require(previous == record, "dependency changed between translation units: " + path)
+    receipt = dict(complete=False, declared=records, discovery=file_identity(discovered))
+    compilations[name] = receipt
+    execute(arguments, output, name, manifest, timeout=timeout, cwd=directory)
+    actual = dependency_paths(dep, directory)
+    receipt["actual_dependency_file"] = file_identity(dep)
+    receipt["actual_paths"] = sorted(str(path) for path in actual)
+    pacga.require(actual == declared,
+                  "actual compiler dependencies differ from the declared header closure")
+    verify_files(manifest["frozen"], hashes=True)
+    receipt["complete"] = True
+    return records
+
+
+def oracle_cpu(version_output):
+    """Select QARMA5 explicitly across QEMU's 8.2/9.x and 10+ CPU interfaces."""
+    matches = re.findall(r"^QEMU emulator version (\d+)\.(\d+)\.(\d+)(?:\s|$)",
+                         version_output, re.M)
+    pacga.require(len(matches) == 1, "unrecognized QEMU emulator version")
+    version = tuple(int(part) for part in matches[0])
+    pacga.require(version >= (8, 2, 0), "PACGA oracle requires QEMU 8.2 or later")
+    properties = ["max", "pauth=on"]
+    if version >= (10, 0, 0):
+        properties.append("pauth-qarma5=on")
+    properties += ["pauth-qarma3=off", "pauth-impdef=off"]
+    return dict(version=list(version), cpu=",".join(properties),
+                selection="explicit QARMA5 properties with guest ISAR1 verification")
+
+
+def verify_pauth_features(result, *, native):
+    value = result.get("isar1")
+    pacga.require(isinstance(value, str) and re.fullmatch(r"[0-9a-fA-F]{16}", value),
+                  "guest did not report a complete ISAR1 value")
+    isar1 = int(value, 16)
+    if native:
+        pacga.require(((isar1 >> 24) & 15) == 1 and ((isar1 >> 28) & 15) == 0,
+                      "native oracle did not expose QARMA5 GPA=1/GPI=0")
+    else:
+        pacga.require((isar1 & 0xff000ff0) == 0, "SVC fixture unexpectedly exposes pointer authentication")
+
+
 def execute(command, output, name, manifest, timeout=60, cwd=None):
     verify_tools(manifest["tools"])
     verify_files(manifest["frozen"])
@@ -238,20 +317,22 @@ def run(args):
         manifest["compiler"] = execute([clang, "--version"], output, "compiler-version", manifest).strip()
         manifest["qemu"] = execute([qemu, "--version"], output, "qemu-version", manifest).strip()
         manifest["lld"] = execute([lld, "--version"], output, "linker-version", manifest).strip()
+        manifest["oracle"] = oracle_cpu(manifest["qemu"])
         target = ["--target=aarch64-none-elf", "-march=armv8-a", "-mgeneral-regs-only",
                   "-ffreestanding", "-fno-builtin", "-fno-stack-protector",
                   "-fno-unwind-tables", "-fno-asynchronous-unwind-tables"]
-        execute([clang, *target, "-c", "entry.S", "-o", "entry.o"],
-                output, "compile-entry", manifest)
+        compile_with_dependencies([clang, *target, "-c", "entry.S", "-o", "entry.o"],
+                                  output, "compile-entry", manifest)
         (output / "entry.o").chmod(0o444)
         manifest["frozen"]["entry.o"] = file_identity(output / "entry.o")
         for name, native, cpu in (
-            ("native", 1, "max,pauth=on,pauth-qarma5=on,pauth-qarma3=off,pauth-impdef=off"),
+            ("native", 1, manifest["oracle"]["cpu"]),
             ("svc", 0, "cortex-a57"),
         ):
-            execute([clang, *target, "-std=c11", "-O2", "-Wall", "-Wextra", "-Werror",
-                     "-DPROBE_NATIVE=" + str(native), "-c", "probe.c", "-o", name + ".o"],
-                    output, "compile-" + name, manifest)
+            compile_with_dependencies(
+                [clang, *target, "-std=c11", "-O2", "-Wall", "-Wextra", "-Werror",
+                 "-DPROBE_NATIVE=" + str(native), "-c", "probe.c", "-o", name + ".o"],
+                output, "compile-" + name, manifest)
             (output / (name + ".o")).chmod(0o444)
             manifest["frozen"][name + ".o"] = file_identity(output / (name + ".o"))
             elf = name + ".elf"
@@ -275,6 +356,7 @@ def run(args):
                           and all(result.get(key) is True for key in
                                   ("paper_vector", "gpr", "pc_lr_sp", "nzcv", "simd", "fpcr_fpsr")),
                           name + " reported an incomplete register/algorithm result")
+            verify_pauth_features(result, native=bool(native))
             if not native:
                 pacga.require(result["ordinary_fallback"] is True, "ordinary SVC fallback was not reached")
             manifest["results"][name] = dict(result, cpu=cpu,

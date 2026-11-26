@@ -8,6 +8,7 @@ from pathlib import Path
 import hashlib
 import json
 import os
+import shlex
 import shutil
 import struct
 import subprocess
@@ -478,10 +479,17 @@ class PacgaTests(unittest.TestCase):
                 # executable ELF or QEMU is run by this injected environment.
                 if "-o" in command:
                     (directory / command[command.index("-o") + 1]).write_bytes(b"synthetic fixture")
+                if "-MF" in command:
+                    source = directory / command[command.index("-c") + 1]
+                    (directory / command[command.index("-MF") + 1]).write_text(
+                        "fixture.o: " + shlex.quote(str(source)) + "\n")
+                if name == "qemu-version":
+                    return "QEMU emulator version 8.2.2 (synthetic publication fixture)\n"
                 if name.startswith("qemu-"):
                     native = name == "qemu-native"
                     result = dict(schema="route-a-pacga-el0-probe-v1", cases=1024, native=native,
-                                  ordinary_fallback=not native, result_fold="0000000000000000")
+                                  ordinary_fallback=not native, result_fold="0000000000000000",
+                                  isar1="0000000001000000" if native else "0000000000000000")
                     result.update({field: True for field in
                                    ("paper_vector", "gpr", "pc_lr_sp", "nzcv", "simd", "fpcr_fpsr")})
                     return "PACGA-PROBE " + json.dumps(result) + "\n"
@@ -502,6 +510,142 @@ class PacgaTests(unittest.TestCase):
             self.assertIs(report["complete"], False)
             self.assertEqual(report["error"], "OSError")
             self.assertIn("injected final report", report["message"])
+
+
+    def test_probe_dependency_closure_binds_resource_headers_and_rejects_drift(self):
+        from route_a_pacga_probe import run as runner
+        for failure in (None, "changed-resource-header", "undeclared-header"):
+            with self.subTest(failure=failure), tempfile.TemporaryDirectory() as tmp:
+                root = Path(tmp)
+                output = root / "probe"
+                output.mkdir()
+                source = output / "probe.c"
+                source.write_text("/* synthetic compile dependency fixture */\n")
+                resource = root / "resource" / "stdint.h"
+                resource.parent.mkdir()
+                resource.write_text("/* first resource-header generation */\n")
+                extra = root / "extra.h"
+                extra.write_text("/* undeclared compiler input */\n")
+                manifest = dict(tools={}, frozen={"source": runner.file_identity(source)}, commands=[])
+                command = [sys.executable, "-c", str(source), "-o", str(output / "probe.o")]
+
+                def synthetic_execute(arguments, directory, name, receipt, **_options):
+                    # No compiler runs: inject dependency output into the real
+                    # closure-binding and final identity verification paths.
+                    discovery = "-M" in arguments
+                    dependencies = [source, resource]
+                    if not discovery and failure == "changed-resource-header":
+                        resource.write_text("/* a different compiler resource */\n")
+                    if not discovery and failure == "undeclared-header":
+                        dependencies.append(extra)
+                    Path(arguments[arguments.index("-MF") + 1]).write_text(
+                        "fixture.o: " + shlex.join(str(path) for path in dependencies) + "\n")
+                    if not discovery:
+                        Path(arguments[arguments.index("-o") + 1]).write_bytes(b"synthetic object")
+                    receipt["commands"].append(dict(name=name, exit_code=0))
+                    return ""
+
+                with mock.patch.object(runner, "execute", synthetic_execute):
+                    if failure is None:
+                        records = runner.compile_with_dependencies(command, output, "compile", manifest)
+                        self.assertIn(str(resource), records)
+                        self.assertEqual(records[str(resource)], runner.file_identity(resource))
+                        self.assertTrue(manifest["compilations"]["compile"]["complete"])
+                    else:
+                        with self.assertRaisesRegex(ValueError, "bound file changed|dependencies differ"):
+                            runner.compile_with_dependencies(command, output, "compile", manifest)
+                        self.assertFalse(manifest["compilations"]["compile"]["complete"])
+                self.assertEqual([entry["name"] for entry in manifest["commands"]],
+                                 ["compile-discover-headers", "compile"])
+
+    def test_oracle_cpu_version_selection_and_guest_features_fail_closed(self):
+        from route_a_pacga_probe import run as runner
+        for version in ("8.2.0", "8.2.2", "9.2.4"):
+            record = runner.oracle_cpu("QEMU emulator version " + version + " (distribution)\n")
+            self.assertNotIn("pauth-qarma5", record["cpu"])
+            self.assertIn("pauth-qarma3=off,pauth-impdef=off", record["cpu"])
+        for version in ("10.0.0", "10.1.2"):
+            self.assertIn("pauth-qarma5=on", runner.oracle_cpu("QEMU emulator version " + version)["cpu"])
+        for version in ("QEMU emulator version 8.1.5", "unknown", "QEMU emulator version 10.0"):
+            with self.subTest(version=version), self.assertRaises(ValueError):
+                runner.oracle_cpu(version)
+        runner.verify_pauth_features({"isar1": "0000000001000000"}, native=True)
+        runner.verify_pauth_features({"isar1": "0000000000000000"}, native=False)
+        for value, native in (("0000000010000000", True), ("0000000000000000", True),
+                              ("0000000001000000", False), ("0000000000000010", False),
+                              ("1000000", True), (None, True)):
+            with self.subTest(value=value, native=native), self.assertRaises(ValueError):
+                runner.verify_pauth_features({"isar1": value}, native=native)
+
+    def test_stage_postcompile_failures_leave_a_failed_terminal_receipt(self):
+        import build_route_a_pacga as stage
+        original_write = Path.write_text
+        original_tools = stage.verify_tools
+        for failure in (None, "object-header", "dependencies-write", "prepared-source", "tool-recheck", "final-report"):
+            with self.subTest(failure=failure), tempfile.TemporaryDirectory() as tmp:
+                root = Path(tmp)
+                xnu = root / "xnu"
+                source = xnu / stage.SOURCE
+                source.parent.mkdir(parents=True)
+                prepared = b"/* publication-path fixture, not a kernel source build */\n"
+                source.write_bytes(prepared)
+                work = root / "build"
+                work.mkdir()
+                (work / "sleh.o").write_bytes(b"original object identity")
+                recipe = work / "sleh.o.json"
+                recipe.write_text(json.dumps(dict(file=str(source), directory=str(work), output="sleh.o",
+                    arguments=[sys.executable, "-c", str(source), "-o", str(work / "sleh.o")])))
+                output = root / "stage"
+
+                def synthetic_run(arguments, *, cwd):
+                    return pacga.XNU_COMMIT + "\n" if "rev-parse" in arguments else ""
+
+                def synthetic_execute(arguments, directory, name, manifest, **_options):
+                    manifest["commands"].append(dict(name=name, exit_code=0))
+                    if name == "compiler-version":
+                        return "synthetic compiler publication fixture\n"
+                    dependencies = [directory / "source" / stage.SOURCE,
+                                    directory / "source/osfmk/arm64/route_a_pacga_qarma5.h"]
+                    Path(arguments[arguments.index("-MF") + 1]).write_text(
+                        "sleh.o: " + shlex.join(str(path) for path in dependencies) + "\n")
+                    if name == "compile":
+                        header = struct.pack("<4I", 0xFEEDFACF, 0x0100000C, 0, 1)
+                        Path(arguments[arguments.index("-o") + 1]).write_bytes(
+                            b"invalid object!\n" if failure == "object-header" else header + b"fixture")
+                        if failure == "prepared-source":
+                            source.write_bytes(b"changed original source")
+                    return ""
+
+                def controlled_write(path, text, *arguments, **keywords):
+                    if failure == "dependencies-write" and path.name == "dependencies.json":
+                        raise OSError("injected dependencies publication failure")
+                    if failure == "final-report" and path.name == "stage-report.json" and json.loads(text).get("compile_passed"):
+                        raise OSError("injected final stage report failure")
+                    return original_write(path, text, *arguments, **keywords)
+
+                def controlled_tools(records, **options):
+                    if failure == "tool-recheck":
+                        raise ValueError("injected tool identity failure")
+                    return original_tools(records, **options)
+
+                with mock.patch.object(stage, "run", synthetic_run), \
+                        mock.patch.object(stage, "execute", synthetic_execute), \
+                        mock.patch.object(stage, "verify_tools", controlled_tools), \
+                        mock.patch.object(Path, "write_text", controlled_write):
+                    if failure is None:
+                        result = stage.prepare(xnu, recipe, output, hashlib.sha256(prepared).hexdigest())
+                        self.assertTrue(result["compile_passed"])
+                    else:
+                        with self.assertRaises((ValueError, OSError)):
+                            stage.prepare(xnu, recipe, output, hashlib.sha256(prepared).hexdigest())
+                report = json.loads((output / "stage-report.json").read_text())
+                self.assertIs(report["compile_passed"], failure is None)
+                self.assertFalse(report["kernel_linked"])
+                self.assertFalse(report["runtime_boot_verified"])
+                self.assertEqual(report["compile_exit_code"], 0)
+                if failure is not None:
+                    self.assertIn("error", report)
+                    self.assertIn("message", report)
 
 
 if __name__ == "__main__":

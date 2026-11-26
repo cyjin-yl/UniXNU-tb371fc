@@ -10,13 +10,12 @@ import argparse
 import hashlib
 import json
 from pathlib import Path
-import shlex
 import struct
 import subprocess
 import sys
 
 from arm64_lowering import pacga
-from route_a_pacga_probe.run import (execute, file_identity, owned_children,
+from route_a_pacga_probe.run import (dependency_paths, execute, file_identity, owned_children,
                                      tool_identity, verify_files, verify_tools)
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -36,19 +35,6 @@ def run(arguments, *, cwd):
     return result.stdout
 
 
-def dependency_paths(path, directory):
-    text = path.read_text().replace(chr(92) + chr(10), " ")
-    pacga.require(":" in text, "compiler dependency output lacks a target")
-    result = set()
-    for name in shlex.split(text.split(":", 1)[1]):
-        source = Path(name)
-        if not source.is_absolute():
-            source = Path(directory) / source
-        result.add(source.resolve())
-    pacga.require(bool(result), "empty compiler dependency closure")
-    return result
-
-
 def prepare(xnu, recipe_path, output, expected_sleh):
     xnu, recipe_path, output = xnu.resolve(), recipe_path.resolve(), output.resolve()
     pacga.require(not output.exists(), "PACGA stage output must be new")
@@ -65,7 +51,11 @@ def prepare(xnu, recipe_path, output, expected_sleh):
     pacga.require(hashlib.sha256(helper_bytes).hexdigest() == identity["sources"][pacga.HEADER]
                   and hashlib.sha256(patch_bytes).hexdigest() == identity["sources"][pacga.PATCH],
                   "PACGA runtime sources changed while captured")
-    recipe = json.loads(recipe_path.read_text().rstrip().removesuffix(","))
+    recipe_identity = file_identity(recipe_path)
+    recipe_bytes = recipe_path.read_bytes()
+    pacga.require(hashlib.sha256(recipe_bytes).hexdigest() == recipe_identity["sha256"],
+                  "recipe changed while captured")
+    recipe = json.loads(recipe_bytes.decode().rstrip().removesuffix(","))
     pacga.require(Path(recipe["file"]).resolve() == source, "recipe is not for the selected sleh.c")
     arguments = list(recipe["arguments"])
     pacga.require(arguments.count(str(source)) == 1 and arguments.count("-o") == 1,
@@ -110,6 +100,7 @@ def prepare(xnu, recipe_path, output, expected_sleh):
               (("source", staged), ("helper", include), ("patch", patch),
                ("recipe", recipe_path), ("stage", __file__),
                ("execution", ROOT / "scripts/route_a_pacga_probe/run.py"))}
+    pacga.require(frozen["recipe"] == recipe_identity, "recipe changed before it was bound")
     manifest = dict(
         schema="route-a-pacga-stage-v1", abi=pacga.ABI, implementation=identity,
         xnu_commit=pacga.XNU_COMMIT, source_file=SOURCE,
@@ -119,9 +110,9 @@ def prepare(xnu, recipe_path, output, expected_sleh):
         arguments=arguments, directory=recipe["directory"],
         previous_object=dict(name=recipe["output"], sha256=sha(old_object)),
         provider_prerequisite="successful source-provider POST and register_and_init_prng at SYSCTL/LAST",
-        key_material_recorded=False, kernel_linked=False, runtime_boot_verified=False)
-    (output / "compile-command.json").write_text(json.dumps(manifest, indent=2) + "\n")
+        key_material_recorded=False, compile_passed=False, kernel_linked=False, runtime_boot_verified=False)
     try:
+        (output / "compile-command.json").write_text(json.dumps(manifest, indent=2) + "\n")
         with owned_children():
             manifest["compiler_version"] = execute(
                 [arguments[0], "--version"], output, "compiler-version", manifest).strip()
@@ -145,6 +136,26 @@ def prepare(xnu, recipe_path, output, expected_sleh):
                           "actual compiler dependencies differ from the declared header closure")
             verify_files(manifest["frozen"], hashes=True)
         manifest["compile_exit_code"] = manifest["commands"][-1]["exit_code"]
+        obj.chmod(0o444)
+        manifest["frozen"]["object"] = file_identity(obj)
+        with obj.open("rb") as stream:
+            header = stream.read(16)
+        pacga.require(len(header) == 16 and struct.unpack("<4I", header) ==
+                      (0xFEEDFACF, 0x0100000C, 0, 1), "overlay is not an ordinary-arm64 Mach-O object")
+        headers = {path: record["sha256"] for path, record in manifest["header_closure"].items()}
+        (output / "dependencies.json").write_text(json.dumps(headers, indent=2, sort_keys=True) + "\n")
+        pacga.require(pacga.implementation() == identity and sha(source) == expected_sleh,
+                      "PACGA implementation/prepared source changed during the build")
+        verify_tools(manifest["tools"], hashes=True)
+        verify_files(manifest["frozen"], hashes=True)
+        manifest.update(object=dict(name=obj.name, bytes=manifest["frozen"]["object"]["generation"]["bytes"],
+                                    sha256=manifest["frozen"]["object"]["sha256"],
+                                    cpu_type="arm64", cpu_subtype=0),
+                        dependencies_sha256=sha(output / "dependencies.json"), dependency_count=len(headers),
+                        descriptor_hex=pacga.descriptor().hex(),
+                        compile_passed=True, overlay_enabled_by_default=False)
+        (output / "stage-report.json").write_text(json.dumps(manifest, indent=2) + "\n")
+        return manifest
     except BaseException as error:
         manifest.update(compile_passed=False, error=type(error).__name__, message=str(error))
         try:
@@ -152,23 +163,6 @@ def prepare(xnu, recipe_path, output, expected_sleh):
         except OSError as secondary:
             print("PACGA stage receipt write failed: " + str(secondary), file=sys.stderr)
         raise
-    with obj.open("rb") as stream:
-        header = stream.read(16)
-    pacga.require(len(header) == 16 and struct.unpack("<4I", header) ==
-                  (0xFEEDFACF, 0x0100000C, 0, 1), "overlay is not an ordinary-arm64 Mach-O object")
-    headers = {path: record["sha256"] for path, record in manifest["header_closure"].items()}
-    (output / "dependencies.json").write_text(json.dumps(headers, indent=2, sort_keys=True) + "\n")
-    pacga.require(pacga.implementation() == identity and sha(source) == expected_sleh,
-                  "PACGA implementation/prepared source changed during the build")
-    verify_tools(manifest["tools"], hashes=True)
-    verify_files(manifest["frozen"], hashes=True)
-    manifest.update(object=dict(name=obj.name, bytes=obj.stat().st_size, sha256=sha(obj),
-                                cpu_type="arm64", cpu_subtype=0),
-                    dependencies_sha256=sha(output / "dependencies.json"), dependency_count=len(headers),
-                    descriptor_hex=pacga.descriptor().hex(),
-                    compile_passed=True, overlay_enabled_by_default=False)
-    (output / "stage-report.json").write_text(json.dumps(manifest, indent=2) + "\n")
-    return manifest
 
 
 def main(argv=None):

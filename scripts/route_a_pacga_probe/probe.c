@@ -225,6 +225,7 @@ void probe_main(void) {
     puts_serial(PROBE_NATIVE ? "true" : "false");
     puts_serial(",\"ordinary_fallback\":");
     puts_serial(PROBE_NATIVE ? "false" : "true");
+    puts_serial(",\"isar1\":\""); hex(isar1); puts_serial("\"");
     puts_serial(",\"result_fold\":\""); hex(folded); puts_serial("\"}\n");
     probe_exit(0);
 }
