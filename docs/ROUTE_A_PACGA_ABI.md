@@ -161,6 +161,24 @@ the new policy. All original signature-page, FIPS and trust-input checks remain.
 
 ## Validation boundaries
 
+The bootstrap includes XNU's [`sys/random.h`](https://github.com/apple-oss-distributions/xnu/blob/ac9718fb1af618d5ce8678d0dc6e8a58f252216f/bsd/sys/random.h)
+for the `read_random(void *, u_int)` declaration. That kernel API is enabled by
+`KERNEL` and the default `__APPLE_API_UNSTABLE` setting from
+[`sys/appleapiopts.h`](https://github.com/apple-oss-distributions/xnu/blob/ac9718fb1af618d5ce8678d0dc6e8a58f252216f/bsd/sys/appleapiopts.h).
+`libkern/crypto/rand.h` declares different crypto-generator interfaces and does
+not declare `read_random`. A real staged `sleh.c` compile caught this missing
+declaration with `-Werror=implicit-function-declaration`; that check remains
+enabled. The declaration regression compiles the actual bootstrap and its
+production includes against small API fixtures, without a provider definition
+that could accidentally supply the missing declaration. It also rejects the
+previous wrong header and a configuration that hides the kernel API.
+
+Changing this production include changes the implementation descriptor hash.
+Create a fresh stage from the corrected source and keep the failed stage intact.
+CoreCrypto stage admission pins the reviewed stage driver and the execution
+helper at `e766bca55f840707a14cebc90c2bb04b7cc36050`; this update does not relabel
+an existing object or change the pinned prepared XNU source and compiler recipe.
+
 The committed tests are synthetic and operate on the actual new C and Python
 code. They cover the published full-block known answer and PACGA truncation,
 all 32,768 register combinations, aliasing, XZR versus SP, Rd31 discard,

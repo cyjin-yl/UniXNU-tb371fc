@@ -9,7 +9,7 @@ diff --git a/osfmk/arm64/sleh.c b/osfmk/arm64/sleh.c
 +#if CONFIG_ROUTE_A_PACGA_SVC
 +#include <arm64/route_a_pacga_qarma5.h>
 +#include <kern/startup.h>
-+#include <libkern/crypto/rand.h>
++#include <sys/random.h>
 +
 +#if __has_feature(ptrauth_calls) || defined(__arm64e__) || HAS_APPLE_PAC || HAS_NATIVE_PAC
 +#error Route A PACGA SVC requires the ordinary arm64 kernel ABI
