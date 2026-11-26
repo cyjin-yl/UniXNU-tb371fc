@@ -282,6 +282,14 @@ class Analyzer:
                    effects='all memory facts killed; ordinary-return continuation only')
         state.invalidate()
 
+    def inline_target(self, state, insn, target):
+        return target in (0x713c, 0x4c988, 0xa99c, 0xa9d0) or (
+            target == 0x99cc and state.load(plus(state.get('x0'), 8), 8) == 0)
+
+    def modeled_effect(self, state, insn):
+        """Additional byte-bound semantics must be supplied explicitly by a subclass."""
+        return False
+
     def lookup(self, state, insn):
         if not self.assumptions.get('lookup_readonly') or state.get('x0') != Pointer('apple', 0):
             return False
@@ -457,8 +465,7 @@ class Analyzer:
                     target = number(operands)
                     if target == 0x6e78 and self.lookup(current, insn):
                         pass
-                    elif target in (0x713c, 0x4c988, 0xa99c, 0xa9d0) or (
-                            target == 0x99cc and current.load(plus(current.get('x0'), 8), 8) == 0):
+                    elif self.inline_target(current, insn, target):
                         if target in self.program.functions:
                             current.put('x30', pc + 4)
                             current.frames += (pc + 4,)
@@ -472,6 +479,8 @@ class Analyzer:
                 elif mnemonic in ('brk', 'udf', 'hlt'):
                     self.event('terminating_exception', pc, instruction=mnemonic)
                     next_pc = None
+                elif self.modeled_effect(current, insn):
+                    pass
                 else:
                     handled = False
                 if not handled:
