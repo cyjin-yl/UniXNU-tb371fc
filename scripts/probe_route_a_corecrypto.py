@@ -41,6 +41,17 @@ def value(number):
     return int(number, 16) if isinstance(number, str) else number
 
 
+def consumer_callback_offset(layout):
+    """Find one complete callback field in the verified compiler ABI record."""
+    matches = re.findall(
+        r"^[ \t]*([0-9]+)[ \t]+\|[ \t]+crypto_random_kmem_ctx_size_fn_t"
+        r"[ \t]+random_kmem_ctx_size_fn[ \t]*$", layout, re.M)
+    require(len(matches) == 1, "callback table offset missing or ambiguous")
+    offset = int(matches[0])
+    require(offset % 8 == 0 and 0 <= offset < 448, "callback table offset outside aligned table slots")
+    return offset
+
+
 def instruction(data, span, offset=0):
     require(offset % 4 == 0 and 0 <= offset <= span["size"] - 4, "instruction outside symbol extent")
     return struct.unpack_from("<I", data, span["file_offset"] + offset)[0]
@@ -73,7 +84,7 @@ def storage_span(strict, name, size):
     found = [s for s in strict["metadata"]["symbols"]["records"] if s["name"] == name]
     require(len(found) == 1, f"missing or ambiguous state cell: {name}")
     symbol = found[0]
-    require(symbol["n_type"] in (0xe, 0xf) and not symbol["n_desc"] & 0x80
+    require(build.is_section_symbol(symbol) and not symbol["n_desc"] & 0x80
             and 1 <= symbol["n_sect"] <= len(strict["metadata"]["sections"]), "invalid state cell definition")
     section = strict["metadata"]["sections"][symbol["n_sect"] - 1]
     address = symbol["value"]
@@ -82,7 +93,7 @@ def storage_span(strict, name, size):
     require(section["addr"] <= address and address + size <= section["addr"] + section["size"]
             and not section["flags"] & 0x80000400, "state cell outside data section")
     next_symbols = [s["value"] for s in strict["metadata"]["symbols"]["records"]
-                    if s["n_type"] in (0xe, 0xf) and s["n_sect"] == symbol["n_sect"] and s["value"] > address]
+                    if build.is_section_symbol(s) and s["n_sect"] == symbol["n_sect"] and s["value"] > address]
     require(not next_symbols or address + size <= min(next_symbols), "state cell extends into another symbol")
     owners = [s for s in strict["segments"] if s["name"] == section["segment"]
               and s["vmaddr"] <= address and address + size <= s["vmaddr"] + s["vmsize"]]
@@ -279,7 +290,7 @@ def return_from_entry(strict, kernel, registers, target, read_register=None):
     """Bind a captured LR to an actual BL/BLR and its still-unmodified operand."""
     address = registers["x30"]
     records = strict["metadata"]["symbols"]["records"]
-    before = [s for s in records if s["n_type"] in (0xe, 0xf) and s["value"] <= address - 4]
+    before = [s for s in records if build.is_section_symbol(s) and s["value"] <= address - 4]
     require(before and address % 4 == 0, "consumer LR is not a candidate code address")
     owner = max(before, key=lambda s: s["value"])
     function = build.function_span(strict, kernel, owner["name"])
@@ -434,9 +445,7 @@ def prepare(args, out, journal, report):
     provider_abi = receipt.parent / "consumer.crypto_functions"
     require(build.sha(provider_abi.read_bytes()) == built["abi"]["records"]["crypto_functions"]["consumer"], "consumer ABI record changed")
     journal.protect(provider_abi)
-    matches = re.findall(r"^\s*(\d+) \| crypto_random_kmem_ctx_size_fn_t random_kmem_ctx_size_fn$", provider_abi.read_text(), re.M)
-    require(len(matches) == 1 and int(matches[0]) % 8 == 0 and 0 <= int(matches[0]) < 448, "callback table offset missing")
-    callback_offset = int(matches[0])
+    callback_offset = consumer_callback_offset(provider_abi.read_text())
     if args.mode == "negative-post":
         offset = value(built["seal"]["hmac_file_offset"])
         require(kernel[offset:offset + 32].hex() == built["seal"]["hmac_sha256"], "stored HMAC differs from seal receipt")

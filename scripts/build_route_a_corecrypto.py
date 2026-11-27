@@ -574,11 +574,17 @@ def abi_check(journal, provider_argv, bootstrap_argv, directory):
     return report
 
 
+def is_section_symbol(symbol):
+    """N_SECT permits N_EXT and N_PEXT; STAB and other types stay excluded."""
+    n_type = symbol["n_type"]
+    return type(n_type) is int and n_type in (0x0e, 0x0f, 0x1e, 0x1f)
+
+
 def symbol_span(strict, data, name, length, *, executable=False):
     found = [s for s in strict["metadata"]["symbols"]["records"] if s["name"] == name]
     require(len(found) == 1, f"ambiguous or missing symbol: {name}")
     symbol = found[0]
-    require(symbol["n_type"] in (0xe, 0xf) and not symbol["n_desc"] & 0x80
+    require(is_section_symbol(symbol) and not symbol["n_desc"] & 0x80
             and 1 <= symbol["n_sect"] <= len(strict["metadata"]["sections"]) and 0 < length <= 65536,
             "symbol is not a strong section definition")
     sec = strict["metadata"]["sections"][symbol["n_sect"] - 1]
@@ -599,7 +605,7 @@ def function_span(strict, data, name, *, bound=65536):
     """Use real symbols and section bounds, not a caller-supplied address root."""
     head = symbol_span(strict, data, name, 4, executable=True)
     following = [s["value"] for s in strict["metadata"]["symbols"]["records"]
-                 if s["n_type"] in (0xe, 0xf) and s["value"] > head["va"]]
+                 if is_section_symbol(s) and s["value"] > head["va"]]
     section, = [s for s in strict["metadata"]["sections"]
                 if s["name"] == head["section"] and s["segment"] == head["segment"]]
     end = min([section["addr"] + section["size"], *following])

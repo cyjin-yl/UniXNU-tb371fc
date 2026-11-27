@@ -50,6 +50,41 @@ time.sleep(30)
 """
 
 
+class CallbackLayout(unittest.TestCase):
+    # Actual normalized compiler row from the qualified CoreCrypto005 consumer
+    # ABI record (2829 bytes, SHA256 6cd8232e032cf96756b427dcd6830855dc106a9f7d3d09d1579cbfb1a70218ae).
+    ROW = "336 |   crypto_random_kmem_ctx_size_fn_t random_kmem_ctx_size_fn"
+
+    def test_actual_normalized_compiler_indentation(self):
+        record = "0 | struct crypto_functions\n" + self.ROW + "\n| [sizeof=448, align=8]\n"
+        self.assertEqual(P.consumer_callback_offset(record), 336)
+
+    def test_horizontal_spacing_keeps_the_same_offset(self):
+        for row in (self.ROW.replace("|   ", "| "),
+                    "\t336\t|\tcrypto_random_kmem_ctx_size_fn_t\trandom_kmem_ctx_size_fn\t"):
+            with self.subTest(row=row):
+                self.assertEqual(P.consumer_callback_offset(row), 336)
+
+    def test_missing_ambiguous_or_different_field_is_rejected(self):
+        for record in ("", self.ROW + "\n" + self.ROW,
+                       self.ROW.replace("crypto_random_kmem_ctx_size_fn_t", "other_fn_t"),
+                       self.ROW + "_other", self.ROW.replace("|   ", "|\n   ")):
+            with self.subTest(record=record):
+                with self.assertRaises(P.build.BuildError):
+                    P.consumer_callback_offset(record)
+
+    def test_invalid_slot_offsets_are_rejected(self):
+        for offset in ("-8", "335", "337", "448", "456", "336.0"):
+            with self.subTest(offset=offset):
+                with self.assertRaises(P.build.BuildError):
+                    P.consumer_callback_offset(self.ROW.replace("336", offset, 1))
+
+    def test_table_endpoints_are_valid_slots(self):
+        for offset in (0, 440):
+            with self.subTest(offset=offset):
+                self.assertEqual(P.consumer_callback_offset(self.ROW.replace("336", str(offset), 1)), offset)
+
+
 class ProbeCleanup(unittest.TestCase):
     def assert_absent(self, pids, group):
         with self.assertRaises(ProcessLookupError):
