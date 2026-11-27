@@ -41,6 +41,17 @@ def value(number):
     return int(number, 16) if isinstance(number, str) else number
 
 
+def consumer_callback_offset(layout):
+    """Find one complete callback field in the verified compiler ABI record."""
+    matches = re.findall(
+        r"^[ \t]*([0-9]+)[ \t]+\|[ \t]+crypto_random_kmem_ctx_size_fn_t"
+        r"[ \t]+random_kmem_ctx_size_fn[ \t]*$", layout, re.M)
+    require(len(matches) == 1, "callback table offset missing or ambiguous")
+    offset = int(matches[0])
+    require(offset % 8 == 0 and 0 <= offset < 448, "callback table offset outside aligned table slots")
+    return offset
+
+
 def instruction(data, span, offset=0):
     require(offset % 4 == 0 and 0 <= offset <= span["size"] - 4, "instruction outside symbol extent")
     return struct.unpack_from("<I", data, span["file_offset"] + offset)[0]
@@ -434,9 +445,7 @@ def prepare(args, out, journal, report):
     provider_abi = receipt.parent / "consumer.crypto_functions"
     require(build.sha(provider_abi.read_bytes()) == built["abi"]["records"]["crypto_functions"]["consumer"], "consumer ABI record changed")
     journal.protect(provider_abi)
-    matches = re.findall(r"^\s*(\d+) \| crypto_random_kmem_ctx_size_fn_t random_kmem_ctx_size_fn$", provider_abi.read_text(), re.M)
-    require(len(matches) == 1 and int(matches[0]) % 8 == 0 and 0 <= int(matches[0]) < 448, "callback table offset missing")
-    callback_offset = int(matches[0])
+    callback_offset = consumer_callback_offset(provider_abi.read_text())
     if args.mode == "negative-post":
         offset = value(built["seal"]["hmac_file_offset"])
         require(kernel[offset:offset + 32].hex() == built["seal"]["hmac_sha256"], "stored HMAC differs from seal receipt")
