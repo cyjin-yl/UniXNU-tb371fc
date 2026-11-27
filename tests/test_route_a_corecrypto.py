@@ -351,6 +351,89 @@ time.sleep(30)
         changed = bytearray(data); struct.pack_into("<I", changed, 0, 0x14000010)
         with self.assertRaises(B.BuildError): P.call_return(strict, bytes(changed), "_caller", "_callee")
 
+    def test_all_ordinary_and_private_section_types_keep_code_and_storage_bounds(self):
+        for n_type in (0x0e, 0x0f, 0x1e, 0x1f):
+            with self.subTest(n_type=n_type):
+                strict, data, base = image()
+                strict["metadata"]["symbols"]["records"][0]["n_type"] = n_type
+                span = B.symbol_span(strict, data, "_caller", 4, executable=True)
+                self.assertEqual((span["va"], span["file_offset"], span["size"]), (base, 0, 4))
+                self.assertEqual(span["sha256"], hashlib.sha256(data[:4]).hexdigest())
+                strict["metadata"]["sections"][0].update(name="__data", segment="__DATA", flags=0)
+                strict["segments"][0].update(name="__DATA", initprot=3)
+                cell = P.storage_span(strict, "_caller", 8)
+                self.assertEqual((cell["va"], cell["size"], cell["segment"]), (base, 8, "__DATA"))
+
+    def test_non_section_and_debug_symbol_types_remain_rejected(self):
+        invalid = (0, 1, 2, 3, 0x0a, 0x0b, 0x10, 0x11, 0x12, 0x13,
+                   0x1a, 0x1b, 0x24, 0x2e, 0x2f, 0x3e, 0x3f, 0xe0, 0xff,
+                   -1, True, False, 14.0, "14", None)
+        for n_type in invalid:
+            with self.subTest(n_type=n_type):
+                strict, data, _ = image()
+                strict["metadata"]["symbols"]["records"][0]["n_type"] = n_type
+                self.assertFalse(B.is_section_symbol(strict["metadata"]["symbols"]["records"][0]))
+                with self.assertRaises(B.BuildError):
+                    B.symbol_span(strict, data, "_caller", 4, executable=True)
+                strict["metadata"]["sections"][0].update(name="__data", segment="__DATA", flags=0)
+                strict["segments"][0].update(name="__DATA", initprot=3)
+                with self.assertRaises(B.BuildError):
+                    P.storage_span(strict, "_caller", 8)
+
+    def test_weak_ordinary_and_private_targets_remain_rejected(self):
+        for n_type in (0x0e, 0x0f, 0x1e, 0x1f):
+            with self.subTest(n_type=n_type):
+                strict, data, _ = image()
+                strict["metadata"]["symbols"]["records"][0].update(n_type=n_type, n_desc=0x80)
+                with self.assertRaises(B.BuildError):
+                    B.function_span(strict, data, "_caller")
+                strict["metadata"]["sections"][0].update(name="__data", segment="__DATA", flags=0)
+                strict["segments"][0].update(name="__DATA", initprot=3)
+                with self.assertRaises(B.BuildError):
+                    P.storage_span(strict, "_caller", 8)
+
+    def test_private_successor_limits_the_preceding_function(self):
+        for n_type in (0x1e, 0x1f):
+            for n_desc in (0, 0x80):
+                with self.subTest(n_type=n_type, n_desc=n_desc):
+                    strict, data, _ = image()
+                    strict["metadata"]["symbols"]["records"][1].update(n_type=n_type, n_desc=n_desc)
+                    span = B.function_span(strict, data, "_caller")
+                    self.assertEqual(span["size"], 64)
+                    self.assertEqual(span["sha256"], hashlib.sha256(data[:64]).hexdigest())
+
+    def test_private_successor_prevents_a_state_read_crossing_into_another_symbol(self):
+        for n_type in (0x1e, 0x1f):
+            with self.subTest(n_type=n_type):
+                strict, _, _ = image()
+                strict["metadata"]["sections"][0].update(name="__data", segment="__DATA", flags=0)
+                strict["segments"][0].update(name="__DATA", initprot=3)
+                strict["metadata"]["symbols"]["records"][0]["n_type"] = n_type
+                strict["metadata"]["symbols"]["records"][1]["n_type"] = n_type
+                self.assertEqual(P.storage_span(strict, "_caller", 64)["size"], 64)
+                with self.assertRaisesRegex(B.BuildError, "extends into another symbol"):
+                    P.storage_span(strict, "_caller", 72)
+
+    def test_private_caller_lr_is_bound_to_actual_bl_or_blr(self):
+        for n_type in (0x1e, 0x1f):
+            for indirect in (False, True):
+                with self.subTest(n_type=n_type, indirect=indirect):
+                    strict, data, base = image()
+                    strict["metadata"]["symbols"]["records"][0]["n_type"] = n_type
+                    strict["metadata"]["symbols"]["records"][1]["n_type"] = n_type
+                    target = B.symbol_span(strict, data, "_callee", 4, executable=True)
+                    changed = bytearray(data)
+                    if indirect: struct.pack_into("<I", changed, 0, 0xd63f0100)  # BLR X8
+                    registers = {"x30": base + 4, "x8": target["va"]}
+                    result = P.return_from_entry(strict, changed, registers, target)
+                    self.assertEqual((result["va"], result["caller"]["symbol"], result["caller"]["size"]),
+                                     (base + 4, "_caller", 64))
+                    self.assertEqual(result["call_bytes"], changed[:8].hex())
+                    if indirect: registers["x8"] = base
+                    else: struct.pack_into("<I", changed, 0, 0x94000018)  # BL panic
+                    with self.assertRaises(B.BuildError):
+                        P.return_from_entry(strict, changed, registers, target)
+
     def test_code_extent_and_strong_symbol_checks_are_not_skipped(self):
         strict, data, base = image()
         for mutation in (lambda s: s["metadata"]["symbols"]["records"][0].update(n_type=0x2f),

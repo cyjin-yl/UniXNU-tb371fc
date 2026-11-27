@@ -84,7 +84,7 @@ def storage_span(strict, name, size):
     found = [s for s in strict["metadata"]["symbols"]["records"] if s["name"] == name]
     require(len(found) == 1, f"missing or ambiguous state cell: {name}")
     symbol = found[0]
-    require(symbol["n_type"] in (0xe, 0xf) and not symbol["n_desc"] & 0x80
+    require(build.is_section_symbol(symbol) and not symbol["n_desc"] & 0x80
             and 1 <= symbol["n_sect"] <= len(strict["metadata"]["sections"]), "invalid state cell definition")
     section = strict["metadata"]["sections"][symbol["n_sect"] - 1]
     address = symbol["value"]
@@ -93,7 +93,7 @@ def storage_span(strict, name, size):
     require(section["addr"] <= address and address + size <= section["addr"] + section["size"]
             and not section["flags"] & 0x80000400, "state cell outside data section")
     next_symbols = [s["value"] for s in strict["metadata"]["symbols"]["records"]
-                    if s["n_type"] in (0xe, 0xf) and s["n_sect"] == symbol["n_sect"] and s["value"] > address]
+                    if build.is_section_symbol(s) and s["n_sect"] == symbol["n_sect"] and s["value"] > address]
     require(not next_symbols or address + size <= min(next_symbols), "state cell extends into another symbol")
     owners = [s for s in strict["segments"] if s["name"] == section["segment"]
               and s["vmaddr"] <= address and address + size <= s["vmaddr"] + s["vmsize"]]
@@ -290,7 +290,7 @@ def return_from_entry(strict, kernel, registers, target, read_register=None):
     """Bind a captured LR to an actual BL/BLR and its still-unmodified operand."""
     address = registers["x30"]
     records = strict["metadata"]["symbols"]["records"]
-    before = [s for s in records if s["n_type"] in (0xe, 0xf) and s["value"] <= address - 4]
+    before = [s for s in records if build.is_section_symbol(s) and s["value"] <= address - 4]
     require(before and address % 4 == 0, "consumer LR is not a candidate code address")
     owner = max(before, key=lambda s: s["value"])
     function = build.function_span(strict, kernel, owner["name"])
