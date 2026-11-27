@@ -15,6 +15,10 @@
 #include <corecrypto/ccsha2.h>
 #include "abi_contract.h"
 
+_Static_assert(sizeof(struct ccdigest_info) == 80, "XNU digest descriptor size");
+_Static_assert(__builtin_offsetof(struct ccdigest_info, compress_parallel) == 72,
+               "XNU digest descriptor trailing field");
+
 static const struct ccdigest_info *
 ra_digest_info(crypto_digest_alg_t alg)
 {
@@ -189,6 +193,16 @@ static bool ra_hmac_verify(crypto_digest_alg_t alg, const void *key, size_t key_
 
 static void route_a_complete_crypto_table(struct crypto_functions *table)
 {
+    /* The source provider has no parallel-compression implementation. Check
+     * the real selected descriptors before their table is published. */
+    const struct ccdigest_info *descriptors[] = {
+        table->ccmd5_di, table->ccsha1_di, table->ccsha256_di,
+        table->ccsha384_di, table->ccsha512_di,
+    };
+    for (size_t i = 0; i < sizeof(descriptors) / sizeof(descriptors[0]); i++) {
+        ra_crypto_require(descriptors[i] != NULL &&
+                          descriptors[i]->compress_parallel == NULL);
+    }
     RA_ASSIGN(ccdigest_final_fn, ra_legacy_digest_final);
     RA_ASSIGN(digest_ctx_size_fn, ra_digest_size);
     RA_ASSIGN(digest_init_fn, ra_digest_init);

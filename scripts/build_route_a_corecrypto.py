@@ -44,6 +44,8 @@ PINS = {
     "bootstrap_recipe": "7b39218dddedd139b2cd70bcc209ea21069768c596a75616eb9e299d86f04027",
     "platform_report": "738a7af11b32c08d0a4261611ba69f325d5a29bf424791b18e98879864feff7c",
     "compiler": "85d220e32bd83d75de788c8beab0bea646a4684e1112f7c06266ca71e651bb04",
+    "provider_digest_header": "02b02dcdd0c9f6920cb86643b435c41f24a11719f391b96b9b5552c30dad4b48",
+    "consumer_digest_header": "729c8bbbd5c4e4cce2c05c72beb1a55e4bb48e114d2b1ef8b6d1a21092cc972f",
 }
 # The retained sleh source equals ac9718fb; locore includes the separately
 # captured preparation instrumentation. These source/recipe identities are
@@ -75,6 +77,10 @@ ABI_RECORDS = (
 RECIPE_REL = "build/xnu/ios-obj/DEVELOPMENT_ARM64_BCM2837/osfmk/DEVELOPMENT/prng_random.o.json"
 ASSYM_REL = "build/xnu/ios-obj/DEVELOPMENT_ARM64_BCM2837/osfmk/DEVELOPMENT/assym.s"
 SOURCE_DATE_EPOCH = "1700000000"
+DIGEST_ABI_TAIL = (
+    b"    void(* CC_SPTR(ccdigest_info, compress_parallel))(ccdigest_state_t state1, size_t nblocks1,\n"
+    b"                    const void *data1, ccdigest_state_t state2, size_t nblocks2, const void *data2);\n"
+)
 
 
 class BuildError(RuntimeError):
@@ -332,6 +338,71 @@ def target_sources(source, pbx):
     require(len(paths) == 529 and len(set(paths)) == 529, "fixed target C source count changed")
     require(all(p.is_file() and p.resolve().is_relative_to(source) for p in paths), "missing target source")
     return paths
+
+
+def digest_abi_header(original, consumer):
+    """Append the pinned XNU descriptor field; preserve every provider prefix byte."""
+    require(sha(original) == PINS["provider_digest_header"]
+            and sha(consumer) == PINS["consumer_digest_header"],
+            "digest ABI header source identity differs")
+    marker = b"struct ccdigest_info {\n"
+    require(original.count(marker) == consumer.count(marker) == 1,
+            "digest ABI structure declaration is not unique")
+    start = original.index(marker)
+    end = original.index(b"};\n", start) + 3
+    target_start = consumer.index(marker)
+    target_end = consumer.index(b"};\n", target_start) + 3
+    prior, target = original[start:end], consumer[target_start:target_end]
+    require(target == prior[:-3] + DIGEST_ABI_TAIL + b"};\n",
+            "digest ABI target changes more than the reviewed trailing field")
+    return original[:start] + target + original[end:]
+
+
+def prepare_provider_digest_abi(journal, source, kernel_build):
+    """Adapt only this fresh extracted header before any provider input is frozen."""
+    source = Path(source).resolve()
+    require(source == journal.out / SOURCE_ROOT,
+            "digest ABI overlay requires this build's fresh extracted source")
+    header = regular(source / "ccdigest/corecrypto/ccdigest.h")
+    require(header.is_relative_to(source), "provider digest header escapes fresh source")
+    target = regular(Path(kernel_build) / ".cache/xnu-work/EXTERNAL_HEADERS/corecrypto/ccdigest.h")
+    journal.protect(target)
+    original = pin(header, PINS["provider_digest_header"])
+    derived = digest_abi_header(original, pin(target, PINS["consumer_digest_header"]))
+    evidence = journal.out / "provider-abi"
+    evidence.mkdir()
+    saved = evidence / "original-ccdigest.h"
+    with saved.open("xb") as stream:
+        stream.write(original)
+    journal.protect(saved)
+    header.write_bytes(derived)
+    return {"schema": "route-a-provider-digest-abi-overlay-v1",
+            "original_header": journal.protect(saved),
+            "consumer_header": journal.protect(target),
+            "derived_header": journal.protect(header),
+            "added_field": "compress_parallel", "parallel_compression_supported": False,
+            "method": "exact trailing-field append in the fresh extracted provider header; all provider translation units use this source"}
+
+
+def verify_provider_digest_abi(report, directory, checked_input):
+    """Replay the version bridge from its unchanged original and consumer inputs."""
+    overlay = report.get("provider_abi_overlay")
+    require(isinstance(overlay, dict), "missing provider digest ABI overlay")
+    require(overlay["schema"] == "route-a-provider-digest-abi-overlay-v1"
+            and overlay["added_field"] == "compress_parallel"
+            and overlay["parallel_compression_supported"] is False,
+            "provider digest ABI overlay contract differs")
+    paths = {name: regular(overlay[name]["path"])
+             for name in ("original_header", "consumer_header", "derived_header")}
+    require(paths["original_header"] == directory / "provider-abi/original-ccdigest.h"
+            and paths["derived_header"] == directory / SOURCE_ROOT / "ccdigest/corecrypto/ccdigest.h",
+            "provider digest ABI overlay paths differ")
+    for name, path in paths.items():
+        require(checked_input(path) == overlay[name], "provider digest ABI input or output changed")
+    expected = digest_abi_header(paths["original_header"].read_bytes(), paths["consumer_header"].read_bytes())
+    require(paths["derived_header"].read_bytes() == expected,
+            "provider digest ABI header does not reproduce the exact version bridge")
+    return normalize_build_paths(overlay, directory)
 
 
 def prepare_overlay(provider, bootstrap, directory):
@@ -1095,6 +1166,7 @@ def build(args):
         pbx_path = kb / "scripts/pbxproj.py"; pin(pbx_path, PINS["pbxproj"]); journal.protect(pbx_path)
         source = extract_source(archive, out)
         source_paths = target_sources(source, module(pbx_path, "pinned_corecrypto_pbx"))
+        report["provider_abi_overlay"] = prepare_provider_digest_abi(journal, source, kb)
         for path in source.rglob("*"):
             if path.is_file(): journal.protect(path)
         # Freeze declared SDK/source headers before compilation, including resolved
@@ -1279,6 +1351,10 @@ def verify_compile_receipts(report, directory, objects):
             checked_inputs[key] = actual
         return checked_inputs[key]
     require(isinstance(report.get("commands"), list), "missing compile command receipts")
+    provider_abi = verify_provider_digest_abi(report, directory, checked_input)
+    provider_digest = report["provider_abi_overlay"]["derived_header"]["path"]
+    consumer_digest = report["provider_abi_overlay"]["consumer_header"]["path"]
+    digest_users = set()
     for command in report["commands"]:
         argv = command.get("argv", [])
         require(isinstance(argv, list) and argv and all(isinstance(arg, str) for arg in argv),
@@ -1328,10 +1404,19 @@ def verify_compile_receipts(report, directory, objects):
                 and dependencies["input_count"] == len(words), "dependency input count/path contract differs")
         dependency_paths = sorted({str(Path(word).resolve()) for word in words})
         require(str(source) in dependency_paths, "dependency file omits the compiled source")
+        digest_headers = [path for path in dependency_paths if Path(path).name == "ccdigest.h"]
+        if digest_headers:
+            require(digest_headers == [consumer_digest if str(output) == bootstrap else provider_digest],
+                    "compile used another digest ABI header")
+            digest_users.add(str(output))
         dependency_inputs = [checked_input(Path(path)) for path in dependency_paths]
         commands[key] = normalize_build_paths(dict(contract, dependencies=dependency_inputs), directory)
     require(len(commands) == 530 and set(commands) == {str(Path(path).relative_to(directory)) for path in expected},
             "compile receipts do not cover every provider and bootstrap object exactly once")
+    require(bootstrap in digest_users and any(
+        str(output) in digest_users and source == directory / "glue/corecrypto_kext.c"
+        for output, (source, _, _) in expected.items()),
+        "provider and bootstrap compiles lack the bound digest ABI header")
     link_contract = verify_link_contract(report, directory, protected, checked_input)
     generated_filelist = report["link_contract"]["filelist"]["path"]
     normalized_inputs = {}
@@ -1341,7 +1426,8 @@ def verify_compile_receipts(report, directory, objects):
             {"kind": "derived-ordered-filelist", **link_contract["filelist"]} if path == generated_filelist
             else normalize_build_paths(actual, directory))
     require(len(normalized_inputs) == len(protected), "normalized input paths are ambiguous")
-    return {"compiles": commands, "stages": stages, "protected_inputs": normalized_inputs, "link_contract": link_contract}
+    return {"compiles": commands, "stages": stages, "protected_inputs": normalized_inputs,
+            "link_contract": link_contract, "provider_abi_overlay": provider_abi}
 
 
 def compare_builds(first_path, second_path):
