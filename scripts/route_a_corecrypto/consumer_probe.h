@@ -6,7 +6,8 @@
 #define ROUTE_A_CORECRYPTO_CONSUMER_PROBE_H
 #include <libkern/crypto/crypto_internal.h>
 #include <libkern/section_keywords.h>
-#include <libkern/libkern.h>
+/* Match the retained PRNG recipe's MACH_KERNEL_PRIVATE/libsa type namespace. */
+#include <libsa/string.h>
 #include <kern/debug.h>
 #include "abi_contract.h"
 
@@ -70,6 +71,17 @@ static void route_a_crypto_consumer_check(void)
     crypto_functions_t f = g_crypto_funcs;
     ra_probe_require(f != NULL && crypto_init, "table published");
     _Static_assert(sizeof(*f) == 448, "fixed XNU table size");
+    _Static_assert(sizeof(struct ccdigest_info) == 80, "XNU digest descriptor size");
+    _Static_assert(__builtin_offsetof(struct ccdigest_info, compress_parallel) == 72,
+                   "XNU digest descriptor trailing field");
+    const struct ccdigest_info *descriptors[] = {
+        f->ccmd5_di, f->ccsha1_di, f->ccsha256_di, f->ccsha384_di, f->ccsha512_di,
+    };
+    for (size_t i = 0; i < sizeof(descriptors) / sizeof(descriptors[0]); i++) {
+        ra_probe_require(descriptors[i] != NULL &&
+                         descriptors[i]->compress_parallel == NULL,
+                         "parallel compression is unsupported");
+    }
     for (size_t offset = 0; offset < sizeof(*f); offset += sizeof(uintptr_t)) {
         uintptr_t pointer;
         memcpy(&pointer, (const unsigned char *)f + offset, sizeof(pointer));

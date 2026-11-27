@@ -1378,14 +1378,14 @@
     },
     {
       "path": "scripts/route_a_corecrypto/adapter.h",
-      "sha256": "d08689dd73b735dc17ca2caad54e5dd4ab263f674daa0ea618871ec7041841d2",
-      "bytes": 7873,
+      "sha256": "91303c912b0df6d4744ac88b4c4f2cd628bbc20040136131fd80dbb0e58964a6",
+      "bytes": 8620,
       "component": "route-a-original-corecrypto-glue"
     },
     {
       "path": "scripts/route_a_corecrypto/consumer_probe.h",
-      "sha256": "ae9ec5fc32526695c58c2145808297b813979df98ac7834b36fe760bc582b407",
-      "bytes": 10672,
+      "sha256": "a4a2e54373398a5baa1bed401ebef87840a00b241c77cb05b10b90609a2b45fe",
+      "bytes": 11392,
       "component": "route-a-original-corecrypto-glue"
     },
     {

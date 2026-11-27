@@ -32,6 +32,14 @@ B = P.build
 S = module("pacga_stage_for_corecrypto_test", ROOT / "scripts/build_route_a_pacga.py")
 
 
+def digest_header_fixture():
+    """Small transformation fixture, not an XNU layout or a provider binary."""
+    prefix = b"struct ccdigest_info {\n    size_t output_size;\n    cc_impl_t impl;\n"
+    original = b"/* provider fixture */\n" + prefix + b"};\n/* retained suffix */\n"
+    consumer = b"/* independent consumer fixture */\n" + prefix + B.DIGEST_ABI_TAIL + b"};\n"
+    return original, consumer
+
+
 def image():
     base = 0xfffffff007004000
     data = bytearray(128)
@@ -46,6 +54,23 @@ def image():
 
 
 class SourceContracts(unittest.TestCase):
+    def test_digest_header_bridge_preserves_prefix_and_refuses_unpinned_bytes(self):
+        original, consumer = digest_header_fixture()
+        pins = {"provider_digest_header": B.sha(original), "consumer_digest_header": B.sha(consumer)}
+        with patch.dict(B.PINS, pins):
+            expected = original.replace(b"};\n", B.DIGEST_ABI_TAIL + b"};\n")
+            self.assertEqual(B.digest_abi_header(original, consumer), expected)
+            for left, right in ((original + b"\n", consumer), (original, consumer + b"\n")):
+                with self.assertRaises(B.BuildError): B.digest_abi_header(left, right)
+
+    def test_digest_header_bridge_refuses_changed_legacy_fields_even_with_matching_pins(self):
+        original, consumer = digest_header_fixture()
+        for changed in (consumer.replace(b"size_t output_size", b"uint32_t output_size"),
+                        consumer.replace(B.DIGEST_ABI_TAIL, b"    void *extra;\n" + B.DIGEST_ABI_TAIL),
+                        consumer.replace(B.DIGEST_ABI_TAIL, B.DIGEST_ABI_TAIL.replace(b"size_t nblocks1", b"int nblocks1"))):
+            with patch.dict(B.PINS, {"provider_digest_header": B.sha(original), "consumer_digest_header": B.sha(changed)}):
+                with self.assertRaises(B.BuildError): B.digest_abi_header(original, changed)
+
     def test_output_parent_alias_cannot_put_artifacts_in_the_repository(self):
         with tempfile.TemporaryDirectory() as tmp:
             alias = Path(tmp) / "source"; alias.symlink_to(ROOT, target_is_directory=True)
@@ -386,6 +411,10 @@ class CoreCryptoReviewRegressions(unittest.TestCase):
             archive_record = B.loader.identity(archive)
             header = root / "external.h"; header.write_text("/* original unused header */\n")
             header_original = header.read_bytes()
+            digest_original, digest_consumer = digest_header_fixture()
+            digest_target = root / "EXTERNAL_HEADERS/corecrypto/ccdigest.h"
+            digest_target.parent.mkdir(parents=True); digest_target.write_bytes(digest_consumer)
+            digest_derived = digest_original.replace(b"};\n", B.DIGEST_ABI_TAIL + b"};\n")
             platform = root / "platform"; platform.mkdir()
             originals = []
             for name in ("cpu.o", "prng_random.o", "sleh.o"):
@@ -427,10 +456,21 @@ class CoreCryptoReviewRegressions(unittest.TestCase):
                 bootstrap = output / "bootstrap/prng_random.o"; bootstrap.parent.mkdir()
                 bootstrap.write_bytes(b"bootstrap object fixture")
                 inputs = [compiler_record, B.loader.identity(header), B.loader.identity(source), *baseline_inputs]
+                digest_saved = output / "provider-abi/original-ccdigest.h"
+                digest_saved.parent.mkdir(); digest_saved.write_bytes(digest_original)
+                digest_header = output / B.SOURCE_ROOT / "ccdigest/corecrypto/ccdigest.h"
+                digest_header.parent.mkdir(parents=True); digest_header.write_bytes(digest_derived)
+                overlay = {"schema": "route-a-provider-digest-abi-overlay-v1",
+                           "original_header": B.loader.identity(digest_saved),
+                           "consumer_header": B.loader.identity(digest_target),
+                           "derived_header": B.loader.identity(digest_header),
+                           "added_field": "compress_parallel", "parallel_compression_supported": False}
+                inputs.extend(overlay[key] for key in ("original_header", "consumer_header", "derived_header"))
                 commands = []
                 def command(source, obj):
                     dependency = obj.with_suffix(".d")
-                    dependency.write_text(str(obj) + ": " + str(source) + " " + str(header) + "\n")
+                    selected_digest = digest_target if obj == bootstrap else digest_header
+                    dependency.write_text(str(obj) + ": " + str(source) + " " + str(header) + " " + str(selected_digest) + "\n")
                     return ({"argv": [str(compiler), "-include", str(header), "-c", str(source), "-o", str(obj),
                                       "-MD", "-MF", str(dependency), "-I" + str(glue),
                                       "-ffile-prefix-map=" + str(output) + "=route-a-corecrypto",
@@ -438,7 +478,7 @@ class CoreCryptoReviewRegressions(unittest.TestCase):
                                       "-fmacro-prefix-map=" + str(output) + "=macros"],
                              "cwd": str(output), "environment": {"TMPDIR": str(output), "LANG": "C"},
                              "exit": 0, "reaped": True},
-                            {"dependency_file": B.loader.identity(dependency), "input_count": 2})
+                            {"dependency_file": B.loader.identity(dependency), "input_count": 3})
                 bootstrap_command, bootstrap_dependencies = command(source, bootstrap)
                 commands.append(bootstrap_command)
                 objects = []
@@ -467,6 +507,7 @@ class CoreCryptoReviewRegressions(unittest.TestCase):
                           "deterministic_environment": {"SOURCE_DATE_EPOCH": B.SOURCE_DATE_EPOCH},
                           "object_manifest": B.loader.identity(manifest), "bootstrap": B.loader.identity(bootstrap),
                           "bootstrap_dependencies": bootstrap_dependencies, "commands": commands, "inputs": inputs}
+                report["provider_abi_overlay"] = overlay
                 for key in ("archive", "kernel", "loaded_image"):
                     artifact = output / key; artifact.write_bytes((key + " fixture").encode())
                     report[key] = B.loader.identity(artifact)
@@ -516,10 +557,13 @@ class CoreCryptoReviewRegressions(unittest.TestCase):
 
             first_path, first = make_build("first")
             second_path, second = make_build("second")
-            mutable_paths = [second_path.parent / name for name in ("platform.filelist", "abi-consumer.stdout", "seal.json")]
+            mutable_paths = [second_path.parent / name for name in ("platform.filelist", "abi-consumer.stdout", "seal.json",
+                              B.SOURCE_ROOT + "/ccdigest/corecrypto/ccdigest.h")]
             preserved_artifacts = {path: path.read_bytes() for path in mutable_paths}
             with patch.dict(B.PINS, {"archive": archive_record["sha256"], "compiler": compiler_record["sha256"],
-                                    "platform_report": baseline_record["sha256"]}), \
+                                    "platform_report": baseline_record["sha256"],
+                                    "provider_digest_header": B.sha(digest_original),
+                                    "consumer_digest_header": B.sha(digest_consumer)}), \
                     patch.object(B.loader.platform_link, "FILELIST_SHA256", B.sha(original_filelist.read_bytes())), \
                     patch.object(B.loader.platform_link, "FILELIST_OBJECT_COUNT", 3), \
                     patch.object(B, "seal_kernel", side_effect=synthetic_seal):
@@ -549,7 +593,17 @@ class CoreCryptoReviewRegressions(unittest.TestCase):
                     identity = B.loader.identity(path); report["seal_receipt"] = identity
                     for index, record in enumerate(report["inputs"]):
                         if record["path"] == str(path): report["inputs"][index] = identity
+                def reverted_digest_header(report):
+                    path = Path(report["provider_abi_overlay"]["derived_header"]["path"])
+                    path.write_bytes(digest_original)
+                    identity = B.loader.identity(path)
+                    report["provider_abi_overlay"]["derived_header"] = identity
+                    for index, record in enumerate(report["inputs"]):
+                        if record["path"] == str(path): report["inputs"][index] = identity
                 mutations = {
+                    "missing-digest-abi-overlay": lambda r: r.pop("provider_abi_overlay"),
+                    "unimplemented-parallel-claimed": lambda r: r["provider_abi_overlay"].update(parallel_compression_supported=True),
+                    "self-consistent-unpatched-provider-header": reverted_digest_header,
                     "copied-first-build-commands": lambda r: r.update(commands=copy.deepcopy(first["commands"])),
                     "failed-compile": lambda r: r["commands"][0].update(exit=1),
                     "unreaped-compile": lambda r: r["commands"][0].update(reaped=False),
