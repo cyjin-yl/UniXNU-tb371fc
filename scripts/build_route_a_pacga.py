@@ -100,7 +100,11 @@ def compile_arguments(recipe, source, staged, output, unit, implementation):
     arguments = list(recipe["arguments"])
     arguments[arguments.index(str(source))] = str(staged)
     arguments[arguments.index("-o") + 1] = str(output / (unit + ".o"))
-    arguments[1:1] = ["-I", str(output / "source/osfmk")]
+    # Moving the translation unit changes its implicit quoted-include directory.
+    # Restore original siblings while staged siblings keep precedence and
+    # angle includes retain the reviewed osfmk overlay search order.
+    arguments[1:1] = ["-I", str(output / "source/osfmk"),
+                      "-iquote", str(source.parent)]
     arguments += ["-march=armv8-a", "-DCONFIG_ROUTE_A_PACGA_SVC=1",
                   '-DROUTE_A_PACGA_IMPLEMENTATION_SHA256="' + implementation["sha256"] + '"']
     if unit == "sleh":

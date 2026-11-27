@@ -830,6 +830,66 @@ class PacgaTests(unittest.TestCase):
                 if failure in ("locore-compile", "configuration", "shared-dependency"):
                     self.assertNotIn("object", report["translation_units"]["locore"])
 
+    def test_stage_assembly_keeps_source_quotes_and_overlay_headers(self):
+        import build_route_a_pacga as stage
+        compiler = shutil.which("clang")
+        if compiler is None:
+            self.skipTest("Clang is required for the real arm64 assembly fixture")
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            xnu, work, output = root / "xnu", root / "build", root / "stage"
+            source, tree = xnu / stage.LOCORE, output / "source"
+            staged = tree / stage.LOCORE
+            source.parent.mkdir(parents=True)
+            staged.parent.mkdir(parents=True)
+            work.mkdir()
+            body = ('#include "dwarf_unwind.h"\n'
+                    '#include <arm64/exception_asm.h>\n'
+                    '#include "assym.s"\n#include <angle_only.h>\n'
+                    '#if QUOTED_SIBLING != 41 || STAGED_ABI != 1 || '
+                    'GENERATED_OFFSET != 8 || ANGLE_DIRECTORY != 7\n'
+                    '#error wrong header search\n#endif\n'
+                    '.text\n.globl _fixture\n_fixture:\n nop\n')
+            source.write_text(body)
+            staged.write_text(body)
+            sibling = source.parent / "dwarf_unwind.h"
+            sibling.write_text("#define QUOTED_SIBLING 41\n")
+            (xnu / stage.EXCEPTION_ASM).write_text("#error original exception header selected\n")
+            (source.parent / "angle_only.h").write_text("#error quote directory used for angle include\n")
+            angle = xnu / "osfmk/angle_only.h"
+            angle.write_text("#define ANGLE_DIRECTORY 7\n")
+            exception = tree / stage.EXCEPTION_ASM
+            exception.write_text('#include "route_a_pacga_abi.h"\n')
+            abi = staged.parent / "route_a_pacga_abi.h"
+            abi.write_text("#define STAGED_ABI 1\n")
+            assym = work / "assym.s"
+            assym.write_text("#define GENERATED_OFFSET 8\n")
+            recipe = {"arguments": [compiler, "--target=arm64-apple-ios27.0",
+                      "-xassembler-with-cpp", "-c", str(source), "-o", str(work / "locore.o"),
+                      "-I", str(xnu / "osfmk"), "-I", str(work)]}
+            arguments = stage.compile_arguments(recipe, source, staged, output,
+                                                "locore", {"sha256": "0" * 64})
+            missing_quotes = list(arguments)
+            if "-iquote" in missing_quotes:
+                index = missing_quotes.index("-iquote")
+                del missing_quotes[index:index + 2]
+            failure = subprocess.run(stage.discovery_arguments(missing_quotes, output, "locore"),
+                                     cwd=work, capture_output=True, text=True, timeout=30)
+            self.assertNotEqual(failure.returncode, 0)
+            self.assertIn("dwarf_unwind.h", failure.stderr)
+            for command in (stage.discovery_arguments(arguments, output, "locore"),
+                            stage.configuration_arguments(arguments, output, "locore"), arguments):
+                result = subprocess.run(command, cwd=work, capture_output=True, text=True, timeout=30)
+                self.assertEqual(result.returncode, 0, result.stderr)
+            declared = stage.dependency_paths(output / "locore.discovered.d", work)
+            self.assertEqual(declared, {staged, sibling, exception, abi, assym, angle})
+            self.assertEqual(stage.dependency_paths(output / "locore.d", work), declared)
+            stage.validate_closure(declared, staged, tree, xnu, "locore", assym)
+            self.assertEqual(stage.read_configuration(output / "locore.macros.txt", "locore")
+                             ["language"], "assembler-with-cpp")
+            self.assertEqual(struct.unpack("<4I", (output / "locore.o").read_bytes()[:16]),
+                             (0xFEEDFACF, 0x0100000C, 0, 1))
+
     def test_stage_recipe_binds_compact_assembly_and_uses_the_retained_object(self):
         import build_route_a_pacga as stage
         with tempfile.TemporaryDirectory() as tmp:
