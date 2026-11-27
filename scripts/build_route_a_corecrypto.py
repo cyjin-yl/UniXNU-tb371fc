@@ -58,7 +58,7 @@ PACGA_PINS = {
     "genassym": "4d44c588f045d21d0209647c4d366629896c34263c6545d2d4872962e132d27e",
     # Bind the reviewed producer and execution sources independently of each
     # report. New validation requires a fresh stage; old attempts stay immutable.
-    "stage_driver": "c4c495340cce5f88f952f72851c3cc238bae78df34b286bf82a751a1e43d98bd",
+    "stage_driver": "19f1f52fa1f4644fd565699c98e62a1e933ef5f48723fbe9c7f4189e9d533000",
     "execution_driver": "20848591b62d63274a7bfd09014e9c7f3be001d6bd067385668b825f2fc953ad",
 }
 ADDED_FIELDS = (
@@ -857,7 +857,8 @@ def admit_pacga_stage(journal, stage_path, kernel_build, original_members):
             require(not descriptors, "PACGA locore object duplicates the implementation descriptor")
         arguments[arguments.index(str(source))] = str(staged)
         arguments[arguments.index("-o") + 1] = str(obj)
-        arguments[1:1] = ["-I", str(output / "source/osfmk")]
+        arguments[1:1] = ["-I", str(output / "source/osfmk"),
+                          "-iquote", str(source.parent)]
         arguments += ["-march=armv8-a", "-DCONFIG_ROUTE_A_PACGA_SVC=1",
                       '-DROUTE_A_PACGA_IMPLEMENTATION_SHA256="' + implementation["sha256"] + '"']
         if unit == "sleh":

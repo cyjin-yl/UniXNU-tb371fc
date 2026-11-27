@@ -29,6 +29,7 @@ def module(name, path):
 
 P = module("corecrypto_runtime_test", ROOT / "scripts/probe_route_a_corecrypto.py")
 B = P.build
+S = module("pacga_stage_for_corecrypto_test", ROOT / "scripts/build_route_a_pacga.py")
 
 
 def image():
@@ -729,16 +730,7 @@ class PacgaLinkAdmission(unittest.TestCase):
             symbols = struct.pack("<6I", 2, 24, offset + len(data), 0, offset + len(data), 1)
             obj.write_bytes(struct.pack("<8I", 0xFEEDFACF, 0x0100000C, 0, 1, 3, 200, 0, 0)
                             + segment + version + symbols + data + b"\0")
-            arguments = list(recipe["arguments"])
-            arguments[arguments.index(str(source))] = str(staged)
-            arguments[arguments.index("-o") + 1] = str(obj)
-            arguments[1:1] = ["-I", str(output / "source/osfmk")]
-            arguments += ["-march=armv8-a", "-DCONFIG_ROUTE_A_PACGA_SVC=1",
-                          '-DROUTE_A_PACGA_IMPLEMENTATION_SHA256="' + identity["sha256"] + '"']
-            if unit == "sleh": arguments += ["-mgeneral-regs-only"]
-            arguments += ["-MD", "-MF", str(output / (unit + ".d"))]
-            if unit == "sleh":
-                arguments += ["-Werror=implicit-function-declaration", "-Werror=incompatible-function-pointer-types", "-Werror=return-type"]
+            arguments = S.compile_arguments(recipe, source, staged, output, unit, identity)
             discovery = list(arguments)
             discovery[discovery.index("-MD")] = "-M"
             discovery[discovery.index("-MF") + 1] = str(output / (unit + ".discovered.d"))
@@ -799,6 +791,37 @@ class PacgaLinkAdmission(unittest.TestCase):
             record["dependencies_sha256"] = B.sha(dependencies.read_bytes())
             if path == fixture.output / (unit + ".macros.txt"): record["configuration"]["macros_sha256"] = identity["sha256"]
             if path == fixture.output / (unit + ".o"): record["object"].update(bytes=path.stat().st_size, sha256=identity["sha256"])
+
+    def test_reviewed_validation_pins_match_checked_in_producers(self):
+        for key, relative in (("stage_driver", "scripts/build_route_a_pacga.py"),
+                              ("execution_driver", "scripts/route_a_pacga_probe/run.py")):
+            with self.subTest(source=relative):
+                self.assertEqual(B.PACGA_PINS[key], B.sha((ROOT / relative).read_bytes()))
+
+    def test_original_quoted_header_search_is_required_in_all_three_receipts(self):
+        for name in ("sleh", "locore"):
+            for mutation in ("missing", "wrong-directory", "angle-include"):
+                with self.subTest(unit=name, mutation=mutation), tempfile.TemporaryDirectory() as tmp:
+                    fixture = self.fixture(Path(tmp))
+                    unit = fixture.stage["translation_units"][name]
+
+                    def alter(arguments):
+                        result = list(arguments)
+                        at = result.index("-iquote")
+                        if mutation == "missing":
+                            del result[at:at + 2]
+                        elif mutation == "wrong-directory":
+                            result[at + 1] = str(fixture.output / "source/osfmk/arm64")
+                        else:
+                            result[at] = "-I"
+                        return result
+
+                    unit["arguments"] = alter(unit["arguments"])
+                    for command in fixture.stage["commands"]:
+                        if command["name"].startswith(name + "-"):
+                            command["arguments"] = alter(command["arguments"])
+                    with self.assertRaisesRegex(B.BuildError, "PACGA compile argv differs"):
+                        self.admit(fixture)
 
     def test_v2_binds_both_recipes_configuration_dependencies_and_objects(self):
         failures = (None, "v1", "one-tu", "third-tu", "failed", "unreaped", "wrong-previous", "extra-flags",
