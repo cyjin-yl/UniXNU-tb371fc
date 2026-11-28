@@ -1,0 +1,56 @@
+{
+  "scope": "QEMU virt CoreCrypto/PACGA bootstrap and real XNU consumer; no OS or TB371FC hardware qualification",
+  "source_commit": "8285e2837ab3f8250acc044126e7e49f7fa4a965",
+  "change": "icount sleep=off -> sleep=on; shift=0, input kernel/seed, observer assertions and 50-second bound unchanged",
+  "qemu_version": "10.0.13 (Debian 1:10.0.13+ds-0+deb13u1)",
+  "positive_kernel_sha256": "386c2954304098122200f11ff94031951d929d96b2cf2c93793caf1874d121cb",
+  "runs": {
+    "positive": {
+      "report_path": "/work/continuation-20261127-triline-unixnu/runtime-cf805-001/positive-sleep-on/report.json",
+      "report_sha256": "3578a035430140a9c712fbfb4a17a7bfa82d1f29045bd3e3f49febdc485b0021",
+      "started_at_utc": "2026-11-28T18:11:32.301457+00:00",
+      "finished_at_utc": "2026-11-28T18:11:44.178478+00:00",
+      "status": "provider_and_consumer_observed",
+      "qemu_elapsed_seconds": 2.457469,
+      "input_recheck_unchanged": true,
+      "owned_process_group_absent": true,
+      "verified_flags": [
+        "consumer_vectors_verified",
+        "pacga_key_initialization_verified",
+        "post_consumer_return_verified",
+        "real_consumer_return_verified",
+        "runtime_post_verified",
+        "runtime_provider_verified"
+      ],
+      "post_w0": "0x0",
+      "panic_format": "image4 interface not available @%s:%d",
+      "panic_caller": "0xfffffff0078850c8",
+      "kmem_ctx_size": 240,
+      "consumer_vectors": 5
+    },
+    "negative-post": {
+      "report_path": "/work/continuation-20261127-triline-unixnu/runtime-cf805-001/negative-sleep-on/report.json",
+      "report_sha256": "b784cc114c6f2b04e7a940d03b33e2faf01cb53fe6bea68dfebbe0410886f58d",
+      "started_at_utc": "2026-11-28T18:10:56.498374+00:00",
+      "finished_at_utc": "2026-11-28T18:11:10.444448+00:00",
+      "status": "negative_post_rejection_observed",
+      "qemu_elapsed_seconds": 2.721342,
+      "input_recheck_unchanged": true,
+      "owned_process_group_absent": true,
+      "verified_flags": [
+        "negative_post_rejection_verified",
+        "pacga_negative_post_unpublished_verified"
+      ],
+      "post_w0": "0xfffff7e6",
+      "panic_format": "\"FIPS Kernel POST Failed (%d)!\" @%s:%d",
+      "panic_caller": "0xfffffff007b4e3d0"
+    }
+  },
+  "not_verified": [
+    "bsd_init",
+    "OS boot",
+    "Darwin userland",
+    "PACGA SVC roundtrip",
+    "TB371FC hardware"
+  ]
+}

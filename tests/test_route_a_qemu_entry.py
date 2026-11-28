@@ -873,7 +873,7 @@ class SeedAndReportTests(unittest.TestCase):
                 self.assertEqual(report["qemu"]["clock_mode"], mode)
                 argv = launched[0]
                 icount = [argv[i + 1] for i, value in enumerate(argv) if value == "-icount"]
-                self.assertEqual(icount, [] if mode == "host-virtual" else ["shift=0,align=off,sleep=off"])
+                self.assertEqual(icount, [] if mode == "host-virtual" else ["shift=0,align=off,sleep=on"])
                 self.assertEqual(report["qemu"]["icount"], icount[0] if icount else None)
                 if icount:
                     at = argv.index("-icount")
