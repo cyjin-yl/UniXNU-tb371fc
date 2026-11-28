@@ -40,7 +40,9 @@ STRING_LIMIT, STACK_LIMIT, VA_LIST_LIMIT, READ_CHUNK = 512, 256, 256, 64
 CORE_NAMES = tuple(f"x{i}" for i in range(31)) + ("sp", "pc", "cpsr")
 CPUS = ("cortex-a53", "cortex-a57", "cortex-a72", "cortex-a76", "cortex-a710")
 CLOCK_MODES = ("host-virtual", "instruction-1ns")
-INSTRUCTION_CLOCK = "shift=0,align=off,sleep=off"
+# Keep idle time host-paced: sleep=off can warp an idle CPU to a far-future
+# ARM timer expiry and wedge QEMU 10.0.13 when resuming a GDB breakpoint.
+INSTRUCTION_CLOCK = "shift=0,align=off,sleep=on"
 QUALIFICATION = {
     "qemu_kernel_entry_executed": False,
     "qemu_early_cpu_entry_observed": False,

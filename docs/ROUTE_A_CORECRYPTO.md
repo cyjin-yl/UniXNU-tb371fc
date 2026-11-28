@@ -1,5 +1,13 @@
 # Route A：固定源 CoreCrypto 的完整表适配与可复现链路
 
+## 2026-11-28 实际运行进展
+
+复用 PR #32 对应的普通 ARM64/PACGA 构建，保持内核、seed、50 秒预算和原有断点/校验不变，仅把固定 icount 的空闲设置从 `sleep=off` 改为 `sleep=on`。旧设置的正负例均在真实 POST 返回后挂起；新设置的正例完成 POST、provider/PRNG 发布、5 个消费者向量、真实 `read_random` 调用/返回、PACGA 密钥初始化及整个 `vm_map_store_crypto_init` 返回，实际 kmem context size 为 240。
+
+同一存储 POST HMAC 单 bit 翻转负例执行到真实 POST 失败 panic，provider/PRNG/consumer/PACGA 状态均未发布。两次使用同一 QEMU 10.0.13，输入复查未变，子进程组已回收；[简洁运行摘要](evidence/route-a-corecrypto-runtime-20261128.json)绑定原始报告和内核摘要。
+
+正例继续遇到 `kern_trustcache.c` 的 `image4 interface not available` panic；尚未到达 `bsd_init`、Darwin 用户态或系统启动。PACGA SVC 往返和 TB371FC 真机资格也未取得。这里证明的是 QEMU virt 中上述内核路径，不是设备安全链或硬件验收。
+
 本页描述一条独立、显式的普通 ARM64 构建和 QEMU 诊断路径。它针对固定 XNU 12377.121.6 的 `crypto_functions` 合同，补齐旧 provider 未赋值的 13 个槽，并验证真实 provider、POST、PRNG 和 XNU 消费者。构建结果、实际运行、后续 XNU 初始化、Darwin 用户态和 TB371FC 硬件资格分别记录。
 
 脚本和测试 fixture 本身不会产生运行时成功证据。新的正负运行结果应以该次脚本身份、完整输入、原始报告和实际进程收据为准。旧实验 006 的 `ctx_size=240`、007 的 POST 返回 0 和 008 的 POST 返回非零仍只有各自原始范围；008 停在 POST 返回处，不能当作本页要求的实际拒绝路径。
