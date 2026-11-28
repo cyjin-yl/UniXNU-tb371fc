@@ -1,5 +1,55 @@
 # Route A：27 用户态与 TB371FC 内核的集成缺口
 
+## 2026-11-28 更新：真实目标 kernelcache 与兼容基线
+
+**当前 Route A 构建并运行的是公开 XNU 12377.121.6 的普通 arm64 兼容候选。** 固定的[上游 iPadOS profile][U-IPAD]明确选择该源码，并用补丁补入较新接口；本仓库原有 README 和下文初始评估也将它列为 XNU 12377。这是有意的跨版本兼容路线。本次取得的原厂二进制补充了目标版本与实际依赖，现有 12377 构建和 CoreCrypto 运行成果继续保留。
+
+### 同一官方输入的实际观测
+
+沿[原有输入提取方法](ROUTE_A_EXTRACTION.md)及留存的源 URL，使用现有 `ipsw v3.1.750` 只读取[Apple 官方 24A446 恢复包](https://updates.cdn-apple.com/2026FallFCS/6074e110-d48d-40c2-b0e8-b611520941a3/iPad17,1,iPad17,2,iPad17,3,iPad17,4_27.0.1_24A446_Restore.ipsw)中的 KernelCache 成员。完整 IPSW 为 11,654,176,243 字节；本次没有下载整包、加载该内核或执行 provider。
+
+| 项目 | 实际读取结果 |
+| --- | --- |
+| 目标与成员 | iPadOS 27.0.1 / 24A446；`iPad17,3`、`j820ap`；BuildManifest 的 `kernelcache.release.ipad17` |
+| 解压内核 | 80,035,840 字节；SHA-256 `38e6d9fa5f789b8228f4617ef4c6d2a3fd8ab564abdc9b62920f1db53fc1780a`，与固定 profile 的 kernelcache pin 一致 |
+| 内核自身版本字符串 | `Darwin Kernel Version 27.0.0: Thu Aug 13 21:42:06 PDT 2026; root:xnu-13432.2.10~2/RELEASE_ARM64_T8142` |
+| 装载形态 | `MH_FILESET`，308 个 fileset entries；原厂 provider 位于同一 KC 的共享段 |
+| `com.apple.security.AppleImage4` | 版本 7.0.0；`MH_KEXT_BUNDLE`、CPU subtype `0xc0000002`（arm64e）；符号表 `nsyms=0` |
+| `com.apple.driver.AppleMobileFileIntegrity` | 版本 1.0.5；同为 arm64e `MH_KEXT_BUNDLE`、`nsyms=0` |
+
+提取命令可使用同一工具和新的输出目录重现；它按指定设备选择 kernelcache：
+
+```sh
+ipsw extract --remote --kernel --device iPad17,3 \
+  --output NEW_OUTPUT_DIRECTORY --json --json-format artifacts \
+  'https://updates.cdn-apple.com/2026FallFCS/6074e110-d48d-40c2-b0e8-b611520941a3/iPad17,1,iPad17,2,iPad17,3,iPad17,4_27.0.1_24A446_Restore.ipsw'
+```
+
+本次使用的工具二进制 SHA-256 为 `b1fbe15d8619523d431ab418ac5a32f765c6a6385453527fd75336d035fb5db3`，与原有提取工具 pin 相同。版本、load commands 和依赖来自实际 Mach-O 与 `__PRELINK_INFO`，不是从 profile 名字推算。官方文件和私有提取产物继续保存在源码仓库外。
+
+### 与当前运行结果的关系
+
+[CoreCrypto 正负运行](ROUTE_A_CORECRYPTO.md)已经在 QEMU virt 的 12377 候选中越过真实 POST、PRNG、消费者和 kmem crypto 初始化；下一处实际 panic 为 `image4 interface not available`。该候选是普通 arm64 `MH_EXECUTE`，没有包含上述原厂 fileset providers。现有 `img4_interface_register`、`image4_v2_interface_register`、AMFI 表布局适配属于接收实现的接口；它们本身不提供 Image4/AMFI 验证实现。
+
+KC 中两个 provider 的代码、数据和 `__LINKEDIT` 分散在共享文件偏移，不能把一个 Mach-O header 后的连续切片当作独立可链接对象。它们的 arm64e 指针/调用约定、已剥离符号和 13432 依赖，还没有与当前 12377 普通指针 ABI 完成匹配。固定 profile 的 `darwin=25.5.0` 和 Darwin 26 补丁说明的是所选兼容基线；本次 KC 的实际版本为 Darwin 27，不能把前者用作完整目标 ABI 的证明。
+
+`__PRELINK_INFO` 声明 AppleImage4 依赖 CoreTrust、corecrypto、IOCryptoAcceleratorFamily 和相应 kernel KPI；AMFI 还依赖 ApplePMGR、CoreAnalyticsFamily、AppleImage4 及 `com.apple.security.Image4`。这些是需要解析、装入和初始化的真实依赖，尚未证明在当前候选内可用。
+
+### 已核对的公开源码与下一接入前提
+
+2026-11-28 UTC 查询 Apple 官方仓库：[精确 `xnu-13432.2.10` ref](https://api.github.com/repos/apple-oss-distributions/xnu/git/ref/tags/xnu-13432.2.10)返回 404，[`refs/tags/xnu-13432` 前缀查询](https://api.github.com/repos/apple-oss-distributions/xnu/git/matching-refs/tags/xnu-13432)返回空列表；同一接口的[`xnu-12377.121.6` 阳性对照](https://api.github.com/repos/apple-oss-distributions/xnu/git/ref/tags/xnu-12377.121.6)正常存在。[官方 macOS 26.5 分发清单](https://github.com/apple-oss-distributions/distribution-macOS/blob/macos-265/release.json)将 XNU 映射到 12377.121.6，[官方 `distribution-iOS` 的 `refs/tags/ios-27` 查询](https://api.github.com/repos/apple-oss-distributions/distribution-iOS/git/matching-refs/tags/ios-27)为空。因此本次没有找到可 pin 的官方 13432.2.10 匹配源 tag；结论限于这些实际查询的官方 refs 和分发清单。
+
+接下来保留已验证的 12377 路线，推进真实 provider 接入：
+
+1. 准备固定的 XnuPrelink 工具与符号参考。当前工作树的 `kits/XnuPrelink` 目录为空，profile 指定的 `build/xnu/fileset-reference/mach.release.bcm2837.unstripped.noctf` 也不存在；应先补齐真实输入，再检查跨版本调用能否全部解析。
+2. 对所选 provider 的代码和指针完成普通 arm64 约定转换及依赖解析。profile 中的 bring-up 选项 `--allow-missing` 与未映射调用报告桩不能作为依赖已闭合的结果。
+3. 使真实 Image4/AMFI 实现在 trust-cache 初始化前注册，保留原有签名、信任与失败路径；以实际内核运行为接入结果。
+4. 若日后核验到精确官方新源，另开匹配源码路线并复用当前成果；本次不替换 12377 源码，也不把原厂 arm64e provider 记作已经适配。
+
+以下保留 2026-11-23 的初始源码评估，涉及“尚未编译”等表述按当时范围阅读。最新构建、QEMU 运行和 provider 输入结果以上述更新及相应实际运行记录为准。
+
+---
+
 审计日期：2026-11-23。范围是源码与构建配方的只读比对；没有编译候选内核，没有安装或启动 27 系统。本文的“27”分别指上游固定的 iPadOS `27.0.1 / 24A446` 与 macOS `27.3 / 26C5035r`，不表示任意后续 27 版本。[U-IPAD] [U-MAC]
 
 ## 判断与证据范围

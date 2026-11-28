@@ -8,6 +8,8 @@
 
 采用 **离线 arm64e → 普通 arm64 转换、CPU 原生执行**的路线 A，先推进 **iPadOS 27.0.1 / 24A446**，再验证 macOS 27。转换采用普通指针 ABI，不保留 PAC 认证；加载器、内核 pager 和指针生产者必须遵守同一约定。
 
+当前源码编译与 QEMU 运行结果专指 **XNU 12377.121.6 的普通 arm64 兼容候选**。2026-11-28 从同一官方 24A446 恢复包只读提取的原厂 kernelcache，实际标识为 **XNU 13432.2.10 / Darwin 27.0.0、arm64e**。12377 是现有路线有意选择的公开源码基线；原厂 Image4/AMFI 已取得，其跨版本 ABI、普通指针转换和加载依赖仍待接入，见[版本与 provider 实测范围](docs/ROUTE_A_KERNEL_GAPS.md)。
+
 **当前没有启动 iPadOS 27 或 macOS 27。** 已取得的结果如下；完整证据与适用范围见 [证据索引](docs/evidence/README.md)。
 
 | 已完成工作 | 可核验结果 | 证明范围 |
@@ -23,6 +25,7 @@
 | 候选的有限编码核对 | 扫描 3 个区域、2,220,163 个候选 4 字节字；分类器识别的非 HINT PAuth 为 0，精确 POE2 TCHANGE 为 0；180 个 `XPACLRI` HINT | [独立记录](docs/evidence/route-a-kernel-candidate-audit-20261124.json)；不证明可达性，也不覆盖全部 ISA 或外部 archives |
 | 平台组件与真实 kernel callback | 固定 `ArmDTPlatform`、`ArmCpu` 实际编译，真实 `cpu.c` callback 接线对象完成独立链接；21,942,456 字节新候选，强／弱未定义均为 0 | [平台结果](docs/ROUTE_A_PLATFORM_RESULT.md)；完整 provider 闭包、运行时匹配与设备 entry 继续单独验收 |
 | 真实候选的 DarwinBoot 主机装载 | 原 C parser／复制代码通过；10 段、23,035,904 字节映像逐字节一致；102,103 条 local pointer 记录全部核验，`boot_args` ABI 一致 | [实际结果与前两次失败](docs/ROUTE_A_LOADER_CONTRACT.md)；固定虚拟地址合同，未执行 UEFI 分配、MMU 交接或设备内核入口 |
+| 真实 CoreCrypto/PACGA 启动路径 | 正例完成 POST、真实 PRNG/消费者、PACGA 密钥初始化和 kmem crypto 初始化；损坏 POST HMAC 的负例进入真实失败 panic | [实际运行](docs/ROUTE_A_CORECRYPTO.md)；QEMU virt / XNU 12377，随后停在缺少 Image4 interface，尚未启动 Darwin 用户态 |
 | 独立 QEMU 入口、快照与计时诊断 | 实际入口单步、run004 完整有限 panic 快照；相同 guest 输入的 run005 首异常为 Data Abort，快照因原窗口与长度限制保留 `partial`／失败 | [五次实际尝试](docs/ROUTE_A_QEMU_ENTRY.md)；标准 `virt`／Cortex-A76、合成 ADT；新故障依赖、完整 MMU／slide、TB371FC 实机和 OS boot 继续独立验收 |
 | 首轮编译失败保留 | 716 个目标文件后因 fileset panic 的无条件 PAuth builtin 退出；旧目录和日志保留 | [历史失败证据](docs/evidence/route-a-first-kernel-failure-20261124.json)；第二轮已越过该阻塞 |
 | 主机工具实际验收 | 普通 ARM64 样本链接、MIG 接口生成、LZFSE 往返 **3/3 组通过** | 自写样本；完整 XNU、SDK 和定制 Clang 资格单独验证 |
