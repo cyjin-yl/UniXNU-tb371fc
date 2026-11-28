@@ -8,6 +8,8 @@
 
 正例继续遇到 `kern_trustcache.c` 的 `image4 interface not available` panic；尚未到达 `bsd_init`、Darwin 用户态或系统启动。PACGA SVC 往返和 TB371FC 真机资格也未取得。这里证明的是 QEMU virt 中上述内核路径，不是设备安全链或硬件验收。
 
+同日只读提取的原厂 24A446 kernelcache 已确认含真实 AppleImage4 / AMFI；其内核标识为 **XNU 13432.2.10 / Darwin 27.0.0**，provider 为 arm64e fileset 成员。当前构建有意使用公开 **XNU 12377.121.6** 作普通 arm64 兼容基线，尚未接入这些原厂 provider 的跨版本 ABI 与依赖。详细输入摘要、官方源 tag 核对和下一接入前提见[内核集成缺口更新](ROUTE_A_KERNEL_GAPS.md)。
+
 本页描述一条独立、显式的普通 ARM64 构建和 QEMU 诊断路径。它针对固定 XNU 12377.121.6 的 `crypto_functions` 合同，补齐旧 provider 未赋值的 13 个槽，并验证真实 provider、POST、PRNG 和 XNU 消费者。构建结果、实际运行、后续 XNU 初始化、Darwin 用户态和 TB371FC 硬件资格分别记录。
 
 脚本和测试 fixture 本身不会产生运行时成功证据。新的正负运行结果应以该次脚本身份、完整输入、原始报告和实际进程收据为准。旧实验 006 的 `ctx_size=240`、007 的 POST 返回 0 和 008 的 POST 返回非零仍只有各自原始范围；008 停在 POST 返回处，不能当作本页要求的实际拒绝路径。
